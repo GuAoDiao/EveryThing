@@ -2,6 +2,18 @@
 
 #include "MainMenu.h"
 
+void UMainMenu::StartGame()
+{
 
+}
 
+void UMainMenu::FindGame()
+{
+
+}
+
+void UMainMenu::ExitGame()
+{
+
+}
 

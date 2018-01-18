@@ -14,7 +14,13 @@ class EVERYTHING_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
 	
-	
-	
-	
+public:
+	UFUNCTION(BlueprintCallable)
+	void StartGame();
+
+	UFUNCTION(BlueprintCallable)
+	void FindGame();
+
+	UFUNCTION(BlueprintCallable)
+	void ExitGame();	
 };

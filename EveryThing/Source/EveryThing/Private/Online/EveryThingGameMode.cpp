@@ -14,6 +14,7 @@ AEveryThingGameMode::AEveryThingGameMode()
 
 	DefaultPawnClass = AGamePawn::StaticClass();
 	PlayerControllerClass = APlayerPawnController::StaticClass();
+
 	GameSessionClass = AEveryThingGameSession::StaticClass();
 }
 
