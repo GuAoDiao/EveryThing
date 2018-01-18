@@ -16,6 +16,10 @@ class EVERYTHING_API UJumpMovementComponent : public UActorComponent
 public:
 	UJumpMovementComponent();
 
+protected:
+	class IJumpMovementPawnInterface* OwnerJumpPawn;
+	class UPrimitiveComponent* OwnerPrimitiveComp;
+
 private:
 	//////////////////////////////////////////////////////////////////////////
 	/// Server
@@ -26,10 +30,11 @@ private:
 	void ServerJump();
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerJumpMove();
+	void ServerJumpMove(const FVector& Dircetion);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerRotatePawn(float AxisValue);
+
 protected:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
@@ -74,16 +79,10 @@ protected:
 	float AdjustSelfRotationForce;
 
 	UPROPERTY(Replicated)
-	bool bWantToJumpMove;
-	UPROPERTY(Replicated, BlueprintReadOnly)
-	bool bHasMoveDirection;
-	UPROPERTY(Replicated)
-	bool bIsToogleMovementState;
-	UPROPERTY(Replicated)
 	bool bCanJump;
-	UPROPERTY(Replicated)
-	FVector CurrentMoveDirection;
-
-	class IJumpMovementPawnInterface* OwnerJumpPawn;
-	class UPrimitiveComponent* OwnerPrimitiveComp;
+	
+private:
+	bool bIsToogleMovementState;
+	bool bHasMoveDirection;
+	FVector WantedMoveDirection;
 };

@@ -37,17 +37,19 @@ private:
 	void ServerAcceptForceImpulse(const FVector& Location, const FVector& Force);
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerStartJump();
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerToogleMovementState(bool bInIsFastMovementState);
 
 
 protected:
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float SpeedSlow;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float SpeedFast;
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float JumpForceSmall;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float JumpForceStrong;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
@@ -59,7 +61,6 @@ protected:
 private:
 	UPROPERTY(Replicated)
 	bool bIsJumping;
-	UPROPERTY(Replicated)
 	bool bIsFastMovementState;
 
 	class IRotaryMovementPawnInterface* OwnerRotaryPawn;

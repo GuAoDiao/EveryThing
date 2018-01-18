@@ -23,7 +23,6 @@ UJumpMovementComponent::UJumpMovementComponent()
 
 	AdjustSelfRotationForce = 500000 * 1000.f;
 
-	bWantToJumpMove = false;
 	bHasMoveDirection = false;
 	bIsToogleMovementState = false;
 	bCanJump = true;
@@ -133,9 +132,9 @@ void UJumpMovementComponent::SetJumpMoveDirection(bool bIsForward, bool bIsPosit
 	bHasMoveDirection = true;
 	if (OwnerPrimitiveComp)
 	{
-		CurrentMoveDirection = bIsForward ? OwnerPrimitiveComp->GetForwardVector() : OwnerPrimitiveComp->GetRightVector();
+		WantedMoveDirection = bIsForward ? OwnerPrimitiveComp->GetForwardVector() : OwnerPrimitiveComp->GetRightVector();
 
-		if (!bIsPositive) { CurrentMoveDirection = -CurrentMoveDirection; }
+		if (!bIsPositive) { WantedMoveDirection = -WantedMoveDirection; }
 	}
 }
 
@@ -148,7 +147,7 @@ void UJumpMovementComponent::StartJump()
 {
 	if (bHasMoveDirection)
 	{
-		ServerJumpMove();
+		ServerJumpMove(WantedMoveDirection);
 	}
 	else
 	{
@@ -170,13 +169,13 @@ void UJumpMovementComponent::ServerJump_Implementation()
 	}
 }
 
-bool UJumpMovementComponent::ServerJumpMove_Validate() { return true; }
-void UJumpMovementComponent::ServerJumpMove_Implementation()
+bool UJumpMovementComponent::ServerJumpMove_Validate(const FVector& Dircetion) { return true; }
+void UJumpMovementComponent::ServerJumpMove_Implementation(const FVector& Dircetion)
 {
-	if (OwnerPrimitiveComp && bHasMoveDirection && bCanJump)
+	if (OwnerPrimitiveComp && bCanJump)
 	{
 		UE_LOG(LogTemp, Log, TEXT("-_- this is jump move"));
-		OwnerPrimitiveComp->AddImpulse(OwnerPrimitiveComp->GetUpVector() * JumpHeightForce + CurrentMoveDirection * JumpForwardForce);
+		OwnerPrimitiveComp->AddImpulse(OwnerPrimitiveComp->GetUpVector() * JumpHeightForce + WantedMoveDirection * JumpForwardForce);
 		bCanJump = false;
 	}
 }
@@ -186,11 +185,7 @@ void UJumpMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
-	DOREPLIFETIME(UJumpMovementComponent, CurrentMoveDirection);
-	DOREPLIFETIME(UJumpMovementComponent, bWantToJumpMove);
 	DOREPLIFETIME(UJumpMovementComponent, bCanJump);
-	DOREPLIFETIME(UJumpMovementComponent, bHasMoveDirection);
-	DOREPLIFETIME(UJumpMovementComponent, bIsToogleMovementState);
 
 	DOREPLIFETIME(UJumpMovementComponent, AutoAdjstRotationStrength);
 	DOREPLIFETIME(UJumpMovementComponent, JumpForwardForce);

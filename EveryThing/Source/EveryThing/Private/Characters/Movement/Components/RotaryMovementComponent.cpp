@@ -85,7 +85,12 @@ void URotaryMovementComponent::ServerStartJump_Implementation()
 void URotaryMovementComponent::ToogleMovementState()
 {
 	bIsFastMovementState = !bIsFastMovementState;
-	if (bIsFastMovementState)
+	ServerToogleMovementState(bIsFastMovementState);
+}
+bool URotaryMovementComponent::ServerToogleMovementState_Validate(bool bInIsFastMovementState) { return true; }
+void URotaryMovementComponent::ServerToogleMovementState_Implementation(bool bInIsFastMovementState)
+{
+	if (bInIsFastMovementState)
 	{
 		CurrentSpeed = SpeedFast;
 		CurrentJumpForce = JumpForceStrong;
@@ -104,11 +109,5 @@ void URotaryMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(URotaryMovementComponent, CurrentSpeed);
 	DOREPLIFETIME(URotaryMovementComponent, CurrentJumpForce);
 
-	DOREPLIFETIME(URotaryMovementComponent, SpeedSlow);
-	DOREPLIFETIME(URotaryMovementComponent, SpeedFast);
-	DOREPLIFETIME(URotaryMovementComponent, JumpForceSmall);
-	DOREPLIFETIME(URotaryMovementComponent, JumpForceStrong);
-
-	DOREPLIFETIME(URotaryMovementComponent, bIsFastMovementState);
 	DOREPLIFETIME(URotaryMovementComponent, bIsJumping);
 }
