@@ -1,0 +1,28 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "RotaryMovementPawn.h"
+
+#include "GameFramework/Controller.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Components/StaticMeshComponent.h"
+
+#include "Characters/Movement/Components/RotaryMovementComponent.h"
+
+ARotaryMovementPawn::ARotaryMovementPawn()
+{
+	OwnerRotaryMovementComponent = CreateDefaultSubobject<URotaryMovementComponent>(TEXT("RotaryMovementComponent"));
+}
+
+/// For Rotary Movement
+const FVector ARotaryMovementPawn::GetActualForwardVector() const { return UKismetMathLibrary::GetForwardVector(GetControlRotation()); }
+const FVector ARotaryMovementPawn::GetActualRightVector() const { return UKismetMathLibrary::GetRightVector(GetControlRotation()); }
+const FVector ARotaryMovementPawn::GetActualUpVector() const { return UKismetMathLibrary::GetUpVector(GetControlRotation()); }
+
+//////////////////////////////////////////////////////////////////////////
+/// Hit
+void ARotaryMovementPawn::OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit)
+{
+	Super::OnHitImplement(HitComp, OtherActor, OtherComp, NormalInpulse, Hit);
+
+	OwnerRotaryMovementComponent->SetIsJumping(false);
+}

@@ -1,0 +1,23 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "JumpMovementPawnInterface.generated.h"
+
+UINTERFACE()
+class EVERYTHING_API UJumpMovementPawnInterface : public UInterface
+{
+	GENERATED_BODY()
+};
+
+class EVERYTHING_API IJumpMovementPawnInterface
+{
+	GENERATED_BODY()
+
+public:
+	/// For Controller
+	virtual class UJumpMovementComponent* GetJumpMovementComponent() const = 0;
+	/// For Rotary Movement
+	virtual class UPrimitiveComponent* GetPrimitiveComponent() const = 0;
+};
