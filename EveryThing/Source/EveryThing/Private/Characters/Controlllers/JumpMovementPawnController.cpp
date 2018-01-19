@@ -2,6 +2,8 @@
 
 #include "JumpMovementPawnController.h"
 
+#include "GameFramework/Pawn.h"
+
 #include "Characters/Movement/Interfaces/JumpMovementPawnInterface.h"
 #include "Characters/Movement/Components/JumpMovementComponent.h"
 
@@ -38,10 +40,7 @@ void AJumpMovementPawnController::SetPawn(APawn* InPawn)
 	Super::SetPawn(InPawn);
 
 	IJumpMovementPawnInterface* OwnerJumpPawn = Cast<IJumpMovementPawnInterface>(InPawn);
-	if (OwnerJumpPawn)
-	{
-		OwnerJumpMovementComp = OwnerJumpPawn->GetJumpMovementComponent();
-	}
+	OwnerJumpMovementComp = OwnerJumpPawn ? OwnerJumpPawn->GetJumpMovementComponent() : nullptr;
 }
 
 

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Characters/GamePawn.h"
+#include "Components/StaticMeshComponent.h"
+
 #include "Characters/Movement/Interfaces/RotaryMovementPawnInterface.h"
 
 #include "RotaryMovementPawn.generated.h"

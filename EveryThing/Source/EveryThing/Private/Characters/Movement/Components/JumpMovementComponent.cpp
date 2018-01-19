@@ -16,12 +16,13 @@ UJumpMovementComponent::UJumpMovementComponent()
 	JumpForwardForce = 800 * 1000.f;
 	JumpHeightForce = 600 * 1000.f;
 
-	AutoAdjstRotationStrength = 25.f;
 
 	AdjustLocationForce = 500 * 1000.f;
 	AdjustRotationForce = 100000 * 1000.f;
 
-	AdjustSelfRotationForce = 500000 * 1000.f;
+	AdjustPawnRotationForce = 500000 * 1000.f;
+
+	AtuoAdjustRotationForceStrength = 25.f;
 
 	bHasMoveDirection = false;
 	bIsToogleMovementState = false;
@@ -37,25 +38,8 @@ void UJumpMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 {
 	if (OwnerPrimitiveComp)
 	{
-		FRotator OwnerRotation = OwnerPrimitiveComp->GetComponentRotation();
-		if (OwnerRotation.Roll > 10.f)
-		{
-			ServerAdjustPosition(false, false, -1.f * DeltaTime * AutoAdjstRotationStrength);
-		} 
-		else if (OwnerRotation.Roll < -10.f)
-		{
-			ServerAdjustPosition(false, false, 1.f * DeltaTime * AutoAdjstRotationStrength);
-		}
-
-		if (OwnerRotation.Pitch > 10.f)
-		{
-			ServerAdjustPosition(false, true, 1.f * DeltaTime * AutoAdjstRotationStrength);
-		}
-		else if (OwnerRotation.Pitch < -10.f)
-		{
-			ServerAdjustPosition(false, true, -1.f * DeltaTime * AutoAdjstRotationStrength);
-		}
-
+		AutoAdjsutRotationPosition(DeltaTime);
+		
 
 		APawn* OwnerPawn = Cast<APawn>(GetOwner());
 		APlayerController* OwnerPC = OwnerPawn ? Cast<APlayerController>(OwnerPawn->GetController()) : nullptr;
@@ -81,18 +65,58 @@ void UJumpMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 	}
 }
 
-void UJumpMovementComponent::AdjustForwardPosition(float AxisValue)
+//////////////////////////////////////////////////////////////////////////
+/// Adjust Position
+
+void UJumpMovementComponent::AdjustForwardPosition(float AxisValue) { AdjustPosition(!bIsToogleMovementState, true, AxisValue); }
+void UJumpMovementComponent::AdjustRightPosition(float AxisValue) { AdjustPosition(!bIsToogleMovementState, false, AxisValue); }
+
+void UJumpMovementComponent::AutoAdjsutRotationPosition(float DeltaTime)
 {
-	ServerAdjustPosition(!bIsToogleMovementState, true, AxisValue);
-}
-void UJumpMovementComponent::AdjustRightPosition(float AxisValue)
-{
-	ServerAdjustPosition(!bIsToogleMovementState, false, AxisValue);
+	if (OwnerPrimitiveComp)
+	{
+		FRotator OwnerRotation = OwnerPrimitiveComp->GetComponentRotation();
+	
+		bool bNeedAdjustForward = OwnerRotation.Roll > 10.f || OwnerRotation.Roll < -10.f;
+		bool bForwardIsPositiveValue = OwnerRotation.Roll > 0.f;
+
+		bool bNeedAdjustRight = OwnerRotation.Pitch > 10.f || OwnerRotation.Pitch < -10.f;
+		bool bRightIsPositiveValue = OwnerRotation.Pitch > 0.f;
+
+		if (bNeedAdjustForward || bNeedAdjustRight)
+		{
+			AdjsutRotationPosition(bNeedAdjustForward, bForwardIsPositiveValue, bNeedAdjustRight, bRightIsPositiveValue, DeltaTime);
+		}
+	}
 }
 
-bool UJumpMovementComponent::ServerAdjustPosition_Validate(bool bIsAdjsutLocation, bool bIsForward, float AxisValue) { return true; }
-void UJumpMovementComponent::ServerAdjustPosition_Implementation(bool bIsAdjsutLocation, bool bIsForward, float AxisValue)
+void UJumpMovementComponent::AdjsutRotationPosition(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float AxisValue)
 {
+	if (GetOwnerRole() != ROLE_Authority)
+	{
+		ServerAdjustPawnRotation(bNeedAdjustForward, bForwardIsPositiveValue, bNeedAdjustRight, bRightIsPositiveValue, AxisValue);
+		return;
+	}
+
+	if (bNeedAdjustForward) { AdjustPosition(false, false, (bForwardIsPositiveValue ? 1.f : -1.f) * AxisValue * AtuoAdjustRotationForceStrength); }
+	if (bNeedAdjustRight) { AdjustPosition(false, true, (bRightIsPositiveValue ? 1.f : -1.f) * AxisValue * AtuoAdjustRotationForceStrength); }
+}
+bool UJumpMovementComponent::ServerAdjustPawnRotation_Validate(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float AxisValue) { return true; }
+void UJumpMovementComponent::ServerAdjustPawnRotation_Implementation(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float AxisValue)
+{
+	AdjsutRotationPosition(bNeedAdjustForward, bForwardIsPositiveValue, bNeedAdjustRight, bRightIsPositiveValue, AxisValue);
+}
+
+
+
+void UJumpMovementComponent::AdjustPosition(bool bIsAdjsutLocation, bool bIsForward, float AxisValue)
+{
+	if (GetOwnerRole() != ROLE_Authority)
+	{
+		ServerAdjustPosition(bIsAdjsutLocation, bIsForward, AxisValue);
+		return;
+	}
+		
 	if (OwnerPrimitiveComp)
 	{
 		if (bIsAdjsutLocation)
@@ -108,19 +132,25 @@ void UJumpMovementComponent::ServerAdjustPosition_Implementation(bool bIsAdjsutL
 	}
 }
 
+bool UJumpMovementComponent::ServerAdjustPosition_Validate(bool bIsAdjsutLocation, bool bIsForward, float AxisValue) { return true; }
+void UJumpMovementComponent::ServerAdjustPosition_Implementation(bool bIsAdjsutLocation, bool bIsForward, float AxisValue) { AdjustPosition(bIsAdjsutLocation, bIsForward, AxisValue); }
+
 void UJumpMovementComponent::RotatePawn(float AxisValue)
 {
-	ServerRotatePawn(AxisValue);
+	if (GetOwnerRole() != ROLE_Authority)
+	{
+		ServerRotatePawn(AxisValue);
+		return;
+	}
+	
+	if (OwnerPrimitiveComp) { OwnerPrimitiveComp->AddTorqueInRadians(OwnerPrimitiveComp->GetUpVector() * AdjustPawnRotationForce * AxisValue); }
 }
 bool UJumpMovementComponent::ServerRotatePawn_Validate(float AxisValue) { return true; }
-void UJumpMovementComponent::ServerRotatePawn_Implementation(float AxisValue)
-{
-	if (OwnerPrimitiveComp)
-	{
-		OwnerPrimitiveComp->AddTorqueInRadians(OwnerPrimitiveComp->GetUpVector() * AdjustSelfRotationForce * AxisValue);
-	}
-}
+void UJumpMovementComponent::ServerRotatePawn_Implementation(float AxisValue) { RotatePawn(AxisValue); }
 
+
+//////////////////////////////////////////////////////////////////////////
+/// Jump And Jump Move
 
 inline void UJumpMovementComponent::JumpMoveToForward() { SetJumpMoveDirection(true, true); }
 inline void UJumpMovementComponent::JumpMoveToBack() { SetJumpMoveDirection(true, false); }
@@ -147,20 +177,26 @@ void UJumpMovementComponent::StartJump()
 {
 	if (bHasMoveDirection)
 	{
-		ServerJumpMove(WantedMoveDirection);
+		JumpMove(WantedMoveDirection);
 	}
 	else
 	{
-		ServerJump();
+		Jump();
 	}
 }
 void UJumpMovementComponent::StopJump()
 {
 }
 
-bool UJumpMovementComponent::ServerJump_Validate() { return true; }
-void UJumpMovementComponent::ServerJump_Implementation()
+
+void UJumpMovementComponent::Jump()
 {
+	if (GetOwnerRole() != ROLE_Authority)
+	{
+		ServerJump();
+		return;
+	}
+
 	if (OwnerPrimitiveComp && bCanJump)
 	{
 		UE_LOG(LogTemp, Log, TEXT("-_- this is jump"));
@@ -168,10 +204,18 @@ void UJumpMovementComponent::ServerJump_Implementation()
 		bCanJump = false;
 	}
 }
+bool UJumpMovementComponent::ServerJump_Validate() { return true; }
+void UJumpMovementComponent::ServerJump_Implementation() { Jump(); }
 
-bool UJumpMovementComponent::ServerJumpMove_Validate(const FVector& Dircetion) { return true; }
-void UJumpMovementComponent::ServerJumpMove_Implementation(const FVector& Dircetion)
+
+void UJumpMovementComponent::JumpMove(const FVector& Dircetion)
 {
+	if (GetOwnerRole() != ROLE_Authority)
+	{
+		ServerJumpMove(Dircetion);
+		return;
+	}
+
 	if (OwnerPrimitiveComp && bCanJump)
 	{
 		UE_LOG(LogTemp, Log, TEXT("-_- this is jump move"));
@@ -179,6 +223,8 @@ void UJumpMovementComponent::ServerJumpMove_Implementation(const FVector& Dircet
 		bCanJump = false;
 	}
 }
+bool UJumpMovementComponent::ServerJumpMove_Validate(const FVector& Dircetion) { return true; }
+void UJumpMovementComponent::ServerJumpMove_Implementation(const FVector& Dircetion) { JumpMove(Dircetion); }
 
 
 void UJumpMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -187,11 +233,12 @@ void UJumpMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
 	
 	DOREPLIFETIME(UJumpMovementComponent, bCanJump);
 
-	DOREPLIFETIME(UJumpMovementComponent, AutoAdjstRotationStrength);
 	DOREPLIFETIME(UJumpMovementComponent, JumpForwardForce);
 	DOREPLIFETIME(UJumpMovementComponent, JumpHeightForce);
 
 	DOREPLIFETIME(UJumpMovementComponent, AdjustLocationForce);
 	DOREPLIFETIME(UJumpMovementComponent, AdjustRotationForce);
-	DOREPLIFETIME(UJumpMovementComponent, AdjustSelfRotationForce);
+	DOREPLIFETIME(UJumpMovementComponent, AdjustPawnRotationForce);
+
+	DOREPLIFETIME(UJumpMovementComponent, AtuoAdjustRotationForceStrength);
 }

@@ -2,6 +2,8 @@
 
 #include "RotaryMovementPawnController.h"
 
+#include "GameFramework/Pawn.h"
+
 #include "Characters/Movement/Interfaces/RotaryMovementPawnInterface.h"
 #include "Characters/Movement/Components/RotaryMovementComponent.h"
 
@@ -24,10 +26,7 @@ void ARotaryMovementPawnController::SetPawn(APawn* InPawn)
 	Super::SetPawn(InPawn);
 
 	IRotaryMovementPawnInterface* OwnerRotaryPawn = Cast<IRotaryMovementPawnInterface>(InPawn);
-	if (OwnerRotaryPawn)
-	{
-		OwnerRotaryMovementComp = OwnerRotaryPawn->GetRotaryMovementComponent();
-	}
+	OwnerRotaryMovementComp = OwnerRotaryPawn ? OwnerRotaryPawn->GetRotaryMovementComponent() : nullptr;
 }
 
 void ARotaryMovementPawnController::MoveForward(float AxisValue) { if (AxisValue != 0.f && OwnerRotaryMovementComp) { OwnerRotaryMovementComp->MoveForward(AxisValue); } }

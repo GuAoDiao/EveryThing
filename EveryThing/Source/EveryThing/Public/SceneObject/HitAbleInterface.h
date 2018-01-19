@@ -9,12 +9,12 @@
 UINTERFACE()
 class EVERYTHING_API UHitAbleInterface : public UInterface
 {
-	GENERATED_UINTERFACE_BODY()
+	GENERATED_BODY()
 };
 
 class EVERYTHING_API IHitAbleInterface
 {
-	GENERATED_IINTERFACE_BODY()
+	GENERATED_BODY()
 
 public:
 	virtual void SetIsSelectedToHit(bool bIsInSelectedToHit) = 0;

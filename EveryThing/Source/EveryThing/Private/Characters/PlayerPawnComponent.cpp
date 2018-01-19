@@ -44,7 +44,7 @@ UPlayerPawnComponent::UPlayerPawnComponent()
 	BaseLookUpRate = 1.f;
 	bIsConvertYAxis = true;
 
-
+	/// Attack Target
 	CurrentAttackTarget = nullptr;
 	LastAttackTarget = nullptr;
 }
@@ -84,29 +84,16 @@ void UPlayerPawnComponent::SelectLastAttackTarget()
 {
 	if (LastAttackTarget)
 	{
-		if (CurrentAttackTarget)
-		{
-			IHitAbleInterface* CurrentHitableAttackActor = Cast<IHitAbleInterface>(CurrentAttackTarget);
-			IHitAbleInterface* LastHitableAttackActor = Cast<IHitAbleInterface>(LastAttackTarget);
-			if (CurrentHitableAttackActor && LastHitableAttackActor)
-			{
-				LastHitableAttackActor->SetIsSelectedToHit(true);
-				CurrentHitableAttackActor->SetIsSelectedToHit(false);
-			}
-			AActor* Temp;
-			Temp = CurrentAttackTarget;
-			CurrentAttackTarget = LastAttackTarget;
-			LastAttackTarget = Temp;
-		}
-		else
-		{
-			CurrentAttackTarget = LastAttackTarget;
-			IHitAbleInterface* CurrentHitableAttackActor = Cast<IHitAbleInterface>(CurrentAttackTarget);
-			if (CurrentHitableAttackActor) { CurrentHitableAttackActor->SetIsSelectedToHit(true); }
+		IHitAbleInterface* CurrentHitableAttackActor = Cast<IHitAbleInterface>(CurrentAttackTarget);
+		if (CurrentHitableAttackActor) { CurrentHitableAttackActor->SetIsSelectedToHit(false); }
 
-			CurrentAttackTarget = LastAttackTarget;
-			LastAttackTarget = nullptr;
-		}
+		IHitAbleInterface* LastHitableAttackActor = Cast<IHitAbleInterface>(LastAttackTarget);
+		if (LastHitableAttackActor) { LastHitableAttackActor->SetIsSelectedToHit(true); }
+
+		AActor* Temp;
+		Temp = CurrentAttackTarget;
+		CurrentAttackTarget = LastAttackTarget;
+		LastAttackTarget = Temp;
 	}
 }
 
@@ -118,7 +105,7 @@ AActor* UPlayerPawnComponent::TryToGetHitAbleActor() const
 	{
 		FVector CameraLocation;
 		FRotator CameraRotation;
-		OwnerPawn->GetController()->GetPlayerViewPoint(CameraLocation, CameraRotation);
+		OwnerPC->GetPlayerViewPoint(CameraLocation, CameraRotation);
 		FVector EndTrace = CameraLocation + (CameraRotation.Vector() * OwnerPawn->GetMaxHyperopiaDistance());
 
 		FCollisionQueryParams TraceParams;
@@ -142,10 +129,7 @@ AActor* UPlayerPawnComponent::TryToGetHitAbleActor() const
 
 void UPlayerPawnComponent::Turn(float AxisValue)
 {
-	if (OwnerPawn)
-	{
-		OwnerPawn->AddControllerYawInput(AxisValue * BaseTurnRate);
-	}
+	if (OwnerPawn) { OwnerPawn->AddControllerYawInput(AxisValue * BaseTurnRate); }
 }
 void UPlayerPawnComponent::LookUp(float AxisValue)
 {
@@ -172,6 +156,7 @@ void UPlayerPawnComponent::UseProp(int32 NumberIndex)
 {
 	UE_LOG(LogTemp, Log, TEXT("-_- Use Prop Of Index: %d"), NumberIndex)
 }
+
 void UPlayerPawnComponent::TogglePawnState(int32 NumberIndex)
 {
 	if (OwnerPawn) { OwnerPawn->ServerToggleToNewPawnFormWithIndex(NumberIndex); }

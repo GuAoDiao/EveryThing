@@ -16,6 +16,8 @@ class EVERYTHING_API UJumpMovementComponent : public UActorComponent
 public:
 	UJumpMovementComponent();
 
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
 protected:
 	class IJumpMovementPawnInterface* OwnerJumpPawn;
 	class UPrimitiveComponent* OwnerPrimitiveComp;
@@ -35,22 +37,35 @@ private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerRotatePawn(float AxisValue);
 
-protected:
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerAdjustPawnRotation(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float DeltaTime);
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Adjust Position
 
 public:
 	void AdjustForwardPosition(float AxisValue);
 	void AdjustRightPosition(float AxisValue);
+	void AutoAdjsutRotationPosition(float DeltaTime);
 
+private:
+	void AdjustPosition(bool bIsAdjsutLocation, bool bIsForward, float AxisValue);
+	void AdjsutRotationPosition(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float AxisValue);
 	void RotatePawn(float AxisValue);
 
+	//////////////////////////////////////////////////////////////////////////
+	/// Jump And Jump Move
+public:
+	void SetJumpMoveDirection(bool bIsForward, bool bIsPositive);
+	void Jump();
+	void JumpMove(const FVector& Dircetion);
 
+public:
 	void JumpMoveToForward();
 	void JumpMoveToBack();
 	void JumpMoveToRight();
 	void JumpMoveToLeft();
 
-	void SetJumpMoveDirection(bool bIsForward, bool bIsPositive);
 	void ClearMoveDirection();
 
 	void StartJump();
@@ -68,17 +83,18 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
 	float JumpHeightForce;
 	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
-	float AutoAdjstRotationStrength;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
 	float AdjustLocationForce;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
 	float AdjustRotationForce;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
-	float AdjustSelfRotationForce;
+	float AdjustPawnRotationForce;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
+	float AtuoAdjustRotationForceStrength;
+
+	UPROPERTY(Replicated, Transient)
 	bool bCanJump;
 	
 private:

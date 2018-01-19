@@ -52,45 +52,65 @@ void URotaryMovementComponent::MoveRight(float AxisValue)
 	}
 }
 
-void URotaryMovementComponent::Move(const FVector& Direction, float AxisValue) { ServerMove(Direction, AxisValue); }
-bool URotaryMovementComponent::ServerMove_Validate(const FVector& Direction, float AxisValue) { return true; }
-void URotaryMovementComponent::ServerMove_Implementation(const FVector& Direction, float AxisValue)
+void URotaryMovementComponent::Move(const FVector& Direction, float AxisValue)
 {
+	if (GetOwnerRole() != ROLE_Authority)
+	{
+		ServerMove(Direction, AxisValue);
+		return;
+	}
+
 	if (OwnerPrimitiveComp) { OwnerPrimitiveComp->AddForce(Direction * CurrentSpeed * AxisValue); }
 }
+bool URotaryMovementComponent::ServerMove_Validate(const FVector& Direction, float AxisValue) { return true; }
+void URotaryMovementComponent::ServerMove_Implementation(const FVector& Direction, float AxisValue) { Move(Direction, AxisValue); }
 
 void URotaryMovementComponent::MoveToLocation(const FVector& Location, float AxisValue)
 {
-	if (OwnerPrimitiveComp) { ServerMove(UKismetMathLibrary::FindLookAtRotation(OwnerPrimitiveComp->GetComponentLocation(), Location).Vector(), AxisValue); }
+	if (OwnerPrimitiveComp) { Move(UKismetMathLibrary::FindLookAtRotation(OwnerPrimitiveComp->GetComponentLocation(), Location).Vector(), AxisValue); }
 }
 
-void URotaryMovementComponent::AcceptForceImpulse(const FVector& Location, const FVector& Force) { ServerAcceptForceImpulse(Location, Force); }
-bool URotaryMovementComponent::ServerAcceptForceImpulse_Validate(const FVector& Location, const FVector& Force) { return true; }
-void URotaryMovementComponent::ServerAcceptForceImpulse_Implementation(const FVector& Location, const FVector& Force)
+void URotaryMovementComponent::AcceptForceImpulse(const FVector& Location, const FVector& Force)
 {
+	if (GetOwnerRole() != ROLE_Authority)
+	{
+		ServerAcceptForceImpulse(Location, Force);
+		return;
+	}
+
 	if (OwnerPrimitiveComp) { OwnerPrimitiveComp->AddImpulseAtLocation(Force, Location); }
 }
+bool URotaryMovementComponent::ServerAcceptForceImpulse_Validate(const FVector& Location, const FVector& Force) { return true; }
+void URotaryMovementComponent::ServerAcceptForceImpulse_Implementation(const FVector& Location, const FVector& Force) { AcceptForceImpulse(Location, Force); }
 
-void URotaryMovementComponent::StartJump() { ServerStartJump(); }
-bool URotaryMovementComponent::ServerStartJump_Validate() { return true; }
-void URotaryMovementComponent::ServerStartJump_Implementation()
+void URotaryMovementComponent::StartJump()
 {
+	if (GetOwnerRole() != ROLE_Authority)
+	{
+		ServerStartJump();
+		return;
+	}
+
 	if (CanJump() && OwnerRotaryPawn && OwnerPrimitiveComp)
 	{
 		OwnerPrimitiveComp->AddImpulse(OwnerRotaryPawn->GetActualUpVector() * CurrentJumpForce);
 		SetIsJumping(true);
 	}
 }
+bool URotaryMovementComponent::ServerStartJump_Validate() { return true; }
+void URotaryMovementComponent::ServerStartJump_Implementation() { StartJump(); }
 
 void URotaryMovementComponent::ToogleMovementState()
 {
+	if (GetOwnerRole() != ROLE_Authority)
+	{
+		ServerToogleMovementState();
+		return;
+	}
+
+
 	bIsFastMovementState = !bIsFastMovementState;
-	ServerToogleMovementState(bIsFastMovementState);
-}
-bool URotaryMovementComponent::ServerToogleMovementState_Validate(bool bInIsFastMovementState) { return true; }
-void URotaryMovementComponent::ServerToogleMovementState_Implementation(bool bInIsFastMovementState)
-{
-	if (bInIsFastMovementState)
+	if (bIsFastMovementState)
 	{
 		CurrentSpeed = SpeedFast;
 		CurrentJumpForce = JumpForceStrong;
@@ -101,6 +121,8 @@ void URotaryMovementComponent::ServerToogleMovementState_Implementation(bool bIn
 		CurrentJumpForce = JumpForceSmall;
 	}
 }
+bool URotaryMovementComponent::ServerToogleMovementState_Validate() { return true; }
+void URotaryMovementComponent::ServerToogleMovementState_Implementation() { ToogleMovementState(); }
 
 void URotaryMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -109,5 +131,8 @@ void URotaryMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(URotaryMovementComponent, CurrentSpeed);
 	DOREPLIFETIME(URotaryMovementComponent, CurrentJumpForce);
 
+	
+
 	DOREPLIFETIME(URotaryMovementComponent, bIsJumping);
+	DOREPLIFETIME(URotaryMovementComponent, bIsFastMovementState);
 }

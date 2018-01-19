@@ -17,6 +17,8 @@ AJumpMovementPawn::AJumpMovementPawn()
 	BoxCollisionComp->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	BoxCollisionComp->SetCollisionObjectType(ECC_WorldDynamic);
 	BoxCollisionComp->SetCollisionResponseToAllChannels(ECR_Block);
+
+	BoxCollisionComp->SetNotifyRigidBodyCollision(true);
 	BoxCollisionComp->OnComponentHit.AddDynamic(this, &AJumpMovementPawn::OnBoxCompHit);
 
 	BoxCollisionComp->SetupAttachment(GetRootComponent());

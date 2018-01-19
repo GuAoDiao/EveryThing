@@ -15,8 +15,7 @@ UFootballAttackComponent::UFootballAttackComponent()
 	SpecialAttack.bIsEnableActionPressed = true;
 	
 	RebindAll();
-
-
+	
 	OwnerPawn = Cast<AFootballPawn>(GetOwner());
 	
 	bIsAttacking = false;
@@ -90,18 +89,17 @@ void UFootballAttackComponent::StartAttack(bool bInIsCommonAttack)
 	}
 }
 
-bool UFootballAttackComponent::ServerStartAttack_Validate(bool bInIsCommonAttack, AActor* AttackTarget) { return true; }
+bool UFootballAttackComponent::ServerStartAttack_Validate(bool bInIsCommonAttack, AActor* AttackTarget) { return AttackTarget != nullptr; }
 void UFootballAttackComponent::ServerStartAttack_Implementation(bool bInIsCommonAttack, AActor* AttackTarget)
 {
-	if (AttackTarget != nullptr)
-	{
-		bIsAttacking = true;
-		CurrentAttackTarget = AttackTarget;
-		bWantedToAcceptHitFunction = true;
-		bIsCommonAttack = bInIsCommonAttack;
-		bIsAutoAim = true;
-		PrimaryComponentTick.SetTickFunctionEnable(true);
-	}
+	bIsAutoAim = true;
+	bIsAttacking = true;
+	bWantedToAcceptHitFunction = true;
+	bIsCommonAttack = bInIsCommonAttack;
+
+	CurrentAttackTarget = AttackTarget;
+
+	PrimaryComponentTick.SetTickFunctionEnable(true);
 }
 
 bool UFootballAttackComponent::ServerStopAttack_Validate() { return true; }
@@ -109,7 +107,9 @@ void UFootballAttackComponent::ServerStopAttack_Implementation()
 {
 	bIsAttacking = false;
 	bWantedToAcceptHitFunction = false;
+	
 	CurrentAttackTarget = nullptr;
+
 	PrimaryComponentTick.SetTickFunctionEnable(false);
 }
 
@@ -131,7 +131,6 @@ void UFootballAttackComponent::ExcuteAttack(float DeltaTime)
 				LastAttackTartgetLocation = AttackActorLocation;
 				RemainingTime = Distance / OwnerPawn->GetVelocity().Size();
 			}
-
 		}
 		else
 		{
@@ -140,6 +139,7 @@ void UFootballAttackComponent::ExcuteAttack(float DeltaTime)
 			RemainingTime -= DeltaTime;
 			if (RemainingTime < 0.f)
 			{
+				DeltaTime += RemainingTime;
 				ServerStopAttack();
 			}
 		}

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Characters/GamePawn.h"
 #include "Characters/Movement/Interfaces/JumpMovementPawnInterface.h"
+#include "Components/StaticMeshComponent.h"
 
 #include "JumpMovementPawn.generated.h"
 

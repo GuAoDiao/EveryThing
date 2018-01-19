@@ -15,7 +15,6 @@ void APlayerPawnController::SetupInputComponent()
 	if (!InputComponent)
 	{
 		InputComponent = NewObject<UInputComponent>(this, UInputComponent::StaticClass());
-
 		InputComponent->RegisterComponent();
 	}
 
@@ -26,6 +25,9 @@ void APlayerPawnController::SetupInputComponent()
 	InputComponent->BindAxis("Turn", this, &APlayerPawnController::Turn);
 	InputComponent->BindAxis("LookUp", this, &APlayerPawnController::LookUp);
 
+	InputComponent->BindAction("SelectNextAttackActor", IE_Pressed, this, &APlayerPawnController::SelectNextAttackTarget);
+	InputComponent->BindAction("SelectLastAttackActor", IE_Pressed, this, &APlayerPawnController::SelectLastAttackTarget);
+
 	InputComponent->BindAction("TogglePawnState", IE_Pressed, this, &APlayerPawnController::StartTogglePawnState);
 	InputComponent->BindAction("TogglePawnState", IE_Released, this, &APlayerPawnController::StopTogglePawnState);
 
@@ -33,9 +35,6 @@ void APlayerPawnController::SetupInputComponent()
 	InputComponent->BindAction("NumberTwo", IE_Pressed, this, &APlayerPawnController::NumberTwo);
 	InputComponent->BindAction("NumberThree", IE_Pressed, this, &APlayerPawnController::NumberThree);
 	InputComponent->BindAction("NumberFour", IE_Pressed, this, &APlayerPawnController::NumberFour);
-
-	InputComponent->BindAction("SelectNextAttackActor", IE_Pressed, this, &APlayerPawnController::SelectNextAttackTarget);
-	InputComponent->BindAction("SelectLastAttackActor", IE_Pressed, this, &APlayerPawnController::SelectLastAttackTarget);
 
 	if (OwnerGamePawn)
 	{
@@ -96,14 +95,9 @@ void APlayerPawnController::ClientEndOnlineGame_Implementation() {}
 void APlayerPawnController::ClientSendRoundEndEvent_Implementation(bool bIsWinner, int32 ExpendedTimeInSeconds) {}
 
 
-
-
 //////////////////////////////////////////////////////////////////////////
 /// For IGamePawnControllerInterface
-AActor* APlayerPawnController::GetAttackTarget()
-{
-	return OwnerPlayerPawnComp ? OwnerPlayerPawnComp->GetAttackTarget() : nullptr;
-}
+AActor* APlayerPawnController::GetAttackTarget() { return OwnerPlayerPawnComp ? OwnerPlayerPawnComp->GetAttackTarget() : nullptr; }
 
 //////////////////////////////////////////////////////////////////////////
 /// Visual Angle

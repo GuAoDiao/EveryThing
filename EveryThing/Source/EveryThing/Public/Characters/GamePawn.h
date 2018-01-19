@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -94,21 +94,21 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Attribute")
 	float Durability;
 
-	// _ÌåÁ¦(_ÄÍÁ¦)
+	// _ä½“åŠ›(_è€åŠ›)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Attribute")
 	float PhysicalPower;
-	// _Ãô½İ(_ËÙ¶È)
+	// _æ•æ·(_é€Ÿåº¦)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Attribute")
 	float Agility;
-	// _ÎÈ¶¨ĞÔ(_·ÀÓù)
+	// _ç¨³å®šæ€§(_é˜²å¾¡)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Attribute")
 	float Stability;
 
-	// _ĞîÁ¦Öµ(_ÄÜÁ¿Öµ)
+	// _è“„åŠ›å€¼(_èƒ½é‡å€¼)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Attribute")
 	float PowerValue;
 
-	// _ÊÓÒ°¾àÀë
+	// _è§†é‡è·ç¦»
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Attribute")
 	float MaxHyperopiaDistance;
 
@@ -117,13 +117,13 @@ protected:
 	inline EElementType GetElementType() const { return ElementType; }
 
 protected:
-	// _ÔªËØÀàĞÍ
+	// _å…ƒç´ ç±»å‹
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attribute")
 	EElementType ElementType;
-	// _ÔªËØÁ¿
+	// _å…ƒç´ é‡
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attribute")
 	float ElementValue;
-	// _ÔªËØ¿¹ĞÔ
+	// _å…ƒç´ æŠ—æ€§
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attribute")
 	float ElementResistance;
 
@@ -137,13 +137,13 @@ protected:
 
 	inline void SetQualityScale(float InQualityScale) { QualityScale = InQualityScale; }
 protected:
-	// _ÖÊÁ¿(_Òş²ØÊôĞÔ)
+	// _è´¨é‡(_éšè—å±æ€§)
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Attribute")
 	float Quality;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attribute")
 	float QualityScale;
 
-	// _×èÁ¦Öµ(_×èÄá)
+	// _é˜»åŠ›å€¼(_é˜»å°¼)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attribute")
 	float LinearDamping;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attribute")

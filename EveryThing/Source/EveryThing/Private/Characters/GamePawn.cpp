@@ -25,6 +25,8 @@ AGamePawn::AGamePawn()
 	StaticMeshComp->SetCollisionObjectType(ECC_Pawn);
 	StaticMeshComp->SetCollisionResponseToAllChannels(ECR_Block);
 	
+	StaticMeshComp->SetNotifyRigidBodyCollision(true);
+
 	StaticMeshComp->OnComponentHit.AddDynamic(this, &AGamePawn::OnHit);
 
 	SetRootComponent(StaticMeshComp);

@@ -38,9 +38,7 @@ private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerStartJump();
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerToogleMovementState(bool bInIsFastMovementState);
-
-
+	void ServerToogleMovementState();
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float SpeedSlow;
@@ -52,15 +50,16 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float JumpForceStrong;
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Transient, Replicated)
 	float CurrentSpeed;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Replicated)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Transient, Replicated)
 	float CurrentJumpForce;
 
 
 private:
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, Transient)
 	bool bIsJumping;
+	UPROPERTY(Replicated, Transient)
 	bool bIsFastMovementState;
 
 	class IRotaryMovementPawnInterface* OwnerRotaryPawn;
