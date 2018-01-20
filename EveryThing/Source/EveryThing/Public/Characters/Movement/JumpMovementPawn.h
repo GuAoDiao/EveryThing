@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Characters/GamePawn.h"
 #include "Characters/Movement/Interfaces/JumpMovementPawnInterface.h"
-#include "Components/StaticMeshComponent.h"
 
 #include "JumpMovementPawn.generated.h"
 
@@ -18,19 +17,15 @@ class EVERYTHING_API AJumpMovementPawn : public AGamePawn, public IJumpMovementP
 public:
 	AJumpMovementPawn();
 protected:
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UJumpMovementComponent* OwnerJumpMovementComp;
-
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UBoxComponent* BoxCollisionComp;
 	//////////////////////////////////////////////////////////////////////////
 	/// IJumpMovementInterface
 public:
 	/// For Controller
-	virtual UJumpMovementComponent* GetJumpMovementComponent() const override { return OwnerJumpMovementComp; }
+	virtual UJumpMovementComponent* GetJumpMovementComponent() const override;
 	/// For Rotary Movement
-	virtual UPrimitiveComponent* GetPrimitiveComponent() const override { return StaticMeshComp; };
+	virtual UPrimitiveComponent* GetPrimitiveComponent() const override;
 
 public:
 	UFUNCTION()

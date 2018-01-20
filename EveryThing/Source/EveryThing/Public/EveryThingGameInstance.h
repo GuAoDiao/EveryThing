@@ -82,24 +82,25 @@ public:
 
 private:
 	void SetWidgetOwnerAndInputModeToFocusWidget(class UUserWidget* InWidget);
-public:
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "GameUI")
 	TSubclassOf<class UMainMenu> MainMenuClass;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	class UMainMenu* MainMenu;
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "GameUI")
 	TSubclassOf<class UHouseList> HouseListClass;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	class UHouseList* HouseList;
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "GameUI")
 	TSubclassOf<class ULoadingScreen> LoadingScreenClass;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	class ULoadingScreen* LoadingScreen;
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "GameUI")
 	TSubclassOf<class UErrorDialog> ErrorDialogClass;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	class UErrorDialog* ErrorDialog;
 };

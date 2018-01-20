@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "GamePawnMovementComponent.h"
 #include "JumpMovementComponent.generated.h"
 
 class IHitAbleInterface;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class EVERYTHING_API UJumpMovementComponent : public UActorComponent
+class EVERYTHING_API UJumpMovementComponent : public UGamePawnMovementComponent
 {
 	GENERATED_BODY()
 
@@ -21,7 +21,6 @@ public:
 protected:
 	class IJumpMovementPawnInterface* OwnerJumpPawn;
 	class UPrimitiveComponent* OwnerPrimitiveComp;
-
 private:
 	//////////////////////////////////////////////////////////////////////////
 	/// Server

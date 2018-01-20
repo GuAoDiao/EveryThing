@@ -40,8 +40,6 @@ void UFootballAttackComponent::TickComponent(float DeltaTime, enum ELevelTick Ti
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	UE_LOG(LogTemp, Log, TEXT("-_- this is current tick"));
-
 	if (bIsAttacking)
 	{
 		ExcuteAttack(DeltaTime);

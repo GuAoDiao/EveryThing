@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "GamePawnMovementComponent.h"
 #include "RotaryMovementComponent.generated.h"
 
 class IHitAbleInterface;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class EVERYTHING_API URotaryMovementComponent : public UActorComponent
+class EVERYTHING_API URotaryMovementComponent : public UGamePawnMovementComponent
 {
 	GENERATED_BODY()
 

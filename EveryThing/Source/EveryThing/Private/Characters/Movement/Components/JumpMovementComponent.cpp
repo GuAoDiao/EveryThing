@@ -92,10 +92,9 @@ void UJumpMovementComponent::AutoAdjsutRotationPosition(float DeltaTime)
 
 void UJumpMovementComponent::AdjsutRotationPosition(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float AxisValue)
 {
-	if (GetOwnerRole() != ROLE_Authority)
+	if (!HasAuthority())
 	{
 		ServerAdjustPawnRotation(bNeedAdjustForward, bForwardIsPositiveValue, bNeedAdjustRight, bRightIsPositiveValue, AxisValue);
-		return;
 	}
 
 	if (bNeedAdjustForward) { AdjustPosition(false, false, (bForwardIsPositiveValue ? 1.f : -1.f) * AxisValue * AtuoAdjustRotationForceStrength); }
@@ -111,10 +110,9 @@ void UJumpMovementComponent::ServerAdjustPawnRotation_Implementation(bool bNeedA
 
 void UJumpMovementComponent::AdjustPosition(bool bIsAdjsutLocation, bool bIsForward, float AxisValue)
 {
-	if (GetOwnerRole() != ROLE_Authority)
+	if (!HasAuthority())
 	{
 		ServerAdjustPosition(bIsAdjsutLocation, bIsForward, AxisValue);
-		return;
 	}
 		
 	if (OwnerPrimitiveComp)
@@ -137,10 +135,9 @@ void UJumpMovementComponent::ServerAdjustPosition_Implementation(bool bIsAdjsutL
 
 void UJumpMovementComponent::RotatePawn(float AxisValue)
 {
-	if (GetOwnerRole() != ROLE_Authority)
+	if (!HasAuthority())
 	{
 		ServerRotatePawn(AxisValue);
-		return;
 	}
 	
 	if (OwnerPrimitiveComp) { OwnerPrimitiveComp->AddTorqueInRadians(OwnerPrimitiveComp->GetUpVector() * AdjustPawnRotationForce * AxisValue); }
@@ -191,10 +188,9 @@ void UJumpMovementComponent::StopJump()
 
 void UJumpMovementComponent::Jump()
 {
-	if (GetOwnerRole() != ROLE_Authority)
+	if (!HasAuthority())
 	{
 		ServerJump();
-		return;
 	}
 
 	if (OwnerPrimitiveComp && bCanJump)
@@ -210,10 +206,9 @@ void UJumpMovementComponent::ServerJump_Implementation() { Jump(); }
 
 void UJumpMovementComponent::JumpMove(const FVector& Dircetion)
 {
-	if (GetOwnerRole() != ROLE_Authority)
+	if (!HasAuthority())
 	{
 		ServerJumpMove(Dircetion);
-		return;
 	}
 
 	if (OwnerPrimitiveComp && bCanJump)

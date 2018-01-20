@@ -20,6 +20,7 @@ class EVERYTHING_API AEveryThingGameMode : public AGameModeBase
 public:
 	AEveryThingGameMode();
 
+	
 	//////////////////////////////////////////////////////////////////////////
 	/// Damage
 	virtual float GetActualDamage(float InDamage, EElementType InDamageType, EElementType PawnElementType, float ElementResistance) const;

@@ -54,10 +54,9 @@ void URotaryMovementComponent::MoveRight(float AxisValue)
 
 void URotaryMovementComponent::Move(const FVector& Direction, float AxisValue)
 {
-	if (GetOwnerRole() != ROLE_Authority)
+	if (!HasAuthority())
 	{
 		ServerMove(Direction, AxisValue);
-		return;
 	}
 
 	if (OwnerPrimitiveComp) { OwnerPrimitiveComp->AddForce(Direction * CurrentSpeed * AxisValue); }
@@ -72,10 +71,9 @@ void URotaryMovementComponent::MoveToLocation(const FVector& Location, float Axi
 
 void URotaryMovementComponent::AcceptForceImpulse(const FVector& Location, const FVector& Force)
 {
-	if (GetOwnerRole() != ROLE_Authority)
+	if (!HasAuthority())
 	{
 		ServerAcceptForceImpulse(Location, Force);
-		return;
 	}
 
 	if (OwnerPrimitiveComp) { OwnerPrimitiveComp->AddImpulseAtLocation(Force, Location); }
@@ -85,10 +83,9 @@ void URotaryMovementComponent::ServerAcceptForceImpulse_Implementation(const FVe
 
 void URotaryMovementComponent::StartJump()
 {
-	if (GetOwnerRole() != ROLE_Authority)
+	if (!HasAuthority())
 	{
 		ServerStartJump();
-		return;
 	}
 
 	if (CanJump() && OwnerRotaryPawn && OwnerPrimitiveComp)
@@ -102,10 +99,9 @@ void URotaryMovementComponent::ServerStartJump_Implementation() { StartJump(); }
 
 void URotaryMovementComponent::ToogleMovementState()
 {
-	if (GetOwnerRole() != ROLE_Authority)
+	if (!HasAuthority())
 	{
 		ServerToogleMovementState();
-		return;
 	}
 
 

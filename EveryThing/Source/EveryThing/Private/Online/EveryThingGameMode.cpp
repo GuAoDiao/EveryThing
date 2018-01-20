@@ -2,9 +2,6 @@
 
 #include "EveryThingGameMode.h"
 
-
-#include "Characters/GamePawn.h"
-#include "Characters/Controlllers/PlayerPawnController.h"
 #include "EveryThingGameSession.h"
 
 AEveryThingGameMode::AEveryThingGameMode()
@@ -12,11 +9,12 @@ AEveryThingGameMode::AEveryThingGameMode()
 	NormalDamageScale = 1.f;
 	SpecificToDamageScale = 1.5f;
 
-	DefaultPawnClass = AGamePawn::StaticClass();
-	PlayerControllerClass = APlayerPawnController::StaticClass();
-
+	DefaultPawnClass = nullptr;
+	PlayerControllerClass = nullptr;
 	GameSessionClass = AEveryThingGameSession::StaticClass();
 }
+
+
 
 float AEveryThingGameMode::GetActualDamage(float InDamage, EElementType InDamageType, EElementType PawnElementType, float ElementResistance) const
 {

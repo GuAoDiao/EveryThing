@@ -10,8 +10,7 @@
 
 AJumpMovementPawn::AJumpMovementPawn()
 {
-	OwnerJumpMovementComp = CreateDefaultSubobject<UJumpMovementComponent>(TEXT("JumpMovementComp"));
-
+	MovementComp = CreateDefaultSubobject<UJumpMovementComponent>(TEXT("JumpMovementComp"));
 
 	BoxCollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	BoxCollisionComp->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -24,7 +23,26 @@ AJumpMovementPawn::AJumpMovementPawn()
 	BoxCollisionComp->SetupAttachment(GetRootComponent());
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// IRotaryMovementPawnInterface
+
+/// For Controller
+UJumpMovementComponent* AJumpMovementPawn::GetJumpMovementComponent() const
+{
+	UJumpMovementComponent* OwnerJumpMovementComp = Cast<UJumpMovementComponent>(MovementComp);
+	check(OwnerJumpMovementComp);
+	return OwnerJumpMovementComp;
+}
+/// For Rotary Movement
+UPrimitiveComponent* AJumpMovementPawn::GetPrimitiveComponent() const
+{
+	return StaticMeshComp;
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Hit
 void AJumpMovementPawn::OnBoxCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit)
 {
-	OwnerJumpMovementComp->SetCanJump(true);
+	GetJumpMovementComponent()->SetCanJump(true);
 }

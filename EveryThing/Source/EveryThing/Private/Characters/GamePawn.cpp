@@ -30,6 +30,8 @@ AGamePawn::AGamePawn()
 	StaticMeshComp->OnComponentHit.AddDynamic(this, &AGamePawn::OnHit);
 
 	SetRootComponent(StaticMeshComp);
+
+	MovementComp = nullptr;
 	
 	Durability = 1000.f;
 	MaxHyperopiaDistance = 10000.f;

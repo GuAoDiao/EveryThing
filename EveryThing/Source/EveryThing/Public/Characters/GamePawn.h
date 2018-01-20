@@ -28,7 +28,8 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
 	class UStaticMeshComponent* StaticMeshComp;
-
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
+	class UGamePawnMovementComponent* MovementComp;
 	//////////////////////////////////////////////////////////////////////////
 	/// HitAble
 public:

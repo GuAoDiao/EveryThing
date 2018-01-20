@@ -10,10 +10,27 @@
 
 ARotaryMovementPawn::ARotaryMovementPawn()
 {
-	OwnerRotaryMovementComponent = CreateDefaultSubobject<URotaryMovementComponent>(TEXT("RotaryMovementComponent"));
+	MovementComp = CreateDefaultSubobject<URotaryMovementComponent>(TEXT("RotaryMovementComponent"));
 }
 
+
+
+//////////////////////////////////////////////////////////////////////////
+/// IRotaryMovementPawnInterface
+
+/// For Controller
+UPrimitiveComponent* ARotaryMovementPawn::GetPrimitiveComponent() const { return StaticMeshComp; }
+
+
 /// For Rotary Movement
+
+URotaryMovementComponent* ARotaryMovementPawn::GetRotaryMovementComponent() const
+{
+	URotaryMovementComponent* OwnerRotaryMovementComponent = Cast<URotaryMovementComponent>(MovementComp);
+	check(OwnerRotaryMovementComponent);
+	return OwnerRotaryMovementComponent;
+}
+
 const FVector ARotaryMovementPawn::GetActualForwardVector() const { return UKismetMathLibrary::GetForwardVector(GetControlRotation()); }
 const FVector ARotaryMovementPawn::GetActualRightVector() const { return UKismetMathLibrary::GetRightVector(GetControlRotation()); }
 const FVector ARotaryMovementPawn::GetActualUpVector() const { return UKismetMathLibrary::GetUpVector(GetControlRotation()); }
@@ -24,5 +41,5 @@ void ARotaryMovementPawn::OnHitImplement(UPrimitiveComponent* HitComp, AActor* O
 {
 	Super::OnHitImplement(HitComp, OtherActor, OtherComp, NormalInpulse, Hit);
 
-	OwnerRotaryMovementComponent->SetIsJumping(false);
+	GetRotaryMovementComponent()->SetIsJumping(false);
 }

@@ -2,6 +2,9 @@
 
 #include "PlayerPawnController.h"
 
+#include "GameFramework/InputSettings.h"
+
+#include "EveryThingTypes.h"
 #include "Characters/GamePawn.h"
 #include "Characters/PlayerPawnInterface.h"
 #include "Characters/PlayerPawnComponent.h"
@@ -9,6 +12,13 @@
 #include "Characters/Moves/AttackComponent.h"
 #include "Characters/Moves/SkillComponent.h"
 #include "SceneObject/HitAbleInterface.h"
+
+
+APlayerPawnController::APlayerPawnController()
+{
+	ActionMappingPath = TEXT("DataTable'/Game/EveryThing/DataTable/DT_InputAction.DT_InputAction'");
+	AxisMappingPath = TEXT("DataTable'/Game/EveryThing/DataTable/DT_InputAction.DT_InputAxis'");
+}
 
 void APlayerPawnController::SetupInputComponent()
 {
@@ -21,6 +31,7 @@ void APlayerPawnController::SetupInputComponent()
 	// Clear all bindings;
 	InputComponent->ClearActionBindings();
 	InputComponent->AxisBindings.Empty();
+	ResetAxisAndActionMapping();
 
 	InputComponent->BindAxis("Turn", this, &APlayerPawnController::Turn);
 	InputComponent->BindAxis("LookUp", this, &APlayerPawnController::LookUp);
@@ -60,6 +71,58 @@ void APlayerPawnController::SetPawn(APawn* InPawn)
 	}
 }
 
+
+void APlayerPawnController::ResetAxisAndActionMapping()
+{
+	UInputSettings* InpueSettings = UInputSettings::GetInputSettings();
+	if (!InpueSettings) { return; }
+
+	UDataTable* InputActionDatable = LoadObject<UDataTable>(nullptr, *ActionMappingPath);
+	if (InputActionDatable)
+	{
+		TArray<FInputAction*> ActionInfoInDatatable;
+		InputActionDatable->GetAllRows<FInputAction>(TEXT("found all input axis mapping"), ActionInfoInDatatable);
+
+
+		for (FInputAction* ActionInfo : ActionInfoInDatatable)
+		{
+			TArray<FInputActionKeyMapping> AllActionKeyMappings;
+			InpueSettings->GetActionMappingByName(ActionInfo->ActionName, AllActionKeyMappings);
+			for (const FInputActionKeyMapping& ActionKeyMapping : AllActionKeyMappings)
+			{
+				InpueSettings->RemoveActionMapping(ActionKeyMapping);
+			}
+		}
+
+		for (FInputAction* ActionInfo : ActionInfoInDatatable)
+		{
+			InpueSettings->AddActionMapping(FInputActionKeyMapping(ActionInfo->ActionName, FKey(ActionInfo->Input), ActionInfo->bInShift, ActionInfo->bInCtrl, ActionInfo->bInAlt, ActionInfo->bInCmd));
+		}
+	}
+
+	UDataTable* InputAxisDatable = LoadObject<UDataTable>(nullptr, *AxisMappingPath);
+	if (InputAxisDatable)
+	{
+		TArray<FInputAxis*> AxisInfoInDatatable;
+		InputAxisDatable->GetAllRows<FInputAxis>(TEXT("found all input axis mapping"), AxisInfoInDatatable);
+
+
+		for (FInputAxis* AxisInfo : AxisInfoInDatatable)
+		{
+			TArray<FInputAxisKeyMapping> AllAxisKeyMappings;
+			InpueSettings->GetAxisMappingByName(AxisInfo->AxisName, AllAxisKeyMappings);
+			for (const FInputAxisKeyMapping& AxisKeyMapping : AllAxisKeyMappings)
+			{
+				InpueSettings->RemoveAxisMapping(AxisKeyMapping);
+			}
+		}
+
+		for (FInputAxis* AxisInfo : AxisInfoInDatatable)
+		{
+			InpueSettings->AddAxisMapping(FInputAxisKeyMapping(AxisInfo->AxisName, FKey(AxisInfo->Input), AxisInfo->AxisVlaue));
+		}
+	}
+}
 
 void APlayerPawnController::RemoveActionAndAxisBindings(const TArray<FName>& BindingsName)
 {

@@ -4,10 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/GamePawn.h"
-#include "Components/StaticMeshComponent.h"
-
 #include "Characters/Movement/Interfaces/RotaryMovementPawnInterface.h"
-
 #include "RotaryMovementPawn.generated.h"
 
 
@@ -19,19 +16,15 @@ class EVERYTHING_API ARotaryMovementPawn : public AGamePawn, public IRotaryMovem
 public:
 	ARotaryMovementPawn();
 
-protected:
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class URotaryMovementComponent* OwnerRotaryMovementComponent;
-
 public:
 	//////////////////////////////////////////////////////////////////////////
 	/// IRotaryMovementPawnInterface
 
 	/// For Controller
-	URotaryMovementComponent* GetRotaryMovementComponent() const { return OwnerRotaryMovementComponent; }
+	virtual class URotaryMovementComponent* GetRotaryMovementComponent() const override;
 
 	/// For Rotary Movement
-	virtual UPrimitiveComponent* GetPrimitiveComponent() const override { return StaticMeshComp; }
+	virtual class UPrimitiveComponent* GetPrimitiveComponent() const override;
 
 	virtual const FVector GetActualForwardVector() const override;
 	virtual const FVector GetActualRightVector() const override;

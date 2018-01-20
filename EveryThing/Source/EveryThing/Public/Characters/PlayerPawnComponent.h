@@ -43,7 +43,6 @@ protected:
 	void TogglePawnState(int32 NumberIndex);
 
 	bool bIsWantedTogglePawnState;
-
 	class AGamePawn* OwnerPawn;
 
 	//////////////////////////////////////////////////////////////////////////
