@@ -2,9 +2,13 @@
 
 #include "MainMenu.h"
 
-void UMainMenu::StartGame()
-{
+#include "EveryThingGameInstance.h"
 
+void UMainMenu::HostGame()
+{
+	UWorld* World = GetWorld();
+	UEveryThingGameInstance* OwnerGameInstance =World ? World->GetGameInstance<UEveryThingGameInstance>() : nullptr;
+	if (OwnerGameInstance) { OwnerGameInstance->HostGame(); }
 }
 
 void UMainMenu::FindGame()

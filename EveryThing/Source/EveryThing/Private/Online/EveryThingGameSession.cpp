@@ -211,8 +211,8 @@ bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSes
 			if (HostSettings.IsValid())
 			{
 
-				HostSettings->Set(SETTING_GAMEMODE, GameType, EOnlineDataAdvertisementType::ViaOnlineService);
-				HostSettings->Set(SETTING_GAMEMODE, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
+				// HostSettings->Set(SETTING_GAMEMODE, GameType, EOnlineDataAdvertisementType::ViaOnlineService);
+				// HostSettings->Set(SETTING_GAMEMODE, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
 				HostSettings->Set(SETTING_MATCHING_HOPPER, FString("TeamDeathmatch"), EOnlineDataAdvertisementType::DontAdvertise);
 				HostSettings->Set(SETTING_MATCHING_TIMEOUT, 120.f, EOnlineDataAdvertisementType::ViaOnlineService);
 				HostSettings->Set(SETTING_SESSION_TEMPLATE_NAME, FString("GameSession"), EOnlineDataAdvertisementType::DontAdvertise);

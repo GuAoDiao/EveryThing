@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "HoustList.generated.h"
+#include "HouseList.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API UHoustList : public UUserWidget
+class EVERYTHING_API UHouseList : public UUserWidget
 {
 	GENERATED_BODY()
 	

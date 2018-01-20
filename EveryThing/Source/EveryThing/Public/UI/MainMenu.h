@@ -16,7 +16,7 @@ class EVERYTHING_API UMainMenu : public UUserWidget
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void StartGame();
+	void HostGame();
 
 	UFUNCTION(BlueprintCallable)
 	void FindGame();
