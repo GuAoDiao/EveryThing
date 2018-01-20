@@ -4,8 +4,6 @@
 
 #include "Components/PrimitiveComponent.h"
 #include "UnrealNetwork.h"
-#include "GameFramework/Pawn.h"
-#include "GameFramework/PlayerController.h"
 
 #include "Characters/Movement/Interfaces/JumpMovementPawnInterface.h"
 
@@ -36,33 +34,7 @@ UJumpMovementComponent::UJumpMovementComponent()
 
 void UJumpMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
-	if (OwnerPrimitiveComp)
-	{
-		AutoAdjsutRotationPosition(DeltaTime);
-		
-
-		APawn* OwnerPawn = Cast<APawn>(GetOwner());
-		APlayerController* OwnerPC = OwnerPawn ? Cast<APlayerController>(OwnerPawn->GetController()) : nullptr;
-		
-		if (OwnerPC)
-		{
-			int32 Width, Height;
-			OwnerPC->GetViewportSize(Width, Height);
-
-			FVector OwnerDirection, CenterDirection;
-			OwnerPC->DeprojectScreenPositionToWorld(Width * 0.5f, Height * 0.5f, OwnerDirection, CenterDirection);
-			OwnerDirection = OwnerPrimitiveComp->GetForwardVector();
-			
-			CenterDirection.Z = 0.f; OwnerDirection.Z = 0.f;
-
-			float Value = FVector::CrossProduct(OwnerDirection, CenterDirection).Z;
-			if (FMath::Abs(Value) > 0.1f)
-			{
-				Value = Value > 0.f ? FMath::Clamp(Value, 0.2f, 1.f) : FMath::Clamp(Value, -1.f, -0.2f);
-				RotatePawn(Value * DeltaTime * 100.f);
-			}
-		}
-	}
+	if (OwnerPrimitiveComp) { AutoAdjsutRotationPosition(DeltaTime); }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -83,29 +55,19 @@ void UJumpMovementComponent::AutoAdjsutRotationPosition(float DeltaTime)
 		bool bNeedAdjustRight = OwnerRotation.Pitch > 10.f || OwnerRotation.Pitch < -10.f;
 		bool bRightIsPositiveValue = OwnerRotation.Pitch > 0.f;
 
-		if (bNeedAdjustForward || bNeedAdjustRight)
+
+		if (bNeedAdjustForward)
 		{
-			AdjsutRotationPosition(bNeedAdjustForward, bForwardIsPositiveValue, bNeedAdjustRight, bRightIsPositiveValue, DeltaTime);
+			FVector Direction = OwnerPrimitiveComp->GetRightVector();
+			OwnerPrimitiveComp->AddTorqueInRadians(Direction * AdjustRotationForce * (bForwardIsPositiveValue ? 1.f : -1.f) * DeltaTime * AtuoAdjustRotationForceStrength);
+		}
+		if (bNeedAdjustRight)
+		{
+			FVector Direction = -OwnerPrimitiveComp->GetForwardVector();
+			OwnerPrimitiveComp->AddTorqueInRadians(Direction * AdjustRotationForce * (bRightIsPositiveValue ? 1.f : -1.f) * DeltaTime * AtuoAdjustRotationForceStrength);
 		}
 	}
 }
-
-void UJumpMovementComponent::AdjsutRotationPosition(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float AxisValue)
-{
-	if (!HasAuthority())
-	{
-		ServerAdjustPawnRotation(bNeedAdjustForward, bForwardIsPositiveValue, bNeedAdjustRight, bRightIsPositiveValue, AxisValue);
-	}
-
-	if (bNeedAdjustForward) { AdjustPosition(false, false, (bForwardIsPositiveValue ? 1.f : -1.f) * AxisValue * AtuoAdjustRotationForceStrength); }
-	if (bNeedAdjustRight) { AdjustPosition(false, true, (bRightIsPositiveValue ? 1.f : -1.f) * AxisValue * AtuoAdjustRotationForceStrength); }
-}
-bool UJumpMovementComponent::ServerAdjustPawnRotation_Validate(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float AxisValue) { return true; }
-void UJumpMovementComponent::ServerAdjustPawnRotation_Implementation(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float AxisValue)
-{
-	AdjsutRotationPosition(bNeedAdjustForward, bForwardIsPositiveValue, bNeedAdjustRight, bRightIsPositiveValue, AxisValue);
-}
-
 
 
 void UJumpMovementComponent::AdjustPosition(bool bIsAdjsutLocation, bool bIsForward, float AxisValue)

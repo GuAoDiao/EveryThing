@@ -36,9 +36,6 @@ private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerRotatePawn(float AxisValue);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerAdjustPawnRotation(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float DeltaTime);
-
 	//////////////////////////////////////////////////////////////////////////
 	/// Adjust Position
 
@@ -46,11 +43,10 @@ public:
 	void AdjustForwardPosition(float AxisValue);
 	void AdjustRightPosition(float AxisValue);
 	void AutoAdjsutRotationPosition(float DeltaTime);
+	void RotatePawn(float AxisValue);
 
 private:
 	void AdjustPosition(bool bIsAdjsutLocation, bool bIsForward, float AxisValue);
-	void AdjsutRotationPosition(bool bNeedAdjustForward, bool bForwardIsPositiveValue, bool bNeedAdjustRight, bool bRightIsPositiveValue, float AxisValue);
-	void RotatePawn(float AxisValue);
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Jump And Jump Move

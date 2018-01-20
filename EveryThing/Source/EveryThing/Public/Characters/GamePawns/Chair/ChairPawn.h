@@ -16,4 +16,5 @@ class EVERYTHING_API AChairPawn : public AJumpMovementPawn
 	
 public:
 	AChairPawn();	
+
 };

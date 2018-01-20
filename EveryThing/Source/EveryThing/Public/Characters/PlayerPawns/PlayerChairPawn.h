@@ -20,6 +20,8 @@ class EVERYTHING_API APlayerChairPawn : public AChairPawn, public IPlayerPawnInt
 public:
 	APlayerChairPawn();
 
+	virtual void Tick(float DeltaTime) override;
+
 	virtual UPlayerPawnComponent* GetPlayerPawnComponent() const override;
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)

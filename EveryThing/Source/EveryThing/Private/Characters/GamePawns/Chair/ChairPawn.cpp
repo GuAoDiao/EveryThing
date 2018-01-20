@@ -12,4 +12,3 @@ AChairPawn::AChairPawn()
 
 	ResetQualityAndDamping();
 }
-
