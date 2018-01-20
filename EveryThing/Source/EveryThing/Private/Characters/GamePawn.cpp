@@ -156,7 +156,7 @@ void AGamePawn::ToggleToNewPawnForm(FGamePawnForm* TargetGamePawnForm)
 
 FGamePawnForm* AGamePawn::GetGamePawnForm(int32 Index)
 {
-	if (Index >= 0 && Index < OwnerGamePawnForms.Num())
+	if (OwnerGamePawnForms.IsValidIndex(Index))
 	{
 		return OwnerGamePawnForms[Index];
 	}
