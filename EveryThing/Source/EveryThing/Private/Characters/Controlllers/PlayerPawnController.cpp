@@ -5,6 +5,7 @@
 #include "GameFramework/InputSettings.h"
 
 #include "EveryThingTypes.h"
+#include "EveryThingAssetManager.h"
 #include "Characters/GamePawn.h"
 #include "Characters/PlayerPawnInterface.h"
 #include "Characters/PlayerPawnComponent.h"
@@ -13,12 +14,6 @@
 #include "Characters/Moves/SkillComponent.h"
 #include "SceneObject/HitAbleInterface.h"
 
-
-APlayerPawnController::APlayerPawnController()
-{
-	ActionMappingPath = TEXT("DataTable'/Game/EveryThing/DataTable/DT_InputAction.DT_InputAction'");
-	AxisMappingPath = TEXT("DataTable'/Game/EveryThing/DataTable/DT_InputAction.DT_InputAxis'");
-}
 
 void APlayerPawnController::SetupInputComponent()
 {
@@ -77,7 +72,7 @@ void APlayerPawnController::ResetAxisAndActionMapping()
 	UInputSettings* InpueSettings = UInputSettings::GetInputSettings();
 	if (!InpueSettings) { return; }
 
-	UDataTable* InputActionDatable = LoadObject<UDataTable>(nullptr, *ActionMappingPath);
+	UDataTable* InputActionDatable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName(TEXT("InputAction"));
 	if (InputActionDatable)
 	{
 		TArray<FInputAction*> ActionInfoInDatatable;
@@ -100,7 +95,7 @@ void APlayerPawnController::ResetAxisAndActionMapping()
 		}
 	}
 
-	UDataTable* InputAxisDatable = LoadObject<UDataTable>(nullptr, *AxisMappingPath);
+	UDataTable* InputAxisDatable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName(TEXT("InputAxis"));
 	if (InputAxisDatable)
 	{
 		TArray<FInputAxis*> AxisInfoInDatatable;

@@ -18,6 +18,8 @@ enum class EGameUIState : uint8
 	Unknown
 };
 
+class UEveryThingAssetManager;
+
 /**
  * 
  */
@@ -28,7 +30,7 @@ class EVERYTHING_API UEveryThingGameInstance : public UGameInstance
 	
 public:
 	UEveryThingGameInstance();
-
+	
 	//////////////////////////////////////////////////////////////////////////
 	/// Game State
 public:

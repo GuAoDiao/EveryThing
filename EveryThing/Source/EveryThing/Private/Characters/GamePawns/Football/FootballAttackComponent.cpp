@@ -6,6 +6,7 @@
 #include "Particles/ParticleSystem.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "EveryThingAssetManager.h"
 #include "Characters/GamePawns/Football/FootballPawn.h"
 #include "Characters/Movement/Components/RotaryMovementComponent.h"
 
@@ -20,8 +21,6 @@ UFootballAttackComponent::UFootballAttackComponent()
 	
 	bIsAttacking = false;
 	CurrentAttackTarget = nullptr;
-
-	HitEmitter = LoadObject<UParticleSystem>(nullptr, TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
 	
 	bIsAutoAim = true;
 	MinAutoAimDistance = 500.f;
@@ -62,6 +61,8 @@ void UFootballAttackComponent::OnHitImplement(UPrimitiveComponent* HitComp, AAct
 			OwnerPawn->GetRotaryMovementComponent()->Move(Hit.Normal, HitElasticScale * OwnerPawn->GetVelocity().Size());
 		}
 
+
+		UParticleSystem*  HitEmitter = UEveryThingAssetManager::GetAssetManagerInstance()->GetParticleFromName(TEXT("Explosion"));
 		if (HitEmitter)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location);

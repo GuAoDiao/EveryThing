@@ -2,8 +2,15 @@
 
 #include "ChairPawn.h"
 
+#include "Components/StaticMeshComponent.h"
+
+#include "EveryThingAssetManager.h"
+
 AChairPawn::AChairPawn()
 {
+	UStaticMesh* ChairMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Chair"));
+	if (ChairMesh) { StaticMeshComp->SetStaticMesh(ChairMesh); }
+
 	Quality = 1000.f;
 	QualityScale = 1.f;
 

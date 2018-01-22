@@ -2,7 +2,10 @@
 
 #include "FootballPawn.h"
 
+#include "Engine/Engine.h"
 #include "Components/StaticMeshComponent.h"
+
+#include "EveryThingAssetManager.h"
 
 #include "Characters/GamePawns/Football/FootballForm.h"
 #include "Characters/GamePawns/Football/FootballTestForm.h"
@@ -15,6 +18,9 @@ AFootballPawn::AFootballPawn()
 	AngularDamping = 5.f;
 
 	ResetQualityAndDamping();
+	
+	UStaticMesh* FootballMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Football"));
+	if (FootballMesh) { StaticMeshComp->SetStaticMesh(FootballMesh); }
 
 	// base form
 	AddGamePawnForm(new FFootballForm(this));

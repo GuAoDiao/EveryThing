@@ -25,9 +25,6 @@ public:
 public:
 	virtual void OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit) override;
 protected:
-	UPROPERTY(BlueprintReadOnly ,EditDefaultsOnly)
-	UParticleSystem* HitEmitter;
-
 	virtual void StartCommonAttack() override;
 	virtual void StartSpecialAttack() override;
 

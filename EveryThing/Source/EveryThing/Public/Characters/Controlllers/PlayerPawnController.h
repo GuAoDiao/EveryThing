@@ -23,7 +23,6 @@ class EVERYTHING_API APlayerPawnController : public APlayerController, public IG
 	GENERATED_BODY()
 	
 public:
-	APlayerPawnController();
 
 	virtual void SetupInputComponent() override;
 	
@@ -32,9 +31,6 @@ protected:
 	void RemoveActionAndAxisBindings(const TArray<FName>& BindingsName);
 
 	void ResetAxisAndActionMapping();
-
-	FString ActionMappingPath;
-	FString AxisMappingPath;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// For IGamePawnControllerInterface
