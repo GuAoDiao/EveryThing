@@ -7,6 +7,7 @@
 
 #include "Online/EveryThingGameMode.h"
 #include "Characters/GamePawnForm.h"
+#include "Characters/GamePawnSkin.h"
 #include "Characters/Moves/AttackComponent.h"
 #include "Characters/Moves/SkillComponent.h"
 #include "Characters/Controlllers/PlayerPawnController.h"
@@ -118,27 +119,32 @@ void AGamePawn::AddDurability_Implementation(float InOffset, EElementType InType
 	}
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+/// Game Pawn Form
 void AGamePawn::AddGamePawnForm(FGamePawnForm* InGamePawnForm)
 {
 	if (InGamePawnForm) { OwnerGamePawnForms.Add(InGamePawnForm); }
 }
 
-bool AGamePawn::ServerToggleToNewPawnFormWithIndex_Validate(int32 Index)
+void AGamePawn::ToggleToNewPawnForm(int32 Index)
 {
-	return true;
-}
-void AGamePawn::ServerToggleToNewPawnFormWithIndex_Implementation(int32 Index)
-{
+	if (!HasAuthority())
+	{
+		ServerToggleToNewPawnForm(Index);
+	}
+
 	FGamePawnForm* TargetPawnForm = GetGamePawnForm(Index);
 	if (TargetPawnForm && TargetPawnForm != CurrentGamePawnForm)
 	{
-		ToggleToNewPawnForm(TargetPawnForm);
+		ToggleToTargetPawnForm(TargetPawnForm);
 		UE_LOG(LogTemp, Log, TEXT("-_- Toggle To %d Pawn Form"), Index)
 	}
 }
 
-void AGamePawn::ToggleToNewPawnForm(FGamePawnForm* TargetGamePawnForm)
+bool AGamePawn::ServerToggleToNewPawnForm_Validate(int32 Index) { return true; }
+void AGamePawn::ServerToggleToNewPawnForm_Implementation(int32 Index) { ToggleToNewPawnForm(Index); }
+
+void AGamePawn::ToggleToTargetPawnForm(FGamePawnForm* TargetGamePawnForm)
 {
 	if (CurrentGamePawnForm) { CurrentGamePawnForm->UnloadGamePawnForm();}
 
@@ -163,10 +169,55 @@ FGamePawnForm* AGamePawn::GetGamePawnForm(int32 Index)
 	return nullptr;
 }
 
-bool AGamePawn::ToggleToNewAttackComponent_Validate(UAttackComponent* InAttackComponent)
+//////////////////////////////////////////////////////////////////////////
+/// Game Pawn Skin
+
+void AGamePawn::AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin)
 {
-	return true;
+	if (InGamePawnSkin) { OwnerGamePawnSkins.Add(InGamePawnSkin); }
 }
+void AGamePawn::ToggleToNewPawnSkin(int32 Index)
+{
+	if (!HasAuthority())
+	{
+		ServerToggleToNewPawnSkin(Index);
+	}
+
+	FGamePawnSkin* TargetPawnSkin = GetGamePawnSkin(Index);
+	if (TargetPawnSkin && TargetPawnSkin != CurrentGamePawnSkin)
+	{
+		ToggleToTargetPawnSkin(TargetPawnSkin);
+		UE_LOG(LogTemp, Log, TEXT("-_- Toggle To %d Pawn Skin"), Index)
+	}
+}
+bool AGamePawn::ServerToggleToNewPawnSkin_Validate(int32 Index) { return true; }
+void AGamePawn::ServerToggleToNewPawnSkin_Implementation(int32 Index) { ToggleToNewPawnSkin(Index); }
+
+void AGamePawn::ToggleToTargetPawnSkin(FGamePawnSkin* TargetGamePawnSkin)
+{
+	if (CurrentGamePawnSkin) { CurrentGamePawnSkin->UnloadGamePawnSkin(); }
+
+	CurrentGamePawnSkin = TargetGamePawnSkin;
+
+
+	if (CurrentGamePawnSkin)
+	{
+		CurrentGamePawnSkin->LoadGamePawnSkin();
+	}
+}
+
+FGamePawnSkin* AGamePawn::GetGamePawnSkin(int32 Index)
+{
+	if (OwnerGamePawnSkins.IsValidIndex(Index))
+	{
+		return OwnerGamePawnSkins[Index];
+	}
+	return nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////
+/// Attack and Skill
+bool AGamePawn::ToggleToNewAttackComponent_Validate(UAttackComponent* InAttackComponent) { return true; }
 void AGamePawn::ToggleToNewAttackComponent_Implementation(UAttackComponent* InAttackComponent)
 {
 	OwnerAttackComp = InAttackComponent;
@@ -178,10 +229,7 @@ void AGamePawn::ToggleToNewAttackComponent_Implementation(UAttackComponent* InAt
 	}
 }
 
-bool AGamePawn::ToggleToNewSkillComponent_Validate(USkillComponent* InSkillComponent)
-{
-	return true;
-}
+bool AGamePawn::ToggleToNewSkillComponent_Validate(USkillComponent* InSkillComponent) { return true; }
 void AGamePawn::ToggleToNewSkillComponent_Implementation(USkillComponent* InSkillComponent)
 {
 	OwnerSkillComp = InSkillComponent;

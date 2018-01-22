@@ -149,7 +149,18 @@ void UPlayerPawnComponent::LookUp(float AxisValue)
 
 void UPlayerPawnComponent::OnPressNumberKeyboard(int32 NumberIndex)
 {
-	bIsWantedTogglePawnState ? TogglePawnState(NumberIndex) : UseProp(NumberIndex);
+	if (bIsWantedTogglePawnSkin)
+	{
+		TogglePawnSkin(NumberIndex);
+	}
+	else if (bIsWantedTogglePawnForm)
+	{
+		TogglePawnForm(NumberIndex);
+	}
+	else
+	{
+		UseProp(NumberIndex);
+	}
 }
 
 void UPlayerPawnComponent::UseProp(int32 NumberIndex)
@@ -157,7 +168,12 @@ void UPlayerPawnComponent::UseProp(int32 NumberIndex)
 	UE_LOG(LogTemp, Log, TEXT("-_- Use Prop Of Index: %d"), NumberIndex)
 }
 
-void UPlayerPawnComponent::TogglePawnState(int32 NumberIndex)
+void UPlayerPawnComponent::TogglePawnForm(int32 NumberIndex)
 {
-	if (OwnerPawn) { OwnerPawn->ServerToggleToNewPawnFormWithIndex(NumberIndex); }
+	if (OwnerPawn) { OwnerPawn->ToggleToNewPawnForm(NumberIndex); }
+}
+
+void UPlayerPawnComponent::TogglePawnSkin(int32 NumberIndex)
+{
+	if (OwnerPawn) { OwnerPawn->ToggleToNewPawnSkin(NumberIndex); }
 }

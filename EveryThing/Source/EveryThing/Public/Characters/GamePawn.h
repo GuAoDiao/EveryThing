@@ -13,6 +13,7 @@
 class UAttackComponent;
 class USkillComponent;
 class FGamePawnForm;
+class FGamePawnSkin;
 
 UCLASS()
 class EVERYTHING_API AGamePawn : public APawn, public IHitAbleInterface
@@ -48,18 +49,39 @@ protected:
 	/// Game Pawn Form
 public:
 	void AddGamePawnForm(FGamePawnForm* InGamePawnForm);
+	void ToggleToNewPawnForm(int32 Index);
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerToggleToNewPawnFormWithIndex(int32 Index);
+	void ServerToggleToNewPawnForm(int32 Index);
 private:
 	// actual implementation
-	void ToggleToNewPawnForm(FGamePawnForm* TargetGamePawnForm);
+	void ToggleToTargetPawnForm(FGamePawnForm* TargetGamePawnForm);
 
+public:
 	FGamePawnForm* GetGamePawnForm(int32 Index);
 	const TArray<FGamePawnForm*>& GetGamePawnForms() { return OwnerGamePawnForms; }
 
 protected:
 	FGamePawnForm* CurrentGamePawnForm;
 	TArray<FGamePawnForm*> OwnerGamePawnForms;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Game Pawn Skin
+public:
+	void AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin);
+	void ToggleToNewPawnSkin(int32 Index);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerToggleToNewPawnSkin(int32 Index);
+private:
+	// actual implementation
+	void ToggleToTargetPawnSkin(FGamePawnSkin* TargetGamePawnSkin);
+
+public:
+	FGamePawnSkin* GetGamePawnSkin(int32 Index);
+	const TArray<FGamePawnSkin*>& GetGamePawnSkins() { return OwnerGamePawnSkins; }
+
+protected:
+	FGamePawnSkin* CurrentGamePawnSkin;
+	TArray<FGamePawnSkin*> OwnerGamePawnSkins;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Attack and Skill

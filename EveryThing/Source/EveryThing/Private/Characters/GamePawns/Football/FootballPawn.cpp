@@ -3,12 +3,14 @@
 #include "FootballPawn.h"
 
 #include "Components/StaticMeshComponent.h"
-#include "Materials/MaterialInstanceConstant.h"
 
 #include "EveryThingAssetManager.h"
 
 #include "Characters/GamePawns/Football/FootballForm.h"
 #include "Characters/GamePawns/Football/FootballTestForm.h"
+
+#include "Characters/GamePawns/Football/FootballSkin.h"
+#include "Characters/GamePawns/Football/FootballFireSkin.h"
 
 AFootballPawn::AFootballPawn()
 {
@@ -19,24 +21,18 @@ AFootballPawn::AFootballPawn()
 
 	ResetQualityAndDamping();
 	
-	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
-
-	UStaticMesh* FootballMesh = AssetManager->GetMeshFromName(TEXT("Football"));
+	UStaticMesh* FootballMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Football"));
 	if (FootballMesh) { StaticMeshComp->SetStaticMesh(FootballMesh); }
 
-	UMaterialInstanceConstant* FootballMaterialBlack = AssetManager->GetMaterialFromName(TEXT("FootballBlack_Fire"));
-	UMaterialInstanceConstant* FootballMaterialWhite = AssetManager->GetMaterialFromName(TEXT("FootballWhite_Fire"));
+	AddGamePawnSkin(new FFootballSkin(StaticMeshComp));
+	AddGamePawnSkin(new FFootballFireSkin(StaticMeshComp));
 
-	if (FootballMaterialBlack && FootballMaterialWhite)
-	{
-		StaticMeshComp->SetMaterial(0, FootballMaterialBlack);
-		StaticMeshComp->SetMaterial(1, FootballMaterialWhite);
-	}
+	ToggleToNewPawnSkin(0);
 
 	// base form
 	AddGamePawnForm(new FFootballForm(this));
 	// test form
 	AddGamePawnForm(new FFootballTestForm(this));
 
-	ServerToggleToNewPawnFormWithIndex(0);
+	ToggleToNewPawnForm(0);
 }

@@ -37,6 +37,9 @@ void APlayerPawnController::SetupInputComponent()
 	InputComponent->BindAction("TogglePawnState", IE_Pressed, this, &APlayerPawnController::StartTogglePawnState);
 	InputComponent->BindAction("TogglePawnState", IE_Released, this, &APlayerPawnController::StopTogglePawnState);
 
+	InputComponent->BindAction("TogglePawnSkin", IE_Pressed, this, &APlayerPawnController::StartTogglePawnSkin);
+	InputComponent->BindAction("TogglePawnSkin", IE_Pressed, this, &APlayerPawnController::StartTogglePawnSkin);
+
 	InputComponent->BindAction("NumberOne", IE_Pressed, this, &APlayerPawnController::NumberOne);
 	InputComponent->BindAction("NumberTwo", IE_Pressed, this, &APlayerPawnController::NumberTwo);
 	InputComponent->BindAction("NumberThree", IE_Pressed, this, &APlayerPawnController::NumberThree);
@@ -166,6 +169,10 @@ void APlayerPawnController::LookUp(float AxisValue) { if (AxisValue != 0.f && Ow
 /// Game Pawn Form And Prop Use
 void APlayerPawnController::StartTogglePawnState() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SetIsWantedTogglePawnForm(true); } }
 void APlayerPawnController::StopTogglePawnState() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SetIsWantedTogglePawnForm(false); } }
+
+void APlayerPawnController::StartTogglePawnSkin() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SetIsWantedTogglePawnSkin(true); } }
+void APlayerPawnController::StopTogglePawnSkin() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SetIsWantedTogglePawnSkin(false); } }
+
 
 void APlayerPawnController::NumberOne() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->OnPressNumberKeyboard(0); } }
 void APlayerPawnController::NumberTwo() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->OnPressNumberKeyboard(1); } }

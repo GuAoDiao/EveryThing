@@ -35,14 +35,17 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn Form And Prop Use
 public:
-	inline void SetIsWantedTogglePawnForm(bool bInIsWantedTogglePawnState) { bIsWantedTogglePawnState = bInIsWantedTogglePawnState; }
+	inline void SetIsWantedTogglePawnForm(bool bInIsWantedTogglePawnForm) { bIsWantedTogglePawnForm = bInIsWantedTogglePawnForm; }
+	inline void SetIsWantedTogglePawnSkin(bool bInIsWantedTogglePawnSkin) { bIsWantedTogglePawnSkin = bInIsWantedTogglePawnSkin; }
 	void OnPressNumberKeyboard(int32 NumberIndex);
 
 protected:
 	void UseProp(int32 NumberIndex);
-	void TogglePawnState(int32 NumberIndex);
+	void TogglePawnForm(int32 NumberIndex);
+	void TogglePawnSkin(int32 NumberIndex);
 
-	bool bIsWantedTogglePawnState;
+	bool bIsWantedTogglePawnSkin;
+	bool bIsWantedTogglePawnForm;
 	class AGamePawn* OwnerPawn;
 
 	//////////////////////////////////////////////////////////////////////////
