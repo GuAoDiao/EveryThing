@@ -126,9 +126,9 @@ void AGamePawn::AddGamePawnForm(FGamePawnForm* InGamePawnForm)
 	if (InGamePawnForm) { OwnerGamePawnForms.Add(InGamePawnForm); }
 }
 
-void AGamePawn::ToggleToNewPawnForm(int32 Index)
+void AGamePawn::ToggleToNewPawnForm(int32 Index, bool bIsCauser)
 {
-	if (!HasAuthority())
+	if (bIsCauser && !HasAuthority())
 	{
 		ServerToggleToNewPawnForm(Index);
 	}
@@ -136,6 +136,7 @@ void AGamePawn::ToggleToNewPawnForm(int32 Index)
 	FGamePawnForm* TargetPawnForm = GetGamePawnForm(Index);
 	if (TargetPawnForm && TargetPawnForm != CurrentGamePawnForm)
 	{
+		CurrentGamePawnFormIndex = Index;
 		ToggleToTargetPawnForm(TargetPawnForm);
 		UE_LOG(LogTemp, Log, TEXT("-_- Toggle To %d Pawn Form"), Index)
 	}
@@ -143,13 +144,13 @@ void AGamePawn::ToggleToNewPawnForm(int32 Index)
 
 bool AGamePawn::ServerToggleToNewPawnForm_Validate(int32 Index) { return true; }
 void AGamePawn::ServerToggleToNewPawnForm_Implementation(int32 Index) { ToggleToNewPawnForm(Index); }
+void AGamePawn::OnRep_CurrentGamePawnFormIndex() { ToggleToNewPawnForm(CurrentGamePawnFormIndex, false); }
 
 void AGamePawn::ToggleToTargetPawnForm(FGamePawnForm* TargetGamePawnForm)
 {
 	if (CurrentGamePawnForm) { CurrentGamePawnForm->UnloadGamePawnForm();}
 
 	CurrentGamePawnForm = TargetGamePawnForm;
-
 
 	if (CurrentGamePawnForm)
 	{
@@ -162,11 +163,7 @@ void AGamePawn::ToggleToTargetPawnForm(FGamePawnForm* TargetGamePawnForm)
 
 FGamePawnForm* AGamePawn::GetGamePawnForm(int32 Index)
 {
-	if (OwnerGamePawnForms.IsValidIndex(Index))
-	{
-		return OwnerGamePawnForms[Index];
-	}
-	return nullptr;
+	return OwnerGamePawnForms.IsValidIndex(Index) ? OwnerGamePawnForms[Index] : nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -176,9 +173,9 @@ void AGamePawn::AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin)
 {
 	if (InGamePawnSkin) { OwnerGamePawnSkins.Add(InGamePawnSkin); }
 }
-void AGamePawn::ToggleToNewPawnSkin(int32 Index)
+void AGamePawn::ToggleToNewPawnSkin(int32 Index, bool bIsCauser)
 {
-	if (!HasAuthority())
+	if (bIsCauser && !HasAuthority())
 	{
 		ServerToggleToNewPawnSkin(Index);
 	}
@@ -186,12 +183,14 @@ void AGamePawn::ToggleToNewPawnSkin(int32 Index)
 	FGamePawnSkin* TargetPawnSkin = GetGamePawnSkin(Index);
 	if (TargetPawnSkin && TargetPawnSkin != CurrentGamePawnSkin)
 	{
+		CurrentGamePawnSkinIndex = Index;
 		ToggleToTargetPawnSkin(TargetPawnSkin);
 		UE_LOG(LogTemp, Log, TEXT("-_- Toggle To %d Pawn Skin"), Index)
 	}
 }
 bool AGamePawn::ServerToggleToNewPawnSkin_Validate(int32 Index) { return true; }
 void AGamePawn::ServerToggleToNewPawnSkin_Implementation(int32 Index) { ToggleToNewPawnSkin(Index); }
+void AGamePawn::OnRep_CurrentGamePawnSkinIndex() { ToggleToNewPawnSkin(CurrentGamePawnSkinIndex, false); }
 
 void AGamePawn::ToggleToTargetPawnSkin(FGamePawnSkin* TargetGamePawnSkin)
 {
@@ -199,26 +198,17 @@ void AGamePawn::ToggleToTargetPawnSkin(FGamePawnSkin* TargetGamePawnSkin)
 
 	CurrentGamePawnSkin = TargetGamePawnSkin;
 
-
-	if (CurrentGamePawnSkin)
-	{
-		CurrentGamePawnSkin->LoadGamePawnSkin();
-	}
+	if (CurrentGamePawnSkin) { CurrentGamePawnSkin->LoadGamePawnSkin(); }
 }
 
 FGamePawnSkin* AGamePawn::GetGamePawnSkin(int32 Index)
 {
-	if (OwnerGamePawnSkins.IsValidIndex(Index))
-	{
-		return OwnerGamePawnSkins[Index];
-	}
-	return nullptr;
+	return OwnerGamePawnSkins.IsValidIndex(Index) ? OwnerGamePawnSkins[Index] : nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 /// Attack and Skill
-bool AGamePawn::ToggleToNewAttackComponent_Validate(UAttackComponent* InAttackComponent) { return true; }
-void AGamePawn::ToggleToNewAttackComponent_Implementation(UAttackComponent* InAttackComponent)
+void AGamePawn::ToggleToNewAttackComponent(UAttackComponent* InAttackComponent)
 {
 	OwnerAttackComp = InAttackComponent;
 
@@ -229,8 +219,7 @@ void AGamePawn::ToggleToNewAttackComponent_Implementation(UAttackComponent* InAt
 	}
 }
 
-bool AGamePawn::ToggleToNewSkillComponent_Validate(USkillComponent* InSkillComponent) { return true; }
-void AGamePawn::ToggleToNewSkillComponent_Implementation(USkillComponent* InSkillComponent)
+void AGamePawn::ToggleToNewSkillComponent(USkillComponent* InSkillComponent)
 {
 	OwnerSkillComp = InSkillComponent;
 
@@ -291,6 +280,9 @@ AActor* AGamePawn::TryToGetAttackTarget(float InMaxAttackDistance)
 void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AGamePawn, CurrentGamePawnSkinIndex);
+	DOREPLIFETIME(AGamePawn, CurrentGamePawnFormIndex);
 
 	DOREPLIFETIME(AGamePawn, Durability);
 	DOREPLIFETIME(AGamePawn, PhysicalPower);

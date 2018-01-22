@@ -49,7 +49,7 @@ protected:
 	/// Game Pawn Form
 public:
 	void AddGamePawnForm(FGamePawnForm* InGamePawnForm);
-	void ToggleToNewPawnForm(int32 Index);
+	void ToggleToNewPawnForm(int32 Index, bool bIsCauser = true);
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerToggleToNewPawnForm(int32 Index);
 private:
@@ -61,6 +61,10 @@ public:
 	const TArray<FGamePawnForm*>& GetGamePawnForms() { return OwnerGamePawnForms; }
 
 protected:
+	UFUNCTION()
+	void OnRep_CurrentGamePawnFormIndex();
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_CurrentGamePawnFormIndex)
+	int32 CurrentGamePawnFormIndex;
 	FGamePawnForm* CurrentGamePawnForm;
 	TArray<FGamePawnForm*> OwnerGamePawnForms;
 
@@ -68,7 +72,7 @@ protected:
 	/// Game Pawn Skin
 public:
 	void AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin);
-	void ToggleToNewPawnSkin(int32 Index);
+	void ToggleToNewPawnSkin(int32 Index, bool bIsCauser = true);
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerToggleToNewPawnSkin(int32 Index);
 private:
@@ -80,6 +84,11 @@ public:
 	const TArray<FGamePawnSkin*>& GetGamePawnSkins() { return OwnerGamePawnSkins; }
 
 protected:
+	UFUNCTION()
+	void OnRep_CurrentGamePawnSkinIndex();
+
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_CurrentGamePawnSkinIndex)
+	int32 CurrentGamePawnSkinIndex;
 	FGamePawnSkin* CurrentGamePawnSkin;
 	TArray<FGamePawnSkin*> OwnerGamePawnSkins;
 
@@ -91,9 +100,7 @@ public:
 	inline UAttackComponent* GetAttackComponent() const { return OwnerAttackComp; }
 	inline USkillComponent* GetSkillComponent() const { return OwnerSkillComp; }
 
-	UFUNCTION(Server, Reliable, WithValidation)
 	void ToggleToNewAttackComponent(UAttackComponent* InAttackComponent);
-	UFUNCTION(Server, Reliable, WithValidation)
 	void ToggleToNewSkillComponent(USkillComponent* InSkillComponent);
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)

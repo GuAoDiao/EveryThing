@@ -38,7 +38,7 @@ void APlayerPawnController::SetupInputComponent()
 	InputComponent->BindAction("TogglePawnState", IE_Released, this, &APlayerPawnController::StopTogglePawnState);
 
 	InputComponent->BindAction("TogglePawnSkin", IE_Pressed, this, &APlayerPawnController::StartTogglePawnSkin);
-	InputComponent->BindAction("TogglePawnSkin", IE_Pressed, this, &APlayerPawnController::StartTogglePawnSkin);
+	InputComponent->BindAction("TogglePawnSkin", IE_Released, this, &APlayerPawnController::StopTogglePawnSkin);
 
 	InputComponent->BindAction("NumberOne", IE_Pressed, this, &APlayerPawnController::NumberOne);
 	InputComponent->BindAction("NumberTwo", IE_Pressed, this, &APlayerPawnController::NumberTwo);

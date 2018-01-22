@@ -21,7 +21,7 @@ void FFootballTestForm::LoadGamePawnForm()
 		else
 		{
 			OwnerAttackComp = NewObject<UFootballAttackComponent>(OwnerGamePawn, UFootballAttackComponent::StaticClass());
-			OwnerSkillComp = NewObject<UFootballTestSkillComponent>(OwnerGamePawn, UFootballAttackComponent::StaticClass());
+			OwnerSkillComp = NewObject<UFootballTestSkillComponent>(OwnerGamePawn, UFootballTestSkillComponent::StaticClass());
 		}
 	}
 }

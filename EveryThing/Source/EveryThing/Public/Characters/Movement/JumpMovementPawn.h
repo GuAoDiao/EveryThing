@@ -19,6 +19,7 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UBoxComponent* BoxCollisionComp;
+
 	//////////////////////////////////////////////////////////////////////////
 	/// IJumpMovementInterface
 public:

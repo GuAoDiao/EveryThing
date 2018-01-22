@@ -13,7 +13,7 @@ AJumpMovementPawn::AJumpMovementPawn()
 	MovementComp = CreateDefaultSubobject<UJumpMovementComponent>(TEXT("JumpMovementComp"));
 
 	BoxCollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	BoxCollisionComp->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	BoxCollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	BoxCollisionComp->SetCollisionObjectType(ECC_WorldDynamic);
 	BoxCollisionComp->SetCollisionResponseToAllChannels(ECR_Block);
 

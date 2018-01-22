@@ -16,7 +16,7 @@ UJumpMovementComponent::UJumpMovementComponent()
 
 
 	AdjustLocationForce = 500 * 1000.f;
-	AdjustRotationForce = 100000 * 1000.f;
+	AdjustRotationForce = 300000 * 1000.f;
 
 	AdjustPawnRotationForce = 500000 * 1000.f;
 
@@ -52,9 +52,9 @@ void UJumpMovementComponent::AutoAdjsutRotationPosition(float DeltaTime)
 		bool bNeedAdjustForward = OwnerRotation.Roll > 10.f || OwnerRotation.Roll < -10.f;
 		bool bForwardIsPositiveValue = OwnerRotation.Roll > 0.f;
 
+
 		bool bNeedAdjustRight = OwnerRotation.Pitch > 10.f || OwnerRotation.Pitch < -10.f;
 		bool bRightIsPositiveValue = OwnerRotation.Pitch > 0.f;
-
 
 		if (bNeedAdjustForward)
 		{
