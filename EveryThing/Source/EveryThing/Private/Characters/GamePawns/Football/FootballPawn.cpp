@@ -2,8 +2,8 @@
 
 #include "FootballPawn.h"
 
-#include "Engine/Engine.h"
 #include "Components/StaticMeshComponent.h"
+#include "Materials/MaterialInstanceConstant.h"
 
 #include "EveryThingAssetManager.h"
 
@@ -19,8 +19,19 @@ AFootballPawn::AFootballPawn()
 
 	ResetQualityAndDamping();
 	
-	UStaticMesh* FootballMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Football"));
+	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
+
+	UStaticMesh* FootballMesh = AssetManager->GetMeshFromName(TEXT("Football"));
 	if (FootballMesh) { StaticMeshComp->SetStaticMesh(FootballMesh); }
+
+	UMaterialInstanceConstant* FootballMaterialBlack = AssetManager->GetMaterialFromName(TEXT("FootballBlack_Fire"));
+	UMaterialInstanceConstant* FootballMaterialWhite = AssetManager->GetMaterialFromName(TEXT("FootballWhite_Fire"));
+
+	if (FootballMaterialBlack && FootballMaterialWhite)
+	{
+		StaticMeshComp->SetMaterial(0, FootballMaterialBlack);
+		StaticMeshComp->SetMaterial(1, FootballMaterialWhite);
+	}
 
 	// base form
 	AddGamePawnForm(new FFootballForm(this));

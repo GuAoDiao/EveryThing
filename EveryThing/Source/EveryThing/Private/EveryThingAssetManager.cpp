@@ -3,8 +3,8 @@
 #include "EveryThingAssetManager.h"
 
 #include "Engine/StaticMesh.h"
-
 #include "Particles/ParticleSystem.h"
+#include "Materials/MaterialInstanceConstant.h"
 
 UEveryThingAssetManager* UEveryThingAssetManager::AssetManager = nullptr;
 
@@ -14,7 +14,7 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 	if (AllDataTable)
 	{
 		TArray<FDataTableData*> AllDataTableInfo;
-		AllDataTable->GetAllRows<FDataTableData>(TEXT("found all input axis mapping"), AllDataTableInfo);
+		AllDataTable->GetAllRows<FDataTableData>(TEXT("found all DataTable"), AllDataTableInfo);
 		for (FDataTableData* DataTable : AllDataTableInfo)
 		{
 			AllDataTableAsset.Add(FName(*DataTable->Name), DataTable->DataTableClass);
@@ -25,10 +25,21 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 	if (StaticMeshDatatable)
 	{
 		TArray<FStaticMeshData*> StaticMeshDataInDatatable;
-		StaticMeshDatatable->GetAllRows<FStaticMeshData>(TEXT("found all input axis mapping"), StaticMeshDataInDatatable);
+		StaticMeshDatatable->GetAllRows<FStaticMeshData>(TEXT("found all StaticMesh DataTable"), StaticMeshDataInDatatable);
 		for (FStaticMeshData* StaticMeshData : StaticMeshDataInDatatable)
 		{
 			AllMeshAsset.Add(FName(*StaticMeshData->Name), StaticMeshData->MeshClass);
+		}
+	}
+
+	UDataTable* MaterialInstaneDatatable = GetDataTableFromName(TEXT("MaterialInstance"));
+	if (MaterialInstaneDatatable)
+	{
+		TArray<FMaterialInstanceData*> MaterialInstanceDataInDatatable;
+		MaterialInstaneDatatable->GetAllRows<FMaterialInstanceData>(TEXT("found all MaterialInstane DataTable"), MaterialInstanceDataInDatatable);
+		for (FMaterialInstanceData* MaterialInstaneData : MaterialInstanceDataInDatatable)
+		{
+			AllMaterialInstanceAsset.Add(FName(*MaterialInstaneData->Name), MaterialInstaneData->MaterialInstanceClass);
 		}
 	}
 
@@ -36,13 +47,15 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 	if (ParticleSystemDatatable)
 	{
 		TArray<FParticleSystemData*> ParticleSystemDataInDatatable;
-		ParticleSystemDatatable->GetAllRows<FParticleSystemData>(TEXT("found all input axis mapping"), ParticleSystemDataInDatatable);
+		ParticleSystemDatatable->GetAllRows<FParticleSystemData>(TEXT("found all ParticleSystem DataTable"), ParticleSystemDataInDatatable);
 		for (FParticleSystemData* ParticleSystemData : ParticleSystemDataInDatatable)
 		{
 			AllParticleAsset.Add(FName(*ParticleSystemData->Name), ParticleSystemData->ParticleSystemClass);
 		}
 	}
 
+
+	UE_LOG(LogTemp, Log, TEXT("-_- init EveryThing Asset Manager"));
 }
 UEveryThingAssetManager::~UEveryThingAssetManager()
 {
@@ -75,6 +88,17 @@ UStaticMesh* UEveryThingAssetManager::GetMeshFromName(const FString& MeshName)
 		AllMeshAsset.Add(MeskKey, LoadObject<UStaticMesh>(nullptr, *FString::Printf(TEXT("StaticMesh'/Game/EveryThing/Meshes/SM_%s.SM_%s'"), *MeshName, *MeshName)));
 	}
 	return AllMeshAsset[MeskKey];
+}
+
+
+UMaterialInstanceConstant* UEveryThingAssetManager::GetMaterialFromName(const FString& MaterialName)
+{
+	FName MaterialKey(*MaterialName);
+	if (!AllMaterialInstanceAsset.Contains(MaterialKey))
+	{
+		AllMaterialInstanceAsset.Add(MaterialKey, LoadObject<UMaterialInstanceConstant>(nullptr, *FString::Printf(TEXT("MaterialInstanceConstant'/Game/EveryThing/Materials/MI_%s.MI_%s'"), *MaterialName, *MaterialName)));
+	}
+	return AllMaterialInstanceAsset[MaterialKey];
 }
 
 UParticleSystem* UEveryThingAssetManager::GetParticleFromName(const FString& ParticleName)

@@ -8,6 +8,7 @@
 
 class UStaticMesh;
 class UParticleSystem;
+class UMaterialInstanceConstant;
 
 USTRUCT(BlueprintType)
 struct FStaticMeshData : public FTableRowBase
@@ -18,6 +19,17 @@ public:
 	FString Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UStaticMesh* MeshClass;
+};
+
+USTRUCT(BlueprintType)
+struct FMaterialInstanceData : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString Name;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UMaterialInstanceConstant* MaterialInstanceClass;
 };
 
 USTRUCT(BlueprintType)
@@ -56,13 +68,14 @@ protected:
 public:
 	static UEveryThingAssetManager* GetAssetManagerInstance();
 	static void DestroyAssetManagerInstance();
+private:
+	static UEveryThingAssetManager* AssetManager;
 
 public:
 	UStaticMesh* GetMeshFromName(const FString& MeshName);
+	UMaterialInstanceConstant* GetMaterialFromName(const FString& MaterialName);
 	UParticleSystem* GetParticleFromName(const FString& ParticleName);
 	UDataTable* GetDataTableFromName(const FString& DataTableName);
-private:
-	static UEveryThingAssetManager* AssetManager;
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
@@ -71,4 +84,6 @@ public:
 	TMap<FName, UParticleSystem*> AllParticleAsset;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	TMap<FName, UDataTable*> AllDataTableAsset;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	TMap<FName, UMaterialInstanceConstant*> AllMaterialInstanceAsset;
 };
