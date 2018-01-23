@@ -61,6 +61,7 @@ void URotaryMovementComponent::Move(const FVector& Direction, float AxisValue)
 
 	if (OwnerPrimitiveComp) { OwnerPrimitiveComp->AddForce(Direction * CurrentSpeed * AxisValue); }
 }
+
 bool URotaryMovementComponent::ServerMove_Validate(const FVector& Direction, float AxisValue) { return true; }
 void URotaryMovementComponent::ServerMove_Implementation(const FVector& Direction, float AxisValue) { Move(Direction, AxisValue); }
 

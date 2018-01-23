@@ -18,6 +18,7 @@ public:
 	UFootballAttackComponent();
 
 	virtual void BeginPlay() override;
+
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -34,13 +35,14 @@ private:
 	void StartAttack(bool bInIsCommonAttack);
 	void ToggleAttack(bool bInIsCommonAttack);
 	void ExcuteAttack(float AxisValue);
+	void StopAttack();
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Server
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerStartAttack(bool bInIsCommonAttack, AActor* AttackTarget);
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerStopAttack();
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastStartAttack(bool bInIsCommonAttack, AActor* AttackTarget);
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastStopAttack();
 	
 private:
 	class AFootballPawn* OwnerPawn;

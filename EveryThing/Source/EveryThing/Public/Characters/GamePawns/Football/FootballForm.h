@@ -9,7 +9,5 @@
 class EVERYTHING_API FFootballForm : public FGamePawnForm
 {
 public:
-	using FGamePawnForm::FGamePawnForm;
-
-	virtual void LoadGamePawnForm() override;
+	FFootballForm(AGamePawn* InGamePawn);
 };

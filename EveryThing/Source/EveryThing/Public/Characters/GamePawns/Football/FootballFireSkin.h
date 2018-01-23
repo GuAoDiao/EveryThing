@@ -11,7 +11,5 @@
 class EVERYTHING_API FFootballFireSkin : public FGamePawnSkin
 {
 public:
-	using FGamePawnSkin::FGamePawnSkin;
-
-	virtual void LoadGamePawnSkin() override;
+	FFootballFireSkin(UStaticMeshComponent* StaticMeshComp);
 };

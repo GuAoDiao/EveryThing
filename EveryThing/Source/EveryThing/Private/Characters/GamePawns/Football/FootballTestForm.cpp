@@ -5,23 +5,8 @@
 #include "FootballAttackComponent.h"
 #include "FootballTestSkillComponent.h"
 
-#include "Characters/GamePawn.h"
-#include "UObjectGlobals.h"
-
-
-void FFootballTestForm::LoadGamePawnForm()
+ FFootballTestForm::FFootballTestForm(AGamePawn* InGamePawn) : FGamePawnForm(InGamePawn)
 {
-	if (OwnerGamePawn)
-	{
-		if (!OwnerGamePawn->IsActorInitialized())
-		{
-			OwnerAttackComp = OwnerGamePawn->CreateDefaultSubobject<UFootballAttackComponent>(TEXT("AttackComp"));
-			OwnerSkillComp = OwnerGamePawn->CreateDefaultSubobject<UFootballTestSkillComponent>(TEXT("SkillComp"));
-		}
-		else
-		{
-			OwnerAttackComp = NewObject<UFootballAttackComponent>(OwnerGamePawn, UFootballAttackComponent::StaticClass());
-			OwnerSkillComp = NewObject<UFootballTestSkillComponent>(OwnerGamePawn, UFootballTestSkillComponent::StaticClass());
-		}
-	}
+	AttackCompClass = UFootballAttackComponent::StaticClass();
+	SkillCompClass = UFootballTestSkillComponent::StaticClass();
 }

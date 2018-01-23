@@ -18,34 +18,36 @@ UFootballAttackComponent::UFootballAttackComponent()
 	RebindAll();
 	
 	OwnerPawn = Cast<AFootballPawn>(GetOwner());
-	
+		
 	bIsAttacking = false;
 	CurrentAttackTarget = nullptr;
 	
 	bIsAutoAim = true;
 	MinAutoAimDistance = 500.f;
 	MaxAttackDistance = 5000.f;
-	HitElasticScale = 0.3f;
-
+	HitElasticScale = 0.7f;
+	
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UFootballAttackComponent::BeginPlay()
 {
+	Super::BeginPlay();
+
 	PrimaryComponentTick.SetTickFunctionEnable(false);
 }
 
 void UFootballAttackComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	
 	if (bIsAttacking)
 	{
 		ExcuteAttack(DeltaTime);
 	}
 	else
 	{
-		ServerStopAttack();
+		StopAttack();
 	}
 }
 
@@ -58,22 +60,18 @@ void UFootballAttackComponent::OnHitImplement(UPrimitiveComponent* HitComp, AAct
 	{
 		if (bIsCommonAttack && OwnerPawn && OwnerPawn->GetRotaryMovementComponent())
 		{
-			OwnerPawn->GetRotaryMovementComponent()->Move(Hit.Normal, HitElasticScale * OwnerPawn->GetVelocity().Size());
+			OwnerPawn->GetRotaryMovementComponent()->AcceptForceImpulse(Hit.Location, -HitElasticScale * OwnerPawn->GetVelocity());
 		}
-
 
 		UParticleSystem*  HitEmitter = UEveryThingAssetManager::GetAssetManagerInstance()->GetParticleFromName(TEXT("Explosion"));
-		if (HitEmitter)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location);
-		}
+		if (HitEmitter) { UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location); }
 
-		ServerStopAttack();
+		StopAttack();
 	}
 }
 
-void UFootballAttackComponent::StartCommonAttack() { StartAttack(true); }
-void UFootballAttackComponent::StartSpecialAttack() { StartAttack(false); }
+void UFootballAttackComponent::StartCommonAttack() { ToggleAttack(true); }
+void UFootballAttackComponent::StartSpecialAttack() { ToggleAttack(false); }
 
 
 void UFootballAttackComponent::StartAttack(bool bInIsCommonAttack)
@@ -84,12 +82,11 @@ void UFootballAttackComponent::StartAttack(bool bInIsCommonAttack)
 
 	if (AttackTarget != nullptr)
 	{
-		ServerStartAttack(bInIsCommonAttack, AttackTarget);
+		MulticastStartAttack(bInIsCommonAttack, AttackTarget);
 	}
 }
 
-bool UFootballAttackComponent::ServerStartAttack_Validate(bool bInIsCommonAttack, AActor* AttackTarget) { return AttackTarget != nullptr; }
-void UFootballAttackComponent::ServerStartAttack_Implementation(bool bInIsCommonAttack, AActor* AttackTarget)
+void UFootballAttackComponent::MulticastStartAttack_Implementation(bool bInIsCommonAttack, AActor* AttackTarget)
 {
 	bIsAutoAim = true;
 	bIsAttacking = true;
@@ -101,12 +98,15 @@ void UFootballAttackComponent::ServerStartAttack_Implementation(bool bInIsCommon
 	PrimaryComponentTick.SetTickFunctionEnable(true);
 }
 
-bool UFootballAttackComponent::ServerStopAttack_Validate() { return true; }
-void UFootballAttackComponent::ServerStopAttack_Implementation()
+void UFootballAttackComponent::StopAttack()
+{
+	MulticastStopAttack();
+}
+void UFootballAttackComponent::MulticastStopAttack_Implementation()
 {
 	bIsAttacking = false;
 	bWantedToAcceptHitFunction = false;
-	
+
 	CurrentAttackTarget = nullptr;
 
 	PrimaryComponentTick.SetTickFunctionEnable(false);
@@ -139,14 +139,14 @@ void UFootballAttackComponent::ExcuteAttack(float DeltaTime)
 			if (RemainingTime < 0.f)
 			{
 				DeltaTime += RemainingTime;
-				ServerStopAttack();
+				StopAttack();
 			}
 		}
 		OwnerPawnRMC->MoveToLocation(AttackActorLocation, 5 * 100.f * DeltaTime);
 	}
 	else
 	{
-		ServerStopAttack();
+		StopAttack();
 	}
 }
 
@@ -155,11 +155,11 @@ void UFootballAttackComponent::ToggleAttack(bool bInIsCommonAttack)
 {
 	if (bIsAttacking)
 	{
-		StartAttack(bInIsCommonAttack);
+		if (bInIsCommonAttack == bIsCommonAttack) { StopAttack(); }		
 	}
 	else
 	{
-		ServerStopAttack();
+		StartAttack(bInIsCommonAttack);
 	}
 }
 

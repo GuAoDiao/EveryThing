@@ -17,5 +17,4 @@ class EVERYTHING_API UEveryThingGameEngine : public UGameEngine
 public:
 	UEveryThingGameEngine();
 	
-	
 };

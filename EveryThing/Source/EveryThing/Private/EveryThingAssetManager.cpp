@@ -53,13 +53,11 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 			AllParticleAsset.Add(FName(*ParticleSystemData->Name), ParticleSystemData->ParticleSystemClass);
 		}
 	}
-
-
-	UE_LOG(LogTemp, Log, TEXT("-_- init EveryThing Asset Manager"));
 }
 UEveryThingAssetManager::~UEveryThingAssetManager()
 {
 	AssetManager = nullptr;
+	UE_LOG(LogTemp, Log, TEXT("-_- this is destroy asset manager"));
 }
 
 UEveryThingAssetManager* UEveryThingAssetManager::GetAssetManagerInstance()
@@ -67,6 +65,7 @@ UEveryThingAssetManager* UEveryThingAssetManager::GetAssetManagerInstance()
 	if (!AssetManager)
 	{
 		AssetManager = NewObject<UEveryThingAssetManager>((UObject*)GetTransientPackage(), TEXT("Blueprint'/Game/EveryThing/Blueprints/BP_AssetManager.BP_AssetManager'"));
+		UE_LOG(LogTemp, Log, TEXT("-_- init EveryThing Asset Manager"));
 	}
 
 	check(AssetManager);

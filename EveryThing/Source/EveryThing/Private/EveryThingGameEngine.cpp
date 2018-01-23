@@ -2,10 +2,11 @@
 
 #include "EveryThingGameEngine.h"
 
-
 #include "EveryThingGameUserSettings.h"
 
 UEveryThingGameEngine::UEveryThingGameEngine()
 {
 	GameUserSettingsClass = UEveryThingGameUserSettings::StaticClass();
 }
+
+

@@ -5,22 +5,8 @@
 #include "FootballAttackComponent.h"
 #include "FootballSkillComponent.h"
 
-#include "Characters/GamePawn.h"
-
-
-void FFootballForm::LoadGamePawnForm()
+FFootballForm::FFootballForm(AGamePawn* InGamePawn) : FGamePawnForm(InGamePawn)
 {
-	if (OwnerGamePawn)
-	{
-		if (!OwnerGamePawn->IsActorInitialized())
-		{
-			OwnerAttackComp = OwnerGamePawn->CreateDefaultSubobject<UFootballAttackComponent>(TEXT("AttackComp"));
-			OwnerSkillComp = OwnerGamePawn->CreateDefaultSubobject<UFootballSkillComponent>(TEXT("SkillComp"));
-		}
-		else
-		{
-			OwnerAttackComp = NewObject<UFootballAttackComponent>();
-			OwnerSkillComp = NewObject<UFootballSkillComponent>();
-		}
-	}
+	AttackCompClass = UFootballAttackComponent::StaticClass();
+	SkillCompClass = UFootballSkillComponent::StaticClass();
 }

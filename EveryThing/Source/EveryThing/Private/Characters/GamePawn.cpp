@@ -33,13 +33,20 @@ AGamePawn::AGamePawn()
 	SetRootComponent(StaticMeshComp);
 
 	MovementComp = nullptr;
-	
+
+	OwnerAttackComp = nullptr;
+	OwnerSkillComp = nullptr;
+
 	Durability = 1000.f;
 	MaxHyperopiaDistance = 10000.f;
 
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void AGamePawn::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
 
 void AGamePawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
@@ -47,7 +54,12 @@ void AGamePawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		delete Form;
 	}
+	for (FGamePawnSkin* Skin : OwnerGamePawnSkins)
+	{
+		delete Skin;
+	}
 	OwnerGamePawnForms.Empty();
+	OwnerGamePawnSkins.Empty();
 
 	Super::EndPlay(EndPlayReason);
 }
@@ -105,10 +117,7 @@ void AGamePawn::ResetQualityAndDamping()
 }
 
 
-bool AGamePawn::AddDurability_Validate(float InOffset, EElementType InType)
-{
-	return true;
-}
+bool AGamePawn::AddDurability_Validate(float InOffset, EElementType InType) { return true; }
 void AGamePawn::AddDurability_Implementation(float InOffset, EElementType InType)
 {
 	UWorld* World = GetWorld();
@@ -121,18 +130,16 @@ void AGamePawn::AddDurability_Implementation(float InOffset, EElementType InType
 
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn Form
-void AGamePawn::AddGamePawnForm(FGamePawnForm* InGamePawnForm)
+void AGamePawn::AddGamePawnForm(FGamePawnForm* InGamePawnForm) { if (InGamePawnForm) { OwnerGamePawnForms.Add(InGamePawnForm); } }
+
+void AGamePawn::ToggleToNewPawnForm(int32 Index)
 {
-	if (InGamePawnForm) { OwnerGamePawnForms.Add(InGamePawnForm); }
+	ServerToggleToNewPawnForm(Index);
 }
 
-void AGamePawn::ToggleToNewPawnForm(int32 Index, bool bIsCauser)
+bool AGamePawn::ServerToggleToNewPawnForm_Validate(int32 Index) { return true; }
+void AGamePawn::ServerToggleToNewPawnForm_Implementation(int32 Index)
 {
-	if (bIsCauser && !HasAuthority())
-	{
-		ServerToggleToNewPawnForm(Index);
-	}
-
 	FGamePawnForm* TargetPawnForm = GetGamePawnForm(Index);
 	if (TargetPawnForm && TargetPawnForm != CurrentGamePawnForm)
 	{
@@ -141,10 +148,15 @@ void AGamePawn::ToggleToNewPawnForm(int32 Index, bool bIsCauser)
 		UE_LOG(LogTemp, Log, TEXT("-_- Toggle To %d Pawn Form"), Index)
 	}
 }
-
-bool AGamePawn::ServerToggleToNewPawnForm_Validate(int32 Index) { return true; }
-void AGamePawn::ServerToggleToNewPawnForm_Implementation(int32 Index) { ToggleToNewPawnForm(Index); }
-void AGamePawn::OnRep_CurrentGamePawnFormIndex() { ToggleToNewPawnForm(CurrentGamePawnFormIndex, false); }
+void AGamePawn::OnRep_CurrentGamePawnFormIndex()
+{
+	FGamePawnForm* TargetPawnForm = GetGamePawnForm(CurrentGamePawnFormIndex);
+	if (TargetPawnForm && TargetPawnForm != CurrentGamePawnForm)
+	{
+		ToggleToTargetPawnForm(TargetPawnForm);
+		UE_LOG(LogTemp, Log, TEXT("-_- Toggle To %d Pawn Form"), CurrentGamePawnFormIndex)
+	}
+}
 
 void AGamePawn::ToggleToTargetPawnForm(FGamePawnForm* TargetGamePawnForm)
 {
@@ -152,13 +164,7 @@ void AGamePawn::ToggleToTargetPawnForm(FGamePawnForm* TargetGamePawnForm)
 
 	CurrentGamePawnForm = TargetGamePawnForm;
 
-	if (CurrentGamePawnForm)
-	{
-		CurrentGamePawnForm->LoadGamePawnForm();
-
-		ToggleToNewAttackComponent(CurrentGamePawnForm->GetAttackComponent());
-		ToggleToNewSkillComponent(CurrentGamePawnForm->GetSkillComponent());
-	}
+	if (CurrentGamePawnForm) { CurrentGamePawnForm->LoadGamePawnForm(); }
 }
 
 FGamePawnForm* AGamePawn::GetGamePawnForm(int32 Index)
@@ -169,10 +175,8 @@ FGamePawnForm* AGamePawn::GetGamePawnForm(int32 Index)
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn Skin
 
-void AGamePawn::AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin)
-{
-	if (InGamePawnSkin) { OwnerGamePawnSkins.Add(InGamePawnSkin); }
-}
+void AGamePawn::AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin) { if (InGamePawnSkin) { OwnerGamePawnSkins.Add(InGamePawnSkin); } }
+
 void AGamePawn::ToggleToNewPawnSkin(int32 Index, bool bIsCauser)
 {
 	if (bIsCauser && !HasAuthority())
@@ -201,36 +205,30 @@ void AGamePawn::ToggleToTargetPawnSkin(FGamePawnSkin* TargetGamePawnSkin)
 	if (CurrentGamePawnSkin) { CurrentGamePawnSkin->LoadGamePawnSkin(); }
 }
 
-FGamePawnSkin* AGamePawn::GetGamePawnSkin(int32 Index)
-{
-	return OwnerGamePawnSkins.IsValidIndex(Index) ? OwnerGamePawnSkins[Index] : nullptr;
-}
+FGamePawnSkin* AGamePawn::GetGamePawnSkin(int32 Index) { return OwnerGamePawnSkins.IsValidIndex(Index) ? OwnerGamePawnSkins[Index] : nullptr; }
 
 //////////////////////////////////////////////////////////////////////////
 /// Attack and Skill
 void AGamePawn::ToggleToNewAttackComponent(UAttackComponent* InAttackComponent)
 {
+
 	OwnerAttackComp = InAttackComponent;
 
 	APlayerPawnController* OwnerPlayerPC = Cast<APlayerPawnController>(GetController());
-	if (OwnerPlayerPC)
-	{
-		OwnerPlayerPC->ToggleToNewAttackComponent(OwnerAttackComp);
-	}
+	if (OwnerPlayerPC) { OwnerPlayerPC->ToggleToNewAttackComponent(OwnerAttackComp); }
 }
 
 void AGamePawn::ToggleToNewSkillComponent(USkillComponent* InSkillComponent)
 {
+	
 	OwnerSkillComp = InSkillComponent;
 
 	APlayerPawnController* OwnerPlayerPC = Cast<APlayerPawnController>(GetController());
-	if (OwnerPlayerPC)
-	{
-		OwnerPlayerPC->ToggleToNewSkillComponent(OwnerSkillComp);
-	}
+	if (OwnerPlayerPC) { OwnerPlayerPC->ToggleToNewSkillComponent(OwnerSkillComp); }
 }
 
-
+void AGamePawn::OnRep_OwnerAttackComp() { ToggleToNewAttackComponent(OwnerAttackComp); }
+void AGamePawn::OnRep_OwnerSkillComp() { ToggleToNewSkillComponent(OwnerSkillComp); }
 
 
 AActor* AGamePawn::TryToGetAttackTarget(float InMaxAttackDistance)
@@ -283,6 +281,9 @@ void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 	DOREPLIFETIME(AGamePawn, CurrentGamePawnSkinIndex);
 	DOREPLIFETIME(AGamePawn, CurrentGamePawnFormIndex);
+
+	DOREPLIFETIME(AGamePawn, OwnerAttackComp);
+	DOREPLIFETIME(AGamePawn, OwnerSkillComp);
 
 	DOREPLIFETIME(AGamePawn, Durability);
 	DOREPLIFETIME(AGamePawn, PhysicalPower);

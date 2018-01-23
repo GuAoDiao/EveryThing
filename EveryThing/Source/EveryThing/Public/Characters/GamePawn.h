@@ -24,6 +24,9 @@ public:
 	AGamePawn();
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
+	virtual void Tick(float DeltaTime) override;
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Component
 protected:
@@ -49,7 +52,7 @@ protected:
 	/// Game Pawn Form
 public:
 	void AddGamePawnForm(FGamePawnForm* InGamePawnForm);
-	void ToggleToNewPawnForm(int32 Index, bool bIsCauser = true);
+	void ToggleToNewPawnForm(int32 Index);
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerToggleToNewPawnForm(int32 Index);
 private:
@@ -103,9 +106,13 @@ public:
 	void ToggleToNewAttackComponent(UAttackComponent* InAttackComponent);
 	void ToggleToNewSkillComponent(USkillComponent* InSkillComponent);
 protected:
-	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
+	UFUNCTION()
+	void OnRep_OwnerAttackComp();
+	UFUNCTION()
+	void OnRep_OwnerSkillComp();
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Replicated, ReplicatedUsing = OnRep_OwnerAttackComp)
 	UAttackComponent* OwnerAttackComp;
-	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Replicated, ReplicatedUsing = OnRep_OwnerSkillComp)
 	USkillComponent* OwnerSkillComp;
 
 	//////////////////////////////////////////////////////////////////////////

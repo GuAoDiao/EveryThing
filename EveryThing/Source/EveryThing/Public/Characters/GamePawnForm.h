@@ -13,14 +13,10 @@ class EVERYTHING_API FGamePawnForm
 public:
 	FGamePawnForm(AGamePawn* InGamePawn);
 
-	inline UAttackComponent* GetAttackComponent() const { return OwnerAttackComp; }
-	inline USkillComponent* GetSkillComponent() const { return OwnerSkillComp; }
-
-	virtual void LoadGamePawnForm() {};
+	virtual void LoadGamePawnForm();
 	void UnloadGamePawnForm();
 protected:
 	AGamePawn* OwnerGamePawn;
-
-	UAttackComponent* OwnerAttackComp;
-	USkillComponent* OwnerSkillComp;
+	UClass* AttackCompClass;
+	UClass* SkillCompClass;
 };

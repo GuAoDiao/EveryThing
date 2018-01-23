@@ -2,24 +2,8 @@
 
 #include "FootballSkin.h"
 
-#include "Components/StaticMeshComponent.h"
-#include "Materials/MaterialInstanceConstant.h"
-
-#include "EveryThingAssetManager.h"
-
-void FFootballSkin::LoadGamePawnSkin()
+FFootballSkin::FFootballSkin(UStaticMeshComponent* StaticMeshComp) : FGamePawnSkin(StaticMeshComp)
 {
-	if (OwnerStaticMeshComp)
-	{
-		UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
-
-		UMaterialInstanceConstant* FootballMaterialBlack = AssetManager->GetMaterialFromName(TEXT("FootballBlack"));
-		UMaterialInstanceConstant* FootballMaterialWhite = AssetManager->GetMaterialFromName(TEXT("FootballWhite"));
-
-		if (FootballMaterialBlack && FootballMaterialWhite)
-		{
-			OwnerStaticMeshComp->SetMaterial(0, FootballMaterialBlack);
-			OwnerStaticMeshComp->SetMaterial(1, FootballMaterialWhite);
-		}
-	}
+	MaterialNames.Add(TEXT("FootballBlack"));
+	MaterialNames.Add(TEXT("FootballWhite"));
 }

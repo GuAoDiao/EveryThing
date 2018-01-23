@@ -16,6 +16,10 @@ class EVERYTHING_API UMovesComponent : public UActorComponent
 	GENERATED_BODY()
 
 protected:
+	UMovesComponent();
+
+	bool HasAuthority();
+
 	virtual void RebindAll() {};
 public:
 	bool bWantedToAcceptHitFunction;
