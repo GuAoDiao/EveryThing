@@ -75,13 +75,6 @@ protected:
 	TSharedPtr<FEveryThingOnlineSessionSettings> HostSettings;
 	TSharedPtr<FEveryThingOnlineSearchSettings> SearchSettings;
 
-	virtual void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
-	void OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful);
-	void OnFindSessionsComplete(bool bWasSuccessful);
-	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
-	virtual void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
-
-
 	// rest the variables the are keeping track of session join attempts
 	void ResetBestSessionVars();
 	// choose the best session from a list of search results based on game criteria
@@ -108,6 +101,16 @@ public:
 	void FindSessions(const FUniqueNetId& UserId, FName SessionName, bool bIsLAN, bool bIsPresence);
 	bool JoinSession(const FUniqueNetId& UserId, FName SessionName, int32 SessionIndexInSearResults);
 	bool JoinSession(const FUniqueNetId& UserId, FName SessionName, const FOnlineSessionSearchResult& SearchResult);
+
+protected:
+	virtual void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
+	void OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful);
+	void OnFindSessionsComplete(bool bWasSuccessful);
+	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+	virtual void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
+
+
+public:
 	// return true if any Online _async work is in progress, false otherwise
 	bool IsBusy() const;
 

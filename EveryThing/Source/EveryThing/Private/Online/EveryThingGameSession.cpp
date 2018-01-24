@@ -52,6 +52,134 @@ AEveryThingGameSession::AEveryThingGameSession()
 	}
 }
 
+
+bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSessionName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
+{
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	if (Subsystem)
+	{
+		CurrentSessionParams.SessionName = InSessionName;
+		CurrentSessionParams.bIsLAN = bIsLAN;
+		CurrentSessionParams.bIsPresence = bIsPresence;
+		CurrentSessionParams.UserId = &UserId;
+
+		MaxPlayers = MaxPlayersNum;
+
+		IOnlineSessionPtr Sessions = Subsystem->GetSessionInterface();
+		if (Sessions.IsValid() && CurrentSessionParams.UserId)
+		{
+			HostSettings = MakeShareable(new FEveryThingOnlineSessionSettings(bIsLAN, bIsPresence, MaxPlayers));
+			if (HostSettings.IsValid())
+			{
+
+				HostSettings->Set(SETTING_GAMEMODE, GameType, EOnlineDataAdvertisementType::ViaOnlineService);
+				HostSettings->Set(SETTING_GAMEMODE, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
+				HostSettings->Set(SETTING_MATCHING_HOPPER, FString("TeamDeathmatch"), EOnlineDataAdvertisementType::DontAdvertise);
+				HostSettings->Set(SETTING_MATCHING_TIMEOUT, 120.f, EOnlineDataAdvertisementType::ViaOnlineService);
+				HostSettings->Set(SETTING_SESSION_TEMPLATE_NAME, FString("GameSession"), EOnlineDataAdvertisementType::DontAdvertise);
+
+#if !PLATFORM_SWITCH
+				// on switch, we don't have room for this in the session data(and it's not used anyway when searching), so there's no need to add it
+				HostSettings->Set(SEARCH_KEYWORDS, CustomMatchKeyboard, EOnlineDataAdvertisementType::ViaOnlineService);
+#endif
+				OnCreateSessionCompleteDelegateHandle = Sessions->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
+				return Sessions->CreateSession(*CurrentSessionParams.UserId, CurrentSessionParams.SessionName, *HostSettings);
+			}
+		}
+	}
+#if !UE_BUILD_SHIPPING
+	else
+	{
+		// hack work flow in development
+		OnCreatePresenceSessionComplete().Broadcast(NAME_GameSession, true);
+	}
+#endif
+
+	return false;
+}
+
+void AEveryThingGameSession::FindSessions(const FUniqueNetId& UserId, FName InSessionName, bool bIsLAN, bool bIsPresence)
+{
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	if (!Subsystem)
+	{
+		OnFindSessionsComplete(false);
+		return;
+	}
+
+	CurrentSessionParams.SessionName = InSessionName;
+	CurrentSessionParams.bIsLAN = bIsLAN;
+	CurrentSessionParams.bIsPresence = bIsPresence;
+	CurrentSessionParams.UserId = &UserId;
+
+	IOnlineSessionPtr Sessions = Subsystem->GetSessionInterface();
+	if (Sessions.IsValid() && CurrentSessionParams.UserId)
+	{
+		SearchSettings = MakeShareable(new FEveryThingOnlineSearchSettings(bIsLAN, bIsPresence));
+		if (SearchSettings.IsValid())
+		{
+			SearchSettings->QuerySettings.Set(SEARCH_KEYWORDS, CustomMatchKeyboard, EOnlineComparisonOp::Equals);
+
+			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SearchSettings.ToSharedRef();
+
+			OnFindSessionsCompleteDelegateHandle = Sessions->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
+
+			Sessions->FindSessions(*CurrentSessionParams.UserId, SearchSettingsRef);
+		}
+	}
+}
+
+bool AEveryThingGameSession::JoinSession(const FUniqueNetId& UserId, FName InSessionName, int32 SessionIndexInSearResults)
+{
+	bool bResult = false;
+
+	if (SearchSettings.IsValid())
+	{
+		if (SessionIndexInSearResults >= 0 && SessionIndexInSearResults < SearchSettings->SearchResults.Num())
+		{
+			bResult = JoinSession(UserId, InSessionName, SearchSettings->SearchResults[SessionIndexInSearResults]);
+		}
+	}
+
+	return bResult;
+}
+
+bool AEveryThingGameSession::JoinSession(const FUniqueNetId& UserId, FName InSessionName, const FOnlineSessionSearchResult& SearchResult)
+{
+	bool bResult = false;
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
+	{
+		OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
+		bResult = Sessions->JoinSession(UserId, InSessionName, SearchResult);
+	}
+
+	return bResult;
+}
+
+
+
+void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool bWasSuccessful)
+{
+	UE_LOG(LogOnlineGame, Verbose, TEXT("-_- OnCreateSessionComplete %s bSuccess : %d"), *InSessionName.ToString(), bWasSuccessful);
+
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
+	{
+		Sessions->ClearOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegateHandle);
+
+		if (bWasSuccessful)
+		{
+			OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
+			
+			Sessions->StartSession(InSessionName);
+		}
+	}
+	OnCreatePresenceSessionComplete().Broadcast(InSessionName, bWasSuccessful);
+}
+
 void AEveryThingGameSession::OnStartOnlineGameComplete(FName InSessionName, bool bWasSuccessful)
 {
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
@@ -74,6 +202,86 @@ void AEveryThingGameSession::OnStartOnlineGameComplete(FName InSessionName, bool
 			}
 		}
 	}
+}
+
+void AEveryThingGameSession::OnFindSessionsComplete(bool bWasSuccessful)
+{
+	UE_LOG(LogOnlineGame, Verbose, TEXT("-_- OnFindSessionsCOmplete bSuccess: %d"), bWasSuccessful);
+
+
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
+	{
+		Sessions->ClearOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegateHandle);
+
+		if (SearchSettings.IsValid())
+		{
+			UE_LOG(LogOnlineGame, Verbose, TEXT("-_- Num Search Results: %d"), SearchSettings->SearchResults.Num());
+
+			for (int32 SearchIndex = 0; SearchIndex < SearchSettings->SearchResults.Num(); ++SearchIndex)
+			{
+				const FOnlineSessionSearchResult& SearchResult = SearchSettings->SearchResults[SearchIndex];
+				DumpSession(&SearchResult.Session);
+			}
+		}
+
+		OnFindSessionsComplete().Broadcast(bWasSuccessful);
+	}
+}
+
+void AEveryThingGameSession::OnJoinSessionComplete(FName InSessionName, EOnJoinSessionCompleteResult::Type Result)
+{
+	bool bWillTravel = false;
+
+	UE_LOG(LogOnlineGame, Verbose, TEXT("-_- OnjoinSessionComplete %s bSuccess: $d"), *InSessionName.ToString(), static_cast<int32>(Result));
+
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
+	{
+		Sessions->ClearOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegateHandle);
+	}
+
+	OnJoinSessionComplete().Broadcast(Result);
+}
+
+void AEveryThingGameSession::OnDestroySessionComplete(FName InSessionName, bool bWasSuccessful)
+{
+	UE_LOG(LogOnlineGame, Verbose, TEXT("-_- OnDestroySessionComplete %s bSuccess: %d"), *InSessionName.ToString(), bWasSuccessful);
+
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
+	{
+		Sessions->ClearOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegateHandle);
+		HostSettings = nullptr;
+	}
+}
+
+
+EOnlineAsyncTaskState::Type AEveryThingGameSession::GetSearchResultStatus(int32& SearchResultIndex, int32& NumSearchResults)
+{
+	SearchResultIndex = -1;
+	NumSearchResults = -1;
+	if (SearchSettings.IsValid())
+	{
+		if (SearchSettings.IsValid())
+		{
+			SearchResultIndex = CurrentSessionParams.BestSessionIndex;
+			NumSearchResults = SearchSettings->SearchResults.Num();
+		}
+		return SearchSettings->SearchState;
+	}
+
+	return EOnlineAsyncTaskState::NotStarted;
+}
+
+const TArray<FOnlineSessionSearchResult>& AEveryThingGameSession::GetSearchResults() const
+{
+	check(SearchSettings.IsValid())
+	
+	return SearchSettings->SearchResults;
 }
 
 void AEveryThingGameSession::HandleMatchHasStarted()
@@ -140,129 +348,6 @@ bool AEveryThingGameSession::IsBusy() const
 	return false;
 }
 
-EOnlineAsyncTaskState::Type AEveryThingGameSession::GetSearchResultStatus(int32& SearchResultIndex, int32& NumSearchResults)
-{
-	SearchResultIndex = -1;
-	NumSearchResults = -1;
-	if (SearchSettings.IsValid())
-	{
-		if (SearchSettings.IsValid())
-		{
-			SearchResultIndex = CurrentSessionParams.BestSessionIndex;
-			NumSearchResults = SearchSettings->SearchResults.Num();
-		}
-		return SearchSettings->SearchState;
-	}
-
-	return EOnlineAsyncTaskState::NotStarted;
-}
-
-const TArray<FOnlineSessionSearchResult>& AEveryThingGameSession::GetSearchResults() const
-{
-	check(SearchSettings.IsValid())
-	
-	return SearchSettings->SearchResults;
-}
-
-void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool bWasSuccessful)
-{
-	UE_LOG(LogOnlineGame, Verbose, TEXT("-_- OnCreateSessionComplete %s bSuccess : %d"), *InSessionName.ToString(), bWasSuccessful);
-
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-	if (Sessions.IsValid())
-	{
-		Sessions->ClearOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegateHandle);
-	}
-
-	OnCreatePresenceSessionComplete().Broadcast(InSessionName, bWasSuccessful);
-}
-
-
-void AEveryThingGameSession::OnDestroySessionComplete(FName InSessionName, bool bWasSuccessful)
-{
-	UE_LOG(LogOnlineGame, Verbose, TEXT("-_- OnDestroySessionComplete %s bSuccess: %d"), *InSessionName.ToString(), bWasSuccessful);
-
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-	if (Sessions.IsValid())
-	{
-		Sessions->ClearOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegateHandle);
-		HostSettings = nullptr;
-	}
-}
-
-bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSessionName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
-{
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	if (Subsystem)
-	{
-		CurrentSessionParams.SessionName = InSessionName;
-		CurrentSessionParams.bIsLAN = bIsLAN;
-		CurrentSessionParams.bIsPresence = bIsPresence;
-		CurrentSessionParams.UserId = &UserId;
-		
-		MaxPlayers = MaxPlayersNum;
-
-		IOnlineSessionPtr Sessions =Subsystem->GetSessionInterface();
-		if (Sessions.IsValid() && CurrentSessionParams.UserId)
-		{
-			HostSettings = MakeShareable(new FEveryThingOnlineSessionSettings(bIsLAN, bIsPresence, MaxPlayers));
-			if (HostSettings.IsValid())
-			{
-
-				// HostSettings->Set(SETTING_GAMEMODE, GameType, EOnlineDataAdvertisementType::ViaOnlineService);
-				// HostSettings->Set(SETTING_GAMEMODE, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
-				HostSettings->Set(SETTING_MATCHING_HOPPER, FString("TeamDeathmatch"), EOnlineDataAdvertisementType::DontAdvertise);
-				HostSettings->Set(SETTING_MATCHING_TIMEOUT, 120.f, EOnlineDataAdvertisementType::ViaOnlineService);
-				HostSettings->Set(SETTING_SESSION_TEMPLATE_NAME, FString("GameSession"), EOnlineDataAdvertisementType::DontAdvertise);
-
-#if !PLATFORM_SWITCH
-				// on switch, we don't have room for this in the session data(and it's not used anyway when searching), so there's no need to add it
-				HostSettings->Set(SEARCH_KEYWORDS, CustomMatchKeyboard, EOnlineDataAdvertisementType::ViaOnlineService);
-#endif
-				OnCreateSessionCompleteDelegateHandle = Sessions->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
-				return Sessions->CreateSession(*CurrentSessionParams.UserId, CurrentSessionParams.SessionName, *HostSettings);
-			}
-		}
-	}
-#if !UE_BUILD_SHIPPING
-	else
-	{
-		// hack work flow in development
-		OnCreatePresenceSessionComplete().Broadcast(NAME_GameSession, true);
-	}
-#endif
-
-	return false;
-}
-
-void AEveryThingGameSession::OnFindSessionsComplete(bool bWasSuccessful)
-{
-	UE_LOG(LogOnlineGame, Verbose, TEXT("-_- OnFindSessionsCOmplete bSuccess: %d"), bWasSuccessful);
-
-
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-	if (Sessions.IsValid())
-	{
-		Sessions->ClearOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegateHandle);
-
-		if (SearchSettings.IsValid())
-		{
-			UE_LOG(LogOnlineGame, Verbose, TEXT("-_- Num Search Results: %d"), SearchSettings->SearchResults.Num());
-
-			for (int32 SearchIndex = 0; SearchIndex < SearchSettings->SearchResults.Num(); ++SearchIndex)
-			{
-				const FOnlineSessionSearchResult& SearchResult = SearchSettings->SearchResults[SearchIndex];
-				DumpSession(&SearchResult.Session);
-			}
-		}
-
-		OnFindSessionsComplete().Broadcast(bWasSuccessful);
-	}
-}
-
 void AEveryThingGameSession::ResetBestSessionVars()
 {
 	CurrentSessionParams.BestSessionIndex = -1;
@@ -312,84 +397,6 @@ void AEveryThingGameSession::OnNoMatchesAvaiable()
 {
 	UE_LOG(LogOnlineGame, Verbose, TEXT("Matchmaking complete, no sessions avaiable."));
 	SearchSettings = nullptr;
-}
-
-void AEveryThingGameSession::FindSessions(const FUniqueNetId& UserId, FName InSessionName, bool bIsLAN, bool bIsPresence)
-{
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	if (Subsystem)
-	{
-		CurrentSessionParams.SessionName = InSessionName;
-		CurrentSessionParams.bIsLAN = bIsLAN;
-		CurrentSessionParams.bIsPresence = bIsPresence;
-		CurrentSessionParams.UserId = &UserId;
-
-		IOnlineSessionPtr Sessions = Subsystem->GetSessionInterface();
-		if (Sessions.IsValid() && CurrentSessionParams.UserId)
-		{
-			SearchSettings = MakeShareable(new FEveryThingOnlineSearchSettings(bIsLAN, bIsPresence));
-			if (SearchSettings.IsValid())
-			{
-				SearchSettings->QuerySettings.Set(SEARCH_KEYWORDS, CustomMatchKeyboard, EOnlineComparisonOp::Equals);
-
-				TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SearchSettings.ToSharedRef();
-
-				OnFindSessionsCompleteDelegateHandle = Sessions->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
-				
-				Sessions->FindSessions(*CurrentSessionParams.UserId, SearchSettingsRef);
-			}
-		}
-	}
-	else
-	{
-		OnFindSessionsComplete(false);
-	}
-}
-
-
-bool AEveryThingGameSession::JoinSession(const FUniqueNetId& UserId, FName InSessionName, int32 SessionIndexInSearResults)
-{
-	bool bResult = false;
-
-	if (SearchSettings.IsValid())
-	{
-		if (SessionIndexInSearResults >= 0 && SessionIndexInSearResults < SearchSettings->SearchResults.Num())
-		{
-			bResult = JoinSession(UserId, InSessionName, SearchSettings->SearchResults[SessionIndexInSearResults]);
-		}
-	}
-
-	return bResult;
-}
-
-bool AEveryThingGameSession::JoinSession(const FUniqueNetId& UserId, FName InSessionName, const FOnlineSessionSearchResult& SearchResult)
-{
-	bool bResult = false;
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-	if (Sessions.IsValid())
-	{
-		OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
-		bResult = Sessions->JoinSession(UserId, InSessionName, SearchResult);
-	}
-
-	return bResult;
-}
-
-void AEveryThingGameSession::OnJoinSessionComplete(FName InSessionName, EOnJoinSessionCompleteResult::Type Result)
-{
-	bool bWillTravel = false;
-
-	UE_LOG(LogOnlineGame, Verbose, TEXT("-_- OnjoinSessionComplete %s bSuccess: $d"), *InSessionName.ToString(), static_cast<int32>(Result));
-
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-	if (Sessions.IsValid())
-	{
-		Sessions->ClearOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegateHandle);
-	}
-
-	OnJoinSessionComplete().Broadcast(Result);
 }
 
 bool AEveryThingGameSession::TravelToSession(int32 ControllerId, FName InSessionName)

@@ -2,91 +2,25 @@
 
 #include "EveryThingGameInstance.h"
 
+#include "Engine/World.h"
+#include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
 
 
-#include "Online/EveryThingGameMode.h"
+#include "Online/EveryThingGameMode_Menu.h"
 #include "Online/EveryThingGameSession.h"
-
-#include "UI/ErrorDialog.h"
-#include "UI/MainMenu.h"
-#include "UI/HouseList.h"
-#include "UI/LoadingScreen.h"
-
 
 UEveryThingGameInstance::UEveryThingGameInstance()
 {
-	CurrentGameUIState = EGameUIState::StartUp;
+
 }
 
-bool UEveryThingGameInstance::IsToggleToNewGameUIState(EGameUIState InGameUIState)
-{
-	if (CurrentGameUIState == InGameUIState)
-	{
-		return false;
-	}
-	CurrentGameUIState = InGameUIState;
-	return true;
-}
-
-void UEveryThingGameInstance::ToggleToNewGameUIState(EGameUIState InGameUIState)
-{
-	switch (InGameUIState)
-	{
-		case EGameUIState::StartUp:
-			break;
-		case EGameUIState::MainMenu:
-			if (MainMenu) { MainMenu->RemoveFromParent(); }
-			break;
-		case EGameUIState::HouseList:
-			if (HouseList) { HouseList->RemoveFromParent(); }
-			break;
-		case EGameUIState::LoadingScreen:
-			if (LoadingScreen) { LoadingScreen->RemoveFromParent(); }
-			break;
-		case EGameUIState::ErrorDialog:
-			if (ErrorDialog) { ErrorDialog->RemoveFromParent(); }
-			break;
-		case EGameUIState::Playing:
-			break;
-		case EGameUIState::Unknown:
-			break;
-		default:
-			break;
-	}
-
-	CurrentGameUIState = InGameUIState;
-}
-
-void UEveryThingGameInstance::HostGame()
-{
-	ShowLoadingScreen();
-
-	ULocalPlayer* OwnerLocalPlayer = GetFirstGamePlayer();
-	if (OwnerLocalPlayer)
-	{
-		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
-		if(UserId.IsValid()){}
-
-		FName SessionName = FName(*FString(UserId->ToString() + TEXT("_Game")));
-
-		GetGameSession()->HostSession(*UserId, SessionName, TEXT(""), TEXT(""), true, true, 8);
-
-	}
-}
-
-
-AEveryThingGameSession* UEveryThingGameInstance::GetGameSession() const
-{
-	AEveryThingGameMode* OwnerETGM = GetWorld() ? GetWorld()->GetAuthGameMode<AEveryThingGameMode>() : nullptr;
-	return OwnerETGM ? Cast<AEveryThingGameSession>(OwnerETGM->GameSession) : nullptr;
-}
 
 //////////////////////////////////////////////////////////////////////////
 /// Level
-void UEveryThingGameInstance::OpenGameLevel()
+void UEveryThingGameInstance::OpenGameLevel(const FName& LevelName)
 {
-	UGameplayStatics::OpenLevel(this, GameLevelName, true, TEXT("listen"));
+	UGameplayStatics::OpenLevel(this, LevelName, true, TEXT("listen"));
 }
 
 void UEveryThingGameInstance::OpenMenuLevel()
@@ -94,96 +28,68 @@ void UEveryThingGameInstance::OpenMenuLevel()
 	UGameplayStatics::OpenLevel(this, MenuLevelName, true);
 }
 
-//////////////////////////////////////////////////////////////////////////
-/// UI
 
-void UEveryThingGameInstance::ShowMainMenu()
+AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()
 {
-	if (IsTargetGameUIState(EGameUIState::Playing)) { OpenMenuLevel(); }
+	AEveryThingGameMode_Menu* OwnerMenuETGM = GetWorld()->GetAuthGameMode<AEveryThingGameMode_Menu>();
+	return Cast<AEveryThingGameSession>(OwnerMenuETGM->GameSession);
+}
 
-	if (IsToggleToNewGameUIState(EGameUIState::HouseList))
+void UEveryThingGameInstance::HostGame(const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
+{
+	AEveryThingGameSession* OwnerETGS = GetGameSession();
+	ULocalPlayer* OwnerLocalPlayer = GetFirstGamePlayer();
+	if (OwnerETGS && OwnerLocalPlayer)
 	{
-		if (!MainMenu && MainMenuClass)
+		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
+		if (UserId.IsValid() && OwnerETGS)
 		{
-			MainMenu = CreateWidget<UMainMenu>(this, MainMenuClass);
-		}
-
-		if (MainMenu)
-		{
-			MainMenu->AddToViewport();
-			SetWidgetOwnerAndInputModeToFocusWidget(MainMenu);
-
-			APlayerController* OwnerPC = GetFirstLocalPlayerController();
-			if (OwnerPC) { OwnerPC->bShowMouseCursor = true; }
+			OwnerETGS->HostSession(*UserId, GameSessionName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum);
 		}
 	}
 }
 
-void UEveryThingGameInstance::ShowHouseList()
+void UEveryThingGameInstance::FindHoustList()
 {
-	if (IsToggleToNewGameUIState(EGameUIState::HouseList))
+	AEveryThingGameSession* OwnerETGS = GetGameSession();
+	ULocalPlayer* OwnerLocalPlayer = GetFirstGamePlayer();
+	if (OwnerETGS && OwnerLocalPlayer)
 	{
-		if (!HouseList && HouseListClass)
-		{
-			HouseList = CreateWidget<UHouseList>(this, HouseListClass);
-		}
+		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
+		OwnerETGS->FindSessions(*UserId, GameSessionName, true, true);
+	}
+}
 
-		if (HouseList)
+void UEveryThingGameInstance::JoinGame(FOnlineSessionSearchResult& SessionResult)
+{
+	AEveryThingGameSession* OwnerETGS = GetGameSession();
+	ULocalPlayer* OwnerLocalPlayer = GetFirstGamePlayer();
+	if (OwnerETGS && OwnerLocalPlayer)
+	{
+		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
+		if (UserId.IsValid() && SessionResult.Session.OwningUserId != UserId)
 		{
-			HouseList->AddToViewport();
-			SetWidgetOwnerAndInputModeToFocusWidget(HouseList);
+			OwnerETGS->JoinSession(*UserId, *SessionResult.Session.OwningUserName, SessionResult);
 		}
 	}
 }
 
-void UEveryThingGameInstance::ShowLoadingScreen()
+void UEveryThingGameInstance::JoinGame(FName SessionName, int32 SearchResultIndex)
 {
-	if (IsToggleToNewGameUIState(EGameUIState::LoadingScreen))
+	AEveryThingGameSession* OwnerETGS = GetGameSession();
+	ULocalPlayer* OwnerLocalPlayer = GetFirstGamePlayer();
+	if (OwnerETGS && OwnerLocalPlayer)
 	{
-		if (!LoadingScreen && LoadingScreenClass)
+		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
+		if (UserId.IsValid())
 		{
-			LoadingScreen = CreateWidget<ULoadingScreen>(this, LoadingScreenClass);
-		}
-
-		if (LoadingScreen)
-		{
-			LoadingScreen->AddToViewport();
-			SetWidgetOwnerAndInputModeToFocusWidget(LoadingScreen);
+			OwnerETGS->JoinSession(*UserId, SessionName, SearchResultIndex);
 		}
 	}
 }
 
-void UEveryThingGameInstance::ShowErrorDialog(const FString& ErrorMessage)
+void UEveryThingGameInstance::ExitGame()
 {
-	if (IsToggleToNewGameUIState(EGameUIState::ErrorDialog))
-	{
-
-		if (!ErrorDialog && ErrorDialogClass)
-		{
-			ErrorDialog = CreateWidget<UErrorDialog>(this, ErrorDialogClass);
-		}
-
-		if (ErrorDialog)
-		{
-			ErrorDialog->SetErrorMessage(FText::FromString(ErrorMessage));
-			ErrorDialog->AddToViewport();
-
-			SetWidgetOwnerAndInputModeToFocusWidget(ErrorDialog);
-		}
-	}
-}
-
-
-void UEveryThingGameInstance::SetWidgetOwnerAndInputModeToFocusWidget(UUserWidget* InWidget)
-{
-	APlayerController* PC = GetFirstLocalPlayerController();
-	if (PC && InWidget)
-	{
-		InWidget->SetOwningPlayer(PC);
-
-		FInputModeUIOnly InputMode;
-		InputMode.SetWidgetToFocus(InWidget->TakeWidget());
-		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-		PC->SetInputMode(InputMode);
-	}
+	APlayerController* OwnerPC = GetFirstLocalPlayerController();
+	if (OwnerPC) { OwnerPC->ConsoleCommand("quit"); }
 }

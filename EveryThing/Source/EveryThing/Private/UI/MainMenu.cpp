@@ -3,21 +3,36 @@
 #include "MainMenu.h"
 
 #include "EveryThingGameInstance.h"
+#include "UI/EveryThingMenuHUD.h"
 
-void UMainMenu::HostGame()
+void UMainMenu::OnCreateHouse()
 {
-	UWorld* World = GetWorld();
-	UEveryThingGameInstance* OwnerGameInstance =World ? World->GetGameInstance<UEveryThingGameInstance>() : nullptr;
-	if (OwnerGameInstance) { OwnerGameInstance->HostGame(); }
+	APlayerController* OwnerPC = GetOwningPlayer();
+	AEveryThingMenuHUD* OwnerMenuHUD = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
+	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::HouseCreate); }
 }
 
-void UMainMenu::FindGame()
+void UMainMenu::OnHouseList()
 {
 
+	APlayerController* OwnerPC = GetOwningPlayer();
+	AEveryThingMenuHUD* OwnerMenuHUD = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
+	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::HouseList); }
 }
 
-void UMainMenu::ExitGame()
+void UMainMenu::OnConfig()
 {
-
+	APlayerController* OwnerPC = GetOwningPlayer();
+	AEveryThingMenuHUD* OwnerMenuHUD = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
+	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::Config); }
 }
 
+void UMainMenu::OnExitGame()
+{
+	APlayerController* OwnerPC = GetOwningPlayer();
+	UEveryThingGameInstance* OwnerETGI = OwnerPC ? Cast<UEveryThingGameInstance>(OwnerPC->GetGameInstance()) : nullptr;
+	if (OwnerETGI)
+	{
+		OwnerETGI->ExitGame();
+	}
+}
