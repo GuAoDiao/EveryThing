@@ -18,7 +18,7 @@ UFootballAttackComponent::UFootballAttackComponent()
 	RebindAll();
 	
 	OwnerPawn = Cast<AFootballPawn>(GetOwner());
-		
+
 	bIsAttacking = false;
 	CurrentAttackTarget = nullptr;
 	
@@ -40,7 +40,7 @@ void UFootballAttackComponent::BeginPlay()
 void UFootballAttackComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
+
 	if (bIsAttacking)
 	{
 		ExcuteAttack(DeltaTime);

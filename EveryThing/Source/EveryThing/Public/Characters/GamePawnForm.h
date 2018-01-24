@@ -17,6 +17,7 @@ public:
 	void UnloadGamePawnForm();
 protected:
 	AGamePawn* OwnerGamePawn;
+
 	UClass* AttackCompClass;
 	UClass* SkillCompClass;
 };

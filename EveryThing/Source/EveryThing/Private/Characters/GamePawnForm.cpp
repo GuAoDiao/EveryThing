@@ -16,6 +16,7 @@ void FGamePawnForm::LoadGamePawnForm()
 
 	if (OwnerGamePawn && OwnerGamePawn->HasAuthority())
 	{
+
 		if (!OwnerGamePawn->IsActorInitialized())
 		{
 			UObject* CreateDefaultSubobject(FName SubobjectFName, UClass* ReturnType, UClass* ClassToCreateByDefault, bool bIsRequired, bool bAbstract, bool bIsTransient);
@@ -26,6 +27,7 @@ void FGamePawnForm::LoadGamePawnForm()
 		else
 		{
 			UAttackComponent* AttackComp = NewObject<UAttackComponent>(OwnerGamePawn, AttackCompClass);
+			
 			if (AttackComp) { AttackComp->RegisterComponent(); }
 
 			OwnerGamePawn->ToggleToNewAttackComponent(AttackComp);

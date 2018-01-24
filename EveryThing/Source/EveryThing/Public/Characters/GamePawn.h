@@ -53,19 +53,17 @@ protected:
 public:
 	void AddGamePawnForm(FGamePawnForm* InGamePawnForm);
 	void ToggleToNewPawnForm(int32 Index);
+private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerToggleToNewPawnForm(int32 Index);
-private:
 	// actual implementation
 	void ToggleToTargetPawnForm(FGamePawnForm* TargetGamePawnForm);
-
+	UFUNCTION()
+	void OnRep_CurrentGamePawnFormIndex();
 public:
 	FGamePawnForm* GetGamePawnForm(int32 Index);
 	const TArray<FGamePawnForm*>& GetGamePawnForms() { return OwnerGamePawnForms; }
-
 protected:
-	UFUNCTION()
-	void OnRep_CurrentGamePawnFormIndex();
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_CurrentGamePawnFormIndex)
 	int32 CurrentGamePawnFormIndex;
 	FGamePawnForm* CurrentGamePawnForm;
@@ -75,21 +73,22 @@ protected:
 	/// Game Pawn Skin
 public:
 	void AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin);
+
 	void ToggleToNewPawnSkin(int32 Index, bool bIsCauser = true);
+
+private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerToggleToNewPawnSkin(int32 Index);
-private:
 	// actual implementation
 	void ToggleToTargetPawnSkin(FGamePawnSkin* TargetGamePawnSkin);
 
+	UFUNCTION()
+	void OnRep_CurrentGamePawnSkinIndex();
 public:
 	FGamePawnSkin* GetGamePawnSkin(int32 Index);
 	const TArray<FGamePawnSkin*>& GetGamePawnSkins() { return OwnerGamePawnSkins; }
 
 protected:
-	UFUNCTION()
-	void OnRep_CurrentGamePawnSkinIndex();
-
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_CurrentGamePawnSkinIndex)
 	int32 CurrentGamePawnSkinIndex;
 	FGamePawnSkin* CurrentGamePawnSkin;

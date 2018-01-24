@@ -132,10 +132,7 @@ void AGamePawn::AddDurability_Implementation(float InOffset, EElementType InType
 /// Game Pawn Form
 void AGamePawn::AddGamePawnForm(FGamePawnForm* InGamePawnForm) { if (InGamePawnForm) { OwnerGamePawnForms.Add(InGamePawnForm); } }
 
-void AGamePawn::ToggleToNewPawnForm(int32 Index)
-{
-	ServerToggleToNewPawnForm(Index);
-}
+void AGamePawn::ToggleToNewPawnForm(int32 Index) { ServerToggleToNewPawnForm(Index); }
 
 bool AGamePawn::ServerToggleToNewPawnForm_Validate(int32 Index) { return true; }
 void AGamePawn::ServerToggleToNewPawnForm_Implementation(int32 Index)
@@ -211,7 +208,6 @@ FGamePawnSkin* AGamePawn::GetGamePawnSkin(int32 Index) { return OwnerGamePawnSki
 /// Attack and Skill
 void AGamePawn::ToggleToNewAttackComponent(UAttackComponent* InAttackComponent)
 {
-
 	OwnerAttackComp = InAttackComponent;
 
 	APlayerPawnController* OwnerPlayerPC = Cast<APlayerPawnController>(GetController());
@@ -220,7 +216,6 @@ void AGamePawn::ToggleToNewAttackComponent(UAttackComponent* InAttackComponent)
 
 void AGamePawn::ToggleToNewSkillComponent(USkillComponent* InSkillComponent)
 {
-	
 	OwnerSkillComp = InSkillComponent;
 
 	APlayerPawnController* OwnerPlayerPC = Cast<APlayerPawnController>(GetController());
