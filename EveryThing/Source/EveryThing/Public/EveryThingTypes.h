@@ -53,3 +53,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bInCmd;
 };
+
+
+
+USTRUCT(BlueprintType)
+struct FMapInfo : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString MapType;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString MapName;
+};

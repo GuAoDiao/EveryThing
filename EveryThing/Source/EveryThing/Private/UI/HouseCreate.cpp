@@ -2,13 +2,25 @@
 
 #include "HouseCreate.h"
 
-
+#include "EveryThingTypes.h"
+#include "EveryThingAssetManager.h"
 #include "EveryThingGameInstance.h"
 #include "UI/EveryThingMenuHUD.h"
 
 UHouseCreate::UHouseCreate(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	MapsInfoDataTable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName("MapsInfo");
+	if (MapsInfoDataTable)
+	{
+		TArray<FMapInfo*> MapsInfoInDataTable;
+		MapsInfoDataTable->GetAllRows<FMapInfo>(TEXT("look up all maps info"), MapsInfoInDataTable);
+		for (FMapInfo* MapInfo : MapsInfoInDataTable)
+		{
+			MapsType.AddUnique(MapInfo->MapType);
+		}
+	}
 
+	UE_LOG(LogTemp, Log, TEXT("a"));
 }
 
 void UHouseCreate::HostGame(const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
@@ -27,4 +39,23 @@ void UHouseCreate::Back()
 	{
 		OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::MainMenu);
 	}
+}
+
+TArray<FString> UHouseCreate::GetAllMaps(const FString& MapType) const
+{
+	TArray<FString> AllMaps;
+
+	if (MapsInfoDataTable)
+	{
+		TArray<FMapInfo*> MapsInfoInDataTable;
+		MapsInfoDataTable->GetAllRows<FMapInfo>(TEXT("look up all maps info"), MapsInfoInDataTable);
+		for (FMapInfo* MapInfo : MapsInfoInDataTable)
+		{
+			if (MapInfo->MapType == MapType)
+			{
+				AllMaps.AddUnique(MapInfo->MapName);
+			}
+		}
+	}
+	return AllMaps;
 }

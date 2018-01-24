@@ -22,9 +22,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Back();
+	
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FString> MapsType;
 
-	UPROPERTY(BlueprintReadOnly)
-	TArray<FString> MapsName;
-	UPROPERTY(BlueprintReadOnly)
-	TArray<FString> MapType;
+	UFUNCTION(BlueprintCallable)
+	TArray<FString> GetAllMaps(const FString& MapType) const;
+private:
+	class UDataTable* MapsInfoDataTable;
 };
