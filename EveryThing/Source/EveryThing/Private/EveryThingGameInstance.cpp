@@ -31,8 +31,9 @@ void UEveryThingGameInstance::OpenMenuLevel()
 
 AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()
 {
-	AEveryThingGameMode_Menu* OwnerMenuETGM = GetWorld()->GetAuthGameMode<AEveryThingGameMode_Menu>();
-	return Cast<AEveryThingGameSession>(OwnerMenuETGM->GameSession);
+	UWorld* World = GetWorld();
+	AEveryThingGameMode_Menu* OwnerMenuETGM = World ? World->GetAuthGameMode<AEveryThingGameMode_Menu>() : nullptr;
+	return OwnerMenuETGM ? Cast<AEveryThingGameSession>(OwnerMenuETGM->GameSession) : nullptr;
 }
 
 void UEveryThingGameInstance::HostGame(const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
