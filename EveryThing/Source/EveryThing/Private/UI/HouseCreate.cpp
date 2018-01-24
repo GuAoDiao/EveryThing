@@ -19,8 +19,6 @@ UHouseCreate::UHouseCreate(const FObjectInitializer& ObjectInitializer) : Super(
 			MapsType.AddUnique(MapInfo->MapType);
 		}
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("a"));
 }
 
 void UHouseCreate::HostGame(const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)

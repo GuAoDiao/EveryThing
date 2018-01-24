@@ -148,20 +148,6 @@ void APlayerPawnController::RemoveActionAndAxisBindings(const TArray<FName>& Bin
 
 
 //////////////////////////////////////////////////////////////////////////
-/// Game match
-void APlayerPawnController::ClientSetSpectatorCamera_Implementation(FVector CameraLocation, FRotator CameraRotation) {}
-void APlayerPawnController::ClientGameStarted_Implementation() {}
-void APlayerPawnController::ClientStartOnlineGame_Implementation()
-{
-	UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
-	if (OwnerETGI) { OwnerETGI->OpenGameLevel(TEXT("")); }
-}
-void APlayerPawnController::ClientEndOnlineGame_Implementation() {}
-
-void APlayerPawnController::ClientSendRoundEndEvent_Implementation(bool bIsWinner, int32 ExpendedTimeInSeconds) {}
-
-
-//////////////////////////////////////////////////////////////////////////
 /// For IGamePawnControllerInterface
 AActor* APlayerPawnController::GetAttackTarget() { return OwnerPlayerPawnComp ? OwnerPlayerPawnComp->GetAttackTarget() : nullptr; }
 

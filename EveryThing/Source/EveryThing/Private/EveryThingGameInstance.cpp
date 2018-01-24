@@ -21,19 +21,33 @@ UEveryThingGameInstance::UEveryThingGameInstance()
 void UEveryThingGameInstance::OpenGameLevel(const FName& LevelName)
 {
 	UGameplayStatics::OpenLevel(this, LevelName, true, TEXT("listen"));
+
+	APlayerController* OwnerPC = GetFirstLocalPlayerController();
+	if (OwnerPC)
+	{
+		FInputModeGameOnly InputMode;
+		OwnerPC->SetInputMode(InputMode);
+	}
+
 }
 
 void UEveryThingGameInstance::OpenMenuLevel()
 {
 	UGameplayStatics::OpenLevel(this, MenuLevelName, true);
+
+	APlayerController* OwnerPC = GetFirstLocalPlayerController();
+	if (OwnerPC)
+	{
+		FInputModeUIOnly InputMode;
+		OwnerPC->SetInputMode(InputMode);
+	}
 }
 
 
 AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()
 {
-	UWorld* World = GetWorld();
-	AEveryThingGameMode_Menu* OwnerMenuETGM = World ? World->GetAuthGameMode<AEveryThingGameMode_Menu>() : nullptr;
-	return OwnerMenuETGM ? Cast<AEveryThingGameSession>(OwnerMenuETGM->GameSession) : nullptr;
+	AGameModeBase* OwnerGameMode = GetWorld() ? GetWorld()->GetAuthGameMode() : nullptr;
+	return OwnerGameMode ? Cast<AEveryThingGameSession>(OwnerGameMode->GameSession) : nullptr;
 }
 
 void UEveryThingGameInstance::HostGame(const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
@@ -43,9 +57,11 @@ void UEveryThingGameInstance::HostGame(const FString& GameType, const FString& M
 	if (OwnerETGS && OwnerLocalPlayer)
 	{
 		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
+		// create unique session name
+		FName SessionName = FName(*FString(UserId->ToString() + TEXT("_Game")));
 		if (UserId.IsValid() && OwnerETGS)
 		{
-			OwnerETGS->HostSession(*UserId, GameSessionName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum);
+			OwnerETGS->HostSession(*UserId, SessionName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum);
 		}
 	}
 }

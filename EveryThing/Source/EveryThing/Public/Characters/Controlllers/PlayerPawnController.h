@@ -36,22 +36,6 @@ protected:
 	/// For IGamePawnControllerInterface
 	virtual AActor* GetAttackTarget() override;
 
-
-	//////////////////////////////////////////////////////////////////////////
-	/// Game Match
-public:
-	UFUNCTION(reliable, client)
-	void ClientSetSpectatorCamera(FVector CameraLocation, FRotator CameraRotation);
-	UFUNCTION(reliable, client)
-	void ClientGameStarted();
-	UFUNCTION(reliable, client)
-	void ClientStartOnlineGame();
-	UFUNCTION(reliable, client)
-	void ClientEndOnlineGame();
-
-	UFUNCTION(reliable, client)
-	void ClientSendRoundEndEvent(bool bIsWinner, int32 ExpendedTimeInSeconds);
-
 	//////////////////////////////////////////////////////////////////////////
 	/// Visual Angle
 public:

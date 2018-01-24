@@ -5,7 +5,7 @@
 #include "Engine/World.h"
 #include "OnlineSubsystemSessionSettings.h"
 
-#include "Characters/Controlllers/PlayerPawnController.h"
+#include "EveryThingGameInstance.h"
 
 namespace
 {
@@ -42,7 +42,7 @@ FEveryThingOnlineSearchSettingsEmptyDedicated::FEveryThingOnlineSearchSettingsEm
 
 AEveryThingGameSession::AEveryThingGameSession()
 {
-	if (!HasAnyFlags(RF_ClassDefaultObject))
+	// if (!HasAnyFlags(RF_ClassDefaultObject))
 	{
 		OnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnCreateSessionComplete);
 		OnStartSessionCompleteDelegate = FOnStartSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnStartOnlineGameComplete);
@@ -73,7 +73,7 @@ bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSes
 			{
 
 				HostSettings->Set(SETTING_GAMEMODE, GameType, EOnlineDataAdvertisementType::ViaOnlineService);
-				HostSettings->Set(SETTING_GAMEMODE, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
+				HostSettings->Set(SETTING_MAPNAME, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
 				HostSettings->Set(SETTING_MATCHING_HOPPER, FString("TeamDeathmatch"), EOnlineDataAdvertisementType::DontAdvertise);
 				HostSettings->Set(SETTING_MATCHING_TIMEOUT, 120.f, EOnlineDataAdvertisementType::ViaOnlineService);
 				HostSettings->Set(SETTING_SESSION_TEMPLATE_NAME, FString("GameSession"), EOnlineDataAdvertisementType::DontAdvertise);
@@ -173,7 +173,7 @@ void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool b
 		if (bWasSuccessful)
 		{
 			OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
-			
+
 			Sessions->StartSession(InSessionName);
 		}
 	}
@@ -182,24 +182,31 @@ void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool b
 
 void AEveryThingGameSession::OnStartOnlineGameComplete(FName InSessionName, bool bWasSuccessful)
 {
+	UE_LOG(LogOnlineGame, Verbose, TEXT("-_- OnStartOnlineGameComplete bSuccess : %d "), bWasSuccessful);
+
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
 	if (Sessions.IsValid())
 	{
+
 		Sessions->ClearOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegateHandle);
 	}
+
 
 	UWorld* World = GetWorld();
 	if (bWasSuccessful && World)
 	{
-		// tell non-local players to start Online game
-		for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
+		FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(InSessionName);
+
+		FString GameType, MapName;
+		OwnerOnlineSessionSetting->Get<FString>(SETTING_GAMEMODE, GameType);
+		OwnerOnlineSessionSetting->Get<FString>(SETTING_MAPNAME, MapName);
+		UE_LOG(LogTemp, Log, TEXT("-_- the type : %s|map : %s"), *GameType, * MapName);
+
+		if (OwnerETGI)
 		{
-			APlayerPawnController* PlayerPPC = Cast<APlayerPawnController>(*It);
-			if (PlayerPPC && PlayerPPC->IsLocalPlayerController())
-			{
-				PlayerPPC->ClientStartOnlineGame();
-			}
+			OwnerETGI->OpenGameLevel(*MapName);
 		}
 	}
 }
@@ -307,15 +314,6 @@ void AEveryThingGameSession::HandleMatchHasEnded()
 
 		if (World)
 		{
-			// tell non-local players to end Online game
-			for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
-			{
-				APlayerPawnController* PlayerPPC = Cast<APlayerPawnController>(*It);
-				if (PlayerPPC && PlayerPPC->IsLocalPlayerController())
-				{
-					PlayerPPC->ClientEndOnlineGame();
-				}
-			}
 		}
 
 		// server is handled here
