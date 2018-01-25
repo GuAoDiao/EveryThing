@@ -20,14 +20,12 @@ enum class EGameUIState : uint8
 	Config,
 	LoadingScreen,
 	ErrorDialog,
-	Playing,
 	Unknown
 };
 
 
 class UMainMenu;
 class UHouseList;
-class UHouseRow;
 class UHouseCreate;
 class ULoadingScreen;
 class UErrorDialog;
@@ -45,11 +43,6 @@ public:
 	virtual void BeginPlay() override;
 
 	//////////////////////////////////////////////////////////////////////////
-	/// Game Match
-public:
-	UFUNCTION(BlueprintCallable)
-	void BeginPlayShowMainMenu();
-	//////////////////////////////////////////////////////////////////////////
 	/// Game UI State
 public:
 	UFUNCTION(BlueprintPure)
@@ -58,22 +51,26 @@ public:
 	bool IsTargetGameUIState(EGameUIState InGameUIState) const { return InGameUIState == CurrentGameUIState; }
 	UFUNCTION(BlueprintCallable)
 	void ToggleToNewGameUIState(EGameUIState InGameUIState);
-
+private:
+	void FinishOldGameUIState(EGameUIState InGameUIState);
+	void StartNewGameUIState(EGameUIState InGameUIState);
 private:
 	EGameUIState CurrentGameUIState;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// UI
+	
+public:
+	void SetErrorDialogMessage(const FString& ErrorMessage);
+	void UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResults);
+	
 private:
 	void ShowMainMenu();
 	void ShowHouseCreate();
 	void ShowHouseList();
 	void ShowLoadingScreen();
-	void ShowErrorDialog(const FString& ErrorMessage);
-	
-public:
-	void UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResults);
-private:
+	void ShowErrorDialog();
+
 	void SetWidgetOwnerAndInputModeToFocusWidget(class UUserWidget* InWidget);
 
 protected:
@@ -83,19 +80,9 @@ protected:
 	TSubclassOf<UHouseCreate> HouseCreateClass;
 	TSubclassOf<ULoadingScreen> LoadingScreenClass;
 
-	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	UMainMenu* MainMenu;
-
-	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	UHouseList* HouseList;
-
-
-	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	UHouseCreate* HouseCreate;
-
-	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	ULoadingScreen* LoadingScreen;
-
-	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	UErrorDialog* ErrorDialog;	
 };

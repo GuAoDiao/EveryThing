@@ -6,17 +6,20 @@
 
 #include "EveryThingGameInstance.h"
 #include "EveryThingAssetManager.h"
-#include "UI/HouseRow.h"
 #include "UI/EveryThingMenuHUD.h"
+#include "UI/HouseRow.h"
 
 
 void UHouseList::FindAllHouseList(bool bIsLAN, bool bIsPresence)
 {
 	APlayerController* OwnerPC = GetOwningPlayer();
-	UEveryThingGameInstance* OwnerETGI = OwnerPC ? Cast<UEveryThingGameInstance>(OwnerPC->GetGameInstance()) : nullptr;
-	if (OwnerETGI)
+	if (OwnerPC)
 	{
-		OwnerETGI->FindHoustList(bIsLAN, bIsPresence);
+		AEveryThingMenuHUD* OwnerMenuHUD = Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD());
+		if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::LoadingScreen); }
+
+		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(OwnerPC->GetGameInstance());
+		if (OwnerETGI) { OwnerETGI->FindHoustList(bIsLAN, bIsPresence); }
 	}
 }
 
@@ -35,17 +38,12 @@ void UHouseList::UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResul
 				HouseRow->InitializeUI(SearchResults[SearchIndex]);
 				AddHouseRow(HouseRow);
 			}
-
 		}
 	}
 }
 
-void UHouseList::Back()
+void UHouseList::BackUp()
 {
-	APlayerController* OwnerPC = GetOwningPlayer();
-	AEveryThingMenuHUD* OwnerMenuHUD = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
-	if (OwnerMenuHUD)
-	{
-		OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::MainMenu);
-	}
+	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
+	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::MainMenu); }
 }

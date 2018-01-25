@@ -33,20 +33,20 @@ FEveryThingOnlineSearchSettings::FEveryThingOnlineSearchSettings(bool bSearching
 {
 	bIsLanQuery = bSearchingLAN;
 	MaxSearchResults = 10;
-	// PingBucketSize = 50;
+	PingBucketSize = 50;
 	if (bSearchingPresence) { QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals); }
 }
 
 FEveryThingOnlineSearchSettingsEmptyDedicated::FEveryThingOnlineSearchSettingsEmptyDedicated(bool bSearchingLAN, bool bSearchingPresence) : FEveryThingOnlineSearchSettings(bSearchingLAN, bSearchingPresence)
 {
-	// QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
-	// QuerySettings.Set(SEARCH_EMPTY_SERVERS_ONLY, true, EOnlineComparisonOp::Equals);
+	QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
+	QuerySettings.Set(SEARCH_EMPTY_SERVERS_ONLY, true, EOnlineComparisonOp::Equals);
 }
 
 
 AEveryThingGameSession::AEveryThingGameSession()
 {
-	// if (!HasAnyFlags(RF_ClassDefaultObject))
+	if (!HasAnyFlags(RF_ClassDefaultObject))
 	{
 		OnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnCreateSessionComplete);
 		OnStartSessionCompleteDelegate = FOnStartSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnStartOnlineGameComplete);
@@ -92,13 +92,6 @@ bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSes
 			}
 		}
 	}
-#if !UE_BUILD_SHIPPING
-	else
-	{
-		// hack work flow in development
-		OnCreatePresenceSessionComplete().Broadcast(NAME_GameSession, true);
-	}
-#endif
 
 	return false;
 }
@@ -184,7 +177,6 @@ void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool b
 			Sessions->StartSession(InSessionName);
 		}
 	}
-	OnCreatePresenceSessionComplete().Broadcast(InSessionName, bWasSuccessful);
 }
 
 void AEveryThingGameSession::OnStartOnlineGameComplete(FName InSessionName, bool bWasSuccessful)
@@ -233,12 +225,6 @@ void AEveryThingGameSession::OnFindSessionsComplete(bool bWasSuccessful)
 			APlayerController* OwnerPC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
 			AEveryThingMenuHUD* OwnerETMH = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
 			if(OwnerETMH){ OwnerETMH->UpdateHouseList(SearchSettings->SearchResults); }
-
-			for (int32 SearchIndex = 0; SearchIndex < SearchSettings->SearchResults.Num(); ++SearchIndex)
-			{
-				const FOnlineSessionSearchResult& SearchResult = SearchSettings->SearchResults[SearchIndex];
-				DumpSession(&SearchResult.Session);
-			}
 		}
 	}
 }
@@ -257,7 +243,7 @@ void AEveryThingGameSession::OnJoinSessionComplete(FName InSessionName, EOnJoinS
 
 		// get the first local PlayerController, so we can call "ClientTravel" to get to the Server Map
 		// this is something the blueprint node "JoinSession" does automatically!
-		APlayerController* const OwnerPC = GetGameInstance() ? GetGameInstance()->GetFirstLocalPlayerController() : nullptr;
+		APlayerController* OwnerPC = GetGameInstance() ? GetGameInstance()->GetFirstLocalPlayerController() : nullptr;
 
 		// we need a FString to use ClientTravel and we can let the session interface construct such a String for
 		// us by giving him the session name and an empty string. we want to do this, because every Online subsystem uses different TravelURLs

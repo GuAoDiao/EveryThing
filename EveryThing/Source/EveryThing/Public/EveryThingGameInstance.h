@@ -16,22 +16,18 @@ class EVERYTHING_API UEveryThingGameInstance : public UGameInstance
 	
 public:
 	UEveryThingGameInstance();
-
-	
+		
 	//////////////////////////////////////////////////////////////////////////
 	/// Level
 public:
-	UFUNCTION(BlueprintCallable)
 	void OpenMenuLevel();
-	UFUNCTION(BlueprintCallable)
 	void OpenGameLevel(const FString& MapType, const FString& MapName);
-
+	void ExitGame();
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Match
 public:
 	void HostGame(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum);
-	void ExitGame();
 	void FindHoustList(bool bIsLAN, bool bIsPresence);
 	void JoinGame(FOnlineSessionSearchResult& SessionResult);
 	void JoinGame(FName SessionName, int32 SearchResultIndex);

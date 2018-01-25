@@ -7,32 +7,24 @@
 
 void UMainMenu::OnCreateHouse()
 {
-	APlayerController* OwnerPC = GetOwningPlayer();
-	AEveryThingMenuHUD* OwnerMenuHUD = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
+	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
 	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::HouseCreate); }
 }
 
 void UMainMenu::OnHouseList()
 {
-
-	APlayerController* OwnerPC = GetOwningPlayer();
-	AEveryThingMenuHUD* OwnerMenuHUD = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
+	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
 	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::HouseList); }
 }
 
 void UMainMenu::OnConfig()
 {
-	APlayerController* OwnerPC = GetOwningPlayer();
-	AEveryThingMenuHUD* OwnerMenuHUD = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
+	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
 	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::Config); }
 }
 
 void UMainMenu::OnExitGame()
 {
-	APlayerController* OwnerPC = GetOwningPlayer();
-	UEveryThingGameInstance* OwnerETGI = OwnerPC ? Cast<UEveryThingGameInstance>(OwnerPC->GetGameInstance()) : nullptr;
-	if (OwnerETGI)
-	{
-		OwnerETGI->ExitGame();
-	}
+	UEveryThingGameInstance* OwnerETGI = GetOwningPlayer() ? Cast<UEveryThingGameInstance>(GetOwningPlayer()->GetGameInstance()) : nullptr;
+	if (OwnerETGI) { OwnerETGI->ExitGame(); }
 }

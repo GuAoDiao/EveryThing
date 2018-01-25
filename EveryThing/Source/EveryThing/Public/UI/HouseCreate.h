@@ -21,13 +21,14 @@ public:
 	void HostGame(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum);
 
 	UFUNCTION(BlueprintCallable)
-	void Back();
+	void BackUp();
 	
-	UPROPERTY(BlueprintReadOnly)
-	TArray<FString> MapsType;
-
 	UFUNCTION(BlueprintCallable)
 	TArray<FString> GetAllMaps(const FString& MapType) const;
+
+public:
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FString> MapsType;
 private:
 	class UDataTable* MapsInfoDataTable;
 };

@@ -26,22 +26,17 @@ void UEveryThingGameInstance::OpenGameLevel(const FString& MapType, const FStrin
 void UEveryThingGameInstance::OpenMenuLevel()
 {
 	UGameplayStatics::OpenLevel(this, MenuLevelName, true);
-
-	APlayerController* OwnerPC = GetFirstLocalPlayerController();
-	if (OwnerPC)
-	{
-		FInputModeUIOnly InputMode;
-		OwnerPC->SetInputMode(InputMode);
-	}
 }
 
 
-AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()
+void UEveryThingGameInstance::ExitGame()
 {
-	AGameModeBase* OwnerGameMode = GetWorld() ? GetWorld()->GetAuthGameMode() : nullptr;
-	return OwnerGameMode ? Cast<AEveryThingGameSession>(OwnerGameMode->GameSession) : nullptr;
+	APlayerController* OwnerPC = GetFirstLocalPlayerController();
+	if (OwnerPC) { OwnerPC->ConsoleCommand("quit"); }
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// Match
 void UEveryThingGameInstance::HostGame(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
 {
 	AEveryThingGameSession* OwnerETGS = GetGameSession();
@@ -97,8 +92,8 @@ void UEveryThingGameInstance::JoinGame(FName SessionName, int32 SearchResultInde
 	}
 }
 
-void UEveryThingGameInstance::ExitGame()
+AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()
 {
-	APlayerController* OwnerPC = GetFirstLocalPlayerController();
-	if (OwnerPC) { OwnerPC->ConsoleCommand("quit"); }
+	AGameModeBase* OwnerGameMode = GetWorld() ? GetWorld()->GetAuthGameMode() : nullptr;
+	return OwnerGameMode ? Cast<AEveryThingGameSession>(OwnerGameMode->GameSession) : nullptr;
 }

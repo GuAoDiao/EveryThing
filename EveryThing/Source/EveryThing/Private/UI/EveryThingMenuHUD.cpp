@@ -29,12 +29,51 @@ AEveryThingMenuHUD::AEveryThingMenuHUD()
 
 void AEveryThingMenuHUD::BeginPlay()
 {
-	BeginPlayShowMainMenu();
+	if (IsTargetGameUIState(EGameUIState::StartUp)) { ToggleToNewGameUIState(EGameUIState::MainMenu); }
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// Game UI State
 
 void AEveryThingMenuHUD::ToggleToNewGameUIState(EGameUIState InGameUIState)
 {
-	switch (CurrentGameUIState)
+	if (InGameUIState != EGameUIState::LoadingScreen)
+	{
+		FinishOldGameUIState(CurrentGameUIState);
+	}
+
+	CurrentGameUIState = InGameUIState;
+
+	StartNewGameUIState(CurrentGameUIState);
+}
+void AEveryThingMenuHUD::StartNewGameUIState(EGameUIState InGameUIState)
+{
+	switch (InGameUIState)
+	{
+		case EGameUIState::StartUp:
+			break;
+		case EGameUIState::MainMenu:
+			ShowMainMenu();
+			break;
+		case EGameUIState::HouseCreate:
+			ShowHouseCreate();
+			break;
+		case EGameUIState::HouseList:
+			ShowHouseList();
+			break;
+		case EGameUIState::LoadingScreen:
+			ShowLoadingScreen();
+			break;
+		case EGameUIState::ErrorDialog:
+			ShowErrorDialog();
+			break;
+		case EGameUIState::Unknown:
+			break;
+	}
+}
+void AEveryThingMenuHUD::FinishOldGameUIState(EGameUIState InGameUIState)
+{
+	switch (InGameUIState)
 	{
 		case EGameUIState::StartUp:
 			break;
@@ -53,74 +92,46 @@ void AEveryThingMenuHUD::ToggleToNewGameUIState(EGameUIState InGameUIState)
 		case EGameUIState::ErrorDialog:
 			if (ErrorDialog) { ErrorDialog->RemoveFromParent(); }
 			break;
-		case EGameUIState::Playing:
-			break;
 		case EGameUIState::Unknown:
-			break;
-		default:
-			break;
-	}
-
-	CurrentGameUIState = InGameUIState;
-
-	switch (CurrentGameUIState)
-	{
-		case EGameUIState::StartUp:
-			break;
-		case EGameUIState::MainMenu:
-		{
-			if (IsTargetGameUIState(EGameUIState::Playing))
-			{
-				UEveryThingGameInstance* OwnerInstance = Cast<UEveryThingGameInstance>(GetGameInstance());
-				if (!OwnerInstance) { return; }
-				OwnerInstance->OpenMenuLevel();
-			}
-			ShowMainMenu();
-			break;
-		}
-		case EGameUIState::HouseCreate:
-			ShowHouseCreate();
-			break;
-		case EGameUIState::HouseList:
-			ShowHouseList();
-			break;
-		case EGameUIState::LoadingScreen:
-			ShowLoadingScreen();
-			break;
-		case EGameUIState::ErrorDialog:
-			break;
-		case EGameUIState::Playing:
-			break;
-		case EGameUIState::Unknown:
-			break;
-		default:
 			break;
 	}
 }
 
-void AEveryThingMenuHUD::BeginPlayShowMainMenu()
-{
-	if (IsTargetGameUIState(EGameUIState::StartUp)) { ToggleToNewGameUIState(EGameUIState::MainMenu); }
-}
 
 //////////////////////////////////////////////////////////////////////////
 /// UI
+
+
+void AEveryThingMenuHUD::SetErrorDialogMessage(const FString& ErrorMessage)
+{
+	if (IsTargetGameUIState(EGameUIState::ErrorDialog) && ErrorDialog)
+	{
+		ErrorDialog->SetErrorMessage(FText::FromString(ErrorMessage));
+	}
+}
+
+void AEveryThingMenuHUD::UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResults)
+{
+	if (IsTargetGameUIState(EGameUIState::LoadingScreen) && HouseList)
+	{
+		HouseList->UpdateHouseList(SearchResults);
+		ToggleToNewGameUIState(EGameUIState::HouseList);
+	}
+}
+
 
 void AEveryThingMenuHUD::ShowMainMenu()
 {
 	if (IsTargetGameUIState(EGameUIState::MainMenu))
 	{
-		if (!MainMenu && MainMenuClass)
-		{
-			MainMenu = CreateWidget<UMainMenu>(GetGameInstance(), MainMenuClass);
-		}
+		if (!MainMenu && MainMenuClass) { MainMenu = CreateWidget<UMainMenu>(GetGameInstance(), MainMenuClass); }
 
 		if (MainMenu)
 		{
 			MainMenu->AddToViewport();
 			SetWidgetOwnerAndInputModeToFocusWidget(MainMenu);
 
-			APlayerController* OwnerPC = GetGameInstance()->GetFirstLocalPlayerController();
+			APlayerController* OwnerPC = GetGameInstance() ? GetGameInstance()->GetFirstLocalPlayerController() : nullptr;
 			if (OwnerPC) { OwnerPC->bShowMouseCursor = true; }
 		}
 	}
@@ -130,10 +141,7 @@ void AEveryThingMenuHUD::ShowHouseCreate()
 {
 	if (IsTargetGameUIState(EGameUIState::HouseCreate))
 	{
-		if (!HouseCreate && HouseCreateClass)
-		{
-			HouseCreate = CreateWidget<UHouseCreate>(GetGameInstance(), HouseCreateClass);
-		}
+		if (!HouseCreate && HouseCreateClass) { HouseCreate = CreateWidget<UHouseCreate>(GetGameInstance(), HouseCreateClass); }
 
 		if (HouseCreate)
 		{
@@ -147,10 +155,7 @@ void AEveryThingMenuHUD::ShowHouseList()
 {
 	if (IsTargetGameUIState(EGameUIState::HouseList))
 	{
-		if (!HouseList && HouseListClass)
-		{
-			HouseList = CreateWidget<UHouseList>(GetGameInstance(), HouseListClass);
-		}
+		if (!HouseList && HouseListClass) { HouseList = CreateWidget<UHouseList>(GetGameInstance(), HouseListClass); }
 
 		if (HouseList)
 		{
@@ -164,10 +169,7 @@ void AEveryThingMenuHUD::ShowLoadingScreen()
 {
 	if (IsTargetGameUIState(EGameUIState::LoadingScreen))
 	{
-		if (!LoadingScreen && LoadingScreenClass)
-		{
-			LoadingScreen = CreateWidget<ULoadingScreen>(GetGameInstance(), LoadingScreenClass);
-		}
+		if (!LoadingScreen && LoadingScreenClass) { LoadingScreen = CreateWidget<ULoadingScreen>(GetGameInstance(), LoadingScreenClass); }
 
 		if (LoadingScreen)
 		{
@@ -177,33 +179,22 @@ void AEveryThingMenuHUD::ShowLoadingScreen()
 	}
 }
 
-void AEveryThingMenuHUD::ShowErrorDialog(const FString& ErrorMessage)
+void AEveryThingMenuHUD::ShowErrorDialog()
 {
 	if (IsTargetGameUIState(EGameUIState::ErrorDialog))
 	{
 
-		if (!ErrorDialog && ErrorDialogClass)
-		{
-			ErrorDialog = CreateWidget<UErrorDialog>(GetGameInstance(), ErrorDialogClass);
-		}
+		if (!ErrorDialog && ErrorDialogClass) { ErrorDialog = CreateWidget<UErrorDialog>(GetGameInstance(), ErrorDialogClass); }
 
 		if (ErrorDialog)
 		{
-			ErrorDialog->SetErrorMessage(FText::FromString(ErrorMessage));
 			ErrorDialog->AddToViewport();
-
 			SetWidgetOwnerAndInputModeToFocusWidget(ErrorDialog);
 		}
 	}
 }
 
-void AEveryThingMenuHUD::UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResults)
-{
-	if (IsTargetGameUIState(EGameUIState::HouseList) && HouseList)
-	{
-		HouseList->UpdateHouseList(SearchResults);
-	}
-}
+
 
 
 void AEveryThingMenuHUD::SetWidgetOwnerAndInputModeToFocusWidget(UUserWidget* InWidget)

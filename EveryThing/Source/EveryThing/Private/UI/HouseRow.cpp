@@ -5,6 +5,7 @@
 #include "OnlineSessionSettings.h"
 
 #include "EveryThingGameInstance.h"
+#include "UI/EveryThingMenuHUD.h"
 
 void UHouseRow::InitializeUI(FOnlineSessionSearchResult& InSearchResult)
 {
@@ -38,13 +39,13 @@ void UHouseRow::UpdateDisplay()
 
 void UHouseRow::JoinHouse()
 {
-	if (SearchResult)
+	APlayerController* OwnerPC = GetOwningPlayer();
+	if (OwnerPC && SearchResult)
 	{
-		APlayerController* OwnerPC = GetOwningPlayer();
-		UEveryThingGameInstance* OwnerETGI = OwnerPC ? Cast<UEveryThingGameInstance>(OwnerPC->GetGameInstance()) : nullptr;
-		if (OwnerETGI)
-		{
-			OwnerETGI->JoinGame(*SearchResult);
-		}
+		AEveryThingMenuHUD* OwnerMenuHUD = Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD());
+		if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::LoadingScreen); }
+
+		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(OwnerPC->GetGameInstance());
+		if (OwnerETGI) { OwnerETGI->JoinGame(*SearchResult); }
 	}
 }

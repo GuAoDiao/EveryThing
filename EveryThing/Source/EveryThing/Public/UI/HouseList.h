@@ -29,5 +29,5 @@ public:
 	void UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResults);
 
 	UFUNCTION(BlueprintCallable)
-	void Back();
+	void BackUp();
 };

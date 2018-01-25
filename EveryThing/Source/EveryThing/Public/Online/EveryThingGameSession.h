@@ -89,12 +89,6 @@ protected:
 	// called when this instance is starting up as a dedicated server
 	virtual void RegisterServer() override;
 
-	DECLARE_EVENT_TwoParams(AEveryThingGameSession, FOnCreatePresenceSessionComplete, FName /*SessionName*/, bool /*bWasSuccessful*/);
-	FOnCreatePresenceSessionComplete CreatePresenceSessionCompleteEvent;
-	DECLARE_EVENT_OneParam(AEveryThingGameSession, FOnJoinSessionComplete, EOnJoinSessionCompleteResult::Type /*Result*/)
-	FOnJoinSessionComplete JoinSessionCompleteEvent;
-	DECLARE_EVENT_OneParam(AEveryThingGameSession, FOnFindSessionsComplete, bool /*bWasSuccessful*/);
-	FOnFindSessionsComplete FindSessionsCompleteEvent;
 public:
 	static const int32 DEFAULT_PLAYERS_NUM = 8;
 
@@ -118,11 +112,7 @@ public:
 	EOnlineAsyncTaskState::Type GetSearchResultStatus(int32& SearchResultIndex, int32& NumSearchResults);
 
 	const TArray<FOnlineSessionSearchResult>& GetSearchResults() const;
-
-	FOnCreatePresenceSessionComplete& OnCreatePresenceSessionComplete() { return CreatePresenceSessionCompleteEvent; }
-	FOnJoinSessionComplete& OnJoinSessionComplete() { return JoinSessionCompleteEvent; }
-	FOnFindSessionsComplete& OnFindSessionsComplete() { return FindSessionsCompleteEvent; }
-
+	
 	virtual void HandleMatchHasStarted() override;
 	virtual void HandleMatchHasEnded() override;
 

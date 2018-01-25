@@ -23,20 +23,18 @@ UHouseCreate::UHouseCreate(const FObjectInitializer& ObjectInitializer) : Super(
 
 void UHouseCreate::HostGame(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
 {
-	UWorld* World = GetWorld();
-	UEveryThingGameInstance* OwnerGameInstance = World ? World->GetGameInstance<UEveryThingGameInstance>() : nullptr;
+	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
+	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::LoadingScreen); }
+
+	UEveryThingGameInstance* OwnerGameInstance = GetWorld() ? GetWorld()->GetGameInstance<UEveryThingGameInstance>() : nullptr;
 	if (OwnerGameInstance) { OwnerGameInstance->HostGame(HouseName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum); }
 }
 
 
-void UHouseCreate::Back()
+void UHouseCreate::BackUp()
 {
-	APlayerController* OwnerPC = GetOwningPlayer();
-	AEveryThingMenuHUD* OwnerMenuHUD = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
-	if (OwnerMenuHUD)
-	{
-		OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::MainMenu);
-	}
+	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
+	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::MainMenu); }
 }
 
 TArray<FString> UHouseCreate::GetAllMaps(const FString& MapType) const
@@ -49,11 +47,9 @@ TArray<FString> UHouseCreate::GetAllMaps(const FString& MapType) const
 		MapsInfoDataTable->GetAllRows<FMapInfo>(TEXT("look up all maps info"), MapsInfoInDataTable);
 		for (FMapInfo* MapInfo : MapsInfoInDataTable)
 		{
-			if (MapInfo->MapType == MapType)
-			{
-				AllMaps.AddUnique(MapInfo->MapName);
-			}
+			if (MapInfo->MapType == MapType) { AllMaps.AddUnique(MapInfo->MapName); }
 		}
 	}
+
 	return AllMaps;
 }
