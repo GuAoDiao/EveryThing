@@ -20,15 +20,18 @@ void UHouseRow::UpdateDisplay()
 	{
 		const FOnlineSessionSettings& Settings = SearchResult->Session.SessionSettings;
 
-		FString GameType, MapName;
+		FString GameType, MapName, HouseName;
 
 		Settings.Get<FString>(SETTING_GAMEMODE, GameType);
 		Settings.Get<FString>(SETTING_MAPNAME, MapName);
+		Settings.Get<FString>(FName("HouseName"), HouseName);
+		
+
 		int32 MaxPlayersNum = Settings.NumPublicConnections;
 		int32 Pin = SearchResult->PingInMs;
 		int32 CurrentPlayersNum = 0;
 
-		InitializeDisplay(GameType, MapName, CurrentPlayersNum, MaxPlayersNum, Pin);
+		InitializeDisplay(HouseName, GameType, MapName, CurrentPlayersNum, MaxPlayersNum, Pin);
 	}
 }
 

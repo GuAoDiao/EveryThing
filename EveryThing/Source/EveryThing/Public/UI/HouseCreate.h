@@ -18,7 +18,7 @@ public:
 	UHouseCreate(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable)
-	void HostGame(const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum);
+	void HostGame(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum);
 
 	UFUNCTION(BlueprintCallable)
 	void Back();

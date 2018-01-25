@@ -57,7 +57,7 @@ AEveryThingGameSession::AEveryThingGameSession()
 }
 
 
-bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSessionName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
+bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSessionName, const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
 {
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 	if (Subsystem)
@@ -77,8 +77,10 @@ bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSes
 			{
 				HostSettings->Set(SETTING_GAMEMODE, GameType, EOnlineDataAdvertisementType::ViaOnlineService);
 				HostSettings->Set(SETTING_MAPNAME, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
-				HostSettings->Set(SETTING_MATCHING_HOPPER, FString("TeamDeathmatch"), EOnlineDataAdvertisementType::DontAdvertise);
+				HostSettings->Set(FName("HouseName"), HouseName, EOnlineDataAdvertisementType::ViaOnlineService);
+
 				HostSettings->Set(SETTING_MATCHING_TIMEOUT, 120.f, EOnlineDataAdvertisementType::ViaOnlineService);
+				HostSettings->Set(SETTING_MATCHING_HOPPER, FString("TeamDeathmatch"), EOnlineDataAdvertisementType::DontAdvertise);
 				HostSettings->Set(SETTING_SESSION_TEMPLATE_NAME, FString("GameSession"), EOnlineDataAdvertisementType::DontAdvertise);
 
 #if !PLATFORM_SWITCH

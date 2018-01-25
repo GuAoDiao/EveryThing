@@ -21,11 +21,11 @@ UHouseCreate::UHouseCreate(const FObjectInitializer& ObjectInitializer) : Super(
 	}
 }
 
-void UHouseCreate::HostGame(const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
+void UHouseCreate::HostGame(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
 {
 	UWorld* World = GetWorld();
 	UEveryThingGameInstance* OwnerGameInstance = World ? World->GetGameInstance<UEveryThingGameInstance>() : nullptr;
-	if (OwnerGameInstance) { OwnerGameInstance->HostGame(GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum); }
+	if (OwnerGameInstance) { OwnerGameInstance->HostGame(HouseName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum); }
 }
 
 

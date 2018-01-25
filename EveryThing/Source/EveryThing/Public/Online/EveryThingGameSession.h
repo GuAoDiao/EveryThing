@@ -98,7 +98,7 @@ protected:
 public:
 	static const int32 DEFAULT_PLAYERS_NUM = 8;
 
-	bool HostSession(const FUniqueNetId& UserId, FName SessionName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers);
+	bool HostSession(const FUniqueNetId& UserId, FName SessionName, const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers);
 	void FindSessions(const FUniqueNetId& UserId, bool bIsLAN, bool bIsPresence);
 	bool JoinSession(const FUniqueNetId& UserId, int32 SessionIndexInSearResults);
 	bool JoinSession(const FUniqueNetId& UserId, const FOnlineSessionSearchResult& SearchResult);

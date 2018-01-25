@@ -42,7 +42,7 @@ AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()
 	return OwnerGameMode ? Cast<AEveryThingGameSession>(OwnerGameMode->GameSession) : nullptr;
 }
 
-void UEveryThingGameInstance::HostGame(const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
+void UEveryThingGameInstance::HostGame(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
 {
 	AEveryThingGameSession* OwnerETGS = GetGameSession();
 	ULocalPlayer* OwnerLocalPlayer = GetFirstGamePlayer();
@@ -53,7 +53,7 @@ void UEveryThingGameInstance::HostGame(const FString& GameType, const FString& M
 		FName SessionName = FName(*FString(UserId->ToString() + TEXT("_Game")));
 		if (UserId.IsValid() && OwnerETGS)
 		{
-			OwnerETGS->HostSession(*UserId, SessionName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum);
+			OwnerETGS->HostSession(*UserId, SessionName, HouseName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum);
 		}
 	}
 }
