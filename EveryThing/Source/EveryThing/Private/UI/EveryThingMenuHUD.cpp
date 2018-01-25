@@ -128,7 +128,8 @@ void AEveryThingMenuHUD::ShowMainMenu()
 
 		if (MainMenu)
 		{
-			MainMenu->AddToViewport();
+			if (!MainMenu->IsInViewport()) { MainMenu->AddToViewport(); }
+
 			SetWidgetOwnerAndInputModeToFocusWidget(MainMenu);
 
 			APlayerController* OwnerPC = GetGameInstance() ? GetGameInstance()->GetFirstLocalPlayerController() : nullptr;
@@ -145,7 +146,7 @@ void AEveryThingMenuHUD::ShowHouseCreate()
 
 		if (HouseCreate)
 		{
-			HouseCreate->AddToViewport();
+			if (!HouseCreate->IsInViewport()) { HouseCreate->AddToViewport(); }
 			SetWidgetOwnerAndInputModeToFocusWidget(HouseCreate);
 		}
 	}
@@ -159,7 +160,7 @@ void AEveryThingMenuHUD::ShowHouseList()
 
 		if (HouseList)
 		{
-			HouseList->AddToViewport();
+			if (!HouseList->IsInViewport()) { HouseList->AddToViewport(); }
 			SetWidgetOwnerAndInputModeToFocusWidget(HouseList);
 		}
 	}
@@ -173,7 +174,7 @@ void AEveryThingMenuHUD::ShowLoadingScreen()
 
 		if (LoadingScreen)
 		{
-			LoadingScreen->AddToViewport();
+			if (!LoadingScreen->IsInViewport()) { LoadingScreen->AddToViewport(); }
 			SetWidgetOwnerAndInputModeToFocusWidget(LoadingScreen);
 		}
 	}
@@ -188,7 +189,7 @@ void AEveryThingMenuHUD::ShowErrorDialog()
 
 		if (ErrorDialog)
 		{
-			ErrorDialog->AddToViewport();
+			if (!ErrorDialog->IsInViewport()) { ErrorDialog->AddToViewport(); }
 			SetWidgetOwnerAndInputModeToFocusWidget(ErrorDialog);
 		}
 	}
