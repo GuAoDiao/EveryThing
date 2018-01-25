@@ -18,17 +18,9 @@ UEveryThingGameInstance::UEveryThingGameInstance()
 
 //////////////////////////////////////////////////////////////////////////
 /// Level
-void UEveryThingGameInstance::OpenGameLevel(const FName& LevelName)
+void UEveryThingGameInstance::OpenGameLevel(const FString& MapType, const FString& MapName)
 {
-	UGameplayStatics::OpenLevel(this, LevelName, true, TEXT("listen"));
-
-	APlayerController* OwnerPC = GetFirstLocalPlayerController();
-	if (OwnerPC)
-	{
-		FInputModeGameOnly InputMode;
-		OwnerPC->SetInputMode(InputMode);
-	}
-
+	UGameplayStatics::OpenLevel(this, *MapName, true, TEXT("listen"));
 }
 
 void UEveryThingGameInstance::OpenMenuLevel()
@@ -66,14 +58,14 @@ void UEveryThingGameInstance::HostGame(const FString& GameType, const FString& M
 	}
 }
 
-void UEveryThingGameInstance::FindHoustList()
+void UEveryThingGameInstance::FindHoustList(bool bIsLAN, bool bIsPresence)
 {
 	AEveryThingGameSession* OwnerETGS = GetGameSession();
 	ULocalPlayer* OwnerLocalPlayer = GetFirstGamePlayer();
 	if (OwnerETGS && OwnerLocalPlayer)
 	{
 		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
-		OwnerETGS->FindSessions(*UserId, GameSessionName, true, true);
+		OwnerETGS->FindSessions(*UserId, bIsLAN, bIsPresence);
 	}
 }
 
@@ -86,7 +78,7 @@ void UEveryThingGameInstance::JoinGame(FOnlineSessionSearchResult& SessionResult
 		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
 		if (UserId.IsValid() && SessionResult.Session.OwningUserId != UserId)
 		{
-			OwnerETGS->JoinSession(*UserId, *SessionResult.Session.OwningUserName, SessionResult);
+			OwnerETGS->JoinSession(*UserId, SessionResult);
 		}
 	}
 }
@@ -100,7 +92,7 @@ void UEveryThingGameInstance::JoinGame(FName SessionName, int32 SearchResultInde
 		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
 		if (UserId.IsValid())
 		{
-			OwnerETGS->JoinSession(*UserId, SessionName, SearchResultIndex);
+			OwnerETGS->JoinSession(*UserId, SearchResultIndex);
 		}
 	}
 }

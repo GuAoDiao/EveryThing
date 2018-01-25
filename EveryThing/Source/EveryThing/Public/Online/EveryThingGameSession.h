@@ -73,7 +73,8 @@ protected:
 	FEveryThingGameSessionParams CurrentSessionParams;
 
 	TSharedPtr<FEveryThingOnlineSessionSettings> HostSettings;
-	TSharedPtr<FEveryThingOnlineSearchSettings> SearchSettings;
+	TSharedPtr<FOnlineSessionSearch> SearchSettings;
+	// TSharedPtr<FEveryThingOnlineSearchSettings> SearchSettings;
 
 	// rest the variables the are keeping track of session join attempts
 	void ResetBestSessionVars();
@@ -98,9 +99,9 @@ public:
 	static const int32 DEFAULT_PLAYERS_NUM = 8;
 
 	bool HostSession(const FUniqueNetId& UserId, FName SessionName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers);
-	void FindSessions(const FUniqueNetId& UserId, FName SessionName, bool bIsLAN, bool bIsPresence);
-	bool JoinSession(const FUniqueNetId& UserId, FName SessionName, int32 SessionIndexInSearResults);
-	bool JoinSession(const FUniqueNetId& UserId, FName SessionName, const FOnlineSessionSearchResult& SearchResult);
+	void FindSessions(const FUniqueNetId& UserId, bool bIsLAN, bool bIsPresence);
+	bool JoinSession(const FUniqueNetId& UserId, int32 SessionIndexInSearResults);
+	bool JoinSession(const FUniqueNetId& UserId, const FOnlineSessionSearchResult& SearchResult);
 
 protected:
 	virtual void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);

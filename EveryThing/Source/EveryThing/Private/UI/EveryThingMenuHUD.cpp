@@ -3,10 +3,12 @@
 #include "EveryThingMenuHUD.h"
 
 #include "EveryThingGameInstance.h"
+#include "EveryThingAssetManager.h"
 
 #include "UI/ErrorDialog.h"
 #include "UI/MainMenu.h"
 #include "UI/HouseList.h"
+#include "UI/HouseRow.h"
 #include "UI/HouseCreate.h"
 #include "UI/LoadingScreen.h"
 
@@ -14,6 +16,15 @@
 AEveryThingMenuHUD::AEveryThingMenuHUD()
 {
 	CurrentGameUIState = EGameUIState::StartUp;
+
+	UEveryThingAssetManager*  OwnerAssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
+	
+
+	MainMenuClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("MainMenu"));
+	ErrorDialogClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("ErrorDialog"));
+	HouseListClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("HouseList"));
+	HouseCreateClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("HouseCreate"));
+	LoadingScreenClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("LoadingScreen"));
 }
 
 void AEveryThingMenuHUD::BeginPlay()
@@ -71,8 +82,10 @@ void AEveryThingMenuHUD::ToggleToNewGameUIState(EGameUIState InGameUIState)
 			ShowHouseCreate();
 			break;
 		case EGameUIState::HouseList:
+			ShowHouseList();
 			break;
 		case EGameUIState::LoadingScreen:
+			ShowLoadingScreen();
 			break;
 		case EGameUIState::ErrorDialog:
 			break;
@@ -181,6 +194,14 @@ void AEveryThingMenuHUD::ShowErrorDialog(const FString& ErrorMessage)
 
 			SetWidgetOwnerAndInputModeToFocusWidget(ErrorDialog);
 		}
+	}
+}
+
+void AEveryThingMenuHUD::UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResults)
+{
+	if (IsTargetGameUIState(EGameUIState::HouseList) && HouseList)
+	{
+		HouseList->UpdateHouseList(SearchResults);
 	}
 }
 

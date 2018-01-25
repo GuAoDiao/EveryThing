@@ -53,6 +53,17 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 			AllParticleAsset.Add(FName(*ParticleSystemData->Name), ParticleSystemData->ParticleSystemClass);
 		}
 	}
+
+	UDataTable* UserWidgetDatatable = GetDataTableFromName(TEXT("UserWidget"));
+	if (UserWidgetDatatable)
+	{
+		TArray<FUserWidgetData*> UserWidgetDataInDatatable;
+		UserWidgetDatatable->GetAllRows<FUserWidgetData>(TEXT("found all UserWidget DataTable"), UserWidgetDataInDatatable);
+		for (FUserWidgetData* UserWidgetData : UserWidgetDataInDatatable)
+		{
+			AllUserWidgetAsset.Add(FName(*UserWidgetData->Name), UserWidgetData->UserWidgetClass);
+		}
+	}
 }
 UEveryThingAssetManager::~UEveryThingAssetManager()
 {
@@ -89,7 +100,6 @@ UStaticMesh* UEveryThingAssetManager::GetMeshFromName(const FString& MeshName)
 	return AllMeshAsset[MeskKey];
 }
 
-
 UMaterialInstanceConstant* UEveryThingAssetManager::GetMaterialFromName(const FString& MaterialName)
 {
 	FName MaterialKey(*MaterialName);
@@ -109,6 +119,21 @@ UParticleSystem* UEveryThingAssetManager::GetParticleFromName(const FString& Par
 	}
 	return AllParticleAsset[ParticleKey];
 }
+
+
+TSubclassOf<UUserWidget> UEveryThingAssetManager::GetUserWidgetFromName(const FString& UserWidgetName)
+{
+	FName UserWidgetKey(*UserWidgetName);
+	if (!AllUserWidgetAsset.Contains(UserWidgetKey))
+	{
+		AllUserWidgetAsset.Add(UserWidgetKey, LoadClass<UUserWidget>(nullptr, *FString::Printf(TEXT("WidgetBlueprint'/Game/EveryThing/UI/W_%s.W_%s_C'"), *UserWidgetName, *UserWidgetName)));
+
+		// check(0);
+		return nullptr;
+	}
+	return AllUserWidgetAsset[UserWidgetKey];
+}
+
 
 UDataTable* UEveryThingAssetManager::GetDataTableFromName(const FString& DataTableName)
 {

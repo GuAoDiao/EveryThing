@@ -23,6 +23,7 @@ class EVERYTHING_API APlayerPawnController : public APlayerController, public IG
 	GENERATED_BODY()
 	
 public:
+	virtual void BeginPlay() override;
 
 	virtual void SetupInputComponent() override;
 	

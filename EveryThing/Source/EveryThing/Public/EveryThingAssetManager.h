@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Blueprint/UserWidget.h"
 #include "EveryThingAssetManager.generated.h"
 
 class UStaticMesh;
 class UParticleSystem;
 class UMaterialInstanceConstant;
+class UUserWidget;
 
 USTRUCT(BlueprintType)
 struct FStaticMeshData : public FTableRowBase
@@ -44,6 +46,17 @@ public:
 };
 
 USTRUCT(BlueprintType)
+struct FUserWidgetData : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString Name;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UUserWidget> UserWidgetClass;
+};
+
+USTRUCT(BlueprintType)
 struct FDataTableData : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
@@ -76,14 +89,20 @@ public:
 	UMaterialInstanceConstant* GetMaterialFromName(const FString& MaterialName);
 	UParticleSystem* GetParticleFromName(const FString& ParticleName);
 	UDataTable* GetDataTableFromName(const FString& DataTableName);
+	TSubclassOf<UUserWidget> GetUserWidgetFromName(const FString& UserWidgetName);
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	TMap<FName, UDataTable*> AllDataTableAsset;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	TMap<FName, UStaticMesh*> AllMeshAsset;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TMap<FName, UParticleSystem*> AllParticleAsset;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TMap<FName, UDataTable*> AllDataTableAsset;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	TMap<FName, UMaterialInstanceConstant*> AllMaterialInstanceAsset;
+	
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	TMap<FName, UParticleSystem*> AllParticleAsset;
+	
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	TMap<FName, TSubclassOf<UUserWidget>> AllUserWidgetAsset;
 };

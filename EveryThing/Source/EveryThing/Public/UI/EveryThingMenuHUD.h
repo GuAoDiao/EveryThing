@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+
+#include "OnlineSessionSettings.h"
+
 #include "EveryThingMenuHUD.generated.h"
 
 
@@ -24,6 +27,7 @@ enum class EGameUIState : uint8
 
 class UMainMenu;
 class UHouseList;
+class UHouseRow;
 class UHouseCreate;
 class ULoadingScreen;
 class UErrorDialog;
@@ -67,32 +71,31 @@ private:
 	void ShowLoadingScreen();
 	void ShowErrorDialog(const FString& ErrorMessage);
 	
+public:
+	void UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResults);
 private:
 	void SetWidgetOwnerAndInputModeToFocusWidget(class UUserWidget* InWidget);
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "GameUI")
 	TSubclassOf<UMainMenu> MainMenuClass;
+	TSubclassOf<UErrorDialog> ErrorDialogClass;
+	TSubclassOf<UHouseList> HouseListClass;
+	TSubclassOf<UHouseCreate> HouseCreateClass;
+	TSubclassOf<ULoadingScreen> LoadingScreenClass;
+
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	UMainMenu* MainMenu;
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameUI")
-	TSubclassOf<UHouseList> HouseListClass;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	UHouseList* HouseList;
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameUI")
-	TSubclassOf<UHouseCreate> HouseCreateClass;
+
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	UHouseCreate* HouseCreate;
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "GameUI")
-	TSubclassOf<ULoadingScreen> LoadingScreenClass;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	ULoadingScreen* LoadingScreen;
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameUI")
-	TSubclassOf<UErrorDialog> ErrorDialogClass;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "GameUI")
 	UErrorDialog* ErrorDialog;	
 };

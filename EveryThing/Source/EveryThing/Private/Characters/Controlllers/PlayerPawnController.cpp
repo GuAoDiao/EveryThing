@@ -16,6 +16,12 @@
 #include "SceneObject/HitAbleInterface.h"
 
 
+void APlayerPawnController::BeginPlay()
+{
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
+}
+
 void APlayerPawnController::SetupInputComponent()
 {
 	if (!InputComponent)
