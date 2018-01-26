@@ -18,7 +18,7 @@ namespace
 
 FEveryThingOnlineSessionSettings::FEveryThingOnlineSessionSettings(bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
 {
-	NumPublicConnections  = MaxPlayersNum > 0 ? MaxPlayersNum : 0;
+	NumPublicConnections = 8;
 	NumPrivateConnections = 0;
 	bIsLANMatch = bIsLAN;
 	bShouldAdvertise = true;
@@ -158,15 +158,16 @@ bool AEveryThingGameSession::JoinSession(const FUniqueNetId& UserId, const FOnli
 	return bResult;
 }
 
-void AEveryThingGameSession::DestroySession()
+bool AEveryThingGameSession::DestroySession()
 {
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
 	if (Sessions.IsValid())
 	{
 		OnDestroySessionCompleteDelegateHandle = Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
-		Sessions->DestroySession(GameSessionName);
+		return Sessions->DestroySession(NAME_GameSession);
 	}
+	return false;
 }
 
 void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool bWasSuccessful)
@@ -184,6 +185,16 @@ void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool b
 			OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
 
 			Sessions->StartSession(InSessionName);
+		}
+		else
+		{
+			APlayerController* OwnerPC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
+			AEveryThingMenuHUD* OwnerETMH = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
+			if (OwnerETMH)
+			{
+				OwnerETMH->ToggleToNewGameUIState(EMenuUIState::ErrorDialog);
+				OwnerETMH->SetErrorDialogMessage(TEXT("Can't create session"));
+			}
 		}
 	}
 }
@@ -276,14 +287,6 @@ void AEveryThingGameSession::OnDestroySessionComplete(FName InSessionName, bool 
 	{
 		Sessions->ClearOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegateHandle);
 		HostSettings = nullptr;
-	}
-
-	if (bWasSuccessful)
-	{
-	
-		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
-	
-		if (OwnerETGI) { OwnerETGI->OpenMenuLevel(); }
 	}
 }
 

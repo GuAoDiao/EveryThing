@@ -20,5 +20,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveGameMenu();
 private:
+	UPROPERTY(Transient)
 	class UGameMenu* GameMenu;
 };

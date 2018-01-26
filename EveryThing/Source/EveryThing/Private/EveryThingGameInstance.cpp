@@ -5,8 +5,7 @@
 #include "Engine/World.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
-
-#include "GameFramework/PlayerState.h"
+#include "GameFrameWork/OnlineSession.h"
 
 #include "Online/EveryThingGameMode_Menu.h"
 #include "Online/EveryThingGameSession.h"
@@ -46,10 +45,10 @@ void UEveryThingGameInstance::HostGame(const FString& HouseName, const FString& 
 	{
 		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
 		// create unique session name
-		FName SessionName = FName(*FString(UserId->ToString() + TEXT("_Game")));
+		// FName SessionName = FName(*FString(UserId->ToString() + TEXT("_Game")));
 		if (UserId.IsValid() && OwnerETGS)
 		{
-			OwnerETGS->HostSession(*UserId, SessionName, HouseName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum);
+			OwnerETGS->HostSession(*UserId, NAME_GameSession, HouseName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum);
 		}
 	}
 }
@@ -95,20 +94,25 @@ void UEveryThingGameInstance::JoinGame(int32 SearchResultIndex)
 
 void UEveryThingGameInstance::ExitGame()
 {
+	bool bSuccess = false;
 	AEveryThingGameSession* OwnerETGS = GetGameSession();
 	if (OwnerETGS)
 	{
-		OwnerETGS->DestroySession();
+		bSuccess = OwnerETGS->DestroySession();
 	}
 	else
 	{
-		IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-		IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-				
-		if (Sessions.IsValid())
+		UOnlineSession* OwnerOnlineSession = GetOnlineSession();
+		if (OwnerOnlineSession)
 		{
-			Sessions->EndSession(GameSessionName);
+			OwnerOnlineSession->EndOnlineSession(NAME_GameSession);
+			bSuccess = true;
 		}
+	}
+
+	if (bSuccess)
+	{
+		OpenMenuLevel();
 	}
 }
 

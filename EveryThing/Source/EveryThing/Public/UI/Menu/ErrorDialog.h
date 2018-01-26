@@ -20,4 +20,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	FText GetErrorMessage() const;
+
+	UFUNCTION(BlueprintCallable)
+	void Close();
 };

@@ -30,7 +30,8 @@ void UHouseRow::UpdateDisplay()
 
 		int32 MaxPlayersNum = Settings.NumPublicConnections;
 		int32 Pin = SearchResult->PingInMs;
-		int32 CurrentPlayersNum = Settings.NumPublicConnections - SearchResult->Session.NumOpenPublicConnections;
+		int32 CurrentPlayersNum = MaxPlayersNum - SearchResult->Session.NumOpenPublicConnections;
+		UE_LOG(LogTemp, Log, TEXT("-_- the num A: %d and the num B : %d"), SearchResult->Session.NumOpenPublicConnections, SearchResult->Session.NumOpenPrivateConnections);
 
 		InitializeDisplay(HouseName, GameType, MapName, CurrentPlayersNum, MaxPlayersNum, Pin);
 	}

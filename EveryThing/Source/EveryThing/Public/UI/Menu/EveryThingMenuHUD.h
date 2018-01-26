@@ -51,11 +51,14 @@ public:
 	bool IsTargetGameUIState(EMenuUIState InGameUIState) const { return InGameUIState == CurrentGameUIState; }
 	UFUNCTION(BlueprintCallable)
 	void ToggleToNewGameUIState(EMenuUIState InGameUIState);
+	UFUNCTION(BlueprintCallable)
+	void ToggleToLastGameUIState();
 private:
 	void FinishOldGameUIState(EMenuUIState InGameUIState);
 	void StartNewGameUIState(EMenuUIState InGameUIState);
 private:
 	EMenuUIState CurrentGameUIState;
+	EMenuUIState LastGameUIState;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// UI
@@ -80,9 +83,14 @@ protected:
 	TSubclassOf<UHouseCreate> HouseCreateClass;
 	TSubclassOf<ULoadingScreen> LoadingScreenClass;
 
+	UPROPERTY(Transient)
 	UMainMenu* MainMenu;
+	UPROPERTY(Transient)
 	UHouseList* HouseList;
+	UPROPERTY(Transient)
 	UHouseCreate* HouseCreate;
+	UPROPERTY(Transient)
 	ULoadingScreen* LoadingScreen;
+	UPROPERTY(Transient)
 	UErrorDialog* ErrorDialog;	
 };

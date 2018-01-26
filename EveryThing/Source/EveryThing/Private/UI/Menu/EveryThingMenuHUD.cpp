@@ -5,7 +5,7 @@
 #include "EveryThingGameInstance.h"
 #include "EveryThingAssetManager.h"
 
-#include "UI/ErrorDialog.h"
+#include "UI/Menu/ErrorDialog.h"
 #include "UI/Menu/MainMenu.h"
 #include "UI/Menu/HouseList.h"
 #include "UI/Menu/HouseRow.h"
@@ -41,10 +41,16 @@ void AEveryThingMenuHUD::ToggleToNewGameUIState(EMenuUIState InGameUIState)
 		FinishOldGameUIState(CurrentGameUIState);
 	}
 
+	LastGameUIState = CurrentGameUIState;
 	CurrentGameUIState = InGameUIState;
 
 	StartNewGameUIState(CurrentGameUIState);
 }
+void AEveryThingMenuHUD::ToggleToLastGameUIState()
+{
+	ToggleToNewGameUIState(LastGameUIState);
+}
+
 void AEveryThingMenuHUD::StartNewGameUIState(EMenuUIState InGameUIState)
 {
 	switch (InGameUIState)
@@ -193,9 +199,6 @@ void AEveryThingMenuHUD::ShowErrorDialog()
 		}
 	}
 }
-
-
-
 
 void AEveryThingMenuHUD::SetWidgetOwnerAndInputModeToFocusWidget(UUserWidget* InWidget)
 {
