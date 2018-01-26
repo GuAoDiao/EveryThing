@@ -5,7 +5,7 @@
 #include "EveryThingGameInstance.h"
 
 #include "Online/EveryThingGameSession.h"
-#include "UI/EveryThingMenuHUD.h"
+#include "UI/Menu/EveryThingMenuHUD.h"
 
 
 AEveryThingGameMode_Menu::AEveryThingGameMode_Menu()

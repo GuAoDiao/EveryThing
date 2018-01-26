@@ -22,7 +22,7 @@ public:
 public:
 	void OpenMenuLevel();
 	void OpenGameLevel(const FString& MapType, const FString& MapName);
-	void ExitGame();
+	void ExitGameApplication();
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Match
@@ -30,7 +30,8 @@ public:
 	void HostGame(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum);
 	void FindHoustList(bool bIsLAN, bool bIsPresence);
 	void JoinGame(FOnlineSessionSearchResult& SessionResult);
-	void JoinGame(FName SessionName, int32 SearchResultIndex);
+	void JoinGame(int32 SearchResultIndex);
+	void ExitGame();
 
 private:
 	class AEveryThingGameSession* GetGameSession();

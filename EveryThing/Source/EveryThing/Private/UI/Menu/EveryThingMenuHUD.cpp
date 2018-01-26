@@ -6,20 +6,19 @@
 #include "EveryThingAssetManager.h"
 
 #include "UI/ErrorDialog.h"
-#include "UI/MainMenu.h"
-#include "UI/HouseList.h"
-#include "UI/HouseRow.h"
-#include "UI/HouseCreate.h"
-#include "UI/LoadingScreen.h"
+#include "UI/Menu/MainMenu.h"
+#include "UI/Menu/HouseList.h"
+#include "UI/Menu/HouseRow.h"
+#include "UI/Menu/HouseCreate.h"
+#include "UI/Menu/LoadingScreen.h"
 
 
 AEveryThingMenuHUD::AEveryThingMenuHUD()
 {
-	CurrentGameUIState = EGameUIState::StartUp;
+	CurrentGameUIState = EMenuUIState::StartUp;
 
 	UEveryThingAssetManager*  OwnerAssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
 	
-
 	MainMenuClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("MainMenu"));
 	ErrorDialogClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("ErrorDialog"));
 	HouseListClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("HouseList"));
@@ -29,15 +28,15 @@ AEveryThingMenuHUD::AEveryThingMenuHUD()
 
 void AEveryThingMenuHUD::BeginPlay()
 {
-	if (IsTargetGameUIState(EGameUIState::StartUp)) { ToggleToNewGameUIState(EGameUIState::MainMenu); }
+	if (IsTargetGameUIState(EMenuUIState::StartUp)) { ToggleToNewGameUIState(EMenuUIState::MainMenu); }
 }
 
 //////////////////////////////////////////////////////////////////////////
 /// Game UI State
 
-void AEveryThingMenuHUD::ToggleToNewGameUIState(EGameUIState InGameUIState)
+void AEveryThingMenuHUD::ToggleToNewGameUIState(EMenuUIState InGameUIState)
 {
-	if (InGameUIState != EGameUIState::LoadingScreen)
+	if (InGameUIState != EMenuUIState::LoadingScreen)
 	{
 		FinishOldGameUIState(CurrentGameUIState);
 	}
@@ -46,53 +45,53 @@ void AEveryThingMenuHUD::ToggleToNewGameUIState(EGameUIState InGameUIState)
 
 	StartNewGameUIState(CurrentGameUIState);
 }
-void AEveryThingMenuHUD::StartNewGameUIState(EGameUIState InGameUIState)
+void AEveryThingMenuHUD::StartNewGameUIState(EMenuUIState InGameUIState)
 {
 	switch (InGameUIState)
 	{
-		case EGameUIState::StartUp:
+		case EMenuUIState::StartUp:
 			break;
-		case EGameUIState::MainMenu:
+		case EMenuUIState::MainMenu:
 			ShowMainMenu();
 			break;
-		case EGameUIState::HouseCreate:
+		case EMenuUIState::HouseCreate:
 			ShowHouseCreate();
 			break;
-		case EGameUIState::HouseList:
+		case EMenuUIState::HouseList:
 			ShowHouseList();
 			break;
-		case EGameUIState::LoadingScreen:
+		case EMenuUIState::LoadingScreen:
 			ShowLoadingScreen();
 			break;
-		case EGameUIState::ErrorDialog:
+		case EMenuUIState::ErrorDialog:
 			ShowErrorDialog();
 			break;
-		case EGameUIState::Unknown:
+		case EMenuUIState::Unknown:
 			break;
 	}
 }
-void AEveryThingMenuHUD::FinishOldGameUIState(EGameUIState InGameUIState)
+void AEveryThingMenuHUD::FinishOldGameUIState(EMenuUIState InGameUIState)
 {
 	switch (InGameUIState)
 	{
-		case EGameUIState::StartUp:
+		case EMenuUIState::StartUp:
 			break;
-		case EGameUIState::MainMenu:
+		case EMenuUIState::MainMenu:
 			if (MainMenu) { MainMenu->RemoveFromParent(); }
 			break;
-		case EGameUIState::HouseCreate:
+		case EMenuUIState::HouseCreate:
 			if (HouseCreate) { HouseCreate->RemoveFromParent(); }
 			break;
-		case EGameUIState::HouseList:
+		case EMenuUIState::HouseList:
 			if (HouseList) { HouseList->RemoveFromParent(); }
 			break;
-		case EGameUIState::LoadingScreen:
+		case EMenuUIState::LoadingScreen:
 			if (LoadingScreen) { LoadingScreen->RemoveFromParent(); }
 			break;
-		case EGameUIState::ErrorDialog:
+		case EMenuUIState::ErrorDialog:
 			if (ErrorDialog) { ErrorDialog->RemoveFromParent(); }
 			break;
-		case EGameUIState::Unknown:
+		case EMenuUIState::Unknown:
 			break;
 	}
 }
@@ -104,7 +103,7 @@ void AEveryThingMenuHUD::FinishOldGameUIState(EGameUIState InGameUIState)
 
 void AEveryThingMenuHUD::SetErrorDialogMessage(const FString& ErrorMessage)
 {
-	if (IsTargetGameUIState(EGameUIState::ErrorDialog) && ErrorDialog)
+	if (IsTargetGameUIState(EMenuUIState::ErrorDialog) && ErrorDialog)
 	{
 		ErrorDialog->SetErrorMessage(FText::FromString(ErrorMessage));
 	}
@@ -112,17 +111,17 @@ void AEveryThingMenuHUD::SetErrorDialogMessage(const FString& ErrorMessage)
 
 void AEveryThingMenuHUD::UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResults)
 {
-	if (IsTargetGameUIState(EGameUIState::LoadingScreen) && HouseList)
+	if (IsTargetGameUIState(EMenuUIState::LoadingScreen) && HouseList)
 	{
 		HouseList->UpdateHouseList(SearchResults);
-		ToggleToNewGameUIState(EGameUIState::HouseList);
+		ToggleToNewGameUIState(EMenuUIState::HouseList);
 	}
 }
 
 
 void AEveryThingMenuHUD::ShowMainMenu()
 {
-	if (IsTargetGameUIState(EGameUIState::MainMenu))
+	if (IsTargetGameUIState(EMenuUIState::MainMenu))
 	{
 		if (!MainMenu && MainMenuClass) { MainMenu = CreateWidget<UMainMenu>(GetGameInstance(), MainMenuClass); }
 
@@ -140,7 +139,7 @@ void AEveryThingMenuHUD::ShowMainMenu()
 
 void AEveryThingMenuHUD::ShowHouseCreate()
 {
-	if (IsTargetGameUIState(EGameUIState::HouseCreate))
+	if (IsTargetGameUIState(EMenuUIState::HouseCreate))
 	{
 		if (!HouseCreate && HouseCreateClass) { HouseCreate = CreateWidget<UHouseCreate>(GetGameInstance(), HouseCreateClass); }
 
@@ -154,7 +153,7 @@ void AEveryThingMenuHUD::ShowHouseCreate()
 
 void AEveryThingMenuHUD::ShowHouseList()
 {
-	if (IsTargetGameUIState(EGameUIState::HouseList))
+	if (IsTargetGameUIState(EMenuUIState::HouseList))
 	{
 		if (!HouseList && HouseListClass) { HouseList = CreateWidget<UHouseList>(GetGameInstance(), HouseListClass); }
 
@@ -168,7 +167,7 @@ void AEveryThingMenuHUD::ShowHouseList()
 
 void AEveryThingMenuHUD::ShowLoadingScreen()
 {
-	if (IsTargetGameUIState(EGameUIState::LoadingScreen))
+	if (IsTargetGameUIState(EMenuUIState::LoadingScreen))
 	{
 		if (!LoadingScreen && LoadingScreenClass) { LoadingScreen = CreateWidget<ULoadingScreen>(GetGameInstance(), LoadingScreenClass); }
 
@@ -182,7 +181,7 @@ void AEveryThingMenuHUD::ShowLoadingScreen()
 
 void AEveryThingMenuHUD::ShowErrorDialog()
 {
-	if (IsTargetGameUIState(EGameUIState::ErrorDialog))
+	if (IsTargetGameUIState(EMenuUIState::ErrorDialog))
 	{
 
 		if (!ErrorDialog && ErrorDialogClass) { ErrorDialog = CreateWidget<UErrorDialog>(GetGameInstance(), ErrorDialogClass); }

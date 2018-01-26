@@ -5,7 +5,7 @@
 #include "EveryThingTypes.h"
 #include "EveryThingAssetManager.h"
 #include "EveryThingGameInstance.h"
-#include "UI/EveryThingMenuHUD.h"
+#include "UI/Menu/EveryThingMenuHUD.h"
 
 UHouseCreate::UHouseCreate(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -24,7 +24,7 @@ UHouseCreate::UHouseCreate(const FObjectInitializer& ObjectInitializer) : Super(
 void UHouseCreate::HostGame(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum)
 {
 	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
-	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::LoadingScreen); }
+	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::LoadingScreen); }
 
 	UEveryThingGameInstance* OwnerGameInstance = GetWorld() ? GetWorld()->GetGameInstance<UEveryThingGameInstance>() : nullptr;
 	if (OwnerGameInstance) { OwnerGameInstance->HostGame(HouseName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum); }
@@ -34,7 +34,10 @@ void UHouseCreate::HostGame(const FString& HouseName, const FString& GameType, c
 void UHouseCreate::BackUp()
 {
 	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
-	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::MainMenu); }
+	if (OwnerMenuHUD && OwnerMenuHUD->IsTargetGameUIState(EMenuUIState::HouseCreate))
+	{
+		OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::MainMenu);
+	}
 }
 
 TArray<FString> UHouseCreate::GetAllMaps(const FString& MapType) const

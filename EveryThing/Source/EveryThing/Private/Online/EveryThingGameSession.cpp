@@ -6,7 +6,7 @@
 #include "OnlineSubsystemSessionSettings.h"
 
 #include "EveryThingGameInstance.h"
-#include "UI/EveryThingMenuHUD.h"
+#include "UI/Menu/EveryThingMenuHUD.h"
 
 
 DECLARE_LOG_CATEGORY_CLASS(EveryThingOnline, Log, All);
@@ -158,7 +158,16 @@ bool AEveryThingGameSession::JoinSession(const FUniqueNetId& UserId, const FOnli
 	return bResult;
 }
 
-
+void AEveryThingGameSession::DestroySession()
+{
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
+	{
+		OnDestroySessionCompleteDelegateHandle = Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
+		Sessions->DestroySession(GameSessionName);
+	}
+}
 
 void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool bWasSuccessful)
 {
@@ -267,6 +276,14 @@ void AEveryThingGameSession::OnDestroySessionComplete(FName InSessionName, bool 
 	{
 		Sessions->ClearOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegateHandle);
 		HostSettings = nullptr;
+	}
+
+	if (bWasSuccessful)
+	{
+	
+		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
+	
+		if (OwnerETGI) { OwnerETGI->OpenMenuLevel(); }
 	}
 }
 

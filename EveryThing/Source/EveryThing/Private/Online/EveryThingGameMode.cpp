@@ -2,6 +2,8 @@
 
 #include "EveryThingGameMode.h"
 
+#include "UI/Game/EveryThingGameHUD.h"
+
 AEveryThingGameMode::AEveryThingGameMode()
 {
 	NormalDamageScale = 1.f;
@@ -9,6 +11,8 @@ AEveryThingGameMode::AEveryThingGameMode()
 
 	DefaultPawnClass = nullptr;
 	PlayerControllerClass = nullptr;
+
+	HUDClass = AEveryThingGameHUD::StaticClass();
 }
 
 

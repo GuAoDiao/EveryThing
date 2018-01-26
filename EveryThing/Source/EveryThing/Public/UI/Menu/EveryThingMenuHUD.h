@@ -11,7 +11,7 @@
 
 
 UENUM(BlueprintType)
-enum class EGameUIState : uint8
+enum class EMenuUIState : uint8
 {
 	StartUp,
 	MainMenu,
@@ -46,16 +46,16 @@ public:
 	/// Game UI State
 public:
 	UFUNCTION(BlueprintPure)
-	EGameUIState GetCurrentGameUIState() const { return CurrentGameUIState; }
+	EMenuUIState GetCurrentGameUIState() const { return CurrentGameUIState; }
 	UFUNCTION(BlueprintPure)
-	bool IsTargetGameUIState(EGameUIState InGameUIState) const { return InGameUIState == CurrentGameUIState; }
+	bool IsTargetGameUIState(EMenuUIState InGameUIState) const { return InGameUIState == CurrentGameUIState; }
 	UFUNCTION(BlueprintCallable)
-	void ToggleToNewGameUIState(EGameUIState InGameUIState);
+	void ToggleToNewGameUIState(EMenuUIState InGameUIState);
 private:
-	void FinishOldGameUIState(EGameUIState InGameUIState);
-	void StartNewGameUIState(EGameUIState InGameUIState);
+	void FinishOldGameUIState(EMenuUIState InGameUIState);
+	void StartNewGameUIState(EMenuUIState InGameUIState);
 private:
-	EGameUIState CurrentGameUIState;
+	EMenuUIState CurrentGameUIState;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// UI

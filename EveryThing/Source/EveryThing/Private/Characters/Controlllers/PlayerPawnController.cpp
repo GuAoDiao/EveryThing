@@ -6,6 +6,7 @@
 
 #include "EveryThingTypes.h"
 #include "EveryThingGameInstance.h"
+#include "UI/Game/EveryThingGameHUD.h"
 #include "EveryThingAssetManager.h"
 #include "Characters/GamePawn.h"
 #include "Characters/PlayerPawnInterface.h"
@@ -46,6 +47,8 @@ void APlayerPawnController::SetupInputComponent()
 
 	InputComponent->BindAction("TogglePawnSkin", IE_Pressed, this, &APlayerPawnController::StartTogglePawnSkin);
 	InputComponent->BindAction("TogglePawnSkin", IE_Released, this, &APlayerPawnController::StopTogglePawnSkin);
+
+	InputComponent->BindAction("ToggleGameMenu", IE_Pressed, this, &APlayerPawnController::ToggleGameMenu);
 
 	InputComponent->BindAction("NumberOne", IE_Pressed, this, &APlayerPawnController::NumberOne);
 	InputComponent->BindAction("NumberTwo", IE_Pressed, this, &APlayerPawnController::NumberTwo);
@@ -161,6 +164,16 @@ AActor* APlayerPawnController::GetAttackTarget() { return OwnerPlayerPawnComp ? 
 /// Visual Angle
 void APlayerPawnController::Turn(float AxisValue) { if (AxisValue != 0.f && OwnerPlayerPawnComp) { OwnerPlayerPawnComp->Turn(AxisValue); } }
 void APlayerPawnController::LookUp(float AxisValue) { if (AxisValue != 0.f && OwnerPlayerPawnComp) { OwnerPlayerPawnComp->LookUp(AxisValue); } }
+
+
+//////////////////////////////////////////////////////////////////////////
+void APlayerPawnController::ToggleGameMenu()
+{
+	UE_LOG(LogTemp, Log, TEXT("-_- toggle to game menu"));
+
+	AEveryThingGameHUD* OwnerETGH = Cast<AEveryThingGameHUD>(GetHUD());
+	if (OwnerETGH) { OwnerETGH->ToggleGameMenu(); }
+}
 
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn Form And Prop Use

@@ -5,7 +5,7 @@
 #include "OnlineSessionSettings.h"
 
 #include "EveryThingGameInstance.h"
-#include "UI/EveryThingMenuHUD.h"
+#include "UI/Menu/EveryThingMenuHUD.h"
 
 void UHouseRow::InitializeUI(FOnlineSessionSearchResult& InSearchResult)
 {
@@ -19,7 +19,7 @@ void UHouseRow::UpdateDisplay()
 {
 	if (SearchResult)
 	{
-		const FOnlineSessionSettings& Settings = SearchResult->Session.SessionSettings;
+ 		const FOnlineSessionSettings& Settings = SearchResult->Session.SessionSettings;
 
 		FString GameType, MapName, HouseName;
 
@@ -30,7 +30,7 @@ void UHouseRow::UpdateDisplay()
 
 		int32 MaxPlayersNum = Settings.NumPublicConnections;
 		int32 Pin = SearchResult->PingInMs;
-		int32 CurrentPlayersNum = 0;
+		int32 CurrentPlayersNum = Settings.NumPublicConnections - SearchResult->Session.NumOpenPublicConnections;
 
 		InitializeDisplay(HouseName, GameType, MapName, CurrentPlayersNum, MaxPlayersNum, Pin);
 	}
@@ -43,7 +43,7 @@ void UHouseRow::JoinHouse()
 	if (OwnerPC && SearchResult)
 	{
 		AEveryThingMenuHUD* OwnerMenuHUD = Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD());
-		if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EGameUIState::LoadingScreen); }
+		if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::LoadingScreen); }
 
 		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(OwnerPC->GetGameInstance());
 		if (OwnerETGI) { OwnerETGI->JoinGame(*SearchResult); }

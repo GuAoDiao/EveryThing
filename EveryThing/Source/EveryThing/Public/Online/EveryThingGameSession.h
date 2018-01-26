@@ -96,7 +96,7 @@ public:
 	void FindSessions(const FUniqueNetId& UserId, bool bIsLAN, bool bIsPresence);
 	bool JoinSession(const FUniqueNetId& UserId, int32 SessionIndexInSearResults);
 	bool JoinSession(const FUniqueNetId& UserId, const FOnlineSessionSearchResult& SearchResult);
-
+	void DestroySession();
 protected:
 	virtual void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 	void OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful);

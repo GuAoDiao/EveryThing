@@ -6,6 +6,7 @@
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "GameFramework/PlayerState.h"
 
 #include "Online/EveryThingGameMode_Menu.h"
 #include "Online/EveryThingGameSession.h"
@@ -29,7 +30,7 @@ void UEveryThingGameInstance::OpenMenuLevel()
 }
 
 
-void UEveryThingGameInstance::ExitGame()
+void UEveryThingGameInstance::ExitGameApplication()
 {
 	APlayerController* OwnerPC = GetFirstLocalPlayerController();
 	if (OwnerPC) { OwnerPC->ConsoleCommand("quit"); }
@@ -78,7 +79,7 @@ void UEveryThingGameInstance::JoinGame(FOnlineSessionSearchResult& SessionResult
 	}
 }
 
-void UEveryThingGameInstance::JoinGame(FName SessionName, int32 SearchResultIndex)
+void UEveryThingGameInstance::JoinGame(int32 SearchResultIndex)
 {
 	AEveryThingGameSession* OwnerETGS = GetGameSession();
 	ULocalPlayer* OwnerLocalPlayer = GetFirstGamePlayer();
@@ -88,6 +89,25 @@ void UEveryThingGameInstance::JoinGame(FName SessionName, int32 SearchResultInde
 		if (UserId.IsValid())
 		{
 			OwnerETGS->JoinSession(*UserId, SearchResultIndex);
+		}
+	}
+}
+
+void UEveryThingGameInstance::ExitGame()
+{
+	AEveryThingGameSession* OwnerETGS = GetGameSession();
+	if (OwnerETGS)
+	{
+		OwnerETGS->DestroySession();
+	}
+	else
+	{
+		IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+		IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+				
+		if (Sessions.IsValid())
+		{
+			Sessions->EndSession(GameSessionName);
 		}
 	}
 }

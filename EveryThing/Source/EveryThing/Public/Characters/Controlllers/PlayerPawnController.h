@@ -47,12 +47,17 @@ private:
 	class UPlayerPawnComponent* OwnerPlayerPawnComp;
 
 	//////////////////////////////////////////////////////////////////////////
+	/// UI
+	void ToggleGameMenu();
+
+	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn Form , Skin And Prop Use
 	void StartTogglePawnState();
 	void StopTogglePawnState();
 
 	void StartTogglePawnSkin();
 	void StopTogglePawnSkin();
+
 
 	void NumberOne();
 	void NumberTwo();
