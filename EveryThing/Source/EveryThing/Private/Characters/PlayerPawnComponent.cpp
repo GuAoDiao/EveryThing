@@ -139,7 +139,7 @@ void UPlayerPawnComponent::LookUp(float AxisValue)
 
 		if (bIsConvertYAxis) { AxisValue = -AxisValue; }
 
-		// 315 - 45
+		// 315 - 90
 		if ((AxisValue > 0.f && (CurrentPitch < 95.f || CurrentPitch > 315.f)) || (AxisValue < 0.f && (CurrentPitch < 90.f || CurrentPitch > 310.f)))
 		{
 			OwnerPawn->AddControllerPitchInput(AxisValue * BaseTurnRate);
