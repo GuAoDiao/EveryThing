@@ -2,6 +2,7 @@
 
 #include "JumpMovementComponent.h"
 
+#include "Components/InputComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "UnrealNetwork.h"
 
@@ -32,6 +33,33 @@ UJumpMovementComponent::UJumpMovementComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UJumpMovementComponent::BindInputComponent(UInputComponent* OwnerInputComp)
+{
+	Super::BindInputComponent(OwnerInputComp);
+
+	if (!OwnerInputComp) { return; }
+
+	OwnerInputComp->BindAxis("MoveForward", this, &UJumpMovementComponent::AdjsutForwardPosition);
+	OwnerInputComp->BindAxis("MoveRight", this, &UJumpMovementComponent::AdjustRightPosition);
+
+
+	OwnerInputComp->BindAction("MoveForwardAction", IE_Pressed, this, &UJumpMovementComponent::JumpMoveToForward);
+	OwnerInputComp->BindAction("MoveBackAction", IE_Pressed, this, &UJumpMovementComponent::JumpMoveToBack);
+	OwnerInputComp->BindAction("MoveLeftAction", IE_Pressed, this, &UJumpMovementComponent::JumpMoveToLeft);
+	OwnerInputComp->BindAction("MoveRightAction", IE_Pressed, this, &UJumpMovementComponent::JumpMoveToRight);
+
+	OwnerInputComp->BindAction("MoveForwardAction", IE_Released, this, &UJumpMovementComponent::ClearMoveDirection);
+	OwnerInputComp->BindAction("MoveBackAction", IE_Released, this, &UJumpMovementComponent::ClearMoveDirection);
+	OwnerInputComp->BindAction("MoveLeftAction", IE_Released, this, &UJumpMovementComponent::ClearMoveDirection);
+	OwnerInputComp->BindAction("MoveRightAction", IE_Released, this, &UJumpMovementComponent::ClearMoveDirection);
+
+	OwnerInputComp->BindAction("Jump", IE_Pressed, this, &UJumpMovementComponent::StartJump);
+	OwnerInputComp->BindAction("Jump", IE_Released, this, &UJumpMovementComponent::StopJump);
+
+	OwnerInputComp->BindAction("ToggleMovementState", IE_Pressed, this, &UJumpMovementComponent::BeginToggleMovementState);
+	OwnerInputComp->BindAction("ToggleMovementState", IE_Released, this, &UJumpMovementComponent::EndToggleMovementState);
+}
+
 void UJumpMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	if (OwnerPrimitiveComp) { AutoAdjsutRotationPosition(DeltaTime); }
@@ -53,25 +81,25 @@ void UJumpMovementComponent::AutoAdjsutRotationPosition(float DeltaTime)
 
 		if (OwnerRotation.Roll > 10.f)
 		{
-			// Force += OwnerPrimitiveComp->GetRightVector() * FMath::FInterpTo(10, OwnerRotation.Roll, DeltaTime, AtuoAdjustRotationForceStrength);
+			// Force += OwnerPrimitiveComp->GetRightVector() * FMath::Lerp(10.f, OwnerRotation.Roll, 0.5f) *AtuoAdjustRotationForceStrength);
 		}
 		else if(OwnerRotation.Roll < -10.f)
 		{
-			// Force += OwnerPrimitiveComp->GetRightVector() * FMath::FInterpTo(OwnerRotation.Roll , -10, DeltaTime, AtuoAdjustRotationForceStrength);
+			Force += OwnerPrimitiveComp->GetRightVector() * FMath::Lerp(OwnerRotation.Roll , -10.f, 0.5f) *AtuoAdjustRotationForceStrength);
 		}
 
 		if (OwnerRotation.Pitch > 10.f)
 		{
-			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::FInterpTo(10, OwnerRotation.Pitch, DeltaTime, AtuoAdjustRotationForceStrength);
+			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::Lerp(10.f, OwnerRotation.Pitch, 0.5f) *AtuoAdjustRotationForceStrength);
 		}
 		else if(OwnerRotation.Pitch < -10.f)
 		{
-			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::FInterpTo(OwnerRotation.Pitch, -10, DeltaTime, AtuoAdjustRotationForceStrength);
+			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::Lerp(OwnerRotation.Pitch, -10.f, 0.5f) *AtuoAdjustRotationForceStrength);
 		}
 
 		if (Force != FVector::ZeroVector)
 		{
-			OwnerPrimitiveComp->AddTorqueInRadians(Force * AdjustRotationForce  * DeltaTime);
+			// OwnerPrimitiveComp->AddTorqueInRadians(Force * AdjustRotationForce  * DeltaTime);
 		}
 	}
 }

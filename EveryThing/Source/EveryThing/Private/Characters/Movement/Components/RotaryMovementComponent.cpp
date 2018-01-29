@@ -3,8 +3,9 @@
 #include "RotaryMovementComponent.h"
 
 #include "UnrealNetwork.h"
-#include "Components/PrimitiveComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/InputComponent.h"
+#include "Components/PrimitiveComponent.h"
 
 #include "Characters/Movement/Interfaces/RotaryMovementPawnInterface.h"
 
@@ -30,7 +31,18 @@ URotaryMovementComponent::URotaryMovementComponent()
 	OwnerPrimitiveComp = OwnerRotaryPawn ? OwnerRotaryPawn->GetPrimitiveComponent() : nullptr;
 }
 
+void URotaryMovementComponent::BindInputComponent(class UInputComponent* OwnerInputComp)
+{
+	Super::BindInputComponent(OwnerInputComp);
 
+	if (!OwnerInputComp) { return; }
+
+	OwnerInputComp->BindAxis("MoveForward", this, &URotaryMovementComponent::MoveForward);
+	OwnerInputComp->BindAxis("MoveRight", this, &URotaryMovementComponent::MoveRight);
+
+	OwnerInputComp->BindAction("Jump", IE_Pressed, this, &URotaryMovementComponent::StartJump);
+	OwnerInputComp->BindAction("ToggleMovementState", IE_Pressed, this, &URotaryMovementComponent::ToogleMovementState);
+}
 
 void URotaryMovementComponent::MoveForward(float AxisValue)
 {

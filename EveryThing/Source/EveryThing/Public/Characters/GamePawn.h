@@ -14,6 +14,7 @@ class UAttackComponent;
 class USkillComponent;
 class FGamePawnForm;
 class FGamePawnSkin;
+class UGamePawnMovementComponent;
 
 UCLASS()
 class EVERYTHING_API AGamePawn : public APawn, public IHitAbleInterface
@@ -29,6 +30,8 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Component
+public:
+	inline UGamePawnMovementComponent* GetMovementComponent() const { return MovementComp; }
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
 	class UStaticMeshComponent* StaticMeshComp;

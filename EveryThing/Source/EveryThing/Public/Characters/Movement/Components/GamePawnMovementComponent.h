@@ -14,4 +14,7 @@ class EVERYTHING_API UGamePawnMovementComponent : public UActorComponent
 
 protected:
 	bool HasAuthority();
+
+public:
+	virtual void BindInputComponent(class UInputComponent* OwnerInputComp) {}
 };

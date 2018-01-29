@@ -12,6 +12,7 @@
 #include "Kismet/KismetMathLibrary.h"
 
 #include "Characters/GamePawn.h"
+#include "Online/EveryThingPlayerState.h"
 
 UPlayerPawnComponent::UPlayerPawnComponent()
 {
@@ -149,7 +150,11 @@ void UPlayerPawnComponent::LookUp(float AxisValue)
 
 void UPlayerPawnComponent::OnPressNumberKeyboard(int32 NumberIndex)
 {
-	if (bIsWantedTogglePawnSkin)
+	if (bIsWantedTogglePawn)
+	{
+		TogglePawn(NumberIndex);
+	}
+	else if (bIsWantedTogglePawnSkin)
 	{
 		TogglePawnSkin(NumberIndex);
 	}
@@ -166,6 +171,15 @@ void UPlayerPawnComponent::OnPressNumberKeyboard(int32 NumberIndex)
 void UPlayerPawnComponent::UseProp(int32 NumberIndex)
 {
 	UE_LOG(LogTemp, Log, TEXT("-_- Use Prop Of Index: %d"), NumberIndex)
+}
+
+void UPlayerPawnComponent::TogglePawn(int32 NumberIndex)
+{
+	if (OwnerPawn)
+	{
+		AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(OwnerPawn->GetController()->PlayerState);
+		if (OwnerETPS) { OwnerETPS->ToggolePawn(NumberIndex); }
+	}
 }
 
 void UPlayerPawnComponent::TogglePawnForm(int32 NumberIndex)
