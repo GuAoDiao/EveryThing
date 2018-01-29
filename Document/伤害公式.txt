@@ -1,0 +1,5 @@
+MassWeight * SpeedWeight * WeightScale
+
+SpeedWeight = (Speed * SpeedWeightScale)^3;
+
+MassWeight = Mass * MassScale * MassWeightScale;
