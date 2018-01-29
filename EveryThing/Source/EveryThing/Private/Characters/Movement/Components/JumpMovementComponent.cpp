@@ -20,7 +20,7 @@ UJumpMovementComponent::UJumpMovementComponent()
 
 	AdjustPawnRotationForce = 500000 * 1000.f;
 
-	AtuoAdjustRotationForceStrength = 25.f;
+	AtuoAdjustRotationForceStrength = 100.f;
 
 	bHasMoveDirection = false;
 	bIsToogleMovementState = false;
@@ -49,22 +49,29 @@ void UJumpMovementComponent::AutoAdjsutRotationPosition(float DeltaTime)
 	{
 		FRotator OwnerRotation = OwnerPrimitiveComp->GetComponentRotation();
 	
-		bool bNeedAdjustForward = OwnerRotation.Roll > 10.f || OwnerRotation.Roll < -10.f;
-		bool bForwardIsPositiveValue = OwnerRotation.Roll > 0.f;
+		FVector Force = FVector::ZeroVector;
 
-
-		bool bNeedAdjustRight = OwnerRotation.Pitch > 10.f || OwnerRotation.Pitch < -10.f;
-		bool bRightIsPositiveValue = OwnerRotation.Pitch > 0.f;
-
-		if (bNeedAdjustForward)
+		if (OwnerRotation.Roll > 10.f)
 		{
-			FVector Direction = OwnerPrimitiveComp->GetRightVector();
-			OwnerPrimitiveComp->AddTorqueInRadians(Direction * AdjustRotationForce * (bForwardIsPositiveValue ? 1.f : -1.f) * DeltaTime * AtuoAdjustRotationForceStrength);
+			// Force += OwnerPrimitiveComp->GetRightVector() * FMath::FInterpTo(10, OwnerRotation.Roll, DeltaTime, AtuoAdjustRotationForceStrength);
 		}
-		if (bNeedAdjustRight)
+		else if(OwnerRotation.Roll < -10.f)
 		{
-			FVector Direction = -OwnerPrimitiveComp->GetForwardVector();
-			OwnerPrimitiveComp->AddTorqueInRadians(Direction * AdjustRotationForce * (bRightIsPositiveValue ? 1.f : -1.f) * DeltaTime * AtuoAdjustRotationForceStrength);
+			// Force += OwnerPrimitiveComp->GetRightVector() * FMath::FInterpTo(OwnerRotation.Roll , -10, DeltaTime, AtuoAdjustRotationForceStrength);
+		}
+
+		if (OwnerRotation.Pitch > 10.f)
+		{
+			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::FInterpTo(10, OwnerRotation.Pitch, DeltaTime, AtuoAdjustRotationForceStrength);
+		}
+		else if(OwnerRotation.Pitch < -10.f)
+		{
+			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::FInterpTo(OwnerRotation.Pitch, -10, DeltaTime, AtuoAdjustRotationForceStrength);
+		}
+
+		if (Force != FVector::ZeroVector)
+		{
+			OwnerPrimitiveComp->AddTorqueInRadians(Force * AdjustRotationForce  * DeltaTime);
 		}
 	}
 }
