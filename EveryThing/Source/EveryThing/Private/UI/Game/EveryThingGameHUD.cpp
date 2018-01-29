@@ -22,7 +22,10 @@ void AEveryThingGameHUD::DisplayGameMenu()
 	if (!GameMenu)
 	{
 		TSubclassOf<UUserWidget> GameMenuClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("GameMenu"));
-		GameMenu = CreateWidget<UGameMenu>(GetGameInstance(), GameMenuClass);
+		if (GameMenuClass)
+		{
+			GameMenu = CreateWidget<UGameMenu>(GetGameInstance(), GameMenuClass);
+		}
 	}
 
 	if (GameMenu)

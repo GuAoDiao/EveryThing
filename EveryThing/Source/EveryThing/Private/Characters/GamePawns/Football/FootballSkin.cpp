@@ -2,8 +2,13 @@
 
 #include "FootballSkin.h"
 
+#include "EveryThingAssetManager.h"
+
 FFootballSkin::FFootballSkin(UStaticMeshComponent* StaticMeshComp) : FGamePawnSkin(StaticMeshComp)
 {
 	MaterialNames.Add(TEXT("FootballBlack"));
 	MaterialNames.Add(TEXT("FootballWhite"));
+
+	UEveryThingAssetManager::GetAssetManagerInstance()->NeededMaterialFromName(TEXT("FootballBlack"));
+	UEveryThingAssetManager::GetAssetManagerInstance()->NeededMaterialFromName(TEXT("FootballWhite"));
 }

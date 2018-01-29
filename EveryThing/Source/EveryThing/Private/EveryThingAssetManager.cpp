@@ -21,49 +21,13 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 		}
 	}
 
-	UDataTable* StaticMeshDatatable = GetDataTableFromName(TEXT("StaticMesh"));
-	if (StaticMeshDatatable)
-	{
-		TArray<FStaticMeshData*> StaticMeshDataInDatatable;
-		StaticMeshDatatable->GetAllRows<FStaticMeshData>(TEXT("found all StaticMesh DataTable"), StaticMeshDataInDatatable);
-		for (FStaticMeshData* StaticMeshData : StaticMeshDataInDatatable)
-		{
-			AllMeshAsset.Add(FName(*StaticMeshData->Name), StaticMeshData->MeshClass);
-		}
-	}
+	LoadMeshFromDatatable();
 
-	UDataTable* MaterialInstaneDatatable = GetDataTableFromName(TEXT("MaterialInstance"));
-	if (MaterialInstaneDatatable)
-	{
-		TArray<FMaterialInstanceData*> MaterialInstanceDataInDatatable;
-		MaterialInstaneDatatable->GetAllRows<FMaterialInstanceData>(TEXT("found all MaterialInstane DataTable"), MaterialInstanceDataInDatatable);
-		for (FMaterialInstanceData* MaterialInstaneData : MaterialInstanceDataInDatatable)
-		{
-			AllMaterialInstanceAsset.Add(FName(*MaterialInstaneData->Name), MaterialInstaneData->MaterialInstanceClass);
-		}
-	}
+	LoadMaterialFromDatatable();
 
-	UDataTable* ParticleSystemDatatable = GetDataTableFromName(TEXT("ParticleSystem"));
-	if (ParticleSystemDatatable)
-	{
-		TArray<FParticleSystemData*> ParticleSystemDataInDatatable;
-		ParticleSystemDatatable->GetAllRows<FParticleSystemData>(TEXT("found all ParticleSystem DataTable"), ParticleSystemDataInDatatable);
-		for (FParticleSystemData* ParticleSystemData : ParticleSystemDataInDatatable)
-		{
-			AllParticleAsset.Add(FName(*ParticleSystemData->Name), ParticleSystemData->ParticleSystemClass);
-		}
-	}
+	LoadParticleFromDatatable();
 
-	UDataTable* UserWidgetDatatable = GetDataTableFromName(TEXT("UserWidget"));
-	if (UserWidgetDatatable)
-	{
-		TArray<FUserWidgetData*> UserWidgetDataInDatatable;
-		UserWidgetDatatable->GetAllRows<FUserWidgetData>(TEXT("found all UserWidget DataTable"), UserWidgetDataInDatatable);
-		for (FUserWidgetData* UserWidgetData : UserWidgetDataInDatatable)
-		{
-			AllUserWidgetAsset.Add(FName(*UserWidgetData->Name), UserWidgetData->UserWidgetClass);
-		}
-	}
+	LoadUserWidgetFromDataable();
 }
 UEveryThingAssetManager::~UEveryThingAssetManager()
 {
@@ -90,34 +54,150 @@ void UEveryThingAssetManager::DestroyAssetManagerInstance()
 	AssetManager = nullptr;
 }
 
-UStaticMesh* UEveryThingAssetManager::GetMeshFromName(const FString& MeshName)
+//////////////////////////////////////////////////////////////////////////
+/// Mesh
+void UEveryThingAssetManager::LoadMeshFromDatatable()
+{
+	UDataTable* StaticMeshDatatable = GetDataTableFromName(TEXT("StaticMesh"));
+	if (StaticMeshDatatable)
+	{
+		TArray<FStaticMeshData*> StaticMeshDataInDatatable;
+		StaticMeshDatatable->GetAllRows<FStaticMeshData>(TEXT("found all StaticMesh DataTable"), StaticMeshDataInDatatable);
+		for (FStaticMeshData* StaticMeshData : StaticMeshDataInDatatable)
+		{
+			AllMeshAsset.Add(FName(*StaticMeshData->Name), StaticMeshData->MeshClass);
+		}
+	}
+}
+
+void UEveryThingAssetManager::NeededMeshFromName(const FString& MeshName)
+{
+	GetMeshFromName(MeshName, false);
+}
+
+UStaticMesh* UEveryThingAssetManager::GetMeshFromName(const FString& MeshName, bool bIsNeedForce)
 {
 	FName MeskKey(*MeshName);
 	if (!AllMeshAsset.Contains(MeskKey))
 	{
-		AllMeshAsset.Add(MeskKey, LoadObject<UStaticMesh>(nullptr, *FString::Printf(TEXT("StaticMesh'/Game/EveryThing/Meshes/SM_%s.SM_%s'"), *MeshName, *MeshName)));
+		AllMeshAsset.Add(MeskKey, TSoftObjectPtr<UStaticMesh>(FString::Printf(TEXT("StaticMesh'/Game/EveryThing/Meshes/SM_%s.SM_%s'"), *MeshName, *MeshName)));
 	}
-	return AllMeshAsset[MeskKey];
+
+	if (bIsNeedForce)
+	{
+		return AllMeshAsset[MeskKey].LoadSynchronous();
+	}
+	else
+	{
+		OwnerStreamableManager.RequestAsyncLoad(AllMeshAsset[MeskKey].ToSoftObjectPath());
+
+		return AllMeshAsset[MeskKey].Get();
+	}
 }
 
-UMaterialInstanceConstant* UEveryThingAssetManager::GetMaterialFromName(const FString& MaterialName)
+
+//////////////////////////////////////////////////////////////////////////
+/// Material instance
+
+void UEveryThingAssetManager::LoadMaterialFromDatatable()
+{
+	UDataTable* MaterialInstaneDatatable = GetDataTableFromName(TEXT("MaterialInstance"));
+	if (MaterialInstaneDatatable)
+	{
+		TArray<FMaterialInstanceData*> MaterialInstanceDataInDatatable;
+		MaterialInstaneDatatable->GetAllRows<FMaterialInstanceData>(TEXT("found all MaterialInstane DataTable"), MaterialInstanceDataInDatatable);
+		for (FMaterialInstanceData* MaterialInstaneData : MaterialInstanceDataInDatatable)
+		{
+			AllMaterialInstanceAsset.Add(FName(*MaterialInstaneData->Name), MaterialInstaneData->MaterialInstanceClass);
+		}
+	}
+}
+
+void UEveryThingAssetManager::NeededMaterialFromName(const FString& MaterialName)
+{
+	GetMaterialFromName(MaterialName, false);
+}
+
+UMaterialInstanceConstant* UEveryThingAssetManager::GetMaterialFromName(const FString& MaterialName, bool bIsNeedForce)
 {
 	FName MaterialKey(*MaterialName);
 	if (!AllMaterialInstanceAsset.Contains(MaterialKey))
 	{
-		AllMaterialInstanceAsset.Add(MaterialKey, LoadObject<UMaterialInstanceConstant>(nullptr, *FString::Printf(TEXT("MaterialInstanceConstant'/Game/EveryThing/Materials/MI_%s.MI_%s'"), *MaterialName, *MaterialName)));
+		AllMaterialInstanceAsset.Add(MaterialKey, TSoftObjectPtr<UMaterialInstanceConstant>(FString::Printf(TEXT("MaterialInstanceConstant'/Game/EveryThing/Materials/MI_%s.MI_%s'"), *MaterialName, *MaterialName)));
 	}
-	return AllMaterialInstanceAsset[MaterialKey];
+
+	if (bIsNeedForce)
+	{
+		return AllMaterialInstanceAsset[MaterialKey].LoadSynchronous();
+	}
+	else
+	{
+		OwnerStreamableManager.RequestAsyncLoad(AllMaterialInstanceAsset[MaterialKey].ToSoftObjectPath());
+
+		return AllMaterialInstanceAsset[MaterialKey].Get();
+	}
 }
 
-UParticleSystem* UEveryThingAssetManager::GetParticleFromName(const FString& ParticleName)
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Particle
+
+void UEveryThingAssetManager::LoadParticleFromDatatable()
+{
+	UDataTable* ParticleSystemDatatable = GetDataTableFromName(TEXT("ParticleSystem"));
+	if (ParticleSystemDatatable)
+	{
+		TArray<FParticleSystemData*> ParticleSystemDataInDatatable;
+		ParticleSystemDatatable->GetAllRows<FParticleSystemData>(TEXT("found all ParticleSystem DataTable"), ParticleSystemDataInDatatable);
+		for (FParticleSystemData* ParticleSystemData : ParticleSystemDataInDatatable)
+		{
+			AllParticleAsset.Add(FName(*ParticleSystemData->Name), ParticleSystemData->ParticleSystemClass);
+		}
+	}
+}
+
+UParticleSystem* UEveryThingAssetManager::GetParticleFromName(const FString& ParticleName, bool bIsNeedForce)
 {
 	FName ParticleKey(*ParticleName);
 	if (!AllParticleAsset.Contains(ParticleKey))
 	{
-		AllParticleAsset.Add(ParticleKey, LoadObject<UParticleSystem>(nullptr, *FString::Printf(TEXT("ParticleSystem'/Game/EveryThing/Particles/P_%s.P_%s'"), *ParticleName, *ParticleName)));
+		AllParticleAsset.Add(ParticleKey, TSoftObjectPtr<UParticleSystem>(FString::Printf(TEXT("ParticleSystem'/Game/EveryThing/Particles/P_%s.P_%s'"), *ParticleName, *ParticleName)));
 	}
-	return AllParticleAsset[ParticleKey];
+
+	if (bIsNeedForce)
+	{
+		return AllParticleAsset[ParticleKey].LoadSynchronous();
+	}
+	else
+	{
+		OwnerStreamableManager.RequestAsyncLoad(AllParticleAsset[ParticleKey].ToSoftObjectPath());
+
+		return AllParticleAsset[ParticleKey].Get();
+	}
+}
+
+void UEveryThingAssetManager::NeededParticleFromName(const FString& ParticleName)
+{
+	GetParticleFromName(ParticleName, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/// User Widget
+
+void UEveryThingAssetManager::LoadUserWidgetFromDataable()
+{
+	UDataTable* UserWidgetDatatable = GetDataTableFromName(TEXT("UserWidget"));
+	if (UserWidgetDatatable)
+	{
+		TArray<FUserWidgetData*> UserWidgetDataInDatatable;
+		UserWidgetDatatable->GetAllRows<FUserWidgetData>(TEXT("found all UserWidget DataTable"), UserWidgetDataInDatatable);
+		for (FUserWidgetData* UserWidgetData : UserWidgetDataInDatatable)
+		{
+			AllUserWidgetAsset.Add(FName(*UserWidgetData->Name), UserWidgetData->UserWidgetClass);
+		}
+	}
 }
 
 
@@ -126,21 +206,19 @@ TSubclassOf<UUserWidget> UEveryThingAssetManager::GetUserWidgetFromName(const FS
 	FName UserWidgetKey(*UserWidgetName);
 	if (!AllUserWidgetAsset.Contains(UserWidgetKey))
 	{
-		AllUserWidgetAsset.Add(UserWidgetKey, LoadClass<UUserWidget>(nullptr, *FString::Printf(TEXT("WidgetBlueprint'/Game/EveryThing/UI/W_%s.W_%s_C'"), *UserWidgetName, *UserWidgetName)));
-
-		// check(0);
-		return nullptr;
+		AllUserWidgetAsset.Add(UserWidgetKey, TSoftClassPtr<UUserWidget>(FString::Printf(TEXT("WidgetBlueprint'/Game/EveryThing/UI/W_%s.W_%s_C'"), *UserWidgetName, *UserWidgetName)));
 	}
-	return AllUserWidgetAsset[UserWidgetKey];
+	return AllUserWidgetAsset[UserWidgetKey].LoadSynchronous();
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+/// Data table
 UDataTable* UEveryThingAssetManager::GetDataTableFromName(const FString& DataTableName)
 {
 	FName DataTableKey(*DataTableName);
 	if (!AllDataTableAsset.Contains(DataTableKey))
 	{
-		AllDataTableAsset.Add(DataTableKey, LoadObject<UDataTable>(nullptr, *FString::Printf(TEXT("DataTable'/Game/EveryThing/DataTable/DT_%s.DT_%s'"), *DataTableName, *DataTableName)));
+		AllDataTableAsset.Add(DataTableKey, TSoftObjectPtr<UDataTable>(FString::Printf(TEXT("DataTable'/Game/EveryThing/DataTable/DT_%s.DT_%s'"), *DataTableName, *DataTableName)));
 	}
-	return AllDataTableAsset[DataTableKey];
+	return AllDataTableAsset[DataTableKey].LoadSynchronous();
 }

@@ -3,8 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "Engine/DataTable.h"
+#include "Engine/StreamableManager.h"
+
 #include "Blueprint/UserWidget.h"
+
 #include "EveryThingAssetManager.generated.h"
 
 class UStaticMesh;
@@ -20,7 +24,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UStaticMesh* MeshClass;
+	TSoftObjectPtr<UStaticMesh> MeshClass;
 };
 
 USTRUCT(BlueprintType)
@@ -31,7 +35,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UMaterialInstanceConstant* MaterialInstanceClass;
+	TSoftObjectPtr<UMaterialInstanceConstant> MaterialInstanceClass;
 };
 
 USTRUCT(BlueprintType)
@@ -42,7 +46,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UParticleSystem* ParticleSystemClass;
+	TSoftObjectPtr<UParticleSystem> ParticleSystemClass;
 };
 
 USTRUCT(BlueprintType)
@@ -53,7 +57,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<UUserWidget> UserWidgetClass;
+	TSoftClassPtr<UUserWidget> UserWidgetClass;
 };
 
 USTRUCT(BlueprintType)
@@ -64,7 +68,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UDataTable* DataTableClass;
+	TSoftObjectPtr<UDataTable> DataTableClass;
 };
 
 /**
@@ -83,26 +87,54 @@ public:
 	static void DestroyAssetManagerInstance();
 private:
 	static UEveryThingAssetManager* AssetManager;
-
+	
+	FStreamableManager OwnerStreamableManager;
+	//////////////////////////////////////////////////////////////////////////
+	/// Mesh
 public:
-	UStaticMesh* GetMeshFromName(const FString& MeshName);
-	UMaterialInstanceConstant* GetMaterialFromName(const FString& MaterialName);
-	UParticleSystem* GetParticleFromName(const FString& ParticleName);
-	UDataTable* GetDataTableFromName(const FString& DataTableName);
+	void NeededMeshFromName(const FString& MeshName);
+	UStaticMesh* GetMeshFromName(const FString& MeshName, bool bIsNeedForce = true);
+private:
+	void LoadMeshFromDatatable();
+	TMap<FName, TSoftObjectPtr<UStaticMesh>> AllMeshAsset;
+
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Material instance
+public:
+	void NeededMaterialFromName(const FString& MaterialName);
+	UMaterialInstanceConstant* GetMaterialFromName(const FString& MaterialName, bool bIsNeedForce = false);
+
+private:
+	void LoadMaterialFromDatatable();
+	TMap<FName, TSoftObjectPtr<UMaterialInstanceConstant>> AllMaterialInstanceAsset;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Particle
+public:
+	void NeededParticleFromName(const FString& ParticleName);
+	UParticleSystem* GetParticleFromName(const FString& ParticleName, bool bIsNeedForce = false);
+
+private:
+	void LoadParticleFromDatatable();
+	TMap<FName, TSoftObjectPtr<UParticleSystem>> AllParticleAsset;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// User Widget
+public:
+
+	void LoadUserWidgetFromDataable();
 	TSubclassOf<UUserWidget> GetUserWidgetFromName(const FString& UserWidgetName);
 
-public:
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TMap<FName, UDataTable*> AllDataTableAsset;
+private:	
+	TMap<FName, TSoftClassPtr<UUserWidget>> AllUserWidgetAsset;
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TMap<FName, UStaticMesh*> AllMeshAsset;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TMap<FName, UMaterialInstanceConstant*> AllMaterialInstanceAsset;
-	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TMap<FName, UParticleSystem*> AllParticleAsset;
-	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TMap<FName, TSubclassOf<UUserWidget>> AllUserWidgetAsset;
+	//////////////////////////////////////////////////////////////////////////
+	/// Data table
+
+public:
+	UDataTable* GetDataTableFromName(const FString& DataTableName);
+
+private:
+	TMap<FName, TSoftObjectPtr<UDataTable>> AllDataTableAsset;
 };

@@ -6,12 +6,14 @@
 #include "Particles/ParticleSystem.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Engine.h"
+
 #include "EveryThingAssetManager.h"
 #include "Characters/GamePawns/Football/FootballPawn.h"
 #include "Characters/Movement/Components/RotaryMovementComponent.h"
 
 UFootballAttackComponent::UFootballAttackComponent()
-{
+{ 
 	CommonAttack.bIsEnableActionPressed = true;
 	SpecialAttack.bIsEnableActionPressed = true;
 	
@@ -26,6 +28,8 @@ UFootballAttackComponent::UFootballAttackComponent()
 	MinAutoAimDistance = 500.f;
 	MaxAttackDistance = 5000.f;
 	HitElasticScale = 0.7f;
+
+	UEveryThingAssetManager::GetAssetManagerInstance()->NeededParticleFromName(TEXT("Explosion"));
 	
 	PrimaryComponentTick.bCanEverTick = true;
 }
@@ -64,7 +68,10 @@ void UFootballAttackComponent::OnHitImplement(UPrimitiveComponent* HitComp, AAct
 		}
 
 		UParticleSystem*  HitEmitter = UEveryThingAssetManager::GetAssetManagerInstance()->GetParticleFromName(TEXT("Explosion"));
-		if (HitEmitter) { UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location); }
+		if (HitEmitter)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location);
+		}
 
 		StopAttack();
 	}
