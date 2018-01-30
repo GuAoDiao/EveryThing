@@ -17,3 +17,4 @@ class EVERYTHING_API AFootballPawn : public ARotaryMovementPawn
 public:
 	AFootballPawn();
 };
+

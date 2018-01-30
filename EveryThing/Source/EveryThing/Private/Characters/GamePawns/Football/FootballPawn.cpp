@@ -14,17 +14,8 @@
 
 AFootballPawn::AFootballPawn()
 {
-	UDataTable* GamePawnInfoDataDable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName("GamePawn");
-	if (GamePawnInfoDataDable)
-	{
-		FGamePawnInfo* FootballInfo = GamePawnInfoDataDable->FindRow<FGamePawnInfo>("Football", TEXT("find game pawn football base info"));
-		if (FootballInfo)
-		{
-			SetInfo(FootballInfo);
-		}
-	}
-
-	
+	ResetInfoFromDataTable("Football");
+		
 	UStaticMesh* FootballMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Football"));
 	if (FootballMesh) { StaticMeshComp->SetStaticMesh(FootballMesh); }
 

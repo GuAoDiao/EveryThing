@@ -4,7 +4,7 @@
 #include "Engine/World.h"
 #include "Components/StaticMeshComponent.h"
 
-
+#include "EveryThingAssetManager.h"
 #include "Online/EveryThingGameMode.h"
 #include "Characters/GamePawnForm.h"
 #include "Characters/GamePawnSkin.h"
@@ -250,7 +250,19 @@ AActor* AGamePawn::TryToGetAttackTarget(float InMaxAttackDistance)
 
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn info
-void AGamePawn::SetInfo(FGamePawnInfo* InInfo)
+
+void AGamePawn::ResetInfoFromDataTable(const FName& GamePawnName)
+{
+	UDataTable* GamePawnInfoDataDable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName("GamePawn");
+	if (GamePawnInfoDataDable)
+	{
+		FGamePawnInfo* GamePawnInfo = GamePawnInfoDataDable->FindRow<FGamePawnInfo>(GamePawnName, FString::Printf(TEXT("find game pawn %s base info"), *GamePawnName.ToString()));
+		if (GamePawnInfo) { SetInfo(GamePawnInfo); }
+	}
+}
+
+
+void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 {
 	OwnerInfo = *InInfo;
 

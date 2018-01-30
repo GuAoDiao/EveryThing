@@ -12,6 +12,9 @@ public:
 	FGamePawnSkin(UStaticMeshComponent* StaticMeshComp);
 	virtual ~FGamePawnSkin() {}
 
+
+	void LoadAllGameSkinMaterial();
+
 	virtual void LoadGamePawnSkin();
 	void UnloadGamePawnSkin();
 protected:

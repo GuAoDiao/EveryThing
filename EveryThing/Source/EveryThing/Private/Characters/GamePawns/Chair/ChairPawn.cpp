@@ -9,15 +9,7 @@
 
 AChairPawn::AChairPawn()
 {
-	UDataTable* GamePawnInfoDataDable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName("GamePawn");
-	if (GamePawnInfoDataDable)
-	{
-		FGamePawnInfo* FootballInfo = GamePawnInfoDataDable->FindRow<FGamePawnInfo>("Chair", TEXT("find game pawn chair base info"));
-		if (FootballInfo)
-		{
-			SetInfo(FootballInfo);
-		}
-	}
+	ResetInfoFromDataTable("Chair");
 
 
 	UStaticMesh* ChairMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Chair"));
@@ -28,6 +20,8 @@ AChairPawn::AChairPawn()
 	UMaterialInstanceConstant* ChairWoodMaterial = AssetManager->GetMaterialFromName("ChairWood");
 	UMaterialInstanceConstant* ChairMatMaterial = AssetManager->GetMaterialFromName("ChairMat");
 	UMaterialInstanceConstant* ChairTidyMaterial = AssetManager->GetMaterialFromName("ChairTidy");
+
+
 	if (ChairWoodMaterial && ChairMatMaterial && ChairTidyMaterial)
 	{
 		StaticMeshComp->SetMaterial(0, ChairMatMaterial);

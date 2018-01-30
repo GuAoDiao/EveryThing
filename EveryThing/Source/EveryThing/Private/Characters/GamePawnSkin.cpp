@@ -12,6 +12,16 @@ FGamePawnSkin::FGamePawnSkin(UStaticMeshComponent* StaticMeshComp)
 	OwnerStaticMeshComp = StaticMeshComp;
 }
 
+void FGamePawnSkin::LoadAllGameSkinMaterial()
+{
+	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
+
+	for (int32 i = 0; i < MaterialNames.Num(); ++i)
+	{
+		AssetManager->NeededMaterialFromName(MaterialNames[i]);
+	}
+}
+
 void FGamePawnSkin::LoadGamePawnSkin()
 {
 	if (OwnerStaticMeshComp)

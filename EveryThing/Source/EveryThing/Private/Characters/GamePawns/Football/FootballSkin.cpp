@@ -9,6 +9,5 @@ FFootballSkin::FFootballSkin(UStaticMeshComponent* StaticMeshComp) : FGamePawnSk
 	MaterialNames.Add(TEXT("FootballBlack"));
 	MaterialNames.Add(TEXT("FootballWhite"));
 
-	UEveryThingAssetManager::GetAssetManagerInstance()->NeededMaterialFromName(TEXT("FootballBlack"));
-	UEveryThingAssetManager::GetAssetManagerInstance()->NeededMaterialFromName(TEXT("FootballWhite"));
+	LoadAllGameSkinMaterial();
 }

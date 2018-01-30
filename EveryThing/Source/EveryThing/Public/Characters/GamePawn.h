@@ -121,10 +121,10 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn info
 protected:
-	void SetInfo(FGamePawnInfo* InInfo);
+	void ResetInfoFromDataTable(const FName& GamePawnName);
+	void SetInfo(const FGamePawnInfo* InInfo);
 
 	FGamePawnInfo OwnerInfo;
-
 	//////////////////////////////////////////////////////////////////////////
 	/// Attribute
 	

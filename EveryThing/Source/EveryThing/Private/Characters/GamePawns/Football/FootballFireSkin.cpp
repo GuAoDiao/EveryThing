@@ -9,6 +9,5 @@ FFootballFireSkin::FFootballFireSkin(UStaticMeshComponent* StaticMeshComp) : FGa
 	MaterialNames.Add(TEXT("FootballBlack_Fire"));
 	MaterialNames.Add(TEXT("FootballWhite_Fire"));
 
-	UEveryThingAssetManager::GetAssetManagerInstance()->NeededMaterialFromName(TEXT("FootballBlack_Fire"));
-	UEveryThingAssetManager::GetAssetManagerInstance()->NeededMaterialFromName(TEXT("FootballWhite_Fire"));
+	LoadAllGameSkinMaterial();
 }
