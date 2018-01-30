@@ -27,7 +27,7 @@ public:
 	TArray<FString> GetAllMaps(const FString& MapType) const;
 
 public:
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Transient)
 	TArray<FString> MapsType;
 private:
 	class UDataTable* MapsInfoDataTable;

@@ -25,4 +25,6 @@ public:
 	bool bWantedToAcceptHitFunction;
 	// execute when bWantedToAcceptHitFunction is true
 	virtual void OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit) {};
+
+	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) {}
 };

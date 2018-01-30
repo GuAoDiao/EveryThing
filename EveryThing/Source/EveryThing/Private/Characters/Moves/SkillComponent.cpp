@@ -2,13 +2,21 @@
 
 #include "SkillComponent.h"
 
-USkillComponent::USkillComponent()
+USkillComponent::USkillComponent() : FirstSkill(this), SecondSkill(this), UltimateSkill(this)
 {
 	FirstSkill.BindingName = TEXT("FirstSkill");
 	SecondSkill.BindingName = TEXT("SecondSkill");
 	UltimateSkill.BindingName = TEXT("UltimateSkill");
+}
 
-	FirstSkill.SkillednessComp = SecondSkill.SkillednessComp = UltimateSkill.SkillednessComp = this;
+
+void USkillComponent::RebindInputComp(UInputComponent* OwnerInputComp)
+{
+	Super::RebindInputComp(OwnerInputComp);
+
+	FirstSkill.RebindInput(OwnerInputComp);
+	SecondSkill.RebindInput(OwnerInputComp);
+	UltimateSkill.RebindInput(OwnerInputComp);
 }
 
 void USkillComponent::StartFirstSkill() {}
@@ -26,20 +34,7 @@ void USkillComponent::ExcuteUltimateSkill(float AxisValue) {}
 
 void USkillComponent::RebindAll()
 {
-	RebindFirstSkill();
-	RebindSecondSkill();
-	RebindUltimateSkill();
-}
-
-void USkillComponent::RebindFirstSkill()
-{
-	FirstSkill.RebindFunction((void(UMovesComponent::*)())&USkillComponent::StartFirstSkill, (void(UMovesComponent::*)())&USkillComponent::StopFirstSkill, (void(UMovesComponent::*)(float))&USkillComponent::ExcuteFirstSkill);
-}
-void USkillComponent::RebindSecondSkill()
-{
-	SecondSkill.RebindFunction((void(UMovesComponent::*)())&USkillComponent::StartSecondSkill, (void(UMovesComponent::*)())&USkillComponent::StopSecondSkill, (void(UMovesComponent::*)(float))&USkillComponent::ExcuteSecondSkill);
-}
-void USkillComponent::RebindUltimateSkill()
-{
-	UltimateSkill.RebindFunction((void(UMovesComponent::*)())&USkillComponent::StartUltimateSkill, (void(UMovesComponent::*)()) &USkillComponent::StopUltimateSkill, (void(UMovesComponent::*)(float))&USkillComponent::ExcuteUltimateSkill);
+	FirstSkill.RebindFunction((FMoves::SkillednessAction)&USkillComponent::StartFirstSkill, (FMoves::SkillednessAction)&USkillComponent::StopFirstSkill, (FMoves::SkillednessAxis)&USkillComponent::ExcuteFirstSkill);
+	SecondSkill.RebindFunction((FMoves::SkillednessAction)&USkillComponent::StartSecondSkill, (FMoves::SkillednessAction)&USkillComponent::StopSecondSkill, (FMoves::SkillednessAxis)&USkillComponent::ExcuteSecondSkill);
+	UltimateSkill.RebindFunction((FMoves::SkillednessAction)&USkillComponent::StartUltimateSkill, (FMoves::SkillednessAction) &USkillComponent::StopUltimateSkill, (FMoves::SkillednessAxis)&USkillComponent::ExcuteUltimateSkill);
 }

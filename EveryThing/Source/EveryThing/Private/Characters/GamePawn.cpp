@@ -35,6 +35,7 @@ AGamePawn::AGamePawn()
 	SetRootComponent(StaticMeshComp);
 
 	MovementComp = nullptr;
+	
 	OwnerAttackComp = nullptr;
 	OwnerSkillComp = nullptr;
 
@@ -265,11 +266,19 @@ void AGamePawn::ResetInfoFromDataTable(const FName& GamePawnName)
 void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 {
 	OwnerInfo = *InInfo;
+	UpdateInfo();
+}
 
+void AGamePawn::UpdateInfo()
+{
 	ResetQuality();
 	ResetDamping();
 }
 
+void AGamePawn::OnRep_Info()
+{
+	UpdateInfo();
+}
 
 //////////////////////////////////////////////////////////////////////////
 /// Quality And Damping

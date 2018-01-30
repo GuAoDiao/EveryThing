@@ -9,8 +9,6 @@
 
 #include "PlayerPawnController.generated.h"
 
-
-struct FMoves;
 class UAttackComponent;
 class USkillComponent;
 
@@ -73,49 +71,13 @@ private:
 	void SelectLastAttackTarget();
 
 	//////////////////////////////////////////////////////////////////////////
-	/// _Skilledness
-
-	void StartSkilledness(FMoves* Skillness);
-	void StopSkilledness(FMoves* Skillness);
-	void ExcuteSkilledness(FMoves* Skillness, float Value);
-	
-	void BindSkillednessInputEvent(FMoves* Skillness, void(APlayerPawnController::*InStartKilledness)(), void(APlayerPawnController::*InStopKilledness)(), void(APlayerPawnController::*InExcuteKilledness)(float));
-
-	// Attack
-public:
-	void StartCommonAttack();
-	void StopCommonAttack();
-	void ExcuteCommonAttack(float AxisValue);
-
-	void StartSpecialAttack();
-	void StopSpecialAttack();
-	void ExcuteSpecialAttack(float AxisValue);
-	
+	/// Attack and skill
+public:	
 	void ToggleToNewAttackComponent(UAttackComponent* InAttackComp);
 private:
 	UAttackComponent* CurrentAttackComponent;
-	FMoves* CommonAttack;
-	FMoves* SpecialAttack;
-	// Skill
 public:
-	void StartFirstSkill();
-	void StopFirstSkill();
-	void ExcuteFirstSkill(float AxisValue);
-
-	void StartSecondSkill();
-	void StopSecondSkill();
-	void ExcuteSecondSkill(float AxisValue);
-
-	void StartUltimateSkill();
-	void StopUltimateSkill();
-	void ExcuteUltimateSkill(float AxisValue);
-
-
 	void ToggleToNewSkillComponent(USkillComponent* InSkillComp);
-
 private:
 	USkillComponent* CurrentSkillComponent;
-	FMoves* FirstSkill;
-	FMoves* SecondSkill;
-	FMoves* UltimateSkill;
 };

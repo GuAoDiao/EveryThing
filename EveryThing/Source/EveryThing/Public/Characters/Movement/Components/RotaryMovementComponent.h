@@ -16,7 +16,7 @@ class EVERYTHING_API URotaryMovementComponent : public UGamePawnMovementComponen
 public:
 	URotaryMovementComponent();
 
-	virtual void BindInputComponent(class UInputComponent* OwnerInputComp);
+	virtual void RebindInputComp(class UInputComponent* OwnerInputComp);
 
 public:
 	void MoveForward(float AxisValue);

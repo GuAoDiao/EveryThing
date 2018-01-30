@@ -33,9 +33,9 @@ UJumpMovementComponent::UJumpMovementComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UJumpMovementComponent::BindInputComponent(UInputComponent* OwnerInputComp)
+void UJumpMovementComponent::RebindInputComp(UInputComponent* OwnerInputComp)
 {
-	Super::BindInputComponent(OwnerInputComp);
+	Super::RebindInputComp(OwnerInputComp);
 
 	if (!OwnerInputComp) { return; }
 

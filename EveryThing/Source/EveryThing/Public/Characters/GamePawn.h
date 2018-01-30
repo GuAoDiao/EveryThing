@@ -123,7 +123,11 @@ protected:
 protected:
 	void ResetInfoFromDataTable(const FName& GamePawnName);
 	void SetInfo(const FGamePawnInfo* InInfo);
+	void UpdateInfo();
+	UFUNCTION()
+	void OnRep_Info();
 
+	UPROPERTY(BlueprintReadOnly, Replicated, ReplicatedUsing = OnRep_Info)
 	FGamePawnInfo OwnerInfo;
 	//////////////////////////////////////////////////////////////////////////
 	/// Attribute

@@ -35,6 +35,8 @@ void APlayerPawnController::SetupInputComponent()
 
 void APlayerPawnController::RebindInput()
 {
+	if (!InputComponent) { return; }
+
 	// Clear all bindings;
 	InputComponent->ClearActionBindings();
 	InputComponent->AxisBindings.Empty();
@@ -70,7 +72,7 @@ void APlayerPawnController::RebindInput()
 		ToggleToNewSkillComponent(OwnerGamePawn->GetSkillComponent());
 		
 		UGamePawnMovementComponent* OwnerPlayerMovementComp = OwnerGamePawn->GetGamePawnMovementComponent();
-		if (OwnerPlayerMovementComp) { OwnerPlayerMovementComp->BindInputComponent(InputComponent); }
+		if (OwnerPlayerMovementComp) { OwnerPlayerMovementComp->RebindInputComp(InputComponent); }
 	}
 }
 
@@ -206,23 +208,6 @@ void APlayerPawnController::SelectNextAttackTarget() { if (OwnerPlayerPawnComp) 
 void APlayerPawnController::SelectLastAttackTarget() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SelectLastAttackTarget(); } }
 
 //////////////////////////////////////////////////////////////////////////
-/// _Skilledness
-
-void APlayerPawnController::StartSkilledness(FMoves* Skillness) { if (Skillness->SkillednessComp && Skillness->StartSkilledness) { (Skillness->SkillednessComp->*(Skillness->StartSkilledness))(); } }
-void APlayerPawnController::StopSkilledness(FMoves* Skillness) { if (Skillness->SkillednessComp && Skillness->StopSkilledness) { (Skillness->SkillednessComp->*(Skillness->StopSkilledness))(); } }
-void APlayerPawnController::ExcuteSkilledness(FMoves* Skillness, float Value) { if (Skillness->SkillednessComp && Skillness->ExcuteSkilledness) { (Skillness->SkillednessComp->*(Skillness->ExcuteSkilledness))(Value); } }
-
-void APlayerPawnController::BindSkillednessInputEvent(FMoves* Skillness, void(APlayerPawnController::*InStartKilledness)(), void(APlayerPawnController::*InStopKilledness)(), void(APlayerPawnController::*InExcuteKilledness)(float))
-{
-	if (Skillness && InputComponent)
-	{
-		if (Skillness->bIsEnableActionPressed) { InputComponent->BindAction(Skillness->BindingName, IE_Pressed, this, InStartKilledness); }
-		if (Skillness->bIsEnableActionReleased) { InputComponent->BindAction(Skillness->BindingName, IE_Released, this, InStopKilledness); }
-		if (Skillness->bIsEnableAxis) { InputComponent->BindAxis(Skillness->BindingName, this, InExcuteKilledness); }
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
 /// Attack
 
 void APlayerPawnController::ToggleToNewAttackComponent(UAttackComponent* InAttackComp)
@@ -233,20 +218,12 @@ void APlayerPawnController::ToggleToNewAttackComponent(UAttackComponent* InAttac
 
 	if (CurrentAttackComponent)
 	{
-		CommonAttack = CurrentAttackComponent->GetCommantAttackSkilledness();
-		BindSkillednessInputEvent(CommonAttack, &APlayerPawnController::StartCommonAttack, &APlayerPawnController::StopCommonAttack, &APlayerPawnController::ExcuteCommonAttack);
-		SpecialAttack = CurrentAttackComponent->GetSpecialAttackSkilledness();
-		BindSkillednessInputEvent(SpecialAttack, &APlayerPawnController::StartSpecialAttack, &APlayerPawnController::StopSpecialAttack, &APlayerPawnController::ExcuteSpecialAttack);
+		FMoves* CommonAttack = CurrentAttackComponent->GetCommantAttackSkilledness();
+		if (CommonAttack) { CommonAttack->RebindInput(InputComponent); }
+		FMoves* SpecialAttack = CurrentAttackComponent->GetSpecialAttackSkilledness();
+		if (SpecialAttack) { SpecialAttack->RebindInput(InputComponent); }
 	}
 }
-
-void APlayerPawnController::StartCommonAttack() { if (CommonAttack) { StartSkilledness(CommonAttack); } }
-void APlayerPawnController::StopCommonAttack() { if (CommonAttack) { StopSkilledness(CommonAttack); } }
-void APlayerPawnController::ExcuteCommonAttack(float AxisValue) { if (AxisValue != 0.f && CommonAttack) { ExcuteSkilledness(CommonAttack, AxisValue); } }
-
-void APlayerPawnController::StartSpecialAttack() { if (SpecialAttack) { StartSkilledness(SpecialAttack); } }
-void APlayerPawnController::StopSpecialAttack() { if (SpecialAttack) { StopSkilledness(SpecialAttack); } }
-void APlayerPawnController::ExcuteSpecialAttack(float AxisValue) { if (AxisValue != 0.f && SpecialAttack) { ExcuteSkilledness(SpecialAttack, AxisValue); } }
 
 //////////////////////////////////////////////////////////////////////////
 /// Skill
@@ -258,25 +235,13 @@ void APlayerPawnController::ToggleToNewSkillComponent(USkillComponent* InSkillCo
 
 	if (CurrentSkillComponent)
 	{
-		FirstSkill = CurrentSkillComponent->GetFirstSkillSkilledness();
-		BindSkillednessInputEvent(FirstSkill, &APlayerPawnController::StartFirstSkill, &APlayerPawnController::StopFirstSkill, &APlayerPawnController::ExcuteFirstSkill);
+		FMoves* FirstSkill = CurrentSkillComponent->GetFirstSkillSkilledness();
+		if (FirstSkill) { FirstSkill->RebindInput(InputComponent); }
 
-		SecondSkill = CurrentSkillComponent->GetSecondSkillSkilledness();
-		BindSkillednessInputEvent(SecondSkill, &APlayerPawnController::StartSecondSkill, &APlayerPawnController::StopSecondSkill, &APlayerPawnController::ExcuteSecondSkill);
+		FMoves* SecondSkill = CurrentSkillComponent->GetSecondSkillSkilledness();
+		if (SecondSkill) { SecondSkill->RebindInput(InputComponent); }
 
-		UltimateSkill = CurrentSkillComponent->GetUltimateSkillSkilledness();
-		BindSkillednessInputEvent(UltimateSkill, &APlayerPawnController::StartUltimateSkill, &APlayerPawnController::StopUltimateSkill, &APlayerPawnController::ExcuteUltimateSkill);
+		FMoves* UltimateSkill = CurrentSkillComponent->GetUltimateSkillSkilledness();
+		if (UltimateSkill) { UltimateSkill->RebindInput(InputComponent); }
 	}
 }
-
-void APlayerPawnController::StartFirstSkill() { if (FirstSkill) { StartSkilledness(FirstSkill); } }
-void APlayerPawnController::StopFirstSkill() { if (FirstSkill) { StopSkilledness(FirstSkill); } }
-void APlayerPawnController::ExcuteFirstSkill(float AxisValue) { if (AxisValue != 0.f && FirstSkill) { ExcuteSkilledness(FirstSkill, AxisValue); } }
-
-void APlayerPawnController::StartSecondSkill() { if (SecondSkill) { StartSkilledness(SecondSkill); } }
-void APlayerPawnController::StopSecondSkill() { if (SecondSkill) { StopSkilledness(SecondSkill); } }
-void APlayerPawnController::ExcuteSecondSkill(float AxisValue) { if (AxisValue != 0.f && SecondSkill) { ExcuteSkilledness(SecondSkill, AxisValue); } }
-
-void APlayerPawnController::StartUltimateSkill() { if (UltimateSkill) { StartSkilledness(UltimateSkill); } }
-void APlayerPawnController::StopUltimateSkill() { if (UltimateSkill) { StopSkilledness(UltimateSkill); } }
-void APlayerPawnController::ExcuteUltimateSkill(float AxisValue) { if (AxisValue != 0.f && UltimateSkill) { ExcuteSkilledness(UltimateSkill, AxisValue); } }

@@ -16,5 +16,5 @@ protected:
 	bool HasAuthority();
 
 public:
-	virtual void BindInputComponent(class UInputComponent* OwnerInputComp) {}
+	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) {}
 };

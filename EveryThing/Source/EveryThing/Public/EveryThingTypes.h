@@ -22,6 +22,8 @@ enum class EPromptType : uint8
 	Tips
 };
 
+//////////////////////////////////////////////////////////////////////////
+/// Input
 USTRUCT(BlueprintType)
 struct FInputAxis : public FTableRowBase
 {
@@ -55,7 +57,8 @@ public:
 };
 
 
-
+//////////////////////////////////////////////////////////////////////////
+/// Maps
 USTRUCT(BlueprintType)
 struct FMapInfo : public FTableRowBase
 {
@@ -68,6 +71,8 @@ public:
 };
 
 
+//////////////////////////////////////////////////////////////////////////
+/// Gmaw Pawn
 USTRUCT(BlueprintType)
 struct FGamePawnInfo : public FTableRowBase
 {

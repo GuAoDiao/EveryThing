@@ -2,16 +2,19 @@
 
 #include "AttackComponent.h"
 
-
-UAttackComponent::UAttackComponent()
+UAttackComponent::UAttackComponent() : CommonAttack(this), SpecialAttack(this)
 {
 	CommonAttack.BindingName = TEXT("CommonAttack");
 	SpecialAttack.BindingName = TEXT("SpecialAttack");
-
-
-	CommonAttack.SkillednessComp = SpecialAttack.SkillednessComp = this;
 }
 
+void UAttackComponent::RebindInputComp(UInputComponent* OwnerInputComp)
+{
+	Super::RebindInputComp(OwnerInputComp);
+	
+	CommonAttack.RebindInput(OwnerInputComp);
+	SpecialAttack.RebindInput(OwnerInputComp);
+}
 
 void UAttackComponent::StartCommonAttack() {}
 void UAttackComponent::StopCommonAttack() {}
@@ -21,18 +24,9 @@ void UAttackComponent::StartSpecialAttack() {}
 void UAttackComponent::StopSpecialAttack() {}
 void UAttackComponent::ExcuteSpecialAttack(float AxisValue) {}
 
-void UAttackComponent::RebindCommonAttack()
-{
-	CommonAttack.RebindFunction((void(UMovesComponent::*)())&UAttackComponent::StartCommonAttack, (void(UMovesComponent::*)())&UAttackComponent::StopCommonAttack, (void(UMovesComponent::*)(float))&UAttackComponent::ExcuteCommonAttack);
-}
-
-void UAttackComponent::RebindSpecialAttack()
-{
-	SpecialAttack.RebindFunction((void(UMovesComponent::*)())&UAttackComponent::StartSpecialAttack, (void(UMovesComponent::*)())&UAttackComponent::StopSpecialAttack, (void(UMovesComponent::*)(float))&UAttackComponent::ExcuteSpecialAttack);
-}
 
 void UAttackComponent::RebindAll()
 {
-	RebindCommonAttack();
-	RebindSpecialAttack();
+	CommonAttack.RebindFunction((FMoves::SkillednessAction)&UAttackComponent::StartCommonAttack, (FMoves::SkillednessAction)&UAttackComponent::StopCommonAttack, (FMoves::SkillednessAxis)&UAttackComponent::ExcuteCommonAttack);
+	SpecialAttack.RebindFunction((FMoves::SkillednessAction)&UAttackComponent::StartSpecialAttack, (FMoves::SkillednessAction)&UAttackComponent::StopSpecialAttack, (FMoves::SkillednessAxis)&UAttackComponent::ExcuteSpecialAttack);
 }

@@ -12,9 +12,5 @@
 UCLASS()
 class EVERYTHING_API UChairAttackComponent : public UAttackComponent
 {
-	GENERATED_BODY()
-	
-	
-	
-	
+	GENERATED_BODY()	
 };

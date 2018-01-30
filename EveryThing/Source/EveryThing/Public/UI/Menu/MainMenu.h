@@ -16,14 +16,14 @@ class EVERYTHING_API UMainMenu : public UUserWidget
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void OnCreateHouse();
+	void CreateHouse();
 
 	UFUNCTION(BlueprintCallable)
-	void OnHouseList();
+	void HouseList();
 
 	UFUNCTION(BlueprintCallable)
-	void OnConfig();
+	void Config();
 
 	UFUNCTION(BlueprintCallable)
-	void OnExitGame();	
+	void ExitGame();	
 };

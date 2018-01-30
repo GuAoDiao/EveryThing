@@ -18,7 +18,7 @@ public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
-	virtual void BindInputComponent(class UInputComponent* OwnerInputComp) override;
+	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) override;
 
 protected:
 	class IJumpMovementPawnInterface* OwnerJumpPawn;

@@ -15,6 +15,8 @@ class EVERYTHING_API USkillComponent : public UMovesComponent
 public:
 	USkillComponent();
 
+	virtual void RebindInputComp(UInputComponent* OwnerInputComp) override;
+
 	inline FMoves* GetFirstSkillSkilledness() { return &FirstSkill; }
 	inline FMoves* GetSecondSkillSkilledness() { return &SecondSkill; }
 	inline FMoves* GetUltimateSkillSkilledness() { return &UltimateSkill; }
@@ -23,19 +25,17 @@ protected:
 	virtual void StartFirstSkill();
 	virtual void StopFirstSkill();
 	virtual void ExcuteFirstSkill(float AxisValue);
-	void RebindFirstSkill();
 
 	virtual void StartSecondSkill();
 	virtual void StopSecondSkill();
 	virtual void ExcuteSecondSkill(float AxisValue);
-	void RebindSecondSkill();
 
 	virtual void StartUltimateSkill();
 	virtual void StopUltimateSkill();
 	virtual void ExcuteUltimateSkill(float AxisValue);
-	void RebindUltimateSkill();
 
 	virtual void RebindAll() override;
+
 protected:
 	FMoves FirstSkill;
 	FMoves SecondSkill;

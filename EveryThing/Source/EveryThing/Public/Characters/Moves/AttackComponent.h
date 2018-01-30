@@ -17,16 +17,15 @@ public:
 	inline FMoves* GetCommantAttackSkilledness() { return &CommonAttack; }
 	inline FMoves* GetSpecialAttackSkilledness() { return &SpecialAttack; }
 
+	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) override;
 protected:
 	virtual void StartCommonAttack();
 	virtual void StopCommonAttack();
 	virtual void ExcuteCommonAttack(float AxisValue);
-	void RebindCommonAttack();
 
 	virtual void StartSpecialAttack();
 	virtual void StopSpecialAttack();
 	virtual void ExcuteSpecialAttack(float AxisValue);
-	void RebindSpecialAttack();
 
 	virtual void RebindAll() override;
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 class UMovesComponent;
+class UInputComponent;
 
 struct EVERYTHING_API FMoves
 {
@@ -12,30 +13,21 @@ public:
 	typedef void(UMovesComponent::*SkillednessAction)();
 	typedef void(UMovesComponent::*SkillednessAxis)(float AxisValue);
 
-	FName BindingName;
+	FMoves(UMovesComponent* InMovesComp = nullptr);
+private:
+	UMovesComponent* MovesComp;
+public:
+	void RebindFunction(SkillednessAction InPressedFunc, SkillednessAction InReleasedFunc, SkillednessAxis InExcuteFunc);
+	
+	void RebindInput(UInputComponent* OwnerInputComp);
+private:
 
+public:
 	bool bIsEnableActionPressed;
 	bool bIsEnableActionReleased;
 	bool bIsEnableAxis;
-
-	UMovesComponent* SkillednessComp;
-	
-	void(UMovesComponent::*StartSkilledness)();
-	void(UMovesComponent::*StopSkilledness)();
-	void(UMovesComponent::*ExcuteSkilledness)(float AxisValue);
-
-	FMoves()
-	{
-		bIsEnableAxis = bIsEnableActionPressed = bIsEnableActionReleased = false;
-		SkillednessComp = nullptr;
-		StartSkilledness = StopSkilledness = nullptr;
-		ExcuteSkilledness = nullptr;
-	}
-
-	void RebindFunction(SkillednessAction InPressedFunc, SkillednessAction InReleasedFunc, SkillednessAxis InExcuteFunc)
-	{
-		StartSkilledness = bIsEnableActionPressed ? InPressedFunc : nullptr;
-		StopSkilledness = bIsEnableActionReleased ? InReleasedFunc : nullptr;
-		ExcuteSkilledness = bIsEnableAxis ? InExcuteFunc : nullptr;
-	}
+	FName BindingName;
+	SkillednessAction StartSkilledness;
+	SkillednessAction StopSkilledness;
+	SkillednessAxis ExcuteSkilledness;
 };

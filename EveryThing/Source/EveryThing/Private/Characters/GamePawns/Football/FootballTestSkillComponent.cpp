@@ -31,7 +31,10 @@ void UFootballTestSkillComponent::StopSecondSkill()
 }
 void UFootballTestSkillComponent::ExcuteSecondSkill(float AxisValue)
 {
-	UE_LOG(LogTemp, Log, TEXT("-_- this is football test second skill excute"));
+	if (AxisValue != 0.f)
+	{
+		UE_LOG(LogTemp, Log, TEXT("-_- this is football test second skill excute"));
+	}
 }
 void UFootballTestSkillComponent::StartUltimateSkill()
 {

@@ -16,24 +16,27 @@ UFootballSkillComponent::UFootballSkillComponent()
 
 void UFootballSkillComponent::StartFirstSkill()
 {
-	UE_LOG(LogTemp, Log, TEXT("-_- this is football first skill"))
+	UE_LOG(LogTemp, Log, TEXT("-_- this is football first skill"));
 }
 
 void UFootballSkillComponent::StartSecondSkill()
 {
-	UE_LOG(LogTemp, Log, TEXT("-_- this is football second skill"))
+	UE_LOG(LogTemp, Log, TEXT("-_- this is football second skill"));
 }
 
 void UFootballSkillComponent::StartUltimateSkill()
 {
-	UE_LOG(LogTemp, Log, TEXT("-_- this is football ultimate skill start"))
+	UE_LOG(LogTemp, Log, TEXT("-_- this is football ultimate skill start"));
 }
 
 void UFootballSkillComponent::StopUltimateSkill()
 {
-	UE_LOG(LogTemp, Log, TEXT("-_- this is football ultimate skill stop"))
+	UE_LOG(LogTemp, Log, TEXT("-_- this is football ultimate skill stop"));
 }
 void UFootballSkillComponent::ExcuteUltimateSkill(float AxisValue)
 {
-	UE_LOG(LogTemp, Log, TEXT("-_- this is football ultimate skill excute"))
+	if (AxisValue != 0.f)
+	{
+		UE_LOG(LogTemp, Log, TEXT("-_- this is football ultimate skill excute"));
+	}
 }

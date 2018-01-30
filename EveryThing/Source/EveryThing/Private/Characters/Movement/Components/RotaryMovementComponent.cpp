@@ -31,9 +31,9 @@ URotaryMovementComponent::URotaryMovementComponent()
 	OwnerPrimitiveComp = OwnerRotaryPawn ? OwnerRotaryPawn->GetPrimitiveComponent() : nullptr;
 }
 
-void URotaryMovementComponent::BindInputComponent(class UInputComponent* OwnerInputComp)
+void URotaryMovementComponent::RebindInputComp(class UInputComponent* OwnerInputComp)
 {
-	Super::BindInputComponent(OwnerInputComp);
+	Super::RebindInputComp(OwnerInputComp);
 
 	if (!OwnerInputComp) { return; }
 
