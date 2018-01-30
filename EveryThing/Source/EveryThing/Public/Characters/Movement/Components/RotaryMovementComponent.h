@@ -18,6 +18,8 @@ public:
 
 	virtual void RebindInputComp(class UInputComponent* OwnerInputComp);
 
+
+	virtual void UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale = 1.f) override;
 public:
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
@@ -29,7 +31,9 @@ public:
 	void StartJump();
 
 	void ToogleMovementState();
-
+private:
+	void SetMovementState(bool bIsFastMovementState);
+public:
 	void SetIsJumping(bool bInIsJumping) { bIsJumping = bInIsJumping; }
 	bool CanJump() { return !bIsJumping; }
 
@@ -44,14 +48,14 @@ private:
 	void ServerToogleMovementState();
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	float SpeedSlow;
+	float SpeedForceBase;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	float SpeedFast;
+	float FastSpeedScale;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	float JumpForceSmall;
+	float JumpForceBase;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	float JumpForceStrong;
+	float FastJumpScale;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Transient, Replicated)
 	float CurrentSpeed;

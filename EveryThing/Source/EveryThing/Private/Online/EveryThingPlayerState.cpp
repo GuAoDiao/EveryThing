@@ -4,6 +4,7 @@
 
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "UnrealNetwork.h"
 
 #include "Characters/GamePawn.h"
 #include "Characters/PlayerPawns/PlayerChairPawn.h"
@@ -27,6 +28,12 @@ void AEveryThingPlayerState::ToggolePawn(int32 NumberIndex)
 {
 	if (AllGamePawn.IsValidIndex(NumberIndex) && AllGamePawn[NumberIndex] != CurrentPawnClass)
 	{
+		if (!HasAuthority())
+		{
+			ServerTogglePawn(NumberIndex);
+			return;
+		}
+
 		UE_LOG(LogTemp, Log, TEXT("-_- toggle pawn Of Index: %d"), NumberIndex)
 
 		APlayerController* OwnerPC = Cast<APlayerController>(GetOwner());
@@ -50,4 +57,19 @@ void AEveryThingPlayerState::ToggolePawn(int32 NumberIndex)
 
 		CurrentPawnClass = AllGamePawn[NumberIndex];
 	}
+}
+
+bool AEveryThingPlayerState::ServerTogglePawn_Validate(int32 NumberIndex) { return true; }
+void AEveryThingPlayerState::ServerTogglePawn_Implementation(int32 NumberIndex)
+{
+	ToggolePawn(NumberIndex);
+}
+
+
+
+void AEveryThingPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AEveryThingPlayerState, CurrentPawnClass);
 }

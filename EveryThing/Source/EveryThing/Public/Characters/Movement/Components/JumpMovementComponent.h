@@ -16,6 +16,8 @@ class EVERYTHING_API UJumpMovementComponent : public UGamePawnMovementComponent
 public:
 	UJumpMovementComponent();
 
+	virtual void UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale = 1.f);
+
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) override;

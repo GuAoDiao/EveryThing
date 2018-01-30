@@ -25,8 +25,12 @@ public:
 
 	void ToggolePawn(int32 NumberIndex);
 
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerTogglePawn(int32 NumberIndex);
+
 private:
 	TArray<TSubclassOf<AGamePawn>> AllGamePawn;
 
+	UPROPERTY(Transient, Replicated)
 	TSubclassOf<AGamePawn> CurrentPawnClass;
 };

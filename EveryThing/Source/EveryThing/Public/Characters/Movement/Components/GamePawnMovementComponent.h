@@ -12,8 +12,20 @@ class EVERYTHING_API UGamePawnMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+public:
+	UGamePawnMovementComponent();
+	
+	virtual void UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale = 1.f);
 protected:
+
 	bool HasAuthority();
+
+	float ActualMoveForce;
+	float ActualJumpForce;
+	float MoveForceScale;
+	float JumpForceScale;
+	float ActualSpeed;
+	float SpeedScale;
 
 public:
 	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) {}

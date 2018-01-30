@@ -12,20 +12,13 @@
 
 
 URotaryMovementComponent::URotaryMovementComponent()
-{
-	bReplicates = true;
-
-	SpeedSlow = 625 * 1000.f;
-	SpeedFast = 1250 * 1000.f;
-
-	JumpForceSmall = 275 * 1000.f;
-	JumpForceStrong = 450 * 1000.f;
-
-	CurrentSpeed = SpeedSlow;
-	CurrentJumpForce = JumpForceSmall;
-
+{	
 	bIsJumping = false;
 	bIsFastMovementState = false;
+
+	FastSpeedScale = 2.f;
+	FastJumpScale = 1.5f;
+
 
 	OwnerRotaryPawn = Cast<IRotaryMovementPawnInterface>(GetOwner());
 	OwnerPrimitiveComp = OwnerRotaryPawn ? OwnerRotaryPawn->GetPrimitiveComponent() : nullptr;
@@ -43,6 +36,17 @@ void URotaryMovementComponent::RebindInputComp(class UInputComponent* OwnerInput
 	OwnerInputComp->BindAction("Jump", IE_Pressed, this, &URotaryMovementComponent::StartJump);
 	OwnerInputComp->BindAction("ToggleMovementState", IE_Pressed, this, &URotaryMovementComponent::ToogleMovementState);
 }
+
+void URotaryMovementComponent::UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale)
+{
+	Super::UpdateAgilityAndQuality(SpeedScale, Quality, QualityScale);
+
+	SpeedForceBase = ActualMoveForce * ActualSpeed;
+	JumpForceBase = ActualJumpForce;
+
+	SetMovementState(bIsFastMovementState);
+}
+
 
 void URotaryMovementComponent::MoveForward(float AxisValue)
 {
@@ -117,19 +121,26 @@ void URotaryMovementComponent::ToogleMovementState()
 		ServerToogleMovementState();
 	}
 
-
 	bIsFastMovementState = !bIsFastMovementState;
-	if (bIsFastMovementState)
+	SetMovementState(bIsFastMovementState);
+}
+
+void URotaryMovementComponent::SetMovementState(bool bInIsFastMovementState)
+{
+	UE_LOG(LogTemp, Log, TEXT("-_- current is %s state"), bInIsFastMovementState ? TEXT("fast") : TEXT("slow"));
+
+	if (bInIsFastMovementState)
 	{
-		CurrentSpeed = SpeedFast;
-		CurrentJumpForce = JumpForceStrong;
+		CurrentSpeed = SpeedForceBase * FastSpeedScale;
+		CurrentJumpForce = JumpForceBase * FastJumpScale;
 	}
 	else
 	{
-		CurrentSpeed = SpeedSlow;
-		CurrentJumpForce = JumpForceSmall;
+		CurrentSpeed = SpeedForceBase;
+		CurrentJumpForce = JumpForceBase;
 	}
 }
+
 bool URotaryMovementComponent::ServerToogleMovementState_Validate() { return true; }
 void URotaryMovementComponent::ServerToogleMovementState_Implementation() { ToogleMovementState(); }
 
@@ -138,9 +149,7 @@ void URotaryMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(URotaryMovementComponent, CurrentSpeed);
-	DOREPLIFETIME(URotaryMovementComponent, CurrentJumpForce);
-
-	
+	DOREPLIFETIME(URotaryMovementComponent, CurrentJumpForce);	
 
 	DOREPLIFETIME(URotaryMovementComponent, bIsJumping);
 	DOREPLIFETIME(URotaryMovementComponent, bIsFastMovementState);

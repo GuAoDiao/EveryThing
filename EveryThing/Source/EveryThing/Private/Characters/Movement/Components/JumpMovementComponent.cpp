@@ -21,7 +21,7 @@ UJumpMovementComponent::UJumpMovementComponent()
 
 	AdjustPawnRotationForce = 500000 * 1000.f;
 
-	AtuoAdjustRotationForceStrength = 100.f;
+	AtuoAdjustRotationForceStrength = 2.f;
 
 	bHasMoveDirection = false;
 	bIsToogleMovementState = false;
@@ -60,6 +60,12 @@ void UJumpMovementComponent::RebindInputComp(UInputComponent* OwnerInputComp)
 	OwnerInputComp->BindAction("ToggleMovementState", IE_Released, this, &UJumpMovementComponent::EndToggleMovementState);
 }
 
+void UJumpMovementComponent::UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale)
+{
+	Super::UpdateAgilityAndQuality(SpeedScale, Quality, QualityScale);
+
+}
+
 void UJumpMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	if (OwnerPrimitiveComp) { AutoAdjsutRotationPosition(DeltaTime); }
@@ -81,25 +87,25 @@ void UJumpMovementComponent::AutoAdjsutRotationPosition(float DeltaTime)
 
 		if (OwnerRotation.Roll > 10.f)
 		{
-			// Force += OwnerPrimitiveComp->GetRightVector() * FMath::Lerp(10.f, OwnerRotation.Roll, 0.5f) *AtuoAdjustRotationForceStrength;
+			Force += OwnerPrimitiveComp->GetForwardVector() * FMath::Lerp(10.f, OwnerRotation.Roll, 0.3f);
 		}
-		else if(OwnerRotation.Roll < -10.f)
+		else if (OwnerRotation.Roll < -10.f)
 		{
-			Force += OwnerPrimitiveComp->GetRightVector() * FMath::Lerp(OwnerRotation.Roll , -10.f, 0.5f) * AtuoAdjustRotationForceStrength;
+			Force += OwnerPrimitiveComp->GetForwardVector() * FMath::Lerp(-10.f, OwnerRotation.Roll, 0.3f);
 		}
 
 		if (OwnerRotation.Pitch > 10.f)
 		{
-			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::Lerp(10.f, OwnerRotation.Pitch, 0.5f) *AtuoAdjustRotationForceStrength;
+			Force += OwnerPrimitiveComp->GetRightVector() * FMath::Lerp(10.f, OwnerRotation.Pitch, 0.3f);
 		}
-		else if(OwnerRotation.Pitch < -10.f)
+		else if (OwnerRotation.Pitch < -10.f)
 		{
-			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::Lerp(OwnerRotation.Pitch, -10.f, 0.5f) *AtuoAdjustRotationForceStrength;
+			Force += OwnerPrimitiveComp->GetRightVector() * FMath::Lerp(-10.f, OwnerRotation.Pitch, 0.3f);
 		}
 
 		if (Force != FVector::ZeroVector)
 		{
-			// OwnerPrimitiveComp->AddTorqueInRadians(Force * AdjustRotationForce  * DeltaTime);
+			OwnerPrimitiveComp->AddTorqueInRadians(Force * AdjustRotationForce  * DeltaTime  * AtuoAdjustRotationForceStrength);
 		}
 	}
 }

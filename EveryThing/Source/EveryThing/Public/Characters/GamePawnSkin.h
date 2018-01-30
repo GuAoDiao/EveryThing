@@ -17,6 +17,7 @@ public:
 
 	virtual void LoadGamePawnSkin();
 	void UnloadGamePawnSkin();
+
 protected:
 	UStaticMeshComponent* OwnerStaticMeshComp;
 

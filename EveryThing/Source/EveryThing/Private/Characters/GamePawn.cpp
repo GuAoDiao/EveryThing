@@ -11,6 +11,7 @@
 #include "Characters/Moves/AttackComponent.h"
 #include "Characters/Moves/SkillComponent.h"
 #include "Characters/PlayerPawnController.h"
+#include "Characters/Movement/Components/GamePawnMovementComponent.h"
 
 
 
@@ -228,7 +229,6 @@ AActor* AGamePawn::TryToGetAttackTarget(float InMaxAttackDistance)
 
 			if (Hit.GetActor() == nullptr || Hit.GetActor() == AttackTarget)
 			{
-
 				return AttackTarget;
 			}
 			else
@@ -273,6 +273,8 @@ void AGamePawn::UpdateInfo()
 {
 	ResetQuality();
 	ResetDamping();
+
+	if (MovementComp) { MovementComp->UpdateAgilityAndQuality(OwnerInfo.Agility, OwnerInfo.Quality, OwnerInfo.QualityScale); }
 }
 
 void AGamePawn::OnRep_Info()
