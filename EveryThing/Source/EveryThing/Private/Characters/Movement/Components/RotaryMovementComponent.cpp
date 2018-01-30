@@ -54,7 +54,7 @@ void URotaryMovementComponent::MoveForward(float AxisValue)
 	{
 		FVector Direction = OwnerRotaryPawn->GetActualForwardVector();
 		Direction.Z = 0.f;
-		Move(Direction, AxisValue);
+		Move(Direction.GetSafeNormal(), AxisValue);
 	}
 }
 
@@ -64,7 +64,7 @@ void URotaryMovementComponent::MoveRight(float AxisValue)
 	{
 		FVector Direction = OwnerRotaryPawn->GetActualRightVector();
 		Direction.Z = 0.f;
-		Move(Direction, AxisValue);
+		Move(Direction.GetSafeNormal(), AxisValue);
 	}
 }
 

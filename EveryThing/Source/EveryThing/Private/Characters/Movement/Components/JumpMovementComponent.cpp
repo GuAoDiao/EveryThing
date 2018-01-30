@@ -198,7 +198,6 @@ void UJumpMovementComponent::Jump()
 
 	if (OwnerPrimitiveComp && bCanJump)
 	{
-		UE_LOG(LogTemp, Log, TEXT("-_- this is jump"));
 		OwnerPrimitiveComp->AddImpulse(OwnerPrimitiveComp->GetUpVector() * JumpHeightForce);
 		bCanJump = false;
 	}
@@ -216,7 +215,6 @@ void UJumpMovementComponent::JumpMove(const FVector& Dircetion)
 
 	if (OwnerPrimitiveComp && bCanJump)
 	{
-		UE_LOG(LogTemp, Log, TEXT("-_- this is jump move"));
 		OwnerPrimitiveComp->AddImpulse(OwnerPrimitiveComp->GetUpVector() * JumpHeightForce + WantedMoveDirection * JumpForwardForce);
 		bCanJump = false;
 	}
