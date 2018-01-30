@@ -217,37 +217,33 @@ AActor* AGamePawn::TryToGetAttackTarget(float InMaxAttackDistance)
 
 	if (AttackTarget)
 	{
-		FCollisionQueryParams TraceParams;
-		TraceParams.AddIgnoredActor(this);
-		FHitResult Hit;
-		if (GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), AttackTarget->GetActorLocation(), ECC_Visibility, TraceParams))
+		if ((AttackTarget->GetActorLocation() - GetActorLocation()).Size() < InMaxAttackDistance)
 		{
-			if (Hit.GetActor() == AttackTarget)
+			FCollisionQueryParams TraceParams;
+			TraceParams.AddIgnoredActor(this);
+			FHitResult Hit;
+		
+			GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), AttackTarget->GetActorLocation(), ECC_Visibility, TraceParams);
+
+			if (Hit.GetActor() == nullptr || Hit.GetActor() == AttackTarget)
 			{
-				if ((AttackTarget->GetActorLocation() - GetActorLocation()).Size() < InMaxAttackDistance)
-				{
-					return AttackTarget;
-				}
-				else
-				{
-					UE_LOG(LogTemp, Log, TEXT("-_- exceed the max attack distance"));
-				}
+
+				return AttackTarget;
 			}
 			else
 			{
 				UE_LOG(LogTemp, Log, TEXT("-_- can't attack target actor, because has a block object"));
 			}
-		}
+		}	
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("-_- unknown error"));
+			UE_LOG(LogTemp, Log, TEXT("-_- exceed the max attack distance"));
 		}
 	}
 	else
 	{
 		UE_LOG(LogTemp, Log, TEXT("-_- not found attack target"));
 	}
-
 
 	return nullptr;
 }
@@ -258,7 +254,7 @@ void AGamePawn::SetInfo(FGamePawnInfo* InInfo)
 {
 	OwnerInfo = *InInfo;
 
-	ResetQuality;
+	ResetQuality();
 	ResetDamping();
 }
 
