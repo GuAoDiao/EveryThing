@@ -1,0 +1,8 @@
+---,Name,UserWidgetClass
+MainMenu,"MainMenu","/Game/EveryThing/UI/Menu/W_MainMenu.W_MainMenu_C"
+ErrorDialog,"ErrorDialog","/Game/EveryThing/UI/W_ErrorDialog.W_ErrorDialog_C"
+HouseList,"HouseList","/Game/EveryThing/UI/Menu/W_HouseList.W_HouseList_C"
+HouseCreate,"HouseCreate","/Game/EveryThing/UI/Menu/W_HouseCreate.W_HouseCreate_C"
+HouseRow,"HouseRow","/Game/EveryThing/UI/Menu/W_HouseRow.W_HouseRow_C"
+LoadingScreen,"LoadingScreen","/Game/EveryThing/UI/Menu/W_LoadingScreen.W_LoadingScreen_C"
+GameMenu,"GameMenu","/Game/EveryThing/UI/Game/W_GameMenu.W_GameMenu_C"

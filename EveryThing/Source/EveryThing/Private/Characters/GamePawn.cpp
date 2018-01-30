@@ -32,16 +32,11 @@ AGamePawn::AGamePawn()
 	StaticMeshComp->SetNotifyRigidBodyCollision(true);
 	StaticMeshComp->OnComponentHit.AddDynamic(this, &AGamePawn::OnHit);
 
-
 	SetRootComponent(StaticMeshComp);
 
 	MovementComp = nullptr;
-
 	OwnerAttackComp = nullptr;
 	OwnerSkillComp = nullptr;
-
-	Durability = 1000.f;
-	MaxHyperopiaDistance = 10000.f;
 
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -103,21 +98,6 @@ void AGamePawn::OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor,
 
 
 
-void AGamePawn::ResetQuality()
-{
-	StaticMeshComp->SetMassScale(NAME_None, QualityScale);
-	StaticMeshComp->SetMassOverrideInKg(NAME_None, Quality);
-}
-void AGamePawn::ResetDamping()
-{
-	StaticMeshComp->SetLinearDamping(LinearDamping);
-	StaticMeshComp->SetAngularDamping(AngularDamping);
-}
-void AGamePawn::ResetQualityAndDamping()
-{
-	ResetQuality();
-	ResetDamping();
-}
 
 
 bool AGamePawn::AddDurability_Validate(float InOffset, EElementType InType) { return true; }
@@ -127,7 +107,7 @@ void AGamePawn::AddDurability_Implementation(float InOffset, EElementType InType
 	AEveryThingGameMode* OwnerGameMode = World ? World->GetAuthGameMode<AEveryThingGameMode>() : nullptr;
 	if (OwnerGameMode)
 	{
-		Durability += OwnerGameMode->GetActualDamage(InOffset, InType, ElementType, ElementResistance);
+		OwnerInfo.Durability += OwnerGameMode->GetActualDamage(InOffset, InType, OwnerInfo.ElementType[0], OwnerInfo.ElementResistance[OwnerInfo.ElementType[0]]);
 	}
 }
 
@@ -272,6 +252,34 @@ AActor* AGamePawn::TryToGetAttackTarget(float InMaxAttackDistance)
 	return nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// Game Pawn info
+void AGamePawn::SetInfo(FGamePawnInfo* InInfo)
+{
+	OwnerInfo = *InInfo;
+
+	ResetQuality;
+	ResetDamping();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Quality And Damping
+void AGamePawn::SetQualityScale(float InQualityScale) { OwnerInfo.QualityScale = InQualityScale; ResetQuality(); }
+
+void AGamePawn::ResetQuality()
+{
+	StaticMeshComp->SetMassOverrideInKg(NAME_None, OwnerInfo.Quality);
+	StaticMeshComp->SetMassScale(NAME_None, OwnerInfo.QualityScale);
+}
+void AGamePawn::ResetDamping()
+{
+	StaticMeshComp->SetLinearDamping(OwnerInfo.LinearDamping);
+	StaticMeshComp->SetAngularDamping(OwnerInfo.AngularDamping);
+}
+
+
+
 
 void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -283,10 +291,5 @@ void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AGamePawn, OwnerAttackComp);
 	DOREPLIFETIME(AGamePawn, OwnerSkillComp);
 
-	DOREPLIFETIME(AGamePawn, Durability);
-	DOREPLIFETIME(AGamePawn, PhysicalPower);
-	DOREPLIFETIME(AGamePawn, Agility);
-	DOREPLIFETIME(AGamePawn, Stability);
-	DOREPLIFETIME(AGamePawn, PowerValue);
-	DOREPLIFETIME(AGamePawn, MaxHyperopiaDistance);
+	DOREPLIFETIME(AGamePawn, OwnerInfo);
 }

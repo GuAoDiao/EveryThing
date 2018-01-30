@@ -14,12 +14,16 @@
 
 AFootballPawn::AFootballPawn()
 {
-	Quality = 500.f;
-	QualityScale = 1.f;
-	LinearDamping = 0.01f;
-	AngularDamping = 5.f;
+	UDataTable* GamePawnInfoDataDable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName("GamePawn");
+	if (GamePawnInfoDataDable)
+	{
+		FGamePawnInfo* FootballInfo = GamePawnInfoDataDable->FindRow<FGamePawnInfo>("Football", TEXT("find game pawn football base info"));
+		if (FootballInfo)
+		{
+			SetInfo(FootballInfo);
+		}
+	}
 
-	ResetQualityAndDamping();
 	
 	UStaticMesh* FootballMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Football"));
 	if (FootballMesh) { StaticMeshComp->SetStaticMesh(FootballMesh); }

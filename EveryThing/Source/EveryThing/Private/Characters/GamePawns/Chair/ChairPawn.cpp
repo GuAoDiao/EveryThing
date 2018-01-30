@@ -9,6 +9,16 @@
 
 AChairPawn::AChairPawn()
 {
+	UDataTable* GamePawnInfoDataDable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName("GamePawn");
+	if (GamePawnInfoDataDable)
+	{
+		FGamePawnInfo* FootballInfo = GamePawnInfoDataDable->FindRow<FGamePawnInfo>("Chair", TEXT("find game pawn chair base info"));
+		if (FootballInfo)
+		{
+			SetInfo(FootballInfo);
+		}
+	}
+
 
 	UStaticMesh* ChairMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Chair"));
 	if (ChairMesh) { StaticMeshComp->SetStaticMesh(ChairMesh); }
@@ -24,12 +34,4 @@ AChairPawn::AChairPawn()
 		StaticMeshComp->SetMaterial(1, ChairWoodMaterial);
 		StaticMeshComp->SetMaterial(2, ChairTidyMaterial);
 	}
-
-	Quality = 1000.f;
-	QualityScale = 1.f;
-
-	LinearDamping = 0.01f;
-	AngularDamping = 10.f;
-
-	ResetQualityAndDamping();
 }

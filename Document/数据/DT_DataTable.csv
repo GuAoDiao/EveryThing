@@ -1,0 +1,9 @@
+---,Name,DataTableClass
+StaticMesh,"StaticMesh","/Game/EveryThing/DataTable/DT_StaticMesh.DT_StaticMesh"
+MaterialInstance,"MaterialInstance","/Game/EveryThing/DataTable/DT_MaterialInstance.DT_MaterialInstance"
+UserWidget,"UserWidget","/Game/EveryThing/DataTable/DT_UserWidget.DT_UserWidget"
+ParticleSystem,"ParticleSystem","/Game/EveryThing/DataTable/DT_ParticleSystem.DT_ParticleSystem"
+InputAction,"InputAction","/Game/EveryThing/DataTable/DT_InputAction.DT_InputAction"
+InputAxis,"InputAxis","/Game/EveryThing/DataTable/DT_InputAxis.DT_InputAxis"
+MapsInfo,"MapsInfo","/Game/EveryThing/DataTable/DT_MapsInfo.DT_MapsInfo"
+NewRow,"GamePawn","/Game/EveryThing/DataTable/DT_GamwPawn.DT_GamwPawn"
