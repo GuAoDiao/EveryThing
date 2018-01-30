@@ -21,12 +21,12 @@ public:
 
 	AEveryThingPlayerState();
 
+	virtual void BeginPlay() override;
+
 	void ToggolePawn(int32 NumberIndex);
 
 private:
 	TArray<TSubclassOf<AGamePawn>> AllGamePawn;
-	TArray<TSubclassOf<AGamePawn>> AllGamePawnController;
 
 	TSubclassOf<AGamePawn> CurrentPawnClass;
-	TSubclassOf<APlayerPawnController> CurrentControllerClass;
 };

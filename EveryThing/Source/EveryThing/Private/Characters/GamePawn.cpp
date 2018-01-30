@@ -10,7 +10,7 @@
 #include "Characters/GamePawnSkin.h"
 #include "Characters/Moves/AttackComponent.h"
 #include "Characters/Moves/SkillComponent.h"
-#include "Characters/Controlllers/PlayerPawnController.h"
+#include "Characters/PlayerPawnController.h"
 
 
 

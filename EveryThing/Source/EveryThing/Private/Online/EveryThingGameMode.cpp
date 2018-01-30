@@ -2,6 +2,8 @@
 
 #include "EveryThingGameMode.h"
 
+#include "Characters/PlayerPawnController.h"
+#include "Online/EveryThingPlayerState.h"
 #include "UI/Game/EveryThingGameHUD.h"
 
 AEveryThingGameMode::AEveryThingGameMode()
@@ -10,7 +12,9 @@ AEveryThingGameMode::AEveryThingGameMode()
 	SpecificToDamageScale = 1.5f;
 
 	DefaultPawnClass = nullptr;
-	PlayerControllerClass = nullptr;
+	PlayerControllerClass = APlayerPawnController::StaticClass();
+
+	PlayerStateClass = AEveryThingPlayerState::StaticClass();
 
 	HUDClass = AEveryThingGameHUD::StaticClass();
 }

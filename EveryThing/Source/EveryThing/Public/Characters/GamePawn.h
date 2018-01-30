@@ -31,7 +31,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	/// Component
 public:
-	inline UGamePawnMovementComponent* GetMovementComponent() const { return MovementComp; }
+	inline UGamePawnMovementComponent* GetGamePawnMovementComponent() const { return MovementComp; }
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
 	class UStaticMeshComponent* StaticMeshComp;

@@ -39,7 +39,7 @@ void UJumpMovementComponent::BindInputComponent(UInputComponent* OwnerInputComp)
 
 	if (!OwnerInputComp) { return; }
 
-	OwnerInputComp->BindAxis("MoveForward", this, &UJumpMovementComponent::AdjsutForwardPosition);
+	OwnerInputComp->BindAxis("MoveForward", this, &UJumpMovementComponent::AdjustForwardPosition);
 	OwnerInputComp->BindAxis("MoveRight", this, &UJumpMovementComponent::AdjustRightPosition);
 
 
@@ -81,20 +81,20 @@ void UJumpMovementComponent::AutoAdjsutRotationPosition(float DeltaTime)
 
 		if (OwnerRotation.Roll > 10.f)
 		{
-			// Force += OwnerPrimitiveComp->GetRightVector() * FMath::Lerp(10.f, OwnerRotation.Roll, 0.5f) *AtuoAdjustRotationForceStrength);
+			// Force += OwnerPrimitiveComp->GetRightVector() * FMath::Lerp(10.f, OwnerRotation.Roll, 0.5f) *AtuoAdjustRotationForceStrength;
 		}
 		else if(OwnerRotation.Roll < -10.f)
 		{
-			Force += OwnerPrimitiveComp->GetRightVector() * FMath::Lerp(OwnerRotation.Roll , -10.f, 0.5f) *AtuoAdjustRotationForceStrength);
+			Force += OwnerPrimitiveComp->GetRightVector() * FMath::Lerp(OwnerRotation.Roll , -10.f, 0.5f) * AtuoAdjustRotationForceStrength;
 		}
 
 		if (OwnerRotation.Pitch > 10.f)
 		{
-			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::Lerp(10.f, OwnerRotation.Pitch, 0.5f) *AtuoAdjustRotationForceStrength);
+			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::Lerp(10.f, OwnerRotation.Pitch, 0.5f) *AtuoAdjustRotationForceStrength;
 		}
 		else if(OwnerRotation.Pitch < -10.f)
 		{
-			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::Lerp(OwnerRotation.Pitch, -10.f, 0.5f) *AtuoAdjustRotationForceStrength);
+			// Force += OwnerPrimitiveComp->GetForwardVector() * FMath::Lerp(OwnerRotation.Pitch, -10.f, 0.5f) *AtuoAdjustRotationForceStrength;
 		}
 
 		if (Force != FVector::ZeroVector)

@@ -69,7 +69,7 @@ void APlayerPawnController::RebindInput()
 		ToggleToNewAttackComponent(OwnerGamePawn->GetAttackComponent());
 		ToggleToNewSkillComponent(OwnerGamePawn->GetSkillComponent());
 		
-		UGamePawnMovementComponent* OwnerPlayerMovementComp = OwnerGamePawn->GetMovementComponent();
+		UGamePawnMovementComponent* OwnerPlayerMovementComp = OwnerGamePawn->GetGamePawnMovementComponent();
 		if (OwnerPlayerMovementComp) { OwnerPlayerMovementComp->BindInputComponent(InputComponent); }
 	}
 }

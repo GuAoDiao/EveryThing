@@ -177,7 +177,8 @@ void UPlayerPawnComponent::TogglePawn(int32 NumberIndex)
 {
 	if (OwnerPawn)
 	{
-		AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(OwnerPawn->GetController()->PlayerState);
+		AController* OwnerPC = OwnerPawn->GetController();
+		AEveryThingPlayerState* OwnerETPS = OwnerPC ? Cast<AEveryThingPlayerState>(OwnerPC->PlayerState) : nullptr;
 		if (OwnerETPS) { OwnerETPS->ToggolePawn(NumberIndex); }
 	}
 }
