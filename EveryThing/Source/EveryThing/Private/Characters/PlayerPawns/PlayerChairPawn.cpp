@@ -35,11 +35,11 @@ void APlayerChairPawn::Tick(float DeltaTime)
 
 		CenterDirection.Z = 0.f; OwnerDirection.Z = 0.f;
 
-		float Value = FVector::CrossProduct(OwnerDirection, CenterDirection).Z;
+		float Value = FVector::CrossProduct(OwnerDirection.GetSafeNormal(), CenterDirection.GetSafeNormal()).Z;
 		if (FMath::Abs(Value) > 0.1f)
 		{
-			Value = Value > 0.f ? FMath::Clamp(Value, 0.2f, 1.f) : FMath::Clamp(Value, -1.f, -0.2f);
-			GetJumpMovementComponent()->RotatePawn(Value * DeltaTime * 100.f);
+			Value = Value > 0.f ? FMath::Lerp(Value, 1.f, 0.5f) : FMath::Lerp(Value, -1.f, 0.5f);
+			GetJumpMovementComponent()->RotatePawn(Value * DeltaTime * 150.f);
 		}
 	}
 }

@@ -8,7 +8,6 @@ UGamePawnMovementComponent::UGamePawnMovementComponent()
 {
 	bReplicates = true;
 
-
 	MoveForceScale = 10.f;
 	SpeedScale = 10.f;
 	JumpForceScale = 75.f;

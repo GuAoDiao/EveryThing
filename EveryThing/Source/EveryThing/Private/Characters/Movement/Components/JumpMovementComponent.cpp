@@ -11,17 +11,11 @@
 UJumpMovementComponent::UJumpMovementComponent()
 {
 	bReplicates = true;
+	
+	AdjustRotationForce = 1500000 * 100.f;
+	AtuoAdjustRotationForceStrength = 5.f;
 
-	JumpForwardForce = 800 * 1000.f;
-	JumpHeightForce = 600 * 1000.f;
-
-
-	AdjustLocationForce = 500 * 1000.f;
-	AdjustRotationForce = 300000 * 1000.f;
-
-	AdjustPawnRotationForce = 500000 * 1000.f;
-
-	AtuoAdjustRotationForceStrength = 2.f;
+	AdjustPawnRotationForce = 500000 * 100.f;
 
 	bHasMoveDirection = false;
 	bIsToogleMovementState = false;
@@ -64,6 +58,10 @@ void UJumpMovementComponent::UpdateAgilityAndQuality(float Agility, float Qualit
 {
 	Super::UpdateAgilityAndQuality(SpeedScale, Quality, QualityScale);
 
+	JumpForwardForce = ActualMoveForce * ActualSpeed * 1.4f;
+	JumpHeightForce = ActualJumpForce ;
+
+	AdjustLocationForce = ActualMoveForce * ActualSpeed * 0.7f;
 }
 
 void UJumpMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
@@ -143,7 +141,11 @@ void UJumpMovementComponent::RotatePawn(float AxisValue)
 		ServerRotatePawn(AxisValue);
 	}
 	
-	if (OwnerPrimitiveComp) { OwnerPrimitiveComp->AddTorqueInRadians(OwnerPrimitiveComp->GetUpVector() * AdjustPawnRotationForce * AxisValue); }
+	if (OwnerPrimitiveComp)
+	{
+		OwnerPrimitiveComp->AddImpulse(OwnerPrimitiveComp->GetUpVector() * 5000.f);
+		OwnerPrimitiveComp->AddTorqueInRadians(OwnerPrimitiveComp->GetUpVector() * AdjustPawnRotationForce * AxisValue);
+	}
 }
 bool UJumpMovementComponent::ServerRotatePawn_Validate(float AxisValue) { return true; }
 void UJumpMovementComponent::ServerRotatePawn_Implementation(float AxisValue) { RotatePawn(AxisValue); }

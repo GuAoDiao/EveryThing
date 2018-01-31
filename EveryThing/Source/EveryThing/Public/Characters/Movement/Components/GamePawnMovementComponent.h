@@ -21,8 +21,8 @@ protected:
 	bool HasAuthority();
 
 	float ActualMoveForce;
-	float ActualJumpForce;
 	float MoveForceScale;
+	float ActualJumpForce;
 	float JumpForceScale;
 	float ActualSpeed;
 	float SpeedScale;
