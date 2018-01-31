@@ -18,6 +18,6 @@ public:
 protected:
 	AGamePawn* OwnerGamePawn;
 
-	UClass* AttackCompClass;
 	UClass* SkillCompClass;
+	UClass* AttackCompClass;
 };

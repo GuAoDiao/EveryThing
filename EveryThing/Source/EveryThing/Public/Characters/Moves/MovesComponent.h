@@ -18,6 +18,10 @@ class EVERYTHING_API UMovesComponent : public UActorComponent
 protected:
 	UMovesComponent();
 
+public:
+	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) {}
+
+protected:
 	bool HasAuthority();
 
 	virtual void RebindAll() {};
@@ -25,6 +29,4 @@ public:
 	bool bWantedToAcceptHitFunction;
 	// execute when bWantedToAcceptHitFunction is true
 	virtual void OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit) {};
-
-	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) {}
 };

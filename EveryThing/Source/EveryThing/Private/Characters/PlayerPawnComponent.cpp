@@ -50,6 +50,9 @@ UPlayerPawnComponent::UPlayerPawnComponent()
 	LastAttackTarget = nullptr;
 }
 
+
+
+
 void UPlayerPawnComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -58,7 +61,7 @@ void UPlayerPawnComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 	{
 		AActor* SelectedHitAbleActor = TryToGetHitAbleActor();
 
-		if (SelectedHitAbleActor && SelectedHitAbleActor != CurrentAttackTarget)
+		if (SelectedHitAbleActor && SelectedHitAbleActor != CurrentAttackTarget && SelectedHitAbleActor!= OwnerPawn)
 		{
 			IHitAbleInterface* CurrentHitableAttackTarget;
 			if (CurrentAttackTarget)
@@ -75,8 +78,55 @@ void UPlayerPawnComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 		}
 	}
 }
+//////////////////////////////////////////////////////////////////////////
+/// Input
+void UPlayerPawnComponent::RebindInputComp(class UInputComponent* OwnerInputComp)
+{
+	if (!OwnerInputComp) { return; }
+
+	OwnerInputComp->BindAction("SelectNextAttackActor", IE_Pressed, this, &UPlayerPawnComponent::SelectNextAttackTarget);
+	OwnerInputComp->BindAction("SelectLastAttackActor", IE_Pressed, this, &UPlayerPawnComponent::SelectLastAttackTarget);
+
+	OwnerInputComp->BindAction("TogglePawn", IE_Pressed, this, &UPlayerPawnComponent::StartTogglePawn);
+	OwnerInputComp->BindAction("TogglePawn", IE_Released, this, &UPlayerPawnComponent::StopTogglePawn);
+
+	OwnerInputComp->BindAction("TogglePawnState", IE_Pressed, this, &UPlayerPawnComponent::StartTogglePawnForm);
+	OwnerInputComp->BindAction("TogglePawnState", IE_Released, this, &UPlayerPawnComponent::StopTogglePawnForm);
+
+	OwnerInputComp->BindAction("TogglePawnSkin", IE_Pressed, this, &UPlayerPawnComponent::StartTogglePawnSkin);
+	OwnerInputComp->BindAction("TogglePawnSkin", IE_Released, this, &UPlayerPawnComponent::StopTogglePawnSkin);
+
+	OwnerInputComp->BindAction("NumberOne", IE_Pressed, this, &UPlayerPawnComponent::NumberOne);
+	OwnerInputComp->BindAction("NumberTwo", IE_Pressed, this, &UPlayerPawnComponent::NumberTwo);
+	OwnerInputComp->BindAction("NumberThree", IE_Pressed, this, &UPlayerPawnComponent::NumberThree);
+	OwnerInputComp->BindAction("NumberFour", IE_Pressed, this, &UPlayerPawnComponent::NumberFour);
+}
 
 
+//////////////////////////////////////////////////////////////////////////
+/// Visual Angle
+void UPlayerPawnComponent::Turn(float AxisValue)
+{
+	if (OwnerPawn) { OwnerPawn->AddControllerYawInput(AxisValue * BaseTurnRate); }
+}
+void UPlayerPawnComponent::LookUp(float AxisValue)
+{
+	if (OwnerPawn)
+	{
+		float CurrentPitch = OwnerPawn->GetControlRotation().Pitch;
+
+		if (bIsConvertYAxis) { AxisValue = -AxisValue; }
+
+		// 315 - 90
+		if ((AxisValue > 0.f && (CurrentPitch < 95.f || CurrentPitch > 315.f)) || (AxisValue < 0.f && (CurrentPitch < 90.f || CurrentPitch > 310.f)))
+		{
+			OwnerPawn->AddControllerPitchInput(AxisValue * BaseTurnRate);
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+/// Select Attack Target
 void UPlayerPawnComponent::SelectNextAttackTarget()
 {
 	UE_LOG(LogTemp, Log, TEXT("-_- not implementation"));
@@ -85,11 +135,12 @@ void UPlayerPawnComponent::SelectLastAttackTarget()
 {
 	if (LastAttackTarget)
 	{
-		IHitAbleInterface* CurrentHitableAttackActor = Cast<IHitAbleInterface>(CurrentAttackTarget);
-		if (CurrentHitableAttackActor) { CurrentHitableAttackActor->SetIsSelectedToHit(false); }
+		IHitAbleInterface* HitableAttackActor;
+		HitableAttackActor = Cast<IHitAbleInterface>(CurrentAttackTarget);
+		if (HitableAttackActor) { HitableAttackActor->SetIsSelectedToHit(false); }
 
-		IHitAbleInterface* LastHitableAttackActor = Cast<IHitAbleInterface>(LastAttackTarget);
-		if (LastHitableAttackActor) { LastHitableAttackActor->SetIsSelectedToHit(true); }
+		HitableAttackActor = Cast<IHitAbleInterface>(LastAttackTarget);
+		if (HitableAttackActor) { HitableAttackActor->SetIsSelectedToHit(true); }
 
 		AActor* Temp;
 		Temp = CurrentAttackTarget;
@@ -118,7 +169,7 @@ AActor* UPlayerPawnComponent::TryToGetHitAbleActor() const
 
 		if (GetWorld()->LineTraceSingleByChannel(Hit, OwnerPawn->GetActorLocation(), EndTrace, ECC_Visibility, TraceParams))
 		{
-			if (Cast<IHitAbleInterface>(Hit.GetActor()) && Hit.GetActor() != OwnerPawn)	
+			if (Cast<IHitAbleInterface>(Hit.GetActor()))	
 			{
 				return Hit.GetActor();
 			}
@@ -128,26 +179,11 @@ AActor* UPlayerPawnComponent::TryToGetHitAbleActor() const
 	return nullptr;
 }
 
-void UPlayerPawnComponent::Turn(float AxisValue)
-{
-	if (OwnerPawn) { OwnerPawn->AddControllerYawInput(AxisValue * BaseTurnRate); }
-}
-void UPlayerPawnComponent::LookUp(float AxisValue)
-{
-	if (OwnerPawn)
-	{
-		float CurrentPitch = OwnerPawn->GetControlRotation().Pitch;
 
-		if (bIsConvertYAxis) { AxisValue = -AxisValue; }
 
-		// 315 - 90
-		if ((AxisValue > 0.f && (CurrentPitch < 95.f || CurrentPitch > 315.f)) || (AxisValue < 0.f && (CurrentPitch < 90.f || CurrentPitch > 310.f)))
-		{
-			OwnerPawn->AddControllerPitchInput(AxisValue * BaseTurnRate);
-		}
-	}
-}
 
+//////////////////////////////////////////////////////////////////////////
+/// Game Pawn Form And Prop Use
 void UPlayerPawnComponent::OnPressNumberKeyboard(int32 NumberIndex)
 {
 	if (bIsWantedTogglePawn)
@@ -183,12 +219,5 @@ void UPlayerPawnComponent::TogglePawn(int32 NumberIndex)
 	}
 }
 
-void UPlayerPawnComponent::TogglePawnForm(int32 NumberIndex)
-{
-	if (OwnerPawn) { OwnerPawn->ToggleToNewPawnForm(NumberIndex); }
-}
-
-void UPlayerPawnComponent::TogglePawnSkin(int32 NumberIndex)
-{
-	if (OwnerPawn) { OwnerPawn->ToggleToNewPawnSkin(NumberIndex); }
-}
+void UPlayerPawnComponent::TogglePawnForm(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewPawnForm(NumberIndex); } }
+void UPlayerPawnComponent::TogglePawnSkin(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewPawnSkin(NumberIndex); } }

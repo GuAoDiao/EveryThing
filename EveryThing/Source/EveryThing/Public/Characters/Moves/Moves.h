@@ -23,10 +23,11 @@ public:
 private:
 
 public:
+	FName BindingName;
+
 	bool bIsEnableActionPressed;
 	bool bIsEnableActionReleased;
 	bool bIsEnableAxis;
-	FName BindingName;
 	SkillednessAction StartSkilledness;
 	SkillednessAction StopSkilledness;
 	SkillednessAxis ExcuteSkilledness;

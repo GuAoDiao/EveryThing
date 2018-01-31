@@ -6,9 +6,6 @@
 UEveryThingGameUserSettings::UEveryThingGameUserSettings()
 {
 	SetToDefaults();
-
-
-	GEngine;
 }
 
 void UEveryThingGameUserSettings::SetToDefaults()

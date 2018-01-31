@@ -26,7 +26,7 @@ void AEveryThingPlayerState::BeginPlay()
 
 void AEveryThingPlayerState::ToggolePawn(int32 NumberIndex)
 {
-	if (AllGamePawn.IsValidIndex(NumberIndex) && AllGamePawn[NumberIndex] != CurrentPawnClass)
+	if (AllGamePawn.IsValidIndex(NumberIndex) && !CurrentPawnClass->IsChildOf(AllGamePawn[NumberIndex]))
 	{
 		if (!HasAuthority())
 		{

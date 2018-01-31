@@ -10,7 +10,4 @@ APlayerFootballPawn::APlayerFootballPawn()
 	OwnerPlayerPawnComponent = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawnComponent"));
 }
 
-UPlayerPawnComponent* APlayerFootballPawn::GetPlayerPawnComponent() const
-{
-	return OwnerPlayerPawnComponent;
-}
+UPlayerPawnComponent* APlayerFootballPawn::GetPlayerPawnComponent() const { return OwnerPlayerPawnComponent; }

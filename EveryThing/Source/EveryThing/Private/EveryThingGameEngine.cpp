@@ -8,5 +8,3 @@ UEveryThingGameEngine::UEveryThingGameEngine()
 {
 	GameUserSettingsClass = UEveryThingGameUserSettings::StaticClass();
 }
-
-

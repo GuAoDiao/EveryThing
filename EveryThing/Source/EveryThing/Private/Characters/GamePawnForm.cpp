@@ -27,7 +27,6 @@ void FGamePawnForm::LoadGamePawnForm()
 		else
 		{
 			UAttackComponent* AttackComp = NewObject<UAttackComponent>(OwnerGamePawn, AttackCompClass);
-			
 			if (AttackComp) { AttackComp->RegisterComponent(); }
 
 			OwnerGamePawn->ToggleToNewAttackComponent(AttackComp);

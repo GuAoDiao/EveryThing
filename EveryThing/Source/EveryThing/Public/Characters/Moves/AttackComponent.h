@@ -14,10 +14,10 @@ class EVERYTHING_API UAttackComponent : public UMovesComponent
 public:
 	UAttackComponent();
 
+	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) override;
+
 	inline FMoves* GetCommantAttackSkilledness() { return &CommonAttack; }
 	inline FMoves* GetSpecialAttackSkilledness() { return &SpecialAttack; }
-
-	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) override;
 protected:
 	virtual void StartCommonAttack();
 	virtual void StopCommonAttack();

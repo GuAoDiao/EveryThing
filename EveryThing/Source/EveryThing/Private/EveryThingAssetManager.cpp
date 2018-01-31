@@ -10,6 +10,8 @@ UEveryThingAssetManager* UEveryThingAssetManager::AssetManager = nullptr;
 
 UEveryThingAssetManager::UEveryThingAssetManager()
 {
+	UE_LOG(LogTemp, Log, TEXT("-_- init EveryThing Asset Manager"));
+
 	UDataTable* AllDataTable = LoadObject<UDataTable>(nullptr, TEXT("DataTable'/Game/EveryThing/DataTable/DT_DataTable.DT_DataTable'"));
 	if (AllDataTable)
 	{
@@ -29,6 +31,7 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 
 	LoadUserWidgetFromDataable();
 }
+
 UEveryThingAssetManager::~UEveryThingAssetManager()
 {
 	AssetManager = nullptr;
@@ -40,7 +43,6 @@ UEveryThingAssetManager* UEveryThingAssetManager::GetAssetManagerInstance()
 	if (!AssetManager)
 	{
 		AssetManager = NewObject<UEveryThingAssetManager>((UObject*)GetTransientPackage(), TEXT("Blueprint'/Game/EveryThing/Blueprints/BP_AssetManager.BP_AssetManager'"));
-		UE_LOG(LogTemp, Log, TEXT("-_- init EveryThing Asset Manager"));
 	}
 
 	check(AssetManager);
@@ -70,11 +72,7 @@ void UEveryThingAssetManager::LoadMeshFromDatatable()
 	}
 }
 
-void UEveryThingAssetManager::NeededMeshFromName(const FString& MeshName)
-{
-	GetMeshFromName(MeshName, false);
-}
-
+void UEveryThingAssetManager::NeededMeshFromName(const FString& MeshName) { GetMeshFromName(MeshName, false); }
 UStaticMesh* UEveryThingAssetManager::GetMeshFromName(const FString& MeshName, bool bIsNeedForce)
 {
 	FName MeskKey(*MeshName);
@@ -89,9 +87,9 @@ UStaticMesh* UEveryThingAssetManager::GetMeshFromName(const FString& MeshName, b
 	}
 	else
 	{
-		OwnerStreamableManager.RequestAsyncLoad(AllMeshAsset[MeskKey].ToSoftObjectPath());
-
-		return AllMeshAsset[MeskKey].Get();
+		UStaticMesh* Result = AllMeshAsset[MeskKey].Get();
+		if (!Result) { OwnerStreamableManager.RequestAsyncLoad(AllMeshAsset[MeskKey].ToSoftObjectPath()); }
+		return Result;
 	}
 }
 
@@ -113,11 +111,7 @@ void UEveryThingAssetManager::LoadMaterialFromDatatable()
 	}
 }
 
-void UEveryThingAssetManager::NeededMaterialFromName(const FString& MaterialName)
-{
-	GetMaterialFromName(MaterialName, false);
-}
-
+void UEveryThingAssetManager::NeededMaterialFromName(const FString& MaterialName) { GetMaterialFromName(MaterialName, false); }
 UMaterialInstanceConstant* UEveryThingAssetManager::GetMaterialFromName(const FString& MaterialName, bool bIsNeedForce)
 {
 	FName MaterialKey(*MaterialName);
@@ -132,9 +126,9 @@ UMaterialInstanceConstant* UEveryThingAssetManager::GetMaterialFromName(const FS
 	}
 	else
 	{
-		OwnerStreamableManager.RequestAsyncLoad(AllMaterialInstanceAsset[MaterialKey].ToSoftObjectPath());
-
-		return AllMaterialInstanceAsset[MaterialKey].Get();
+		UMaterialInstanceConstant* Result = AllMaterialInstanceAsset[MaterialKey].Get();
+		if (!Result) { OwnerStreamableManager.RequestAsyncLoad(AllMaterialInstanceAsset[MaterialKey].ToSoftObjectPath()); }
+		return Result;
 	}
 }
 
@@ -157,6 +151,7 @@ void UEveryThingAssetManager::LoadParticleFromDatatable()
 	}
 }
 
+void UEveryThingAssetManager::NeededParticleFromName(const FString& ParticleName) { GetParticleFromName(ParticleName, false); }
 UParticleSystem* UEveryThingAssetManager::GetParticleFromName(const FString& ParticleName, bool bIsNeedForce)
 {
 	FName ParticleKey(*ParticleName);
@@ -171,16 +166,12 @@ UParticleSystem* UEveryThingAssetManager::GetParticleFromName(const FString& Par
 	}
 	else
 	{
-		OwnerStreamableManager.RequestAsyncLoad(AllParticleAsset[ParticleKey].ToSoftObjectPath());
-
-		return AllParticleAsset[ParticleKey].Get();
+		UParticleSystem* Result = AllParticleAsset[ParticleKey].Get();
+		if (!Result) { OwnerStreamableManager.RequestAsyncLoad(AllParticleAsset[ParticleKey].ToSoftObjectPath()); }
+		return Result;
 	}
 }
 
-void UEveryThingAssetManager::NeededParticleFromName(const FString& ParticleName)
-{
-	GetParticleFromName(ParticleName, false);
-}
 
 
 //////////////////////////////////////////////////////////////////////////

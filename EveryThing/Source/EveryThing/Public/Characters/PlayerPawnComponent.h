@@ -19,6 +19,10 @@ public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 	//////////////////////////////////////////////////////////////////////////
+	/// Input
+	void RebindInputComp(class UInputComponent* OwnerInputComp);
+	
+	//////////////////////////////////////////////////////////////////////////
 	/// Visual Angle
 public:
 	void Turn(float AxisValue);
@@ -35,10 +39,6 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn Form And Prop Use
 public:
-	inline void SetIsWantedTogglePawn(bool bInIsWantedTogglePawn) { bIsWantedTogglePawn = bInIsWantedTogglePawn; }
-	inline void SetIsWantedTogglePawnForm(bool bInIsWantedTogglePawnForm) { bIsWantedTogglePawnForm = bInIsWantedTogglePawnForm; }
-	inline void SetIsWantedTogglePawnSkin(bool bInIsWantedTogglePawnSkin) { bIsWantedTogglePawnSkin = bInIsWantedTogglePawnSkin; }
-
 	void OnPressNumberKeyboard(int32 NumberIndex);
 
 protected:
@@ -52,6 +52,20 @@ protected:
 	bool bIsWantedTogglePawnForm;
 	class AGamePawn* OwnerPawn;
 
+	/// For input component
+	void StartTogglePawn() { bIsWantedTogglePawn = true; }
+	void StopTogglePawn() { bIsWantedTogglePawn = false; }
+
+	void StartTogglePawnForm() { bIsWantedTogglePawnForm = true; }
+	void StopTogglePawnForm() { bIsWantedTogglePawnForm = false; }
+
+	void StartTogglePawnSkin() { bIsWantedTogglePawnSkin = true; }
+	void StopTogglePawnSkin() { bIsWantedTogglePawnSkin = false; }
+
+	void NumberOne() { OnPressNumberKeyboard(0); }
+	void NumberTwo() { OnPressNumberKeyboard(1); }
+	void NumberThree() { OnPressNumberKeyboard(2); }
+	void NumberFour() { OnPressNumberKeyboard(3); }
 	//////////////////////////////////////////////////////////////////////////
 	/// Select Attack Target
 public:

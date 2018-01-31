@@ -30,7 +30,6 @@ protected:
 	void RebindInput();
 
 	void RemoveActionAndAxisBindings(const TArray<FName>& BindingsName);
-
 	void ResetAxisAndActionMapping();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -51,33 +50,8 @@ private:
 	void ToggleGameMenu();
 
 	//////////////////////////////////////////////////////////////////////////
-	/// Game Pawn Form , Skin And Prop Use
-	void StartTogglePawn();
-	void StopTogglePawn();
-
-	void StartTogglePawnState();
-	void StopTogglePawnState();
-
-	void StartTogglePawnSkin();
-	void StopTogglePawnSkin();
-
-
-	void NumberOne();
-	void NumberTwo();
-	void NumberThree();
-	void NumberFour();
-
-	void SelectNextAttackTarget();
-	void SelectLastAttackTarget();
-
-	//////////////////////////////////////////////////////////////////////////
 	/// Attack and skill
 public:	
 	void ToggleToNewAttackComponent(UAttackComponent* InAttackComp);
-private:
-	UAttackComponent* CurrentAttackComponent;
-public:
 	void ToggleToNewSkillComponent(USkillComponent* InSkillComp);
-private:
-	USkillComponent* CurrentSkillComponent;
 };

@@ -16,6 +16,7 @@ public:
 	void LoadAllGameSkinMaterial();
 
 	virtual void LoadGamePawnSkin();
+
 	void UnloadGamePawnSkin();
 
 protected:

@@ -13,9 +13,7 @@ AEveryThingGameMode::AEveryThingGameMode()
 
 	DefaultPawnClass = nullptr;
 	PlayerControllerClass = APlayerPawnController::StaticClass();
-
 	PlayerStateClass = AEveryThingPlayerState::StaticClass();
-
 	HUDClass = AEveryThingGameHUD::StaticClass();
 }
 

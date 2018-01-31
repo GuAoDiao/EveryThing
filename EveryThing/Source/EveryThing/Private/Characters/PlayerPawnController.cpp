@@ -42,29 +42,12 @@ void APlayerPawnController::RebindInput()
 	InputComponent->AxisBindings.Empty();
 	ResetAxisAndActionMapping();
 
+	InputComponent->BindAction("ToggleGameMenu", IE_Pressed, this, &APlayerPawnController::ToggleGameMenu);
+
 	InputComponent->BindAxis("Turn", this, &APlayerPawnController::Turn);
 	InputComponent->BindAxis("LookUp", this, &APlayerPawnController::LookUp);
 
-	InputComponent->BindAction("SelectNextAttackActor", IE_Pressed, this, &APlayerPawnController::SelectNextAttackTarget);
-	InputComponent->BindAction("SelectLastAttackActor", IE_Pressed, this, &APlayerPawnController::SelectLastAttackTarget);
 
-
-	InputComponent->BindAction("TogglePawn", IE_Pressed, this, &APlayerPawnController::StartTogglePawn);
-	InputComponent->BindAction("TogglePawn", IE_Released, this, &APlayerPawnController::StopTogglePawn);
-
-	InputComponent->BindAction("TogglePawnState", IE_Pressed, this, &APlayerPawnController::StartTogglePawnState);
-	InputComponent->BindAction("TogglePawnState", IE_Released, this, &APlayerPawnController::StopTogglePawnState);
-
-	InputComponent->BindAction("TogglePawnSkin", IE_Pressed, this, &APlayerPawnController::StartTogglePawnSkin);
-	InputComponent->BindAction("TogglePawnSkin", IE_Released, this, &APlayerPawnController::StopTogglePawnSkin);
-
-	InputComponent->BindAction("ToggleGameMenu", IE_Pressed, this, &APlayerPawnController::ToggleGameMenu);
-
-
-	InputComponent->BindAction("NumberOne", IE_Pressed, this, &APlayerPawnController::NumberOne);
-	InputComponent->BindAction("NumberTwo", IE_Pressed, this, &APlayerPawnController::NumberTwo);
-	InputComponent->BindAction("NumberThree", IE_Pressed, this, &APlayerPawnController::NumberThree);
-	InputComponent->BindAction("NumberFour", IE_Pressed, this, &APlayerPawnController::NumberFour);
 
 	if (OwnerGamePawn)
 	{
@@ -74,6 +57,7 @@ void APlayerPawnController::RebindInput()
 		UGamePawnMovementComponent* OwnerPlayerMovementComp = OwnerGamePawn->GetGamePawnMovementComponent();
 		if (OwnerPlayerMovementComp) { OwnerPlayerMovementComp->RebindInputComp(InputComponent); }
 	}
+	if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->RebindInputComp(InputComponent); }
 }
 
 void APlayerPawnController::SetPawn(APawn* InPawn)
@@ -186,41 +170,17 @@ void APlayerPawnController::ToggleGameMenu()
 }
 
 //////////////////////////////////////////////////////////////////////////
-/// About Toggle all and prop
-
-void APlayerPawnController::StartTogglePawn() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SetIsWantedTogglePawn(true); } }
-void APlayerPawnController::StopTogglePawn() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SetIsWantedTogglePawn(false); } }
-
-
-void APlayerPawnController::StartTogglePawnState() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SetIsWantedTogglePawnForm(true); } }
-void APlayerPawnController::StopTogglePawnState() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SetIsWantedTogglePawnForm(false); } }
-
-void APlayerPawnController::StartTogglePawnSkin() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SetIsWantedTogglePawnSkin(true); } }
-void APlayerPawnController::StopTogglePawnSkin() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SetIsWantedTogglePawnSkin(false); } }
-
-
-void APlayerPawnController::NumberOne() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->OnPressNumberKeyboard(0); } }
-void APlayerPawnController::NumberTwo() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->OnPressNumberKeyboard(1); } }
-void APlayerPawnController::NumberThree() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->OnPressNumberKeyboard(2); } }
-void APlayerPawnController::NumberFour() {if (OwnerPlayerPawnComp) {OwnerPlayerPawnComp->OnPressNumberKeyboard(3);}}
-
-void APlayerPawnController::SelectNextAttackTarget() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SelectNextAttackTarget(); } }
-void APlayerPawnController::SelectLastAttackTarget() { if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->SelectLastAttackTarget(); } }
-
-//////////////////////////////////////////////////////////////////////////
 /// Attack
 
 void APlayerPawnController::ToggleToNewAttackComponent(UAttackComponent* InAttackComp)
 {
-	if (CurrentAttackComponent) { RemoveActionAndAxisBindings(TArray<FName>{"CommonAttack", "SpecialAttack"}); }
+	RemoveActionAndAxisBindings(TArray<FName>{"CommonAttack", "SpecialAttack"});
 
-	CurrentAttackComponent = InAttackComp;
-
-	if (CurrentAttackComponent)
+	if (InAttackComp)
 	{
-		FMoves* CommonAttack = CurrentAttackComponent->GetCommantAttackSkilledness();
+		FMoves* CommonAttack = InAttackComp->GetCommantAttackSkilledness();
 		if (CommonAttack) { CommonAttack->RebindInput(InputComponent); }
-		FMoves* SpecialAttack = CurrentAttackComponent->GetSpecialAttackSkilledness();
+		FMoves* SpecialAttack = InAttackComp->GetSpecialAttackSkilledness();
 		if (SpecialAttack) { SpecialAttack->RebindInput(InputComponent); }
 	}
 }
@@ -229,19 +189,17 @@ void APlayerPawnController::ToggleToNewAttackComponent(UAttackComponent* InAttac
 /// Skill
 void APlayerPawnController::ToggleToNewSkillComponent(USkillComponent* InSkillComp)
 {
-	if (CurrentSkillComponent) { RemoveActionAndAxisBindings(TArray<FName>{"FirstSkill", "SecondSkill", "UltimateSkill"}); }
+	RemoveActionAndAxisBindings(TArray<FName>{"FirstSkill", "SecondSkill", "UltimateSkill"});
 
-	CurrentSkillComponent = InSkillComp;
-
-	if (CurrentSkillComponent)
+	if (InSkillComp)
 	{
-		FMoves* FirstSkill = CurrentSkillComponent->GetFirstSkillSkilledness();
+		FMoves* FirstSkill = InSkillComp->GetFirstSkillSkilledness();
 		if (FirstSkill) { FirstSkill->RebindInput(InputComponent); }
 
-		FMoves* SecondSkill = CurrentSkillComponent->GetSecondSkillSkilledness();
+		FMoves* SecondSkill = InSkillComp->GetSecondSkillSkilledness();
 		if (SecondSkill) { SecondSkill->RebindInput(InputComponent); }
 
-		FMoves* UltimateSkill = CurrentSkillComponent->GetUltimateSkillSkilledness();
+		FMoves* UltimateSkill = InSkillComp->GetUltimateSkillSkilledness();
 		if (UltimateSkill) { UltimateSkill->RebindInput(InputComponent); }
 	}
 }

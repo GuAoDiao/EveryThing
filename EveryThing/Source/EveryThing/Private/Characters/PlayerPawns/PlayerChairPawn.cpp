@@ -13,12 +13,7 @@ APlayerChairPawn::APlayerChairPawn()
 	OwnerPlayerPawnComponent = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawnComponent"));
 }
 
-UPlayerPawnComponent* APlayerChairPawn::GetPlayerPawnComponent() const
-{
-	return OwnerPlayerPawnComponent;
-}
-
-
+UPlayerPawnComponent* APlayerChairPawn::GetPlayerPawnComponent() const { return OwnerPlayerPawnComponent; }
 
 void APlayerChairPawn::Tick(float DeltaTime)
 {
@@ -36,10 +31,13 @@ void APlayerChairPawn::Tick(float DeltaTime)
 		CenterDirection.Z = 0.f; OwnerDirection.Z = 0.f;
 
 		float Value = FVector::CrossProduct(OwnerDirection.GetSafeNormal(), CenterDirection.GetSafeNormal()).Z;
-		if (FMath::Abs(Value) > 0.1f)
+		if (Value > 0.1f)
 		{
-			Value = Value > 0.f ? FMath::Lerp(Value, 1.f, 0.5f) : FMath::Lerp(Value, -1.f, 0.5f);
-			GetJumpMovementComponent()->RotatePawn(Value * DeltaTime * 150.f);
+			GetJumpMovementComponent()->RotatePawn(FMath::Lerp(Value, 1.f, 0.5f) * DeltaTime * 150.f);
+		}
+		else if (Value < -0.1f)
+		{
+			GetJumpMovementComponent()->RotatePawn(FMath::Lerp(Value, -1.f, 0.5f) * DeltaTime * 150.f);
 		}
 	}
 }

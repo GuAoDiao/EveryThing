@@ -13,7 +13,7 @@ UJumpMovementComponent::UJumpMovementComponent()
 	bReplicates = true;
 	
 	AdjustRotationForce = 1500000 * 100.f;
-	AtuoAdjustRotationForceStrength = 5.f;
+	AtuoAdjustRotationForceStrength = 2.f;
 
 	AdjustPawnRotationForce = 500000 * 100.f;
 
@@ -143,7 +143,7 @@ void UJumpMovementComponent::RotatePawn(float AxisValue)
 	
 	if (OwnerPrimitiveComp)
 	{
-		OwnerPrimitiveComp->AddImpulse(OwnerPrimitiveComp->GetUpVector() * 5000.f);
+		OwnerPrimitiveComp->AddImpulse(OwnerPrimitiveComp->GetUpVector() * 7500.f);
 		OwnerPrimitiveComp->AddTorqueInRadians(OwnerPrimitiveComp->GetUpVector() * AdjustPawnRotationForce * AxisValue);
 	}
 }

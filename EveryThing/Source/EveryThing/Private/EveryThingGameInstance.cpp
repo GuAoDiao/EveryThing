@@ -44,12 +44,7 @@ void UEveryThingGameInstance::HostGame(const FString& HouseName, const FString& 
 	if (OwnerETGS && OwnerLocalPlayer)
 	{
 		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
-		// create unique session name
-		// FName SessionName = FName(*FString(UserId->ToString() + TEXT("_Game")));
-		if (UserId.IsValid() && OwnerETGS)
-		{
-			OwnerETGS->HostSession(*UserId, NAME_GameSession, HouseName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum);
-		}
+		if (UserId.IsValid()) { OwnerETGS->HostSession(*UserId, NAME_GameSession, HouseName, GameType, MapName, bIsLAN, bIsPresence, MaxPlayersNum); }
 	}
 }
 
@@ -60,7 +55,7 @@ void UEveryThingGameInstance::FindHoustList(bool bIsLAN, bool bIsPresence)
 	if (OwnerETGS && OwnerLocalPlayer)
 	{
 		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
-		OwnerETGS->FindSessions(*UserId, bIsLAN, bIsPresence);
+		if (UserId.IsValid()) { OwnerETGS->FindSessions(*UserId, bIsLAN, bIsPresence); }
 	}
 }
 
@@ -85,10 +80,7 @@ void UEveryThingGameInstance::JoinGame(int32 SearchResultIndex)
 	if (OwnerETGS && OwnerLocalPlayer)
 	{
 		TSharedPtr<const FUniqueNetId> UserId = OwnerLocalPlayer->GetPreferredUniqueNetId();
-		if (UserId.IsValid())
-		{
-			OwnerETGS->JoinSession(*UserId, SearchResultIndex);
-		}
+		if (UserId.IsValid()) { OwnerETGS->JoinSession(*UserId, SearchResultIndex); }
 	}
 }
 
@@ -110,10 +102,7 @@ void UEveryThingGameInstance::ExitGame()
 		}
 	}
 
-	if (bSuccess)
-	{
-		OpenMenuLevel();
-	}
+	if (bSuccess) { OpenMenuLevel(); }
 }
 
 AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()

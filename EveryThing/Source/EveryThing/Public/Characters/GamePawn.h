@@ -37,11 +37,11 @@ protected:
 	class UStaticMeshComponent* StaticMeshComp;
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
 	class UGamePawnMovementComponent* MovementComp;
+
 	//////////////////////////////////////////////////////////////////////////
 	/// HitAble
 public:
 	virtual void SetIsSelectedToHit(bool bInIsSelectedToHit) override;
-
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Hit
@@ -76,15 +76,12 @@ protected:
 	/// Game Pawn Skin
 public:
 	void AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin);
-
 	void ToggleToNewPawnSkin(int32 Index, bool bIsCauser = true);
-
 private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerToggleToNewPawnSkin(int32 Index);
 	// actual implementation
 	void ToggleToTargetPawnSkin(FGamePawnSkin* TargetGamePawnSkin);
-
 	UFUNCTION()
 	void OnRep_CurrentGamePawnSkinIndex();
 public:
@@ -120,18 +117,16 @@ protected:
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn info
+public:
+	void UpdateInfo();
 protected:
 	void ResetInfoFromDataTable(const FName& GamePawnName);
 	void SetInfo(const FGamePawnInfo* InInfo);
-	void UpdateInfo();
 	UFUNCTION()
 	void OnRep_Info();
 
 	UPROPERTY(BlueprintReadOnly, Replicated, ReplicatedUsing = OnRep_Info)
 	FGamePawnInfo OwnerInfo;
-	//////////////////////////////////////////////////////////////////////////
-	/// Attribute
-	
 public:
 	UFUNCTION(BlueprintPure)
 	float GetDurability() const { return OwnerInfo.Durability; }
@@ -141,8 +136,6 @@ public:
 	float GetMaxHyperopiaDistance() const { return OwnerInfo.MaxHyperopiaDistance; }
 
 protected:
-
-
 	//////////////////////////////////////////////////////////////////////////
 	/// Element
 

@@ -26,8 +26,8 @@ void FMoves::RebindInput(UInputComponent* OwnerInputComp)
 {
 	if (OwnerInputComp && MovesComp)
 	{
-		if (bIsEnableActionPressed) { OwnerInputComp->BindAction(BindingName, IE_Pressed, MovesComp, StartSkilledness); }
-		if (bIsEnableActionReleased) { OwnerInputComp->BindAction(BindingName, IE_Released, MovesComp, StopSkilledness); }
-		if (bIsEnableAxis) { OwnerInputComp->BindAxis(BindingName, MovesComp, ExcuteSkilledness); }
+		if (bIsEnableActionPressed && StartSkilledness) { OwnerInputComp->BindAction(BindingName, IE_Pressed, MovesComp, StartSkilledness); }
+		if (bIsEnableActionReleased && StopSkilledness) { OwnerInputComp->BindAction(BindingName, IE_Released, MovesComp, StopSkilledness); }
+		if (bIsEnableAxis && ExcuteSkilledness) { OwnerInputComp->BindAxis(BindingName, MovesComp, ExcuteSkilledness); }
 	}
 }
