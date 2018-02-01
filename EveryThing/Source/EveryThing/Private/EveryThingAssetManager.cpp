@@ -12,6 +12,8 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 {
 	UE_LOG(LogTemp, Log, TEXT("-_- init EveryThing Asset Manager"));
 
+	SetFlags(RF_Standalone);
+
 	UDataTable* AllDataTable = LoadObject<UDataTable>(nullptr, TEXT("DataTable'/Game/EveryThing/DataTable/DT_DataTable.DT_DataTable'"));
 	if (AllDataTable)
 	{
