@@ -62,10 +62,6 @@ protected:
 	void StartTogglePawnSkin() { bIsWantedTogglePawnSkin = true; }
 	void StopTogglePawnSkin() { bIsWantedTogglePawnSkin = false; }
 
-	void NumberOne() { OnPressNumberKeyboard(0); }
-	void NumberTwo() { OnPressNumberKeyboard(1); }
-	void NumberThree() { OnPressNumberKeyboard(2); }
-	void NumberFour() { OnPressNumberKeyboard(3); }
 	//////////////////////////////////////////////////////////////////////////
 	/// Select Attack Target
 public:

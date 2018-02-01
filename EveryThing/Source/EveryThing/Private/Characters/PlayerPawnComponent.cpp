@@ -96,10 +96,23 @@ void UPlayerPawnComponent::RebindInputComp(class UInputComponent* OwnerInputComp
 	OwnerInputComp->BindAction("TogglePawnSkin", IE_Pressed, this, &UPlayerPawnComponent::StartTogglePawnSkin);
 	OwnerInputComp->BindAction("TogglePawnSkin", IE_Released, this, &UPlayerPawnComponent::StopTogglePawnSkin);
 
-	OwnerInputComp->BindAction("NumberOne", IE_Pressed, this, &UPlayerPawnComponent::NumberOne);
-	OwnerInputComp->BindAction("NumberTwo", IE_Pressed, this, &UPlayerPawnComponent::NumberTwo);
-	OwnerInputComp->BindAction("NumberThree", IE_Pressed, this, &UPlayerPawnComponent::NumberThree);
-	OwnerInputComp->BindAction("NumberFour", IE_Pressed, this, &UPlayerPawnComponent::NumberFour);
+
+	FInputActionBinding Number("Number", IE_Pressed);
+	Number.ActionDelegate.GetDelegateWithKeyForManualSet().BindLambda( [this](FKey InKey)
+	{
+		if (InKey == EKeys::One) { OnPressNumberKeyboard(0); }
+		else if (InKey == EKeys::Two) { OnPressNumberKeyboard(1); }
+		else if (InKey == EKeys::Three) { OnPressNumberKeyboard(2); }
+		else if (InKey == EKeys::Four) { OnPressNumberKeyboard(3); }
+		else if (InKey == EKeys::Five) { OnPressNumberKeyboard(4); }
+		else if (InKey == EKeys::Six) { OnPressNumberKeyboard(5); }
+		else if (InKey == EKeys::Seven) { OnPressNumberKeyboard(6); }
+		else if (InKey == EKeys::Eight) { OnPressNumberKeyboard(7); }
+		else if (InKey == EKeys::Nine) { OnPressNumberKeyboard(8); }
+		else if (InKey == EKeys::Zero) { OnPressNumberKeyboard(9); }
+	});
+
+	OwnerInputComp->AddActionBinding(Number);
 }
 
 
