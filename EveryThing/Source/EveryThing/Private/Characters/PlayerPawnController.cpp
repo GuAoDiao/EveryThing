@@ -2,6 +2,7 @@
 
 #include "PlayerPawnController.h"
 
+#include "UnrealNetwork.h"
 #include "GameFramework/InputSettings.h"
 
 #include "EveryThingTypes.h"
@@ -16,12 +17,20 @@
 #include "Characters/Moves/SkillComponent.h"
 #include "Characters/Movement/Components/GamePawnMovementComponent.h"
 #include "SceneObject/HitAbleInterface.h"
+#include "Online/EveryThingPlayerState.h"
 
 
 void APlayerPawnController::BeginPlay()
 {
 	FInputModeGameOnly InputMode;
 	SetInputMode(InputMode);
+
+	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
+	if (OwnerETPS) 
+	{
+		FPlayerInfo PlayerInfo= OwnerETPS->GetPlayerInfo();
+		CurrentRolesName = PlayerInfo.AllHaveRolesName.IsValidIndex(0) ? PlayerInfo.AllHaveRolesName[0] : NAME_None;
+	}
 }
 
 void APlayerPawnController::SetupInputComponent()
@@ -69,7 +78,7 @@ void APlayerPawnController::SetPawn(APawn* InPawn)
 	OwnerGamePawn = Cast<AGamePawn>(InPawn);
 	IPlayerPawnInterface* OwnerPlayerPawn = Cast<IPlayerPawnInterface>(InPawn);
 	OwnerPlayerPawnComp = OwnerPlayerPawn ? OwnerPlayerPawn->GetPlayerPawnComponent() : nullptr;
-
+	
 	RebindInput();
 }
 
@@ -161,6 +170,7 @@ void APlayerPawnController::LookUp(float AxisValue) { if (AxisValue != 0.f && Ow
 
 
 //////////////////////////////////////////////////////////////////////////
+/// UI
 void APlayerPawnController::ToggleGameMenu()
 {
 	UE_LOG(LogTemp, Log, TEXT("-_- toggle to game menu"));
@@ -202,4 +212,67 @@ void APlayerPawnController::ToggleToNewSkillComponent(USkillComponent* InSkillCo
 		FMoves* UltimateSkill = InSkillComp->GetUltimateSkillSkilledness();
 		if (UltimateSkill) { UltimateSkill->RebindInput(InputComponent); }
 	}
+}
+
+
+
+void APlayerPawnController::ToggoleRole(int32 NumberIndex)
+{
+	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
+	if (!OwnerETPS) { return; }
+	
+	const FPlayerInfo& PlayerInfo = OwnerETPS->GetPlayerInfo();
+	if (!PlayerInfo.AllHaveRolesName.IsValidIndex(NumberIndex)) { return; }
+
+
+	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
+	UClass* CurrentPawnClass = AssetManager->GetRoleClassFromName(CurrentRolesName);
+	UClass* TargetPawnClass = AssetManager->GetRoleClassFromName(PlayerInfo.AllHaveRolesName[NumberIndex]);
+
+	if (CurrentPawnClass->IsChildOf(TargetPawnClass) || TargetPawnClass->IsChildOf(CurrentPawnClass)) {return;}
+
+	if (!HasAuthority())
+	{
+		ServerToggleRole(NumberIndex);
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("-_- toggle pawn Of Index: %d"), NumberIndex);
+
+	// Hide current Pawn and disable it's collision
+	APawn* OwnerPawn = GetPawn();
+	OwnerPawn->SetActorEnableCollision(false);
+	OwnerPawn->SetActorHiddenInGame(true);
+
+	// spawn and possess new pawn
+	FVector Location = OwnerPawn->GetActorLocation();
+	Location.Z += 100.f;
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	AGamePawn* NewPawn = GetWorld()->SpawnActor<AGamePawn>(TargetPawnClass, Location, OwnerPawn->GetActorForwardVector().Rotation());
+
+	Possess(NewPawn);
+
+	// destroy old pawn
+	OwnerPawn->Destroy();
+
+	// update current pawn class
+	CurrentRolesName = PlayerInfo.AllHaveRolesName[NumberIndex];
+}
+
+bool APlayerPawnController::ServerToggleRole_Validate(int32 NumberIndex) { return true; }
+void APlayerPawnController::ServerToggleRole_Implementation(int32 NumberIndex)
+{
+	ToggoleRole(NumberIndex);
+}
+
+
+
+
+void APlayerPawnController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlayerPawnController, CurrentRolesName);
 }

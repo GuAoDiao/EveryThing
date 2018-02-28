@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
+#include "EveryThingTypes.h"
 #include "EveryThingPlayerState.generated.h"
 
 
@@ -18,19 +19,10 @@ class EVERYTHING_API AEveryThingPlayerState : public APlayerState
 	GENERATED_BODY()
 	
 public:
-
 	AEveryThingPlayerState();
 
-	virtual void BeginPlay() override;
-
-	void ToggolePawn(int32 NumberIndex);
-
-	UFUNCTION(Server, WithValidation, Reliable)
-	void ServerTogglePawn(int32 NumberIndex);
-
+	const FPlayerInfo& GetPlayerInfo() const { return CurrentPlayerInfo; }
 private:
-	TArray<TSubclassOf<AGamePawn>> AllGamePawn;
-
 	UPROPERTY(Transient, Replicated)
-	TSubclassOf<AGamePawn> CurrentPawnClass;
+	FPlayerInfo CurrentPlayerInfo;
 };

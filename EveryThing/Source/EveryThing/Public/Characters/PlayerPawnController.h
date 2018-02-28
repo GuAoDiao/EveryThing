@@ -54,4 +54,16 @@ private:
 public:	
 	void ToggleToNewAttackComponent(UAttackComponent* InAttackComp);
 	void ToggleToNewSkillComponent(USkillComponent* InSkillComp);
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Toggle Pawn
+
+public:
+	void ToggoleRole(int32 NumberIndex);
+
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerToggleRole(int32 NumberIndex);
+
+	UPROPERTY(Transient, Replicated)
+	FName CurrentRolesName;
 };

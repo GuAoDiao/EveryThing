@@ -10,9 +10,10 @@
 #include "Online/EveryThingGameMode_Menu.h"
 #include "Online/EveryThingGameSession.h"
 
+#include "EveryThingSaveGame.h"
+
 UEveryThingGameInstance::UEveryThingGameInstance()
 {
-
 }
 
 
@@ -109,4 +110,38 @@ AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()
 {
 	AGameModeBase* OwnerGameMode = GetWorld() ? GetWorld()->GetAuthGameMode() : nullptr;
 	return OwnerGameMode ? Cast<AEveryThingGameSession>(OwnerGameMode->GameSession) : nullptr;
+}
+
+
+bool UEveryThingGameInstance::LoadPlayerInfoFromSlotName(const FString& SlotName)
+{
+	UEveryThingSaveGame* CurrentSaveGame = Cast<UEveryThingSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+	if (CurrentSaveGame)
+	{
+		SaveDataSlotName = SlotName;
+		SetPlayerInfo(CurrentSaveGame->PlayerInfo);
+		return true;
+	}
+
+	return false;
+}
+
+bool UEveryThingGameInstance::SavePlayerInfoToCurrentSlotName()
+{
+	return SavePlayerInfoWithSlotName(SaveDataSlotName);
+}
+
+bool UEveryThingGameInstance::SavePlayerInfoWithSlotName(const FString& SlotName)
+{
+	UEveryThingSaveGame* CurrentSaveGame = Cast<UEveryThingSaveGame>(UGameplayStatics::CreateSaveGameObject(UEveryThingSaveGame::StaticClass()));;
+	if (CurrentSaveGame)
+	{
+		if (UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0))
+		{
+			SaveDataSlotName = SlotName;
+			return true;
+		}
+	}
+
+	return false;
 }

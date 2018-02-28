@@ -22,5 +22,5 @@ public:
 protected:
 	UStaticMeshComponent* OwnerStaticMeshComp;
 
-	TArray<FString> MaterialNames;
+	TArray<FName> MaterialNames;
 };

@@ -22,6 +22,16 @@ enum class EPromptType : uint8
 	Tips
 };
 
+UENUM(BlueprintType)
+enum class ETeamType : uint8
+{
+	None,
+	Free,
+	FirstTeam,
+	SecondTeam,
+	ThirdTeam
+};
+
 //////////////////////////////////////////////////////////////////////////
 /// Input
 USTRUCT(BlueprintType)
@@ -122,4 +132,22 @@ public:
 	float LinearDamping;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float AngularDamping;
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Player Info
+USTRUCT(BlueprintType)
+struct FPlayerInfo
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString PlayerName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Gold;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Experience;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FName> AllHaveRolesName;
 };

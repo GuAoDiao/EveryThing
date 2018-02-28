@@ -12,6 +12,7 @@
 #include "Kismet/KismetMathLibrary.h"
 
 #include "Characters/GamePawn.h"
+#include "Characters/PlayerPawnController.h"
 #include "Online/EveryThingPlayerState.h"
 
 UPlayerPawnComponent::UPlayerPawnComponent()
@@ -226,9 +227,8 @@ void UPlayerPawnComponent::TogglePawn(int32 NumberIndex)
 {
 	if (OwnerPawn)
 	{
-		AController* OwnerPC = OwnerPawn->GetController();
-		AEveryThingPlayerState* OwnerETPS = OwnerPC ? Cast<AEveryThingPlayerState>(OwnerPC->PlayerState) : nullptr;
-		if (OwnerETPS) { OwnerETPS->ToggolePawn(NumberIndex); }
+		APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(OwnerPawn->GetController());
+		if (OwnerPPC) { OwnerPPC->ToggoleRole(NumberIndex); }
 	}
 }
 

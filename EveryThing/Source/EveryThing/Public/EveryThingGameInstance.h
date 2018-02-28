@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "EveryThingTypes.h"
 #include "EveryThingGameInstance.generated.h"
+
+class UEveryThingSaveGame;
 
 /**
  * 
@@ -38,4 +41,17 @@ private:
 public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	FName MenuLevelName;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Player Info
+public:
+	bool LoadPlayerInfoFromSlotName(const FString& SlotName);
+	bool SavePlayerInfoWithSlotName(const FString& SlotName);
+	bool SavePlayerInfoToCurrentSlotName();
+
+	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo) { PlayerInfo = InPlayerInfo; }
+	const FPlayerInfo& GetPlayerInfo() const { return PlayerInfo; }
+private:
+	FPlayerInfo PlayerInfo;
+	FString SaveDataSlotName;
 };

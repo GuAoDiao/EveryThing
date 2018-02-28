@@ -15,6 +15,7 @@ class UStaticMesh;
 class UParticleSystem;
 class UMaterialInstanceConstant;
 class UUserWidget;
+class UClass;
 
 USTRUCT(BlueprintType)
 struct FStaticMeshData : public FTableRowBase
@@ -22,7 +23,7 @@ struct FStaticMeshData : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString Name;
+	FName Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSoftObjectPtr<UStaticMesh> MeshClass;
 };
@@ -33,7 +34,7 @@ struct FMaterialInstanceData : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString Name;
+	FName Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSoftObjectPtr<UMaterialInstanceConstant> MaterialInstanceClass;
 };
@@ -44,7 +45,7 @@ struct FParticleSystemData : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString Name;
+	FName Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSoftObjectPtr<UParticleSystem> ParticleSystemClass;
 };
@@ -55,9 +56,21 @@ struct FUserWidgetData : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString Name;
+	FName Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSoftClassPtr<UUserWidget> UserWidgetClass;
+};
+
+
+USTRUCT(BlueprintType)
+struct FRoleNameData : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName Name;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UClass* RoleClass;
 };
 
 USTRUCT(BlueprintType)
@@ -66,7 +79,7 @@ struct FDataTableData : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString Name;
+	FName Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSoftObjectPtr<UDataTable> DataTableClass;
 };
@@ -92,8 +105,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	/// Mesh
 public:
-	void NeededMeshFromName(const FString& MeshName);
-	UStaticMesh* GetMeshFromName(const FString& MeshName, bool bIsNeedForce = true);
+	void NeededMeshFromName(const FName& MeshName);
+	UStaticMesh* GetMeshFromName(const FName& MeshName, bool bIsNeedForce = true);
 private:
 	void LoadMeshFromDatatable();
 	TMap<FName, TSoftObjectPtr<UStaticMesh>> AllMeshAsset;
@@ -102,8 +115,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	/// Material instance
 public:
-	void NeededMaterialFromName(const FString& MaterialName);
-	UMaterialInstanceConstant* GetMaterialFromName(const FString& MaterialName, bool bIsNeedForce = false);
+	void NeededMaterialFromName(const FName& MaterialName);
+	UMaterialInstanceConstant* GetMaterialFromName(const FName& MaterialName, bool bIsNeedForce = false);
 
 private:
 	void LoadMaterialFromDatatable();
@@ -112,8 +125,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	/// Particle
 public:
-	void NeededParticleFromName(const FString& ParticleName);
-	UParticleSystem* GetParticleFromName(const FString& ParticleName, bool bIsNeedForce = false);
+	void NeededParticleFromName(const FName& ParticleName);
+	UParticleSystem* GetParticleFromName(const FName& ParticleName, bool bIsNeedForce = false);
 
 private:
 	void LoadParticleFromDatatable();
@@ -124,7 +137,7 @@ private:
 public:
 
 	void LoadUserWidgetFromDataable();
-	TSubclassOf<UUserWidget> GetUserWidgetFromName(const FString& UserWidgetName);
+	TSubclassOf<UUserWidget> GetUserWidgetFromName(const FName& UserWidgetName);
 
 private:	
 	TMap<FName, TSoftClassPtr<UUserWidget>> AllUserWidgetAsset;
@@ -133,8 +146,17 @@ private:
 	/// Data table
 
 public:
-	UDataTable* GetDataTableFromName(const FString& DataTableName);
+	UDataTable* GetDataTableFromName(const FName& DataTableName);
 
 private:
 	TMap<FName, TSoftObjectPtr<UDataTable>> AllDataTableAsset;
+
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Game Pawn
+public:
+	void LoadRolesClassFromDatetable();
+	UClass* GetRoleClassFromName(const FName& Name);
+private:
+	TMap<FName, UClass*> AllRolesName;
 };

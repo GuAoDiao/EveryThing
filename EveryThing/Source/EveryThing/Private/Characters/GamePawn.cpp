@@ -1,4 +1,6 @@
-﻿#include "GamePawn.h"
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "GamePawn.h"
 
 #include "UnrealNetwork.h"
 #include "Engine/World.h"

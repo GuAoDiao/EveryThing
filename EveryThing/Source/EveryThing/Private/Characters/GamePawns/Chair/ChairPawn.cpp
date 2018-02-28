@@ -11,11 +11,11 @@ AChairPawn::AChairPawn()
 {
 	ResetInfoFromDataTable("Chair");
 
+	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
 
-	UStaticMesh* ChairMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Chair"));
+	UStaticMesh* ChairMesh = AssetManager->GetMeshFromName("Chair");
 	if (ChairMesh) { StaticMeshComp->SetStaticMesh(ChairMesh); }
 
-	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
 	
 	UMaterialInstanceConstant* ChairWoodMaterial = AssetManager->GetMaterialFromName("ChairWood");
 	UMaterialInstanceConstant* ChairMatMaterial = AssetManager->GetMaterialFromName("ChairMat");
