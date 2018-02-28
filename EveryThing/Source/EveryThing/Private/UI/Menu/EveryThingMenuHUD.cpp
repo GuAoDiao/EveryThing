@@ -6,7 +6,7 @@
 #include "EveryThingAssetManager.h"
 
 #include "UI/Menu/ErrorDialog.h"
-#include "UI/Menu/MainMenu.h"
+#include "UI/Menu/HouseMenu.h"
 #include "UI/Menu/HouseList.h"
 #include "UI/Menu/HouseRow.h"
 #include "UI/Menu/HouseCreate.h"
@@ -19,7 +19,7 @@ AEveryThingMenuHUD::AEveryThingMenuHUD()
 
 	UEveryThingAssetManager*  OwnerAssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
 	
-	MainMenuClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("MainMenu"));
+	HouseMenuClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("HouseMenu"));
 	ErrorDialogClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("ErrorDialog"));
 	HouseListClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("HouseList"));
 	HouseCreateClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("HouseCreate"));
@@ -28,7 +28,7 @@ AEveryThingMenuHUD::AEveryThingMenuHUD()
 
 void AEveryThingMenuHUD::BeginPlay()
 {
-	if (IsTargetGameUIState(EMenuUIState::StartUp)) { ToggleToNewGameUIState(EMenuUIState::MainMenu); }
+	if (IsTargetGameUIState(EMenuUIState::StartUp)) { ToggleToNewGameUIState(EMenuUIState::HouseMenu); }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,8 +57,8 @@ void AEveryThingMenuHUD::StartNewGameUIState(EMenuUIState InGameUIState)
 	{
 		case EMenuUIState::StartUp:
 			break;
-		case EMenuUIState::MainMenu:
-			ShowMainMenu();
+		case EMenuUIState::HouseMenu:
+			ShowHouseMenu();
 			break;
 		case EMenuUIState::HouseCreate:
 			ShowHouseCreate();
@@ -82,8 +82,8 @@ void AEveryThingMenuHUD::FinishOldGameUIState(EMenuUIState InGameUIState)
 	{
 		case EMenuUIState::StartUp:
 			break;
-		case EMenuUIState::MainMenu:
-			if (MainMenu) { MainMenu->RemoveFromParent(); }
+		case EMenuUIState::HouseMenu:
+			if (HouseMenu) { HouseMenu->RemoveFromParent(); }
 			break;
 		case EMenuUIState::HouseCreate:
 			if (HouseCreate) { HouseCreate->RemoveFromParent(); }
@@ -125,17 +125,17 @@ void AEveryThingMenuHUD::UpdateHouseList(TArray<FOnlineSessionSearchResult>& Sea
 }
 
 
-void AEveryThingMenuHUD::ShowMainMenu()
+void AEveryThingMenuHUD::ShowHouseMenu()
 {
-	if (IsTargetGameUIState(EMenuUIState::MainMenu))
+	if (IsTargetGameUIState(EMenuUIState::HouseMenu))
 	{
-		if (!MainMenu && MainMenuClass) { MainMenu = CreateWidget<UMainMenu>(GetGameInstance(), MainMenuClass); }
+		if (!HouseMenu && HouseMenuClass) { HouseMenu = CreateWidget<UHouseMenu>(GetGameInstance(), HouseMenuClass); }
 
-		if (MainMenu)
+		if (HouseMenu)
 		{
-			if (!MainMenu->IsInViewport()) { MainMenu->AddToViewport(); }
+			if (!HouseMenu->IsInViewport()) { HouseMenu->AddToViewport(); }
 
-			SetWidgetOwnerAndInputModeToFocusWidget(MainMenu);
+			SetWidgetOwnerAndInputModeToFocusWidget(HouseMenu);
 
 			APlayerController* OwnerPC = GetGameInstance() ? GetGameInstance()->GetFirstLocalPlayerController() : nullptr;
 			if (OwnerPC) { OwnerPC->bShowMouseCursor = true; }

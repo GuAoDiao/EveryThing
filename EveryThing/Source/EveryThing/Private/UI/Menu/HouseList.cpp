@@ -47,6 +47,6 @@ void UHouseList::BackUp()
 	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
 	if (OwnerMenuHUD && OwnerMenuHUD->IsTargetGameUIState(EMenuUIState::HouseList))
 	{
-		OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::MainMenu);		
+		OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::HouseMenu);		
 	}
 }

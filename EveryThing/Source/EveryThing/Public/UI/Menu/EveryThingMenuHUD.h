@@ -14,7 +14,7 @@ UENUM(BlueprintType)
 enum class EMenuUIState : uint8
 {
 	StartUp,
-	MainMenu,
+	HouseMenu,
 	HouseCreate,
 	HouseList,
 	Config,
@@ -24,7 +24,7 @@ enum class EMenuUIState : uint8
 };
 
 
-class UMainMenu;
+class UHouseMenu;
 class UHouseList;
 class UHouseCreate;
 class ULoadingScreen;
@@ -68,7 +68,7 @@ public:
 	void UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResults);
 	
 private:
-	void ShowMainMenu();
+	void ShowHouseMenu();
 	void ShowHouseCreate();
 	void ShowHouseList();
 	void ShowLoadingScreen();
@@ -77,14 +77,14 @@ private:
 	void SetWidgetOwnerAndInputModeToFocusWidget(class UUserWidget* InWidget);
 
 protected:
-	TSubclassOf<UMainMenu> MainMenuClass;
+	TSubclassOf<UHouseMenu> HouseMenuClass;
 	TSubclassOf<UErrorDialog> ErrorDialogClass;
 	TSubclassOf<UHouseList> HouseListClass;
 	TSubclassOf<UHouseCreate> HouseCreateClass;
 	TSubclassOf<ULoadingScreen> LoadingScreenClass;
 
 	UPROPERTY(Transient)
-	UMainMenu* MainMenu;
+	UHouseMenu* HouseMenu;
 	UPROPERTY(Transient)
 	UHouseList* HouseList;
 	UPROPERTY(Transient)
