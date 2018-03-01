@@ -173,7 +173,7 @@ void UFootballAttackComponent::ToggleAttack(bool bInIsCommonAttack)
 
 void UFootballAttackComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps)
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UFootballAttackComponent, CurrentAttackTarget);
 	DOREPLIFETIME(UFootballAttackComponent, LastAttackTartgetLocation);

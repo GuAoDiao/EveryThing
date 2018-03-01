@@ -24,11 +24,29 @@
 
 void APlayerPawnController::BeginPlay()
 {
+	Super::BeginPlay();
+
+
 	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
-	if (OwnerETPS) 
+	UClass* CurrentPawnClass = GetPawn() ? GetPawn()->GetClass() : nullptr;
+	if (OwnerETPS &&CurrentPawnClass)
 	{
 		FPlayerInfo PlayerInfo= OwnerETPS->GetPlayerInfo();
-		CurrentRoleName = PlayerInfo.AllHaveRolesName.IsValidIndex(0) ? PlayerInfo.AllHaveRolesName[0] : NAME_None;
+
+		CurrentRoleName = NAME_None;
+		
+		for (const FName RoleName : PlayerInfo.AllHaveRolesName)
+		{
+			UClass* TargetPawnClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetRoleClassFromName(RoleName);
+
+			if (!TargetPawnClass) { continue; }
+
+			if (CurrentPawnClass->IsChildOf(TargetPawnClass) || TargetPawnClass->IsChildOf(CurrentPawnClass))
+			{
+				CurrentRoleName = RoleName;
+				break;
+			}
+		}
 	}
 
 
