@@ -11,6 +11,12 @@ void USelectRolesBox::NativeConstruct()
 	AEveryThingPlayerState* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
 	if (OwnerPlaterState)
 	{
+		OwnerPlaterState->GetOnUpdatePlayerInfoDelegate().AddUObject(this, &USelectRolesBox::OnUpdatePlayerInfo);
 		InitializesAllHaveRoles(OwnerPlaterState->GetPlayerInfo().AllHaveRolesName);
 	}
+}
+
+void USelectRolesBox::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
+{
+	InitializesAllHaveRoles(InPlayerInfo.AllHaveRolesName);
 }

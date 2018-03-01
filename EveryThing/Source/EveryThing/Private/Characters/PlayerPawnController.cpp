@@ -253,7 +253,7 @@ void APlayerPawnController::StopToggleRole()
 	AEveryThingGameHUD* OwnerETGH = Cast<AEveryThingGameHUD>(GetHUD());
 	if (OwnerETGH) { OwnerETGH->ToggleSelectRolesBox(false); }
 
-	if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->GetOnPressNumberKeyboardDelegate(); }
+	if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->GetOnPressNumberKeyboardDelegate().Unbind(); }
 
 	bIsWantedTogglePawn = false;
 }
@@ -328,8 +328,9 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 	OwnerPawn->Destroy();
 
 	// update current pawn class
-	StopToggleRole();
 	OnToggleToTargetRoleSuccessDelegate.Broadcast(TargetRoleName);
+	
+	StopToggleRole();
 
 	CurrentRoleName = TargetRoleName;
 }

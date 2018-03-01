@@ -21,8 +21,23 @@ class EVERYTHING_API AEveryThingPlayerState : public APlayerState
 public:
 	AEveryThingPlayerState();
 
+	virtual void BeginPlay() override;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// PlayerInfo
+public:
 	const FPlayerInfo& GetPlayerInfo() const { return CurrentPlayerInfo; }
+	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo);
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdatePlayerInfoDelegate, const FPlayerInfo&);
+	FOnUpdatePlayerInfoDelegate GetOnUpdatePlayerInfoDelegate() { return OnUpdatePlayerInfoDelegate; }
+
 private:
-	UPROPERTY(Transient, Replicated)
+	UFUNCTION()
+	void OnRep_CurrentPlayerInfo();
+	void OnPlayerInfoUpdate();
+
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentPlayerInfo)
 	FPlayerInfo CurrentPlayerInfo;
+	FOnUpdatePlayerInfoDelegate OnUpdatePlayerInfoDelegate;
 };

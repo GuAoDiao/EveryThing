@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+
+#include "EveryThingTypes.h"
+
 #include "SelectRolesBox.generated.h"
 
 /**
@@ -19,4 +22,6 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void InitializesAllHaveRoles(const TArray<FName>& AllHaveRolesName);
+
+	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);
 };

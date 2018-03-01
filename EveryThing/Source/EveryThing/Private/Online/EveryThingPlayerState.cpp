@@ -14,14 +14,35 @@
 
 AEveryThingPlayerState::AEveryThingPlayerState()
 {
-	UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetGameInstance()) : nullptr;
-	if (OwnerETGI) { CurrentPlayerInfo = OwnerETGI->GetPlayerInfo(); }
+}
 
+void AEveryThingPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetWorld()->GetGameInstance()) : nullptr;
+	if (OwnerETGI) { SetPlayerInfo( OwnerETGI->GetPlayerInfo()); }
+}
+
+void AEveryThingPlayerState::SetPlayerInfo(const FPlayerInfo& InPlayerInfo)
+{
+	CurrentPlayerInfo = InPlayerInfo;
 
 	CurrentPlayerInfo.AllHaveRolesName.Add("Football");
 	CurrentPlayerInfo.AllHaveRolesName.Add("Chair");
+
+	OnPlayerInfoUpdate();
 }
 
+void AEveryThingPlayerState::OnPlayerInfoUpdate()
+{
+	OnUpdatePlayerInfoDelegate.Broadcast(CurrentPlayerInfo);
+}
+
+void AEveryThingPlayerState::OnRep_CurrentPlayerInfo()
+{
+	OnPlayerInfoUpdate();
+}
 
 void AEveryThingPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
 {
