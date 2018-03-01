@@ -15,11 +15,19 @@ class EVERYTHING_API AEveryThingGameHUD : public AHUD
 	GENERATED_BODY()
 	
 public:
+	virtual void BeginPlay() override;
+
 	void ToggleGameMenu();
+
+	UFUNCTION(BlueprintCallable)
 	void DisplayGameMenu();
 	UFUNCTION(BlueprintCallable)
 	void RemoveGameMenu();
+
+	void ToggleSelectRolesBox(bool bIsDisplay);
 private:
 	UPROPERTY(Transient)
 	class UGameMenu* GameMenu;
+	UPROPERTY(Transient)
+	class UGameLayout* GameLayout;
 };

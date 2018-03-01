@@ -13,8 +13,19 @@ UCLASS()
 class EVERYTHING_API UGameLayout : public UUserWidget
 {
 	GENERATED_BODY()
-	
-	
-	
-	
+
+public:
+	virtual void NativeConstruct() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitializeGameLayout();
+
+	void DisplaySelectRolesBox();
+	void RemoveSelectRolesBox();
+
+public:
+	UPROPERTY(BlueprintReadWrite, Transient)
+	class USelectRolesBox* SelectRolesBox;
+	UPROPERTY(BlueprintReadWrite, Transient)
+	class UImportantNoteBox* ImportNoteBox;
 };

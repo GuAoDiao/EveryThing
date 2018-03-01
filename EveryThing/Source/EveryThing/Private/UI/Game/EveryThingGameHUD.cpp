@@ -3,17 +3,17 @@
 #include "EveryThingGameHUD.h"
 
 #include "UI/Game/GameMenu.h"
+#include "UI/Game/GameLayout.h"
 #include "EveryThingAssetManager.h"
 
-void AEveryThingGameHUD::ToggleGameMenu()
+
+void AEveryThingGameHUD::BeginPlay()
 {
-	if (!GameMenu || !GameMenu->IsInViewport())
+	TSubclassOf<UUserWidget> GameLayoutClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("GameLayout"));
+	if (GameLayoutClass)
 	{
-		DisplayGameMenu();
-	}
-	else
-	{
-		RemoveGameMenu();
+		GameLayout = CreateWidget<UGameLayout>(GetGameInstance(), GameLayoutClass);
+		if (GameLayout){GameLayout->AddToViewport();}
 	}
 }
 
@@ -32,14 +32,14 @@ void AEveryThingGameHUD::DisplayGameMenu()
 	{
 		GameMenu->AddToViewport();
 
-		APlayerController* OwnerPC = GetGameInstance()->GetFirstLocalPlayerController();
+		APlayerController* OwnerPC = GetOwningPlayerController();
 		if (OwnerPC)
 		{
 			OwnerPC->bShowMouseCursor = true;
 
 			FInputModeUIOnly InputMode;
 			InputMode.SetWidgetToFocus(GameMenu->TakeWidget());
-			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
 			OwnerPC->SetInputMode(InputMode);
 		}
 	}
@@ -50,13 +50,29 @@ void AEveryThingGameHUD::RemoveGameMenu()
 	{
 		GameMenu->RemoveFromParent();
 
-		APlayerController* OwnerPC = GetGameInstance()->GetFirstLocalPlayerController();
+		APlayerController* OwnerPC = GetOwningPlayerController();
 		if (OwnerPC)
 		{
 			OwnerPC->bShowMouseCursor = false;
 
 			FInputModeGameOnly InputMode;
 			OwnerPC->SetInputMode(InputMode);
+		}
+	}
+}
+
+
+void AEveryThingGameHUD::ToggleSelectRolesBox(bool bIsDisplay)
+{
+	if (GameLayout)
+	{
+		if (bIsDisplay)
+		{
+			GameLayout->DisplaySelectRolesBox();
+		}
+		else
+		{
+			GameLayout->RemoveSelectRolesBox();
 		}
 	}
 }

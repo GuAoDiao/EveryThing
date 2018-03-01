@@ -14,11 +14,12 @@ enum class EElementType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EPromptType : uint8
+enum class EImportantNoteType : uint8
 {
 	None,
-	Error,
+	Warning,
 	Message,
+	Error,
 	Tips
 };
 

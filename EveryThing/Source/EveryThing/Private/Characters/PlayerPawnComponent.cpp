@@ -14,13 +14,14 @@
 #include "Characters/GamePawn.h"
 #include "Characters/PlayerPawnController.h"
 #include "Online/EveryThingPlayerState.h"
+#include "UI/Game/EveryThingGameHUD.h"
 
 UPlayerPawnComponent::UPlayerPawnComponent()
 {
-	OwnerPawn = Cast<AGamePawn>(GetOwner());
-
 	PrimaryComponentTick.bCanEverTick = false;
 
+	OwnerPawn = Cast<AGamePawn>(GetOwner());
+	
 	if (OwnerPawn)
 	{
 		class USpringArmComponent* SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
@@ -50,9 +51,6 @@ UPlayerPawnComponent::UPlayerPawnComponent()
 	CurrentAttackTarget = nullptr;
 	LastAttackTarget = nullptr;
 }
-
-
-
 
 void UPlayerPawnComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
@@ -87,9 +85,6 @@ void UPlayerPawnComponent::RebindInputComp(class UInputComponent* OwnerInputComp
 
 	OwnerInputComp->BindAction("SelectNextAttackActor", IE_Pressed, this, &UPlayerPawnComponent::SelectNextAttackTarget);
 	OwnerInputComp->BindAction("SelectLastAttackActor", IE_Pressed, this, &UPlayerPawnComponent::SelectLastAttackTarget);
-
-	OwnerInputComp->BindAction("TogglePawn", IE_Pressed, this, &UPlayerPawnComponent::StartTogglePawn);
-	OwnerInputComp->BindAction("TogglePawn", IE_Released, this, &UPlayerPawnComponent::StopTogglePawn);
 
 	OwnerInputComp->BindAction("TogglePawnState", IE_Pressed, this, &UPlayerPawnComponent::StartTogglePawnForm);
 	OwnerInputComp->BindAction("TogglePawnState", IE_Released, this, &UPlayerPawnComponent::StopTogglePawnForm);
@@ -200,21 +195,24 @@ AActor* UPlayerPawnComponent::TryToGetHitAbleActor() const
 /// Game Pawn Form And Prop Use
 void UPlayerPawnComponent::OnPressNumberKeyboard(int32 NumberIndex)
 {
-	if (bIsWantedTogglePawn)
+	if (OnPressNumberKeyboardDelegate.IsBound())
 	{
-		TogglePawn(NumberIndex);
-	}
-	else if (bIsWantedTogglePawnSkin)
-	{
-		TogglePawnSkin(NumberIndex);
-	}
-	else if (bIsWantedTogglePawnForm)
-	{
-		TogglePawnForm(NumberIndex);
+		OnPressNumberKeyboardDelegate.Execute(NumberIndex);
 	}
 	else
 	{
-		UseProp(NumberIndex);
+		if (bIsWantedTogglePawnSkin)
+		{
+			TogglePawnSkin(NumberIndex);
+		}
+		else if (bIsWantedTogglePawnForm)
+		{
+			TogglePawnForm(NumberIndex);
+		}
+		else
+		{
+			UseProp(NumberIndex);
+		}
 	}
 }
 
@@ -223,14 +221,9 @@ void UPlayerPawnComponent::UseProp(int32 NumberIndex)
 	UE_LOG(LogTemp, Log, TEXT("-_- Use Prop Of Index: %d"), NumberIndex)
 }
 
-void UPlayerPawnComponent::TogglePawn(int32 NumberIndex)
-{
-	if (OwnerPawn)
-	{
-		APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(OwnerPawn->GetController());
-		if (OwnerPPC) { OwnerPPC->ToggoleRole(NumberIndex); }
-	}
-}
+
+
+
 
 void UPlayerPawnComponent::TogglePawnForm(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewPawnForm(NumberIndex); } }
 void UPlayerPawnComponent::TogglePawnSkin(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewPawnSkin(NumberIndex); } }

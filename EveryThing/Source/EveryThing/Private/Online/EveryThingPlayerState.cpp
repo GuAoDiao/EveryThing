@@ -16,6 +16,10 @@ AEveryThingPlayerState::AEveryThingPlayerState()
 {
 	UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetGameInstance()) : nullptr;
 	if (OwnerETGI) { CurrentPlayerInfo = OwnerETGI->GetPlayerInfo(); }
+
+
+	CurrentPlayerInfo.AllHaveRolesName.Add("Football");
+	CurrentPlayerInfo.AllHaveRolesName.Add("Chair");
 }
 
 

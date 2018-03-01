@@ -14,7 +14,9 @@ class EVERYTHING_API USelectRolesBox : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void NativeConstruct() override;
 	
-	
-	
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitializesAllHaveRoles(const TArray<FName>& AllHaveRolesName);
 };

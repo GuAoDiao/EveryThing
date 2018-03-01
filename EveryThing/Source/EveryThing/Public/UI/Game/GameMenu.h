@@ -15,9 +15,20 @@ class EVERYTHING_API UGameMenu : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	UGameMenu(const FObjectInitializer& ObjectInitializer);
+
+	virtual void NativeConstruct() override;
+
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	UFUNCTION(BlueprintCallable)
 	void Confing();
 
 	UFUNCTION(BlueprintCallable)
 	void ExitGame();
+
+	UFUNCTION(BlueprintCallable)
+	void Backup();
+private:
+	TArray<FKey> EscapeKeys;
 };

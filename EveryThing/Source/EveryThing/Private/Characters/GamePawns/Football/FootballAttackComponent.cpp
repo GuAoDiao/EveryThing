@@ -62,16 +62,16 @@ void UFootballAttackComponent::OnHitImplement(UPrimitiveComponent* HitComp, AAct
 	
 	if (Cast<IHitAbleInterface>(OtherActor))
 	{
-		if (bIsCommonAttack && OwnerPawn && OwnerPawn->GetRotaryMovementComponent())
+		if (HasAuthority())
 		{
-			OwnerPawn->GetRotaryMovementComponent()->AcceptForceImpulse(Hit.Location, -HitElasticScale * OwnerPawn->GetVelocity());
+			if (bIsCommonAttack && OwnerPawn && OwnerPawn->GetRotaryMovementComponent())
+			{
+				OwnerPawn->GetRotaryMovementComponent()->AcceptForceImpulse(Hit.Location, -HitElasticScale * OwnerPawn->GetVelocity());
+			}
 		}
 
 		UParticleSystem*  HitEmitter = UEveryThingAssetManager::GetAssetManagerInstance()->GetParticleFromName(TEXT("Explosion"));
-		if (HitEmitter)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location);
-		}
+		if (HitEmitter) { UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location); }
 
 		StopAttack();
 	}
@@ -173,6 +173,8 @@ void UFootballAttackComponent::ToggleAttack(bool bInIsCommonAttack)
 
 void UFootballAttackComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps)
+
 	DOREPLIFETIME(UFootballAttackComponent, CurrentAttackTarget);
 	DOREPLIFETIME(UFootballAttackComponent, LastAttackTartgetLocation);
 	DOREPLIFETIME(UFootballAttackComponent, bIsCommonAttack);

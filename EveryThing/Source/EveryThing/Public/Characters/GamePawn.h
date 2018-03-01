@@ -24,6 +24,8 @@ class EVERYTHING_API AGamePawn : public APawn, public IHitAbleInterface
 public:
 	AGamePawn();
 	
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	virtual void Tick(float DeltaTime) override;

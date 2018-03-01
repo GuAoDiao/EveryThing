@@ -45,6 +45,12 @@ AGamePawn::AGamePawn()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void AGamePawn::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+}
+
+
 void AGamePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

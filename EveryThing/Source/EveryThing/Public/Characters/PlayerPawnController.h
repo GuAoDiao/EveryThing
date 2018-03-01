@@ -47,7 +47,7 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	/// UI
-	void ToggleGameMenu();
+	void DisplayGameMenu();
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Attack and skill
@@ -56,14 +56,28 @@ public:
 	void ToggleToNewSkillComponent(USkillComponent* InSkillComp);
 
 	//////////////////////////////////////////////////////////////////////////
-	/// Toggle Pawn
+	/// Toggle Role
 
 public:
+	void StartToggleRole();
+	void StopToggleRole();
+
+	bool bIsWantedTogglePawn;
+
 	void ToggoleRole(int32 NumberIndex);
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetRoleSuccessDelegate, const FName& /* TargetRoleName */);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetRoleFailureDelegate, const FName& /* TargetRoleName */, const FText&  /* ErrorInfo */);
+
+	FOnToggleToTargetRoleSuccessDelegate& GetOnToggleToTargetRoleSuccessDelegate() { return OnToggleToTargetRoleSuccessDelegate; }
+	FOnToggleToTargetRoleFailureDelegate& GetOnToggleToTargetRoleFailureDelegate() { return OnToggleToTargetRoleFailureDelegate; }
+private:
+	FOnToggleToTargetRoleSuccessDelegate OnToggleToTargetRoleSuccessDelegate;
+	FOnToggleToTargetRoleFailureDelegate OnToggleToTargetRoleFailureDelegate;
+	
 	UFUNCTION(Server, WithValidation, Reliable)
 	void ServerToggleRole(int32 NumberIndex);
 
 	UPROPERTY(Transient, Replicated)
-	FName CurrentRolesName;
+	FName CurrentRoleName;
 };
