@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interface.h"
 #include "JumpMovementPawnInterface.generated.h"
 
-UINTERFACE()
-class EVERYTHING_API UJumpMovementPawnInterface : public UInterface
+UINTERFACE(MinimalAPI)
+class UJumpMovementPawnInterface : public UInterface
 {
 	GENERATED_BODY()
 };

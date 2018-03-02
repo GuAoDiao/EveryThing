@@ -229,7 +229,7 @@ void UEveryThingAssetManager::LoadRolesClassFromDatetable()
 	}
 }
 
-UClass* UEveryThingAssetManager::GetRoleClassFromName(const FName& RolesName)
+TSoftClassPtr<AGamePawn> UEveryThingAssetManager::GetRoleClassFromName(const FName& RolesName)
 {
 	if (AllRolesName.Contains(RolesName))
 	{

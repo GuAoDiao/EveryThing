@@ -37,8 +37,8 @@ void APlayerPawnController::BeginPlay()
 		
 		for (const FName RoleName : PlayerInfo.AllHaveRolesName)
 		{
-			UClass* TargetPawnClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetRoleClassFromName(RoleName);
-
+			TSoftClassPtr<AGamePawn> TargetPawnSoftClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetRoleClassFromName(RoleName);
+			UClass* TargetPawnClass = TargetPawnSoftClass ? TargetPawnSoftClass->GetClass() : nullptr;
 			if (!TargetPawnClass) { continue; }
 
 			if (CurrentPawnClass->IsChildOf(TargetPawnClass) || TargetPawnClass->IsChildOf(CurrentPawnClass))
@@ -281,8 +281,11 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 
 	// Get Current and Target Pawn class 
 	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
-	UClass* CurrentPawnClass = AssetManager->GetRoleClassFromName(CurrentRoleName);
-	UClass* TargetPawnClass = AssetManager->GetRoleClassFromName(TargetRoleName);
+	TSoftClassPtr<AGamePawn> CurrentPawnSoftClass = AssetManager->GetRoleClassFromName(CurrentRoleName);
+	TSoftClassPtr<AGamePawn> TargetPawnSoftClass = AssetManager->GetRoleClassFromName(TargetRoleName);
+
+	UClass* CurrentPawnClass = CurrentPawnSoftClass ? CurrentPawnSoftClass->GetClass() : nullptr;
+	UClass* TargetPawnClass = TargetPawnSoftClass ? TargetPawnSoftClass->GetClass() : nullptr;
 
 	// Check target pawn class is exists
 	if (!TargetPawnClass)
@@ -291,6 +294,7 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 		return;
 	}
 
+	TargetPawnClass->GetClass();
 	// check target pawn and current pawn isn't Parent-child
 	if (CurrentPawnClass->IsChildOf(TargetPawnClass) || TargetPawnClass->IsChildOf(CurrentPawnClass))
 	{

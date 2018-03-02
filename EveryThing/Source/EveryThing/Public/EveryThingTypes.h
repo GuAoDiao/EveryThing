@@ -33,6 +33,17 @@ enum class ETeamType : uint8
 	ThirdTeam
 };
 
+UENUM(BlueprintType)
+enum class ESystemMessageType : uint8
+{
+	Normal,
+	Alert,
+	Error,
+	Team,
+	Status,
+	Experience
+};
+
 //////////////////////////////////////////////////////////////////////////
 /// Input
 USTRUCT(BlueprintType)

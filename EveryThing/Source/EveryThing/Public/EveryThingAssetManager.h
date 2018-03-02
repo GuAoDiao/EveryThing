@@ -15,7 +15,7 @@ class UStaticMesh;
 class UParticleSystem;
 class UMaterialInstanceConstant;
 class UUserWidget;
-class UClass;
+class AGamePawn;
 
 USTRUCT(BlueprintType)
 struct FStaticMeshData : public FTableRowBase
@@ -70,7 +70,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FName Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UClass* RoleClass;
+	TSoftClassPtr<AGamePawn> RoleClass;
 };
 
 USTRUCT(BlueprintType)
@@ -156,7 +156,7 @@ private:
 	/// Game Pawn
 public:
 	void LoadRolesClassFromDatetable();
-	UClass* GetRoleClassFromName(const FName& Name);
+	TSoftClassPtr<AGamePawn> GetRoleClassFromName(const FName& Name);
 private:
-	TMap<FName, UClass*> AllRolesName;
+	TMap<FName, TSoftClassPtr<AGamePawn>> AllRolesName;
 };

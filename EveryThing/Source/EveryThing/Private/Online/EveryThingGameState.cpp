@@ -4,4 +4,7 @@
 
 
 
-
+void AEveryThingGameState::HandleBeginPlay()
+{
+	Super::HandleBeginPlay();
+}

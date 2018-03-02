@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "GamePawnControllerInterface.generated.h"
 
-UINTERFACE()
-class EVERYTHING_API UGamePawnControllerInterface : public UInterface
+UINTERFACE(MinimalAPI)
+class UGamePawnControllerInterface : public UInterface
 {
 	GENERATED_BODY()
 };

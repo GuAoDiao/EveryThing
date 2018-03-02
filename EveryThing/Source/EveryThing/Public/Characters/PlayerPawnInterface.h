@@ -8,8 +8,8 @@
 /**
  * 
  */
-UINTERFACE()
-class EVERYTHING_API UPlayerPawnInterface : public UInterface
+UINTERFACE(MinimalAPI)
+class UPlayerPawnInterface : public UInterface
 {
 	GENERATED_BODY()
 };
