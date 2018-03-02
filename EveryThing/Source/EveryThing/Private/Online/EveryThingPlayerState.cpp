@@ -12,10 +12,6 @@
 #include "Characters/PlayerPawns/PlayerChairPawn.h"
 #include "Characters/PlayerPawns/PlayerFootballPawn.h"
 
-AEveryThingPlayerState::AEveryThingPlayerState()
-{
-}
-
 void AEveryThingPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
@@ -26,23 +22,22 @@ void AEveryThingPlayerState::BeginPlay()
 
 void AEveryThingPlayerState::SetPlayerInfo(const FPlayerInfo& InPlayerInfo)
 {
+	if (!HasAuthority())
+	{ 
+		ServerSetPlayerInfo(InPlayerInfo);
+	}
+
 	CurrentPlayerInfo = InPlayerInfo;
-
-	CurrentPlayerInfo.AllHaveRolesName.Add("Football");
-	CurrentPlayerInfo.AllHaveRolesName.Add("Chair");
-
+	
 	OnPlayerInfoUpdate();
 }
 
-void AEveryThingPlayerState::OnPlayerInfoUpdate()
-{
-	OnUpdatePlayerInfoDelegate.Broadcast(CurrentPlayerInfo);
-}
 
-void AEveryThingPlayerState::OnRep_CurrentPlayerInfo()
-{
-	OnPlayerInfoUpdate();
-}
+bool AEveryThingPlayerState::ServerSetPlayerInfo_Validate(const FPlayerInfo& InPlayerInfo) { return true; }
+void AEveryThingPlayerState::ServerSetPlayerInfo_Implementation(const FPlayerInfo& InPlayerInfo) { SetPlayerInfo(InPlayerInfo); }
+
+void AEveryThingPlayerState::OnPlayerInfoUpdate() { OnUpdatePlayerInfoDelegate.Broadcast(CurrentPlayerInfo); }
+void AEveryThingPlayerState::OnRep_CurrentPlayerInfo() { OnPlayerInfoUpdate(); }
 
 void AEveryThingPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
 {

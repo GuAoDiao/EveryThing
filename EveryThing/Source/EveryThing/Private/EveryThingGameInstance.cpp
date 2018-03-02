@@ -10,7 +10,8 @@
 #include "Online/EveryThingGameMode_Menu.h"
 #include "Online/EveryThingGameSession.h"
 
-#include "EveryThingSaveGame.h"
+#include "EveryThingSaveArchive.h"
+#include "EveryThingSaveArchivesList.h"
 
 UEveryThingGameInstance::UEveryThingGameInstance()
 {
@@ -113,35 +114,81 @@ AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()
 }
 
 
-bool UEveryThingGameInstance::LoadPlayerInfoFromSlotName(const FString& SlotName)
+bool UEveryThingGameInstance::CreateArchive(const FString& ArchiveName, const FString& PlayerName)
 {
-	UEveryThingSaveGame* CurrentSaveGame = Cast<UEveryThingSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+	UEveryThingSaveArchive* CurrentSaveGame = Cast<UEveryThingSaveArchive>(UGameplayStatics::CreateSaveGameObject(UEveryThingSaveArchive::StaticClass()));;
 	if (CurrentSaveGame)
 	{
-		SaveDataSlotName = SlotName;
-		SetPlayerInfo(CurrentSaveGame->PlayerInfo);
+		CurrentSaveGame->PlayerInfo.PlayerName = PlayerName;
+		CurrentSaveGame->PlayerInfo.Gold = 1000;
+		CurrentSaveGame->PlayerInfo.Experience = 0;
+		CurrentSaveGame->PlayerInfo.AllHaveRolesName.Add("Football");
+
+		if (UGameplayStatics::SaveGameToSlot(CurrentSaveGame, ArchiveName, 0))
+		{
+			CurrentSaveArchiveName = ArchiveName;
+			PlayerInfo = CurrentSaveGame->PlayerInfo;
+			CurrentArchivesList.Add(ArchiveName);
+			UpdateArchivesList();
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+bool UEveryThingGameInstance::LoadArchiveFromName(const FString& ArchiveName)
+{
+	UEveryThingSaveArchive* OwnerETSA = Cast<UEveryThingSaveArchive>(UGameplayStatics::LoadGameFromSlot(ArchiveName, 0));
+	if (OwnerETSA)
+	{
+		CurrentSaveArchiveName = ArchiveName;
+		SetPlayerInfo(OwnerETSA->PlayerInfo);
 		return true;
 	}
 
 	return false;
 }
 
-bool UEveryThingGameInstance::SavePlayerInfoToCurrentSlotName()
-{
-	return SavePlayerInfoWithSlotName(SaveDataSlotName);
-}
+bool UEveryThingGameInstance::SaveCurrentArchive() { return SaveArchiveWithName(CurrentSaveArchiveName); }
 
-bool UEveryThingGameInstance::SavePlayerInfoWithSlotName(const FString& SlotName)
+bool UEveryThingGameInstance::SaveArchiveWithName(const FString& ArchiveName)
 {
-	UEveryThingSaveGame* CurrentSaveGame = Cast<UEveryThingSaveGame>(UGameplayStatics::CreateSaveGameObject(UEveryThingSaveGame::StaticClass()));;
-	if (CurrentSaveGame)
+	UEveryThingSaveArchive* OwnerETSA = Cast<UEveryThingSaveArchive>(UGameplayStatics::CreateSaveGameObject(UEveryThingSaveArchive::StaticClass()));;
+	if (OwnerETSA)
 	{
-		if (UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0))
+		OwnerETSA->PlayerInfo = PlayerInfo;
+		if (UGameplayStatics::SaveGameToSlot(OwnerETSA, ArchiveName, 0))
 		{
-			SaveDataSlotName = SlotName;
+			CurrentSaveArchiveName = ArchiveName;
 			return true;
 		}
 	}
 
 	return false;
+}
+
+bool UEveryThingGameInstance::LoadArchivesList()
+{
+	UEveryThingSaveArchivesList* OwnerETSAL = Cast<UEveryThingSaveArchivesList>(UGameplayStatics::LoadGameFromSlot(TEXT("EveryThingArchivesList"), 0));
+	if (OwnerETSAL)
+	{
+		CurrentArchivesList = OwnerETSAL->ArchivesList;
+		return true;
+	}
+	return false;
+}
+
+void UEveryThingGameInstance::UpdateArchivesList()
+{
+	UEveryThingSaveArchivesList* OwnerETSAL = Cast<UEveryThingSaveArchivesList>(UGameplayStatics::CreateSaveGameObject(UEveryThingSaveArchivesList::StaticClass()));;
+	if (OwnerETSAL)
+	{
+		OwnerETSAL->ArchivesList = CurrentArchivesList;
+		bool bSuccess = UGameplayStatics::SaveGameToSlot(OwnerETSAL, TEXT("EveryThingArchivesList"), 0);
+		
+		check(bSuccess);
+	}
 }

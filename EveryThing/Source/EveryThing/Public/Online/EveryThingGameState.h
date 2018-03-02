@@ -14,7 +14,8 @@ class EVERYTHING_API AEveryThingGameState : public AGameStateBase
 {
 	GENERATED_BODY()
 	
-	
+public:
+	virtual void HandleBeginPlay() override;
 	
 	
 };

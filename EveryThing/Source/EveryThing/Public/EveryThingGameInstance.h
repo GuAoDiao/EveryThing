@@ -7,7 +7,7 @@
 #include "EveryThingTypes.h"
 #include "EveryThingGameInstance.generated.h"
 
-class UEveryThingSaveGame;
+class UEveryThingSaveArchive;
 
 /**
  * 
@@ -16,10 +16,10 @@ UCLASS()
 class EVERYTHING_API UEveryThingGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-	
+
 public:
 	UEveryThingGameInstance();
-		
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Level
 public:
@@ -40,18 +40,30 @@ private:
 	class AEveryThingGameSession* GetGameSession();
 public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	FName MenuLevelName;
+		FName MenuLevelName;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Player Info
 public:
-	bool LoadPlayerInfoFromSlotName(const FString& SlotName);
-	bool SavePlayerInfoWithSlotName(const FString& SlotName);
-	bool SavePlayerInfoToCurrentSlotName();
+	bool LoadArchivesList();
+	void UpdateArchivesList();
+	const TArray<FString>& GetArchivesList() { return CurrentArchivesList; }
+
+	bool CreateArchive(const FString& ArchiveName, const FString& PlayerName);
+
+	bool LoadArchiveFromName(const FString& ArchiveName);
+	bool SaveArchiveWithName(const FString& ArchiveName);
+	bool SaveCurrentArchive();
 
 	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo) { PlayerInfo = InPlayerInfo; }
+	UFUNCTION(BlueprintPure)
 	const FPlayerInfo& GetPlayerInfo() const { return PlayerInfo; }
+	UFUNCTION(BlueprintPure)
+	const FString& GetArchiveName() const { return CurrentSaveArchiveName; }
+	
 private:
+	TArray<FString> CurrentArchivesList;
+
 	FPlayerInfo PlayerInfo;
-	FString SaveDataSlotName;
+	FString CurrentSaveArchiveName;
 };

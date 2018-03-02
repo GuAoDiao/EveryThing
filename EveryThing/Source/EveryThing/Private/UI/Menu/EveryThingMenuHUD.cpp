@@ -5,11 +5,14 @@
 #include "EveryThingGameInstance.h"
 #include "EveryThingAssetManager.h"
 
+#include "UI/Menu/MainMenu.h"
 #include "UI/Menu/ErrorDialog.h"
 #include "UI/Menu/HouseMenu.h"
 #include "UI/Menu/HouseList.h"
 #include "UI/Menu/HouseRow.h"
 #include "UI/Menu/HouseCreate.h"
+#include "UI/Menu/CreateArchive.h"
+#include "UI/Menu/ArchiveList.h"
 #include "UI/Menu/LoadingScreen.h"
 
 
@@ -19,16 +22,21 @@ AEveryThingMenuHUD::AEveryThingMenuHUD()
 
 	UEveryThingAssetManager*  OwnerAssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
 	
-	HouseMenuClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("HouseMenu"));
-	ErrorDialogClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("ErrorDialog"));
-	HouseListClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("HouseList"));
-	HouseCreateClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("HouseCreate"));
-	LoadingScreenClass = OwnerAssetManager->GetUserWidgetFromName(TEXT("LoadingScreen"));
+	MainMenuClass = OwnerAssetManager->GetUserWidgetFromName("MainMenu");
+	CreateArchiveClass = OwnerAssetManager->GetUserWidgetFromName("CreateArchive");
+	ArchiveListClass = OwnerAssetManager->GetUserWidgetFromName("ArchiveList");
+	HouseMenuClass = OwnerAssetManager->GetUserWidgetFromName("HouseMenu");
+	ErrorDialogClass = OwnerAssetManager->GetUserWidgetFromName("ErrorDialog");
+	HouseListClass = OwnerAssetManager->GetUserWidgetFromName("HouseList");
+	HouseCreateClass = OwnerAssetManager->GetUserWidgetFromName("HouseCreate");
+	LoadingScreenClass = OwnerAssetManager->GetUserWidgetFromName("LoadingScreen");
 }
 
 void AEveryThingMenuHUD::BeginPlay()
 {
-	if (IsTargetGameUIState(EMenuUIState::StartUp)) { ToggleToNewGameUIState(EMenuUIState::HouseMenu); }
+	if (IsTargetGameUIState(EMenuUIState::StartUp)) { ToggleToNewGameUIState(EMenuUIState::MainMenu); }
+
+	if (GetOwningPlayerController()) { GetOwningPlayerController()->bShowMouseCursor = true; }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,6 +65,15 @@ void AEveryThingMenuHUD::StartNewGameUIState(EMenuUIState InGameUIState)
 	{
 		case EMenuUIState::StartUp:
 			break;
+		case EMenuUIState::MainMenu:
+			ShowMainMenu();
+			break;
+		case EMenuUIState::CreateArchive:
+			ShowCreateArchive();
+			break;
+		case EMenuUIState::ArchiveList:
+			ShowArchiveList();
+			break;
 		case EMenuUIState::HouseMenu:
 			ShowHouseMenu();
 			break;
@@ -81,6 +98,15 @@ void AEveryThingMenuHUD::FinishOldGameUIState(EMenuUIState InGameUIState)
 	switch (InGameUIState)
 	{
 		case EMenuUIState::StartUp:
+			break;
+		case EMenuUIState::MainMenu:
+			if (MainMenu) { MainMenu->RemoveFromParent(); }
+			break;
+		case EMenuUIState::CreateArchive:
+			if (CreateArchive) {CreateArchive->RemoveFromParent();}
+			break;
+		case EMenuUIState::ArchiveList:
+			if (ArchiveList) {ArchiveList->RemoveFromParent();}
 			break;
 		case EMenuUIState::HouseMenu:
 			if (HouseMenu) { HouseMenu->RemoveFromParent(); }
@@ -125,6 +151,51 @@ void AEveryThingMenuHUD::UpdateHouseList(TArray<FOnlineSessionSearchResult>& Sea
 }
 
 
+void AEveryThingMenuHUD::ShowMainMenu()
+{
+	if (IsTargetGameUIState(EMenuUIState::MainMenu))
+	{
+		if (!MainMenu && HouseMenuClass) { MainMenu = CreateWidget<UMainMenu>(GetGameInstance(), MainMenuClass); }
+
+		if (MainMenu)
+		{
+			if (!MainMenu->IsInViewport()) { MainMenu->AddToViewport(); }
+
+			SetWidgetOwnerAndInputModeToFocusWidget(MainMenu);
+		}
+	}
+}
+
+void AEveryThingMenuHUD::ShowCreateArchive()
+{
+	if (IsTargetGameUIState(EMenuUIState::CreateArchive))
+	{
+		if (!CreateArchive && HouseMenuClass) { CreateArchive = CreateWidget<UCreateArchive>(GetGameInstance(), CreateArchiveClass); }
+
+		if (CreateArchive)
+		{
+			if (!CreateArchive->IsInViewport()) { CreateArchive->AddToViewport(); }
+
+			SetWidgetOwnerAndInputModeToFocusWidget(CreateArchive);
+		}
+	}
+}
+
+void AEveryThingMenuHUD::ShowArchiveList()
+{
+	if (IsTargetGameUIState(EMenuUIState::ArchiveList))
+	{
+		if (!ArchiveList && ArchiveListClass) { ArchiveList = CreateWidget<UArchiveList>(GetGameInstance(), ArchiveListClass); }
+
+		if (ArchiveList)
+		{
+			if (!ArchiveList->IsInViewport()) { ArchiveList->AddToViewport(); }
+
+			SetWidgetOwnerAndInputModeToFocusWidget(ArchiveList);
+		}
+	}
+}
+
 void AEveryThingMenuHUD::ShowHouseMenu()
 {
 	if (IsTargetGameUIState(EMenuUIState::HouseMenu))
@@ -136,9 +207,6 @@ void AEveryThingMenuHUD::ShowHouseMenu()
 			if (!HouseMenu->IsInViewport()) { HouseMenu->AddToViewport(); }
 
 			SetWidgetOwnerAndInputModeToFocusWidget(HouseMenu);
-
-			APlayerController* OwnerPC = GetGameInstance() ? GetGameInstance()->GetFirstLocalPlayerController() : nullptr;
-			if (OwnerPC) { OwnerPC->bShowMouseCursor = true; }
 		}
 	}
 }

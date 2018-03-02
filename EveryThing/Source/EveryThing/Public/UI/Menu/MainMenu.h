@@ -4,23 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "HouseMenu.generated.h"
+#include "MainMenu.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API UHouseMenu : public UUserWidget
+class EVERYTHING_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+
 public:
 	UFUNCTION(BlueprintCallable)
-	void CreateHouse();
+	void CreateArchive();
+	
+	UFUNCTION(BlueprintCallable)
+	void ArchiveList();
 
 	UFUNCTION(BlueprintCallable)
-	void HouseList();
-
-	UFUNCTION(BlueprintCallable)
-	void Backup();	
+	void ExitGame();
 };

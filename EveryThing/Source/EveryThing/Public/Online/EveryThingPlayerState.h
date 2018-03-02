@@ -19,8 +19,6 @@ class EVERYTHING_API AEveryThingPlayerState : public APlayerState
 	GENERATED_BODY()
 	
 public:
-	AEveryThingPlayerState();
-
 	virtual void BeginPlay() override;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -28,6 +26,9 @@ public:
 public:
 	const FPlayerInfo& GetPlayerInfo() const { return CurrentPlayerInfo; }
 	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerSetPlayerInfo(const FPlayerInfo& InPlayerInfo);
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdatePlayerInfoDelegate, const FPlayerInfo&);
 	FOnUpdatePlayerInfoDelegate GetOnUpdatePlayerInfoDelegate() { return OnUpdatePlayerInfoDelegate; }

@@ -14,6 +14,9 @@ UENUM(BlueprintType)
 enum class EMenuUIState : uint8
 {
 	StartUp,
+	MainMenu,
+	CreateArchive,
+	ArchiveList,
 	HouseMenu,
 	HouseCreate,
 	HouseList,
@@ -29,6 +32,9 @@ class UHouseList;
 class UHouseCreate;
 class ULoadingScreen;
 class UErrorDialog;
+class UMainMenu;
+class UCreateArchive;
+class UArchiveList;
 
 /**
  * 
@@ -68,6 +74,9 @@ public:
 	void UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResults);
 	
 private:
+	void ShowMainMenu();
+	void ShowCreateArchive();
+	void ShowArchiveList();
 	void ShowHouseMenu();
 	void ShowHouseCreate();
 	void ShowHouseList();
@@ -82,7 +91,16 @@ protected:
 	TSubclassOf<UHouseList> HouseListClass;
 	TSubclassOf<UHouseCreate> HouseCreateClass;
 	TSubclassOf<ULoadingScreen> LoadingScreenClass;
+	TSubclassOf<UMainMenu> MainMenuClass;
+	TSubclassOf<UCreateArchive> CreateArchiveClass;
+	TSubclassOf<UArchiveList> ArchiveListClass;
 
+	UPROPERTY(Transient)
+	UMainMenu* MainMenu;
+	UPROPERTY(Transient)
+	UCreateArchive* CreateArchive;
+	UPROPERTY(Transient)
+	UArchiveList* ArchiveList;
 	UPROPERTY(Transient)
 	UHouseMenu* HouseMenu;
 	UPROPERTY(Transient)

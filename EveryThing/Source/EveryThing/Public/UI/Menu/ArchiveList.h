@@ -4,23 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "HouseMenu.generated.h"
+#include "ArchiveList.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API UHouseMenu : public UUserWidget
+class EVERYTHING_API UArchiveList : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
-	UFUNCTION(BlueprintCallable)
-	void CreateHouse();
+	virtual void NativeConstruct() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShowArchiveList(const TArray<FString>& ArchiveList);
 
 	UFUNCTION(BlueprintCallable)
-	void HouseList();
-
-	UFUNCTION(BlueprintCallable)
-	void Backup();	
+	void Backup();
 };

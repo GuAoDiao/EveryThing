@@ -7,13 +7,13 @@
 
 #include "EveryThingTypes.h"
 
-#include "EveryThingSaveGame.generated.h"
+#include "EveryThingSaveArchive.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API UEveryThingSaveGame : public USaveGame
+class EVERYTHING_API UEveryThingSaveArchive : public USaveGame
 {
 	GENERATED_BODY()
 	
