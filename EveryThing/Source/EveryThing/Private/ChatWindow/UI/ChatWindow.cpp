@@ -15,8 +15,7 @@
 void UChatWindow::NativeConstruct()
 {
 	InitializeChatWindow();
-
-
+	
 	if (ChatInput) { ChatInput->InitializeChatInput(this); }
 	
 	Super::NativeConstruct();

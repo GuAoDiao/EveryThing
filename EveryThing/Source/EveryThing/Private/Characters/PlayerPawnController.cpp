@@ -294,7 +294,6 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 		return;
 	}
 
-	TargetPawnClass->GetClass();
 	// check target pawn and current pawn isn't Parent-child
 	if (CurrentPawnClass->IsChildOf(TargetPawnClass) || TargetPawnClass->IsChildOf(CurrentPawnClass))
 	{
