@@ -4,12 +4,15 @@
 
 #include "GameFramework/HUD.h"
 #include "GameFramework/GameStateBase.h"
+#include "Package.h"
 
 #include "ChatWindow/UI/ChatInput.h"
 #include "ChatWindow/UI/ChatLine.h"
 #include "ChatWindow/ChatWindowControllerInterface.h"
 #include "ChatWindow/ChatWindowHUDInterface.h"
 #include "ChatWindow/ChatWindowGameStateInterface.h"
+#include "ChatWindow/ChatComponent.h"
+#include "ChatWindow/Channel/ChannelManager.h"
 #include "ChatWindow/Channel/ChatChannel.h"
 
 void UChatWindow::NativeConstruct()
@@ -24,14 +27,18 @@ void UChatWindow::NativeConstruct()
 void UChatWindow::InitializeChatWindow_Implementation()
 {
 	IChatWindowControllerInterface* OwnerCWC = Cast<IChatWindowControllerInterface>(GetOwningPlayer());
-	if (OwnerCWC) { ChatComponent = OwnerCWC->GetChatComponent(); }
+	if (OwnerCWC)
+	{
+		ChatComponent = OwnerCWC->GetChatComponent();
+		ToggleChatChannel(ChatComponent->GetChannelManager().GetDefaultChannel());
+	}
 }
 
 
 /// Chat input
-void UChatWindow::FocusChatInput() { if (ChatInput) { ChatInput->FocusToInputText(); } }
+void UChatWindow::FocusToChatInput() { if (ChatInput) { ChatInput->FocusToInputText(); } }
 
-void UChatWindow::FocusChatCommand()
+void UChatWindow::FocusToChatCommand()
 {
 	if (ChatInput)
 	{
@@ -40,7 +47,7 @@ void UChatWindow::FocusChatCommand()
 	}
 }
 
-void UChatWindow::FocusChatReply()
+void UChatWindow::FocusToChatReply()
 {
 	if (ChatInput)
 	{
@@ -49,26 +56,17 @@ void UChatWindow::FocusChatReply()
 	}
 }
 
-void UChatWindow::RemoveChatFocus() { SetUserFocus(GetOwningPlayer()); }
 
 /// Chat Channel 
-bool UChatWindow::ToggleChatChannel(TSoftClassPtr<UChatChannel> InChatChannel)
+bool UChatWindow::ToggleChatChannel(FChatChannel* InChatChannel)
 {
-	if (InChatChannel)
+	
+	if (InChatChannel && InChatChannel->IsSwitchable())
 	{
-		UChatChannel* NewChatChannel = NewObject<UChatChannel>(nullptr, InChatChannel->GetClass());
-		if (NewChatChannel)
-		{
-			if (NewChatChannel->IsSwitchable())
-			{
-				ChatChannel = NewChatChannel;
-				return true;
-			}
-			else
-			{
-				NewChatChannel->BeginDestroy();
-			}
-		}
+		ChatChannel = InChatChannel;
+		ChatChannel->OnToggleToCurrent();
+		UpdateChannelText(ChatChannel->GetDisplayChannelText(), ChatChannel->GetDisplayChannelColor());
+		return true;
 	}
 	return false;
 }
@@ -81,7 +79,7 @@ void UChatWindow::ToggleToReplayWithPlayerID(int32 PlayerID)
 
 
 /// Chat Line
-void UChatWindow::ReceiveChatMessage(class UChatChannel* InChatChannel, const FChatMessageInfo& ChatMessage)
+void UChatWindow::ReceiveChatMessage(const FChatChannel* InChatChannel, const FChatMessageInfo& ChatMessage)
 {
 	APlayerController* OwnerPC = GetOwningPlayer();
 	if (!OwnerPC) { return; }
@@ -89,17 +87,16 @@ void UChatWindow::ReceiveChatMessage(class UChatChannel* InChatChannel, const FC
 	IChatWindowHUDInterface* OwnerCWH = Cast<IChatWindowHUDInterface>(OwnerPC->GetHUD());
 	IChatWindowGameStateInterface* OwnerCWGS = OwnerPC->GetWorld() ? Cast<IChatWindowGameStateInterface>(OwnerPC->GetWorld()->GetGameState()) : nullptr;
 
-	if (OwnerCWH && OwnerCWGS)
+	if (OwnerCWH && OwnerCWGS && InChatChannel)
 	{
-		IChatWindowGameStateInterface;
-		TSubclassOf<UChatLine> ChatLineClass = OwnerCWH->GetChatLineWidgetClass();
+		TSubclassOf<UUserWidget> ChatLineClass = OwnerCWH->GetChatLineWidgetClass();
 		UChatLine* NewChatLine = ChatLineClass ? CreateWidget<UChatLine>(GetOwningPlayer(), ChatLineClass) : nullptr;
 		if (NewChatLine)
 		{
 			NewChatLine->InitalizeChatLine(this, 
 				InChatChannel->GetChannaelName() , InChatChannel->GetDisplayChannelText(), 
 				ChatMessage.PlayerID, InChatChannel->GetDiaplayNameText(OwnerCWGS->GetPlayerChatName(ChatMessage.PlayerID)),
-				FText::FromString(ChatMessage.Message), InChatChannel->GetDisplayColor());
+				FText::FromString(ChatMessage.Message), ChatMessage.DisplayColor);
 
 			AddChatLine(NewChatLine);
 		}

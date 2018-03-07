@@ -23,5 +23,5 @@ class EVERYTHING_API IChatWindowGameStateInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual const FString& GetPlayerChatName(int32 PlayerID) const = 0;
-	
+	virtual const TArray<class APlayerState*>& GetAllChatPlayerState() const = 0;
 };

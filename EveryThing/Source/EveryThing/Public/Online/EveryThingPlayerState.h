@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
+
+#include "ChatWindow/ChatWindowPlayerStateInterface.h"
 #include "EveryThingTypes.h"
+
 #include "EveryThingPlayerState.generated.h"
 
 
@@ -14,7 +17,7 @@ class APlayerPawnController;
  * 
  */
 UCLASS()
-class EVERYTHING_API AEveryThingPlayerState : public APlayerState
+class EVERYTHING_API AEveryThingPlayerState : public APlayerState, public IChatWindowPlayerStateInterface
 {
 	GENERATED_BODY()
 	
@@ -41,4 +44,14 @@ private:
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentPlayerInfo)
 	FPlayerInfo CurrentPlayerInfo;
 	FOnUpdatePlayerInfoDelegate OnUpdatePlayerInfoDelegate;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// For Chat Window Player State Interface
+public:
+	virtual const FString& GetPlayerChatName() const { return CurrentPlayerInfo.PlayerName; }
+	virtual int32 GetPlayerlChatID() const { return ChatID; }
+	void SetPlayerChatID(int32 InChatID) { if (HasAuthority()) { ChatID = InChatID; } }
+
+	UPROPERTY(Transient, Replicated)
+	int32 ChatID;
 };

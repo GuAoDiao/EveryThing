@@ -2,8 +2,8 @@
 
 #include "ChatChannel.h"
 
-UChatChannel::UChatChannel()
+FChatChannel::FChatChannel()
 {
-	DisplayChannelTextFormat = TEXT("[%s]");
-	DisplayNameTextFormat = TEXT("[%s]");
+	DisplayChannelTextFormat = TEXT("[ %s ]");
+	DisplayNameTextFormat = TEXT("%s : ");
 }

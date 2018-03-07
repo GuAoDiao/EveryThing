@@ -20,14 +20,6 @@ void UImportantNoteBox::NativeConstruct()
 
 	InitializeImportantNoteBox();
 
-	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
-	if (OwnerPPC)
-	{
-		OwnerPPC->GetOnToggleToTargetRoleSuccessDelegate().AddUObject(this, &UImportantNoteBox::OnToggleToTargetRoleSuccess);
-		OwnerPPC->GetOnToggleToTargetRoleFailureDelegate().AddUObject(this, &UImportantNoteBox::OnToggleToTargetRoleFailure);
-	}
-	
-
 	Super::NativeConstruct();
 }
 
@@ -56,28 +48,6 @@ void UImportantNoteBox::AddImportantNoteBox_Implementation(const FText& Importan
 }
 
 
-void UImportantNoteBox::OnToggleToTargetRoleSuccess(const FName& TargetRoleName)
-{
-	FFormatNamedArguments Arguments;
-	Arguments.Add(TEXT("TargetRoleName"), FText::FromName(TargetRoleName));
-
-	FText DisplayInfo = FText::Format(LOCTEXT("OnToggleToTargetRoleSuccess", "Success toggle toggle to target role : {TargetRoleName}."), Arguments);
-
-	AddImportantNoteBox(DisplayInfo, EImportantNoteType::Message);
-}
-
-
-void UImportantNoteBox::OnToggleToTargetRoleFailure(const FName& TargetRoleName, const FText& ErrorInfo)
-{
-	FFormatNamedArguments Arguments;
-	Arguments.Add(TEXT("TargetRoleName"), FText::FromName(TargetRoleName));
-	Arguments.Add(TEXT("ErrorInfo"), ErrorInfo);
-
-
-	FText DisplayInfo = FText::Format(LOCTEXT("OnToggleToTargetRoleFailure", "Failure toggle to target role : {TargetRoleName}, because: {ErrorInfo}"), Arguments);
-
-	AddImportantNoteBox(DisplayInfo, EImportantNoteType::Error);
-}
 
 
 void UImportantNoteBox::TidyImportantNoteBox()

@@ -4,6 +4,7 @@
 
 #include "Characters/PlayerPawnController.h"
 #include "Online/EveryThingPlayerState.h"
+#include "Online/EveryThingGameState.h"
 #include "UI/Game/EveryThingGameHUD.h"
 
 AEveryThingGameMode::AEveryThingGameMode()
@@ -14,6 +15,7 @@ AEveryThingGameMode::AEveryThingGameMode()
 	DefaultPawnClass = nullptr;
 	PlayerControllerClass = APlayerPawnController::StaticClass();
 	PlayerStateClass = AEveryThingPlayerState::StaticClass();
+	GameStateClass = AEveryThingGameState::StaticClass();
 	HUDClass = AEveryThingGameHUD::StaticClass();
 }
 

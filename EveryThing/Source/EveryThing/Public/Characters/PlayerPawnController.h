@@ -6,21 +6,26 @@
 #include "GameFramework/PlayerController.h"
 
 #include "Characters/GamePawnControllerInterface.h"
+#include "ChatWindow/ChatWindowControllerInterface.h"
 
 #include "PlayerPawnController.generated.h"
 
 class UAttackComponent;
 class USkillComponent;
+class UChatComponent;
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API APlayerPawnController : public APlayerController, public IGamePawnControllerInterface
+class EVERYTHING_API APlayerPawnController : public APlayerController, public IGamePawnControllerInterface, public IChatWindowControllerInterface
 {
 	GENERATED_BODY()
 	
 public:
+	APlayerPawnController();
+	
+
 	virtual void BeginPlay() override;
 
 	virtual void SetupInputComponent() override;
@@ -33,8 +38,16 @@ protected:
 	void ResetAxisAndActionMapping();
 
 	//////////////////////////////////////////////////////////////////////////
-	/// For IGamePawnControllerInterface
+	/// For Game Pawn Controller Interface
 	virtual AActor* GetAttackTarget() override;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// For Chat Window Controller Interface
+public:
+	virtual UChatComponent* GetChatComponent() const { return ChatComponent; }
+
+private:
+	UChatComponent* ChatComponent;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Visual Angle
@@ -48,6 +61,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	/// UI
 	void DisplayGameMenu();
+	void FocusToChatWindow();
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Attack and skill

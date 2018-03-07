@@ -8,20 +8,25 @@
 /**
  * 
  */
-UCLASS(Abstract)
-class EVERYTHING_API UChatChannel : public UObject
+USTRUCT()
+struct FChatChannel
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 
 public:
-	UChatChannel();
+	FChatChannel();
+	virtual ~FChatChannel() {}
 
-	virtual bool IsSwitchable() { return true; }
-	
+	virtual bool IsSwitchable() const { return true; }
+
+	virtual bool OnToggleToCurrent() const { return true; }
+	virtual bool IsNeededToSend(class APlayerState* InPlayerState) const { return true; }
 	virtual FText GetDisplayChannelText() const { return FText::FromString(FString::Printf(*DisplayChannelTextFormat, *ChannelName.ToString())); }
-	virtual FText GetDiaplayNameText(const FString& PlayerName) const { return FText::FromString(FString::Printf(*DisplayChannelTextFormat, *PlayerName)); }
+	virtual FText GetDiaplayNameText(const FString& PlayerName) const { return FText::FromString(FString::Printf(*DisplayNameTextFormat, *PlayerName)); }
 	virtual const FName& GetChannaelName() const { return ChannelName; }
-	virtual const FLinearColor GetDisplayColor() const { return FLinearColor::Red; }
+	virtual FLinearColor GetDisplayLineColor() const { return FLinearColor::Red; }
+	virtual FLinearColor GetDisplayChannelColor() const { return FLinearColor::Green; }
+
 protected:
 	FString DisplayChannelTextFormat;
 	FString DisplayNameTextFormat;

@@ -31,9 +31,9 @@ URotaryMovementComponent* ARotaryMovementPawn::GetRotaryMovementComponent() cons
 	return OwnerRotaryMovementComponent;
 }
 
-const FVector ARotaryMovementPawn::GetActualForwardVector() const { return UKismetMathLibrary::GetForwardVector(GetControlRotation()); }
-const FVector ARotaryMovementPawn::GetActualRightVector() const { return UKismetMathLibrary::GetRightVector(GetControlRotation()); }
-const FVector ARotaryMovementPawn::GetActualUpVector() const { return UKismetMathLibrary::GetUpVector(GetControlRotation()); }
+const FVector ARotaryMovementPawn::GetActualForwardVector() const { return GetControlRotation().Vector(); }
+const FVector ARotaryMovementPawn::GetActualRightVector() const { return FRotationMatrix(GetControlRotation()).GetScaledAxis(EAxis::Y);}
+const FVector ARotaryMovementPawn::GetActualUpVector() const { return FRotationMatrix(GetControlRotation()).GetScaledAxis(EAxis::Z); }
 
 //////////////////////////////////////////////////////////////////////////
 /// Hit

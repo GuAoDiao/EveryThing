@@ -2,9 +2,16 @@
 
 #include "ChatInput.h"
 
+#include "GameFramework/HUD.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/PlayerState.h"
+
 #include "ChatWindow/UI/ChatWindow.h"
+#include "ChatWindow/Channel/ChannelManager.h"
 #include "ChatWindow/ChatComponent.h"
 #include "ChatWindow/Channel/ChatChannel.h"
+#include "ChatWindow/ChatWindowHUDInterface.h"
+#include "ChatWindow/ChatWindowPlayerStateInterface.h"
 
 void UChatInput::InitializeChatInput_Implementation(UChatWindow* InChatWindow)
 {
@@ -19,9 +26,10 @@ void UChatInput::ProcessInput(const FText& InputText)
 	if (InputString.Split(TEXT(" "), &Shortcut, &Message, ESearchCase::IgnoreCase, ESearchDir::FromStart))
 	{
 		UChatComponent* ChatComponent = ChatWindow ? ChatWindow->GetChatComponent() : nullptr;
-		TSoftClassPtr<UChatChannel> ChatChannel = ChatComponent ? ChatComponent->GetChannelManager().GetChatchannelClass(FName(*Shortcut)) : nullptr;
-		if (ChatChannel)
+		FName ShorcutName = FName(*Shortcut);
+		if (ChatComponent && ChatComponent->GetChannelManager().IsExistChannelName(ShorcutName))
 		{
+			FChatChannel* ChatChannel = ChatComponent->GetChannelManager().GetChatchannelDefaultValueFromName(ShorcutName);
 			if (ChatWindow->ToggleChatChannel(ChatChannel))
 			{
 				// remove first /
@@ -40,18 +48,18 @@ bool UChatInput::IsCommand(const FText& Command) const
 
 void UChatInput::ExcuteInput(const FText& InputText)
 {
-	
-
 	// if empty remove chat focus
 	if (InputText.IsEmpty())
 	{
-		if (ChatWindow) { ChatWindow->RemoveChatFocus(); }
+		IChatWindowHUDInterface* OwnerCWH = Cast<IChatWindowHUDInterface>(GetOwningPlayer()->GetHUD());
+		if (OwnerCWH) { OwnerCWH->RemoveChatWidnowFocus(); }
 		return;
 	}
 
 	
 	UChatComponent* ChatComponent = ChatWindow ? ChatWindow->GetChatComponent() : nullptr;
-	if (ChatWindow && ChatComponent)
+	IChatWindowPlayerStateInterface* OwnerCWPS = GetOwningPlayerPawn() ? Cast<IChatWindowPlayerStateInterface>(GetOwningPlayerPawn()->PlayerState) : nullptr;
+	if (ChatWindow && ChatComponent && OwnerCWPS)
 	{
 		FString InputString = InputText.ToString();
 
@@ -61,8 +69,13 @@ void UChatInput::ExcuteInput(const FText& InputText)
 			// ChatComponent->ClientExecuteCommandEvent(InputString);
 		}
 		else
-		{
-			// ChatComponent->ClientCreateMessageEvent(ChatWindow->GetCurrentChannel(), InputString);
+		{	
+			FChatChannel* CurrentChatChannel = ChatWindow->GetChatChannel();
+			if (CurrentChatChannel)
+			{
+				FChatMessageInfo MessageInfo(InputString, CurrentChatChannel->GetDisplayLineColor(), OwnerCWPS->GetPlayerlChatID());
+				ChatComponent->CreateChatMessage(ChatWindow->GetChatChannel(), MessageInfo);
+			}
 		}
 	}
 

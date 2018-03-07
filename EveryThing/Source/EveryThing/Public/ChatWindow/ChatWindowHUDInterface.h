@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "Interface.h"
 #include "ChatWindow/ChatWindowTypes.h"
+
+#include "ChatWindow/Channel/ChatChannel.h"
+
 #include "ChatWindowHUDInterface.generated.h"
 
 // This class does not need to be modified.
@@ -26,16 +29,16 @@ public:
 	/// Initialize 
 	virtual void InitializeChatWindow() = 0;
 
+	virtual void FocusToChatWindow() = 0;
+	virtual void RemoveChatWidnowFocus() = 0;
+
 	/// Chat Input
 	virtual void FocusToChatInput() = 0;
 	virtual void FocusToChatReply() = 0;
 	virtual void FocusToChatCommand() = 0;
-	virtual void RemoveChatFocus() = 0;
 
-	virtual TSubclassOf<class UChatLine> GetChatLineWidgetClass() = 0;
-	virtual TSubclassOf<class UChatWindow> GetChatWindowWidgetClass() = 0;
-
-	// virtual void SetCurrentChannel(EChatChannel::Type ChatChannelType) = 0;
-
-	virtual void ReceiveChatMessage(class UChatChannel* ChatChannel, const FChatMessageInfo& ChatMessage) = 0;
+	virtual TSubclassOf<class UUserWidget> GetChatLineWidgetClass() = 0;
+	virtual TSubclassOf<class UUserWidget> GetChatWindowWidgetClass() = 0;
+	
+	virtual void ReceiveChatMessage(const FChatChannel* ChatChannel, const FChatMessageInfo& ChatMessage) = 0;
 };

@@ -28,4 +28,6 @@ public:
 	class USelectRolesBox* SelectRolesBox;
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class UImportantNoteBox* ImportNoteBox;
+	UPROPERTY(BlueprintReadWrite, Transient)
+	class UChatWindow* ChatWindow;
 };

@@ -5,12 +5,12 @@
 #include "ChatWindow/Channel/ChatChannel.h"
 
 
-void FChannelManager::AddChatchannelClass(TSoftClassPtr<UChatChannel> ChatChanelClass, const FName& ChatChannelName)
+void FChannelManager::AddChatchannelDefaultValue(FChatChannel* ChatChanelClass, const FName& ChatChannelName)
 {
 	AllChatChannels.Add(ChatChannelName, ChatChanelClass);
 }
 
-TSoftClassPtr<UChatChannel> FChannelManager::GetChatchannelClass(const FName& ChatChannelName) const
+FChatChannel* FChannelManager::GetChatchannelDefaultValueFromName(const FName& ChatChannelName) const
 {
 	if (AllChatChannels.Contains(ChatChannelName))
 	{

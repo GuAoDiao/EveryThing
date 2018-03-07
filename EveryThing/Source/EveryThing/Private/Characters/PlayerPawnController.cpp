@@ -9,6 +9,7 @@
 #include "EveryThingGameInstance.h"
 #include "UI/Game/EveryThingGameHUD.h"
 #include "EveryThingAssetManager.h"
+#include "ChatWindow/ChatComponent.h"
 #include "Characters/GamePawn.h"
 #include "Characters/PlayerPawnInterface.h"
 #include "Characters/PlayerPawnComponent.h"
@@ -21,6 +22,11 @@
 
 
 #define LOCTEXT_NAMESPACE "Everything_Online_PlayerPawnController"
+
+APlayerPawnController::APlayerPawnController()
+{
+	ChatComponent = CreateDefaultSubobject<UChatComponent>(TEXT("ChatComponent"));
+}
 
 void APlayerPawnController::BeginPlay()
 {
@@ -38,7 +44,7 @@ void APlayerPawnController::BeginPlay()
 		for (const FName RoleName : PlayerInfo.AllHaveRolesName)
 		{
 			TSoftClassPtr<AGamePawn> TargetPawnSoftClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetRoleClassFromName(RoleName);
-			UClass* TargetPawnClass = TargetPawnSoftClass ? TargetPawnSoftClass->GetClass() : nullptr;
+			UClass* TargetPawnClass = TargetPawnSoftClass ? TargetPawnSoftClass.Get() : nullptr;
 			if (!TargetPawnClass) { continue; }
 
 			if (CurrentPawnClass->IsChildOf(TargetPawnClass) || TargetPawnClass->IsChildOf(CurrentPawnClass))
@@ -71,7 +77,9 @@ void APlayerPawnController::RebindInput()
 	InputComponent->AxisBindings.Empty();
 	ResetAxisAndActionMapping();
 
-	InputComponent->BindAction("ToggleGameMenu", IE_Pressed, this, &APlayerPawnController::DisplayGameMenu);
+	InputComponent->BindAction("DisplayGameMenu", IE_Pressed, this, &APlayerPawnController::DisplayGameMenu);
+	InputComponent->BindAction("FocusToChatWindow", IE_Pressed, this, &APlayerPawnController::FocusToChatWindow);
+	
 
 	InputComponent->BindAxis("Turn", this, &APlayerPawnController::Turn);
 	InputComponent->BindAxis("LookUp", this, &APlayerPawnController::LookUp);
@@ -93,8 +101,6 @@ void APlayerPawnController::RebindInput()
 void APlayerPawnController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
-
-	UE_LOG(LogTemp, Log, TEXT("-_- this is set pawn"));
 
 	OwnerGamePawn = Cast<AGamePawn>(InPawn);
 	IPlayerPawnInterface* OwnerPlayerPawn = Cast<IPlayerPawnInterface>(InPawn);
@@ -194,10 +200,14 @@ void APlayerPawnController::LookUp(float AxisValue) { if (AxisValue != 0.f && Ow
 /// UI
 void APlayerPawnController::DisplayGameMenu()
 {
-	UE_LOG(LogTemp, Log, TEXT("-_- toggle to game menu"));
-
 	AEveryThingGameHUD* OwnerETGH = Cast<AEveryThingGameHUD>(GetHUD());
 	if (OwnerETGH) { OwnerETGH->DisplayGameMenu(); }
+}
+
+void APlayerPawnController::FocusToChatWindow()
+{
+	AEveryThingGameHUD* OwnerETGH = Cast<AEveryThingGameHUD>(GetHUD());
+	if (OwnerETGH) { OwnerETGH->FocusToChatWindow(); }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -264,7 +274,7 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
 	if (!GetWorld() ||!OwnerETPS)
 	{
-		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), LOCTEXT("", "Can't find Game World Or Owner Player State."));
+		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), LOCTEXT("ToggleRoleWhenNotFonutPlayer", "Can't find Game World Or Owner Player State."));
 		return;
 	}
 	
@@ -274,30 +284,27 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 	{
 		FFormatNamedArguments Arguments;
 		Arguments.Add(TEXT("Index"), NumberIndex);
-		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), FText::Format(LOCTEXT("", "Can'f find Target role name with index : {Index}."), Arguments));
+		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), FText::Format(LOCTEXT("ToggleRoleWhenNotFoundTargetRole", "Can'f find Target role name with index : {Index}."), Arguments));
 		return;
 	}
 	const FName& TargetRoleName = PlayerInfo.AllHaveRolesName[NumberIndex];
 
 	// Get Current and Target Pawn class 
 	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
-	TSoftClassPtr<AGamePawn> CurrentPawnSoftClass = AssetManager->GetRoleClassFromName(CurrentRoleName);
-	TSoftClassPtr<AGamePawn> TargetPawnSoftClass = AssetManager->GetRoleClassFromName(TargetRoleName);
-
-	UClass* CurrentPawnClass = CurrentPawnSoftClass ? CurrentPawnSoftClass->GetClass() : nullptr;
-	UClass* TargetPawnClass = TargetPawnSoftClass ? TargetPawnSoftClass->GetClass() : nullptr;
-
+	UClass* CurrentPawnClass = AssetManager->GetRoleClassFromName(CurrentRoleName).Get();
+	UClass* TargetPawnClass = AssetManager->GetRoleClassFromName(TargetRoleName).Get();
+	
 	// Check target pawn class is exists
 	if (!TargetPawnClass)
 	{
-		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("", "Can't find Target Role Class."));
+		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("ToggleRoleWhenNotFoundTargetRoleClass", "Can't find Target Role Class."));
 		return;
 	}
 
 	// check target pawn and current pawn isn't Parent-child
 	if (CurrentPawnClass->IsChildOf(TargetPawnClass) || TargetPawnClass->IsChildOf(CurrentPawnClass))
 	{
-		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("", "Already is the target Role, needn't to toggle."));
+		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("ToggleRoleWhenSameRole", "Already is the target Role, needn't to toggle."));
 		return;
 	}
 
@@ -324,6 +331,7 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	AGamePawn* NewPawn = GetWorld()->SpawnActor<AGamePawn>(TargetPawnClass, Location, OwnerPawn->GetActorForwardVector().Rotation());
+	check(NewPawn);
 	Possess(NewPawn);
 
 

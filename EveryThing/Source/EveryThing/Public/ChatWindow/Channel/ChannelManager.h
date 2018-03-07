@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "ChatWindow/Channel/ChatChannel.h"
+
 #include "ChannelManager.generated.h"
-
-
-class UChatChannel;
 
 /**
  * 
@@ -16,9 +16,14 @@ struct FChannelManager
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	TMap<FName, TSoftClassPtr<UChatChannel>> AllChatChannels;
+	void AddChatchannelDefaultValue(FChatChannel* ChatChanel, const FName& ChatChannelName = NAME_None);
 
-	void AddChatchannelClass(TSoftClassPtr<UChatChannel> ChatChanel, const FName& ChatChannelName = NAME_None);
+	FChatChannel* GetChatchannelDefaultValueFromName(const FName& ChatChannelName) const;
 
-	TSoftClassPtr<UChatChannel> GetChatchannelClass(const FName& ChatChannelName) const;
+	FChatChannel* GetDefaultChannel() const { return GetChatchannelDefaultValueFromName("Default"); }
+
+	bool IsExistChannelName(const FName& ChatChannelName) const { return AllChatChannels.Contains(ChatChannelName); }
+
+private:
+	TMap<FName, FChatChannel*> AllChatChannels;
 };

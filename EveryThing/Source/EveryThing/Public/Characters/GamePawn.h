@@ -91,7 +91,7 @@ public:
 	const TArray<FGamePawnSkin*>& GetGamePawnSkins() { return OwnerGamePawnSkins; }
 
 protected:
-	UPROPERTY(Replicated, ReplicatedUsing = OnRep_CurrentGamePawnSkinIndex)
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentGamePawnSkinIndex)
 	int32 CurrentGamePawnSkinIndex;
 	FGamePawnSkin* CurrentGamePawnSkin;
 	TArray<FGamePawnSkin*> OwnerGamePawnSkins;

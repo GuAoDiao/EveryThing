@@ -15,7 +15,7 @@ void UChatLine::InitalizeChatLine_Implementation(UChatWindow* InChatWindow, cons
 	PlayerID = InPlayerID;
 
 	FDateTime Time = UKismetMathLibrary::Now();
-	UpdateTimeStamp(FText::FromString(FString::Printf(TEXT("<%02d:%02d:%02d>"), Time.GetHour(), Time.GetMinute(), Time.GetSecond())));
+	UpdateTimeStamp(FText::FromString(FString::Printf(TEXT("<%02d:%02d:%02d> "), Time.GetHour(), Time.GetMinute(), Time.GetSecond())));
 }
 
 void UChatLine::OnClickedName()
@@ -27,6 +27,6 @@ void UChatLine::OnClickedChannel()
 {	
 	if (ChatWindow && ChatWindow->GetChatComponent())
 	{
-		ChatWindow->ToggleChatChannel(ChatWindow->GetChatComponent()->GetChannelManager().GetChatchannelClass(ChatChannelName));
+		ChatWindow->ToggleChatChannel(ChatWindow->GetChatComponent()->GetChannelManager().GetChatchannelDefaultValueFromName(ChatChannelName));
 	}
 }

@@ -5,27 +5,36 @@
 #include "CoreMinimal.h"
 #include "ChatWindow/Channel/ChatChannel.h"
 
-#include "EveryThingTypes.h"
+#include "ChatWindow/ChatWindowTypes.h"
 
 #include "SystemChatChannel.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class EVERYTHING_API USystemChatChannel : public UChatChannel
+USTRUCT()
+struct FSystemChatChannel : public FChatChannel
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 	
 public:
-	USystemChatChannel();	
+	FSystemChatChannel();	
 	
-	virtual const FLinearColor GetDisplayColor() const override;
+	virtual FLinearColor GetDisplayLineColor() const override;
 
+	virtual bool IsSwitchable() const { return false; }
+
+	virtual FText GetDiaplayNameText(const FString& PlayerName) const { return FText::GetEmpty(); }
+
+public:
 
 	ESystemMessageType GetMessageType() const { return MessageType; }
 	void SetMessageType(ESystemMessageType InMessageType) { MessageType = InMessageType; }
+	void SetDisplayColor(FLinearColor InDisplayColor) { DisplayColor = InDisplayColor; }
 protected:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY()
+	FLinearColor DisplayColor;
+
+	UPROPERTY()
 	ESystemMessageType MessageType;
 };

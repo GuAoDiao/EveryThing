@@ -6,12 +6,12 @@
 #include "Blueprint/UserWidget.h"
 
 #include "ChatWindowTypes.h"
+#include "ChatWindow/Channel/ChatChannel.h"
 
 #include "ChatWindow.generated.h"
 
 class UChatComponent;
 class UChatInput;
-class UChatChannel;
 
 /**
  * 
@@ -40,33 +40,34 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Chat Channel
 public:
-	UChatChannel* GetChatChannel() const { return ChatChannel; }
-	bool ToggleChatChannel(TSoftClassPtr<UChatChannel> InChatChannel);
+	FChatChannel* GetChatChannel() const { return ChatChannel; }
+	bool ToggleChatChannel(FChatChannel* InChatChannel);
 
 	void ToggleToReplayWithPlayerID(int32 PlayerID);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateChannelText(const FText& InChannelText, const FLinearColor& InDisplayColor);
+
 protected:
-	UChatChannel* ChatChannel;
+	FChatChannel* ChatChannel;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Chat input
 public:
 	UFUNCTION(BlueprintCallable)
-	void FocusChatInput();
+	void FocusToChatInput();
 	UFUNCTION(BlueprintCallable)
-	void FocusChatCommand();
+	void FocusToChatCommand();
 	UFUNCTION(BlueprintCallable)
-	void FocusChatReply();
+	void FocusToChatReply();
 
-	UFUNCTION(BlueprintCallable)
-	void RemoveChatFocus();
 protected:
-	UPROPERTY(Transient, BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(Transient, BlueprintReadWrite)
 	UChatInput* ChatInput;
 	//////////////////////////////////////////////////////////////////////////
 	/// Chat Line
 public:
-	void ReceiveChatMessage(class UChatChannel* InChatChannel, const FChatMessageInfo& ChatMessage);
+	void ReceiveChatMessage(const FChatChannel* InChatChannel, const FChatMessageInfo& ChatMessage);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void AddChatLine(class UChatLine* ChatLine);

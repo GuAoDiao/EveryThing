@@ -5,13 +5,15 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 
+#include "ChatWindow/Channel/ChatChannel.h"
 #include "ChatWindow/ChatWindowTypes.h"
 #include "ChatWindow/Channel/ChannelManager.h"
 
 #include "ChatComponent.generated.h"
 
 class IChatWindowHUDInterface;
-class UChatChannel;
+class IChatWindowPlayerStateInterface;
+class IChatWindowGameStateInterface;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class EVERYTHING_API UChatComponent : public UActorComponent
@@ -23,16 +25,19 @@ public:
 
 
 	IChatWindowHUDInterface* GetChatWindowHUD() const;
-	
+	IChatWindowPlayerStateInterface* GetChatWindowPlayerState() const;
+	IChatWindowGameStateInterface* GetChatWindowGameState() const;
+
 	FChannelManager& GetChannelManager() { return ChannelManager; }
 
-protected:
-	UFUNCTION(BlueprintCallable, client, Reliable)
-	void ClientReceiveChatMessage(UChatChannel* ChatChannel, const FChatMessageInfo& ChatMessage);
+public:
+	void ReceiveChatMessage(const FChatChannel* ChatChannel, const FChatMessageInfo& ChatMessage);
+	UFUNCTION(client, Reliable)
+	void ClientReceiveChatMessage(const FName& ChatChannelName, const FChatMessageInfo& ChatMessage);
 
-	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
-	void ServerSendChatMessage(UChatChannel* ChatChannel, const FChatMessageInfo& ChatMessage);
-
+	void CreateChatMessage(const FChatChannel* ChatChannel, const FChatMessageInfo& ChatMessage);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerCreateChatMessage(const FName& ChatChannelName, const FChatMessageInfo& ChatMessage);
 
 	FChannelManager ChannelManager;
 };

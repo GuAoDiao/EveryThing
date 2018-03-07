@@ -24,8 +24,6 @@ void UGameMenu::NativeConstruct()
 		for (FInputActionKeyMapping& EscapeAction : EscapeActionMapping)
 		{
 			EscapeKeys.Add(EscapeAction.Key);
-			
-			UE_LOG(LogTemp, Log, TEXT("-_- current supprot key : %s"), *EscapeAction.Key.GetDisplayName().ToString());
 		}
 	}
 
@@ -34,8 +32,6 @@ void UGameMenu::NativeConstruct()
 
 FReply UGameMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
-	UE_LOG(LogTemp, Log, TEXT("-_- current input key : %s"), *InKeyEvent.GetKey().GetDisplayName().ToString());
-
 	if (EscapeKeys.Contains(InKeyEvent.GetKey()))
 	{
 		Backup();

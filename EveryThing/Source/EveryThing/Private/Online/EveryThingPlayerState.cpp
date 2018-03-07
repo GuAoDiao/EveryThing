@@ -44,4 +44,5 @@ void AEveryThingPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AEveryThingPlayerState, CurrentPlayerInfo);
+	DOREPLIFETIME(AEveryThingPlayerState, ChatID);
 }

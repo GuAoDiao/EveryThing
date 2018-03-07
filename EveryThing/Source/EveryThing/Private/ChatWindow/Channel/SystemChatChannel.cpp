@@ -2,13 +2,15 @@
 
 #include "SystemChatChannel.h"
 
-USystemChatChannel::USystemChatChannel()
+FSystemChatChannel::FSystemChatChannel()
 {
 	ChannelName = "System";
+
+	DisplayChannelTextFormat = TEXT("[ %s ] : ");
 }
 
 
-const FLinearColor USystemChatChannel::GetDisplayColor() const
+FLinearColor FSystemChatChannel::GetDisplayLineColor() const
 {
 	switch (MessageType)
 	{
@@ -16,14 +18,14 @@ const FLinearColor USystemChatChannel::GetDisplayColor() const
 			return FLinearColor(1.f, 1.f, 1.f, 1.f);
 		case ESystemMessageType::Alert:
 			return FLinearColor(0.9f, 0.81f, 0.21f, 1.f);
+		case ESystemMessageType::Success:
+			return FLinearColor(0.2f, 1.f, 0.2f, 1.f);
 		case ESystemMessageType::Error:
-			return FLinearColor(1.f, 0.32f, 0.32f, 1.f);
+			return FLinearColor(1.f, 0.f, 0.f, 1.f);
 		case ESystemMessageType::Team:
-			return FLinearColor(0.32f, 0.5f, 1.f, 1.f);
-		case ESystemMessageType::Status:
-			return FLinearColor(1.f, 0.5f, 0.21f, 1.f);
-		case ESystemMessageType::Experience:
-			return FLinearColor(0.16f, 0.32f, 1.f, 1.f);
+			return FLinearColor(1.f, 0.5f, 0.1f, 1.f);
+		case ESystemMessageType::Custom:
+			return DisplayColor;
 	}
 
 	return FLinearColor::White;

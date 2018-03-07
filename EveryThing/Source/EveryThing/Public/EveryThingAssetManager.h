@@ -160,6 +160,3 @@ public:
 private:
 	TMap<FName, TSoftClassPtr<AGamePawn>> AllRolesName;
 };
-
-
-AGamePawn::StaticClass();
