@@ -7,7 +7,7 @@
 #include "EveryThingGameInstance.h"
 #include "EveryThingAssetManager.h"
 #include "UI/Menu/EveryThingMenuHUD.h"
-#include "UI/Menu/HouseRow.h"
+#include "UI/Menu/House/HouseRow.h"
 
 
 void UHouseList::FindAllHouseList(bool bIsLAN, bool bIsPresence)

@@ -8,6 +8,7 @@
 #include "Engine/StreamableManager.h"
 
 #include "Blueprint/UserWidget.h"
+#include "EveryThingTypes.h"
 
 #include "EveryThingAssetManager.generated.h"
 
@@ -59,18 +60,6 @@ public:
 	FName Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSoftClassPtr<UUserWidget> UserWidgetClass;
-};
-
-
-USTRUCT(BlueprintType)
-struct FRoleNameData : public FTableRowBase
-{
-	GENERATED_USTRUCT_BODY()
-public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FName Name;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSoftClassPtr<AGamePawn> RoleClass;
 };
 
 USTRUCT(BlueprintType)

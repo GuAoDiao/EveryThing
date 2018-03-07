@@ -2,6 +2,7 @@
 
 #include "PlayerChairPawn.h"
 
+#include "Engine/World.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/PlayerController.h"
 
@@ -19,7 +20,7 @@ void APlayerChairPawn::Tick(float DeltaTime)
 {
 	APlayerController* OwnerPC = Cast<APlayerController>(GetController());
 
-	if (OwnerPC)
+	if (OwnerPC && OwnerPC->IsLocalController())
 	{
 		int32 Width, Height;
 		OwnerPC->GetViewportSize(Width, Height);

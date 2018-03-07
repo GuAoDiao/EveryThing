@@ -153,3 +153,18 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FName> AllHaveRolesName;
 };
+
+
+//////////////////////////////////////////////////////////////////////////
+USTRUCT(BlueprintType)
+struct FRoleInfo : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName Name;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSoftClassPtr<class AGamePawn> RoleClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Cost;
+};

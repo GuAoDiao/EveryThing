@@ -217,12 +217,12 @@ UDataTable* UEveryThingAssetManager::GetDataTableFromName(const FName& DataTable
 
 void UEveryThingAssetManager::LoadRolesClassFromDatetable()
 {
-	UDataTable* RoleNameDatatable = GetDataTableFromName(TEXT("RolesName"));
+	UDataTable* RoleNameDatatable = GetDataTableFromName(TEXT("RolesInfo"));
 	if (RoleNameDatatable)
 	{
-		TArray<FRoleNameData*> RolesNameDataInDatatable;
-		RoleNameDatatable->GetAllRows<FRoleNameData>(TEXT("found all Roles Name in DataTable"), RolesNameDataInDatatable);
-		for (FRoleNameData* RoleNameData : RolesNameDataInDatatable)
+		TArray<FRoleInfo*> RolesNameDataInDatatable;
+		RoleNameDatatable->GetAllRows<FRoleInfo>(TEXT("found all Roles Name in DataTable"), RolesNameDataInDatatable);
+		for (FRoleInfo* RoleNameData : RolesNameDataInDatatable)
 		{
 			AllRolesName.Add(RoleNameData->Name, RoleNameData->RoleClass);
 		}

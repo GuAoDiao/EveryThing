@@ -6,30 +6,26 @@
 #include "EveryThingAssetManager.h"
 
 #include "UI/Menu/MainMenu.h"
-#include "UI/Menu/ErrorDialog.h"
-#include "UI/Menu/HouseMenu.h"
-#include "UI/Menu/HouseList.h"
-#include "UI/Menu/HouseRow.h"
-#include "UI/Menu/HouseCreate.h"
-#include "UI/Menu/CreateArchive.h"
-#include "UI/Menu/ArchiveList.h"
+
+#include "UI/Menu/Archive/CreateArchive.h"
+#include "UI/Menu/Archive/ArchiveList.h"
+
+#include "UI/Menu/MasterInterface.h"
+
+#include "UI/Menu/Storehouse/Storehouse.h"
+
+#include "UI/Menu/House/HouseMenu.h"
+#include "UI/Menu/House/HouseList.h"
+#include "UI/Menu/House/HouseRow.h"
+#include "UI/Menu/House/HouseCreate.h"
+
 #include "UI/Menu/LoadingScreen.h"
+#include "UI/Menu/ErrorDialog.h"
 
 
 AEveryThingMenuHUD::AEveryThingMenuHUD()
 {
 	CurrentGameUIState = EMenuUIState::StartUp;
-
-	UEveryThingAssetManager*  OwnerAssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
-	
-	MainMenuClass = OwnerAssetManager->GetUserWidgetFromName("MainMenu");
-	CreateArchiveClass = OwnerAssetManager->GetUserWidgetFromName("CreateArchive");
-	ArchiveListClass = OwnerAssetManager->GetUserWidgetFromName("ArchiveList");
-	HouseMenuClass = OwnerAssetManager->GetUserWidgetFromName("HouseMenu");
-	ErrorDialogClass = OwnerAssetManager->GetUserWidgetFromName("ErrorDialog");
-	HouseListClass = OwnerAssetManager->GetUserWidgetFromName("HouseList");
-	HouseCreateClass = OwnerAssetManager->GetUserWidgetFromName("HouseCreate");
-	LoadingScreenClass = OwnerAssetManager->GetUserWidgetFromName("LoadingScreen");
 }
 
 void AEveryThingMenuHUD::BeginPlay()
@@ -68,12 +64,21 @@ void AEveryThingMenuHUD::StartNewGameUIState(EMenuUIState InGameUIState)
 		case EMenuUIState::MainMenu:
 			ShowMainMenu();
 			break;
+
 		case EMenuUIState::CreateArchive:
 			ShowCreateArchive();
 			break;
 		case EMenuUIState::ArchiveList:
 			ShowArchiveList();
 			break;
+
+		case EMenuUIState::MasterInterface:
+			ShowMasterInterface();
+			break;
+		case EMenuUIState::Storehouse:
+			ShowStorehouse();
+			break;
+
 		case EMenuUIState::HouseMenu:
 			ShowHouseMenu();
 			break;
@@ -83,6 +88,7 @@ void AEveryThingMenuHUD::StartNewGameUIState(EMenuUIState InGameUIState)
 		case EMenuUIState::HouseList:
 			ShowHouseList();
 			break;
+
 		case EMenuUIState::LoadingScreen:
 			ShowLoadingScreen();
 			break;
@@ -102,12 +108,21 @@ void AEveryThingMenuHUD::FinishOldGameUIState(EMenuUIState InGameUIState)
 		case EMenuUIState::MainMenu:
 			if (MainMenu) { MainMenu->RemoveFromParent(); }
 			break;
+
 		case EMenuUIState::CreateArchive:
 			if (CreateArchive) {CreateArchive->RemoveFromParent();}
 			break;
 		case EMenuUIState::ArchiveList:
 			if (ArchiveList) {ArchiveList->RemoveFromParent();}
 			break;
+
+		case EMenuUIState::MasterInterface:
+			if (MasterInterface) { MasterInterface->RemoveFromParent(); }
+			break;
+		case EMenuUIState::Storehouse:
+			if (Storehouse) { Storehouse->RemoveFromParent(); }
+			break;
+
 		case EMenuUIState::HouseMenu:
 			if (HouseMenu) { HouseMenu->RemoveFromParent(); }
 			break;
@@ -117,6 +132,7 @@ void AEveryThingMenuHUD::FinishOldGameUIState(EMenuUIState InGameUIState)
 		case EMenuUIState::HouseList:
 			if (HouseList) { HouseList->RemoveFromParent(); }
 			break;
+
 		case EMenuUIState::LoadingScreen:
 			if (LoadingScreen) { LoadingScreen->RemoveFromParent(); }
 			break;
@@ -151,122 +167,39 @@ void AEveryThingMenuHUD::UpdateHouseList(TArray<FOnlineSessionSearchResult>& Sea
 }
 
 
-void AEveryThingMenuHUD::ShowMainMenu()
+template<typename T>
+T* AEveryThingMenuHUD::CreateAndDisplayWidget(EMenuUIState InNeededUIState, const FName& InUserWidgetName, T* ResultWidget)
 {
-	if (IsTargetGameUIState(EMenuUIState::MainMenu))
+	if (IsTargetGameUIState(InNeededUIState))
 	{
-		if (!MainMenu && HouseMenuClass) { MainMenu = CreateWidget<UMainMenu>(GetGameInstance(), MainMenuClass); }
+		TSubclassOf<UUserWidget> TargetClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(InUserWidgetName);
+		if (!ResultWidget && TargetClass) { ResultWidget = CreateWidget<T>(GetGameInstance(), TargetClass); }
 
-		if (MainMenu)
+		if (ResultWidget)
 		{
-			if (!MainMenu->IsInViewport()) { MainMenu->AddToViewport(); }
+			if (!ResultWidget->IsInViewport()) { ResultWidget->AddToViewport(); }
 
-			SetWidgetOwnerAndInputModeToFocusWidget(MainMenu);
+			SetWidgetOwnerAndInputModeToFocusWidget(ResultWidget);
 		}
 	}
+
+	return ResultWidget;
 }
 
-void AEveryThingMenuHUD::ShowCreateArchive()
-{
-	if (IsTargetGameUIState(EMenuUIState::CreateArchive))
-	{
-		if (!CreateArchive && HouseMenuClass) { CreateArchive = CreateWidget<UCreateArchive>(GetGameInstance(), CreateArchiveClass); }
+void AEveryThingMenuHUD::ShowMainMenu() { MainMenu = CreateAndDisplayWidget<UMainMenu>(EMenuUIState::MainMenu, "MainMenu", MainMenu); }
 
-		if (CreateArchive)
-		{
-			if (!CreateArchive->IsInViewport()) { CreateArchive->AddToViewport(); }
+void AEveryThingMenuHUD::ShowCreateArchive() { CreateArchive = CreateAndDisplayWidget<UCreateArchive>(EMenuUIState::CreateArchive, "CreateArchive", CreateArchive); }
+void AEveryThingMenuHUD::ShowArchiveList() { ArchiveList = CreateAndDisplayWidget<UArchiveList>(EMenuUIState::ArchiveList, "ArchiveList", ArchiveList); }
 
-			SetWidgetOwnerAndInputModeToFocusWidget(CreateArchive);
-		}
-	}
-}
+void AEveryThingMenuHUD::ShowMasterInterface() { MasterInterface = CreateAndDisplayWidget<UMasterInterface>(EMenuUIState::MasterInterface, "MasterInterface", MasterInterface); }
+void AEveryThingMenuHUD::ShowStorehouse() { Storehouse = CreateAndDisplayWidget<UStorehouse>(EMenuUIState::Storehouse, "Storehouse", Storehouse); }
 
-void AEveryThingMenuHUD::ShowArchiveList()
-{
-	if (IsTargetGameUIState(EMenuUIState::ArchiveList))
-	{
-		if (!ArchiveList && ArchiveListClass) { ArchiveList = CreateWidget<UArchiveList>(GetGameInstance(), ArchiveListClass); }
+void AEveryThingMenuHUD::ShowHouseMenu() { HouseMenu = CreateAndDisplayWidget<UHouseMenu>(EMenuUIState::HouseMenu, "HouseMenu", HouseMenu); }
+void AEveryThingMenuHUD::ShowHouseCreate() { HouseCreate = CreateAndDisplayWidget<UHouseCreate>(EMenuUIState::HouseCreate, "HouseCreate", HouseCreate); }
+void AEveryThingMenuHUD::ShowHouseList() { HouseList = CreateAndDisplayWidget<UHouseList>(EMenuUIState::HouseList, "HouseList", HouseList); }
 
-		if (ArchiveList)
-		{
-			if (!ArchiveList->IsInViewport()) { ArchiveList->AddToViewport(); }
-
-			SetWidgetOwnerAndInputModeToFocusWidget(ArchiveList);
-		}
-	}
-}
-
-void AEveryThingMenuHUD::ShowHouseMenu()
-{
-	if (IsTargetGameUIState(EMenuUIState::HouseMenu))
-	{
-		if (!HouseMenu && HouseMenuClass) { HouseMenu = CreateWidget<UHouseMenu>(GetGameInstance(), HouseMenuClass); }
-
-		if (HouseMenu)
-		{
-			if (!HouseMenu->IsInViewport()) { HouseMenu->AddToViewport(); }
-
-			SetWidgetOwnerAndInputModeToFocusWidget(HouseMenu);
-		}
-	}
-}
-
-void AEveryThingMenuHUD::ShowHouseCreate()
-{
-	if (IsTargetGameUIState(EMenuUIState::HouseCreate))
-	{
-		if (!HouseCreate && HouseCreateClass) { HouseCreate = CreateWidget<UHouseCreate>(GetGameInstance(), HouseCreateClass); }
-
-		if (HouseCreate)
-		{
-			if (!HouseCreate->IsInViewport()) { HouseCreate->AddToViewport(); }
-			SetWidgetOwnerAndInputModeToFocusWidget(HouseCreate);
-		}
-	}
-}
-
-void AEveryThingMenuHUD::ShowHouseList()
-{
-	if (IsTargetGameUIState(EMenuUIState::HouseList))
-	{
-		if (!HouseList && HouseListClass) { HouseList = CreateWidget<UHouseList>(GetGameInstance(), HouseListClass); }
-
-		if (HouseList)
-		{
-			if (!HouseList->IsInViewport()) { HouseList->AddToViewport(); }
-			SetWidgetOwnerAndInputModeToFocusWidget(HouseList);
-		}
-	}
-}
-
-void AEveryThingMenuHUD::ShowLoadingScreen()
-{
-	if (IsTargetGameUIState(EMenuUIState::LoadingScreen))
-	{
-		if (!LoadingScreen && LoadingScreenClass) { LoadingScreen = CreateWidget<ULoadingScreen>(GetGameInstance(), LoadingScreenClass); }
-
-		if (LoadingScreen)
-		{
-			if (!LoadingScreen->IsInViewport()) { LoadingScreen->AddToViewport(); }
-			SetWidgetOwnerAndInputModeToFocusWidget(LoadingScreen);
-		}
-	}
-}
-
-void AEveryThingMenuHUD::ShowErrorDialog()
-{
-	if (IsTargetGameUIState(EMenuUIState::ErrorDialog))
-	{
-
-		if (!ErrorDialog && ErrorDialogClass) { ErrorDialog = CreateWidget<UErrorDialog>(GetGameInstance(), ErrorDialogClass); }
-
-		if (ErrorDialog)
-		{
-			if (!ErrorDialog->IsInViewport()) { ErrorDialog->AddToViewport(); }
-			SetWidgetOwnerAndInputModeToFocusWidget(ErrorDialog);
-		}
-	}
-}
+void AEveryThingMenuHUD::ShowLoadingScreen() { LoadingScreen = CreateAndDisplayWidget<ULoadingScreen>(EMenuUIState::LoadingScreen, "LoadingScreen", LoadingScreen); }
+void AEveryThingMenuHUD::ShowErrorDialog() { ErrorDialog = CreateAndDisplayWidget<UErrorDialog>(EMenuUIState::ErrorDialog, "ErrorDialog", ErrorDialog); }
 
 void AEveryThingMenuHUD::SetWidgetOwnerAndInputModeToFocusWidget(UUserWidget* InWidget)
 {

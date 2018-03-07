@@ -55,9 +55,9 @@ public:
 	bool SaveArchiveWithName(const FString& ArchiveName);
 	bool SaveCurrentArchive();
 
-	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo) { PlayerInfo = InPlayerInfo; }
+	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo) { PlayerInfo = InPlayerInfo; SaveCurrentArchive(); }
 	UFUNCTION(BlueprintPure)
-	const FPlayerInfo& GetPlayerInfo() const { return PlayerInfo; }
+	FPlayerInfo& GetPlayerInfo() { return PlayerInfo; }
 	UFUNCTION(BlueprintPure)
 	const FString& GetArchiveName() const { return CurrentSaveArchiveName; }
 	

@@ -15,26 +15,41 @@ enum class EMenuUIState : uint8
 {
 	StartUp,
 	MainMenu,
+
 	CreateArchive,
 	ArchiveList,
+
+	MasterInterface,
+	Storehouse,
+
 	HouseMenu,
 	HouseCreate,
 	HouseList,
+
 	Config,
+
 	LoadingScreen,
 	ErrorDialog,
 	Unknown
 };
 
+class UUserWidget;
+
+class UMainMenu;
+
+class UCreateArchive;
+class UArchiveList;
+
+class UMasterInterface;
+class UStorehouse;
 
 class UHouseMenu;
 class UHouseList;
 class UHouseCreate;
+
 class ULoadingScreen;
 class UErrorDialog;
-class UMainMenu;
-class UCreateArchive;
-class UArchiveList;
+
 
 /**
  * 
@@ -75,40 +90,48 @@ public:
 	
 private:
 	void ShowMainMenu();
+
 	void ShowCreateArchive();
 	void ShowArchiveList();
+
+	void ShowMasterInterface();
+	void ShowStorehouse();
+
 	void ShowHouseMenu();
 	void ShowHouseCreate();
 	void ShowHouseList();
+
 	void ShowLoadingScreen();
 	void ShowErrorDialog();
 
-	void SetWidgetOwnerAndInputModeToFocusWidget(class UUserWidget* InWidget);
+	template<typename T>
+	T* CreateAndDisplayWidget(EMenuUIState InNeededUIState, const FName& InUserWidgetName, T* ResultWidget);
+
+	void SetWidgetOwnerAndInputModeToFocusWidget(UUserWidget* InWidget);
 
 protected:
-	TSubclassOf<UHouseMenu> HouseMenuClass;
-	TSubclassOf<UErrorDialog> ErrorDialogClass;
-	TSubclassOf<UHouseList> HouseListClass;
-	TSubclassOf<UHouseCreate> HouseCreateClass;
-	TSubclassOf<ULoadingScreen> LoadingScreenClass;
-	TSubclassOf<UMainMenu> MainMenuClass;
-	TSubclassOf<UCreateArchive> CreateArchiveClass;
-	TSubclassOf<UArchiveList> ArchiveListClass;
-
 	UPROPERTY(Transient)
 	UMainMenu* MainMenu;
+
 	UPROPERTY(Transient)
 	UCreateArchive* CreateArchive;
 	UPROPERTY(Transient)
 	UArchiveList* ArchiveList;
+
+	UPROPERTY(Transient)
+	UMasterInterface* MasterInterface;
+	UPROPERTY(Transient)
+	UStorehouse* Storehouse;
+
 	UPROPERTY(Transient)
 	UHouseMenu* HouseMenu;
 	UPROPERTY(Transient)
 	UHouseList* HouseList;
 	UPROPERTY(Transient)
 	UHouseCreate* HouseCreate;
+
 	UPROPERTY(Transient)
 	ULoadingScreen* LoadingScreen;
 	UPROPERTY(Transient)
-	UErrorDialog* ErrorDialog;	
+	UErrorDialog* ErrorDialog;
 };

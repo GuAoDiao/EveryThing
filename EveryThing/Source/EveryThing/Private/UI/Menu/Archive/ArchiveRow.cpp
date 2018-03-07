@@ -19,7 +19,7 @@ void UArchiveRow::LoadArchive()
 	{
 		if (OwnerETGI->LoadArchiveFromName(ArchiveName))
 		{
-			OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::HouseMenu);
+			OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::MasterInterface);
 		}
 		else
 		{
