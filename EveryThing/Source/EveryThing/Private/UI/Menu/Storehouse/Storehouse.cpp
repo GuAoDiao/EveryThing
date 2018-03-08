@@ -4,6 +4,7 @@
 
 #include "EveryThingAssetManager.h"
 #include "EveryThingGameInstance.h"
+#include "Characters/GamePawnManager.h"
 #include "UI/Menu/EveryThingMenuHUD.h"
 #include "UI/Menu/Storehouse/RoleItem.h"
 
@@ -20,20 +21,18 @@ void UStorehouse::InitializeStorehouse_Implementation(const FPlayerInfo& InPlaye
 	UpdateStorehouseDisplay(InPlayerInfo);
 
 	TSubclassOf<UUserWidget> RoleItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("RoleItem");
-	UDataTable* RoleNameDatatable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName(TEXT("RolesInfo"));
 	APlayerController* OnwerPC = GetOwningPlayer();
 
-	if (RoleNameDatatable && RoleItemClass && OnwerPC)
+	if (RoleItemClass && OnwerPC)
 	{
-		TArray<FRoleInfo*> RolesNameDataInDatatable;
-		RoleNameDatatable->GetAllRows<FRoleInfo>(TEXT("found all Roles Name in DataTable"), RolesNameDataInDatatable);
-		
-		for (FRoleInfo* RoleNameData : RolesNameDataInDatatable)
+		const TMap<FName, FRoleInfo>& AllRolesInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllRolesInfo();
+		for (TMap<FName, FRoleInfo>::TConstIterator It(AllRolesInfo); It; ++It)
 		{
+			const FRoleInfo& RoleInfo = It.Value();
 			URoleItem* RoleItem = CreateWidget<URoleItem>(OnwerPC, RoleItemClass);
 			if (RoleItem)
 			{
-				RoleItem->InitializeRoleItem(RoleNameData->Name, RoleNameData->Cost, InPlayerInfo.AllHaveRolesName.Contains(RoleNameData->Name));
+				RoleItem->InitializeRoleItem(RoleInfo.Name, RoleInfo.Cost, InPlayerInfo.AllHaveRolesName.Contains(RoleInfo.Name));
 				AddRoleItem(RoleItem);
 			}
 		}

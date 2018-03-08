@@ -78,7 +78,9 @@ public:
 
 	bool bIsWantedTogglePawn;
 
-	void ToggoleRole(int32 NumberIndex);
+	void ToggleRoleWithIndex(int32 NumberIndex);
+
+
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetRoleSuccessDelegate, const FName& /* TargetRoleName */);
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetRoleFailureDelegate, const FName& /* TargetRoleName */, const FText&  /* ErrorInfo */);
@@ -89,8 +91,10 @@ private:
 	FOnToggleToTargetRoleSuccessDelegate OnToggleToTargetRoleSuccessDelegate;
 	FOnToggleToTargetRoleFailureDelegate OnToggleToTargetRoleFailureDelegate;
 	
+	void ToggleRoleWithName(const FName& TargetRoleName);
+
 	UFUNCTION(Server, WithValidation, Reliable)
-	void ServerToggleRole(int32 NumberIndex);
+	void ServerToggleRole(const FName& TargetRoleName);
 
 	UPROPERTY(Transient, Replicated)
 	FName CurrentRoleName;

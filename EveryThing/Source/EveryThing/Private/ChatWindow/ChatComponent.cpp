@@ -21,13 +21,21 @@
 
 UChatComponent::UChatComponent()
 {
-	ChannelManager.AddChatchannelDefaultValue(new FAllChatChannel(), "Default");
+	FAllChatChannel* DefaultChannel = new FAllChatChannel();
+	ChannelManager.AddChatchannelDefaultValue(DefaultChannel, "Default");
 
-	ChannelManager.AddChatchannelDefaultValue(new FAllChatChannel(), "All");
+	ChannelManager.AddChatchannelDefaultValue(DefaultChannel, "All");
 	ChannelManager.AddChatchannelDefaultValue(new FTeamChatChannel(), "Team");
 	ChannelManager.AddChatchannelDefaultValue(new FSystemChatChannel(), "System");
 }
 
+
+void UChatComponent::DestroyComponent(bool bPromoteChildren)
+{
+	ChannelManager.ClearAllChatChannel();
+
+	Super::DestroyComponent(bPromoteChildren);
+}
 
 IChatWindowHUDInterface* UChatComponent::GetChatWindowHUD() const
 {

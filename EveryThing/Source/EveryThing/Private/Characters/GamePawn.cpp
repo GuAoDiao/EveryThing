@@ -48,6 +48,8 @@ AGamePawn::AGamePawn()
 void AGamePawn::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+
+	UpdateInfo();
 }
 
 
@@ -60,12 +62,13 @@ void AGamePawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	for (FGamePawnForm* Form : OwnerGamePawnForms)
 	{
-		delete Form;
+		if (Form) { delete Form; }
 	}
 	for (FGamePawnSkin* Skin : OwnerGamePawnSkins)
 	{
-		delete Skin;
+		if (Skin) { delete Skin; }
 	}
+
 	OwnerGamePawnForms.Empty();
 	OwnerGamePawnSkins.Empty();
 
@@ -84,7 +87,6 @@ void AGamePawn::SetIsSelectedToHit(bool bInIsSelectedToHit)
 	{
 		StaticMeshComp->SetRenderCustomDepth(false);
 		StaticMeshComp->CustomDepthStencilValue = 0.f;
-
 	}
 }
 
@@ -274,7 +276,6 @@ void AGamePawn::ResetInfoFromDataTable(const FName& GamePawnName)
 void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 {
 	OwnerInfo = *InInfo;
-	UpdateInfo();
 }
 
 void AGamePawn::UpdateInfo()
@@ -296,13 +297,23 @@ void AGamePawn::SetQualityScale(float InQualityScale) { OwnerInfo.QualityScale =
 
 void AGamePawn::ResetQuality()
 {
-	StaticMeshComp->SetMassOverrideInKg(NAME_None, OwnerInfo.Quality);
-	StaticMeshComp->SetMassScale(NAME_None, OwnerInfo.QualityScale);
+	FBodyInstance* BodyInstance = StaticMeshComp->GetBodyInstance();
+	if (BodyInstance)
+	{
+		BodyInstance->MassScale = OwnerInfo.QualityScale;
+		BodyInstance->SetMassOverride(OwnerInfo.Quality);
+		BodyInstance->UpdateMassProperties();
+	}
 }
 void AGamePawn::ResetDamping()
 {
-	StaticMeshComp->SetLinearDamping(OwnerInfo.LinearDamping);
-	StaticMeshComp->SetAngularDamping(OwnerInfo.AngularDamping);
+	FBodyInstance* BodyInstance = StaticMeshComp->GetBodyInstance();
+	if(BodyInstance)
+	{
+		BodyInstance->LinearDamping  = OwnerInfo.LinearDamping;
+		BodyInstance->AngularDamping = OwnerInfo.AngularDamping;
+		BodyInstance->UpdateDampingProperties();
+	}
 }
 
 

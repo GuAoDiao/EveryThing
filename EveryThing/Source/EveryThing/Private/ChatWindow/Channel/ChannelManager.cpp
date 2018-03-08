@@ -18,3 +18,12 @@ FChatChannel* FChannelManager::GetChatchannelDefaultValueFromName(const FName& C
 	}
 	return nullptr;
 }
+
+void FChannelManager::ClearAllChatChannel()
+{
+	for (TMap<FName, FChatChannel*>::TIterator It(AllChatChannels); It; ++It)
+	{
+		if (It.Value()) { delete It.Value(); }
+	}
+	AllChatChannels.Empty();
+}

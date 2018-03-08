@@ -3,8 +3,6 @@
 #include "AllChatChannel.h"
 
 
-
-
 FAllChatChannel::FAllChatChannel()
 {
 	ChannelName = "All";

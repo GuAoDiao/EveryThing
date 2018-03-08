@@ -16,7 +16,7 @@ class UStaticMesh;
 class UParticleSystem;
 class UMaterialInstanceConstant;
 class UUserWidget;
-class AGamePawn;
+class UGamePawnManager;
 
 USTRUCT(BlueprintType)
 struct FStaticMeshData : public FTableRowBase
@@ -144,8 +144,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn
 public:
-	void LoadRolesClassFromDatetable();
-	TSoftClassPtr<AGamePawn> GetRoleClassFromName(const FName& Name);
-private:
-	TMap<FName, TSoftClassPtr<AGamePawn>> AllRolesName;
+	UGamePawnManager* GetGamePawnManager();
+
+	UPROPERTY()
+	UGamePawnManager* GamePawnManager;
 };

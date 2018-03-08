@@ -23,7 +23,8 @@ class EVERYTHING_API UChatComponent : public UActorComponent
 public:
 	UChatComponent();
 
-
+	virtual void DestroyComponent(bool bPromoteChildren) override;
+	
 	IChatWindowHUDInterface* GetChatWindowHUD() const;
 	IChatWindowPlayerStateInterface* GetChatWindowPlayerState() const;
 	IChatWindowGameStateInterface* GetChatWindowGameState() const;

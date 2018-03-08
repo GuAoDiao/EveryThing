@@ -5,14 +5,14 @@
 #include "Engine/StaticMesh.h"
 #include "Particles/ParticleSystem.h"
 #include "Materials/MaterialInstanceConstant.h"
+#include "Characters/GamePawnManager.h"
 
 UEveryThingAssetManager* UEveryThingAssetManager::AssetManager = nullptr;
 
 UEveryThingAssetManager::UEveryThingAssetManager()
 {
-	UE_LOG(LogTemp, Log, TEXT("-_- init EveryThing Asset Manager"));
-
 	SetFlags(RF_Standalone);
+	AssetManager = this;
 
 	UDataTable* AllDataTable = LoadObject<UDataTable>(nullptr, TEXT("DataTable'/Game/EveryThing/DataTable/DT_DataTable.DT_DataTable'"));
 	if (AllDataTable)
@@ -32,14 +32,12 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 	LoadParticleFromDatatable();
 
 	LoadUserWidgetFromDataable();
-
-	LoadRolesClassFromDatetable();
 }
 
 UEveryThingAssetManager::~UEveryThingAssetManager()
 {
 	AssetManager = nullptr;
-	UE_LOG(LogTemp, Log, TEXT("-_- this is destroy asset manager"));
+	if (GamePawnManager) { GamePawnManager->BeginDestroy(); }
 }
 
 UEveryThingAssetManager* UEveryThingAssetManager::GetAssetManagerInstance()
@@ -49,7 +47,7 @@ UEveryThingAssetManager* UEveryThingAssetManager::GetAssetManagerInstance()
 		AssetManager = NewObject<UEveryThingAssetManager>((UObject*)GetTransientPackage(), TEXT("Blueprint'/Game/EveryThing/Blueprints/BP_AssetManager.BP_AssetManager'"));
 	}
 
-	check(AssetManager);
+	checkf(AssetManager, TEXT("The Asset Manager must be exists."));
 
 	return AssetManager;
 }
@@ -213,28 +211,16 @@ UDataTable* UEveryThingAssetManager::GetDataTableFromName(const FName& DataTable
 	return AllDataTableAsset[DataTableName].LoadSynchronous();
 }
 
+//////////////////////////////////////////////////////////////////////////
 /// Game Pawn
-
-void UEveryThingAssetManager::LoadRolesClassFromDatetable()
+UGamePawnManager* UEveryThingAssetManager::GetGamePawnManager()
 {
-	UDataTable* RoleNameDatatable = GetDataTableFromName(TEXT("RolesInfo"));
-	if (RoleNameDatatable)
+	if (!GamePawnManager)
 	{
-		TArray<FRoleInfo*> RolesNameDataInDatatable;
-		RoleNameDatatable->GetAllRows<FRoleInfo>(TEXT("found all Roles Name in DataTable"), RolesNameDataInDatatable);
-		for (FRoleInfo* RoleNameData : RolesNameDataInDatatable)
-		{
-			AllRolesName.Add(RoleNameData->Name, RoleNameData->RoleClass);
-		}
-	}
-}
-
-TSoftClassPtr<AGamePawn> UEveryThingAssetManager::GetRoleClassFromName(const FName& RolesName)
-{
-	if (AllRolesName.Contains(RolesName))
-	{
-		return AllRolesName[RolesName];
+		GamePawnManager = NewObject<UGamePawnManager>();
 	}
 
-	return nullptr;
+	checkf(GamePawnManager, TEXT("The GamePawnManager must exists"));
+
+	return GamePawnManager;
 }

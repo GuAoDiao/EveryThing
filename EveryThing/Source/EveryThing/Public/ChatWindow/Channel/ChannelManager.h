@@ -24,6 +24,7 @@ public:
 
 	bool IsExistChannelName(const FName& ChatChannelName) const { return AllChatChannels.Contains(ChatChannelName); }
 
+	void ClearAllChatChannel();
 private:
 	TMap<FName, FChatChannel*> AllChatChannels;
 };

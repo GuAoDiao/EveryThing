@@ -20,7 +20,7 @@ void UCreateArchive::CreateArchive(const FString& ArchiveName, const FString& Pl
 	{
 		if (OwnerETGI->CreateArchive(ArchiveName, PlayerName))
 		{
-			OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::HouseMenu);
+			OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::MasterInterface);
 		}
 		else
 		{

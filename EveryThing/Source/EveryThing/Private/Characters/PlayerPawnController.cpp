@@ -19,6 +19,7 @@
 #include "Characters/Movement/Components/GamePawnMovementComponent.h"
 #include "SceneObject/HitAbleInterface.h"
 #include "Online/EveryThingPlayerState.h"
+#include "Characters/GamePawnManager.h"
 
 
 #define LOCTEXT_NAMESPACE "Everything_Online_PlayerPawnController"
@@ -32,29 +33,8 @@ void APlayerPawnController::BeginPlay()
 {
 	Super::BeginPlay();
 
-
-	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
 	UClass* CurrentPawnClass = GetPawn() ? GetPawn()->GetClass() : nullptr;
-	if (OwnerETPS &&CurrentPawnClass)
-	{
-		FPlayerInfo PlayerInfo= OwnerETPS->GetPlayerInfo();
-
-		CurrentRoleName = NAME_None;
-		
-		for (const FName RoleName : PlayerInfo.AllHaveRolesName)
-		{
-			TSoftClassPtr<AGamePawn> TargetPawnSoftClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetRoleClassFromName(RoleName);
-			UClass* TargetPawnClass = TargetPawnSoftClass ? TargetPawnSoftClass.Get() : nullptr;
-			if (!TargetPawnClass) { continue; }
-
-			if (CurrentPawnClass->IsChildOf(TargetPawnClass) || TargetPawnClass->IsChildOf(CurrentPawnClass))
-			{
-				CurrentRoleName = RoleName;
-				break;
-			}
-		}
-	}
-
+	CurrentRoleName = CurrentPawnClass ? UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleNameFromClass(CurrentPawnClass) : NAME_None;
 
 	SetInputMode(FInputModeGameOnly());
 }
@@ -254,7 +234,7 @@ void APlayerPawnController::StartToggleRole()
 	AEveryThingGameHUD* OwnerETGH = Cast<AEveryThingGameHUD>(GetHUD());
 	if (OwnerETGH) { OwnerETGH->ToggleSelectRolesBox(true); }
 
-	if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->GetOnPressNumberKeyboardDelegate().BindUObject(this, &APlayerPawnController::ToggoleRole); }
+	if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->GetOnPressNumberKeyboardDelegate().BindUObject(this, &APlayerPawnController::ToggleRoleWithIndex); }
 
 	bIsWantedTogglePawn = true;
 }
@@ -268,16 +248,16 @@ void APlayerPawnController::StopToggleRole()
 	bIsWantedTogglePawn = false;
 }
 
-void APlayerPawnController::ToggoleRole(int32 NumberIndex)
+void APlayerPawnController::ToggleRoleWithIndex(int32 NumberIndex)
 {
 	// Get owning EverythingPlayerState and the world is exists
 	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
-	if (!GetWorld() ||!OwnerETPS)
+	if (!OwnerETPS)
 	{
-		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), LOCTEXT("ToggleRoleWhenNotFonutPlayer", "Can't find Game World Or Owner Player State."));
+		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), LOCTEXT("ToggleRoleWhenNotFonutPlayer", "Can't find Owner Player State."));
 		return;
 	}
-	
+
 	// try to find Target Role Name is exists
 	const FPlayerInfo& PlayerInfo = OwnerETPS->GetPlayerInfo();
 	if (!PlayerInfo.AllHaveRolesName.IsValidIndex(NumberIndex))
@@ -287,14 +267,32 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), FText::Format(LOCTEXT("ToggleRoleWhenNotFoundTargetRole", "Can'f find Target role name with index : {Index}."), Arguments));
 		return;
 	}
-	const FName& TargetRoleName = PlayerInfo.AllHaveRolesName[NumberIndex];
 
-	// Get Current and Target Pawn class 
-	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
-	UClass* CurrentPawnClass = AssetManager->GetRoleClassFromName(CurrentRoleName).Get();
-	UClass* TargetPawnClass = AssetManager->GetRoleClassFromName(TargetRoleName).Get();
+	ToggleRoleWithName(PlayerInfo.AllHaveRolesName[NumberIndex]);
+}
+
+void APlayerPawnController::ToggleRoleWithName(const FName& TargetRoleName)
+{
+	// Get owning EverythingPlayerState and the world is exists
+	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
+	if (!OwnerETPS)
+	{
+		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), LOCTEXT("ToggleRoleWhenNotFonutPlayer", "Can't find Owner Player State."));
+		return;
+	}
+	
+	// try to find Target Role Name is exists
+	const FPlayerInfo& PlayerInfo = OwnerETPS->GetPlayerInfo();
+	if (!PlayerInfo.AllHaveRolesName.Contains(TargetRoleName))
+	{
+		FFormatNamedArguments Arguments;
+		Arguments.Add(TEXT("TargetRoleName"), FText::FromName(TargetRoleName));
+		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), FText::Format(LOCTEXT("ToggleRoleWhenNotFoundTargetRole", "Can'f find Target role name : {TargetRoleName}."), Arguments));
+		return;
+	}
 	
 	// Check target pawn class is exists
+	UClass* TargetPawnClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleClassFromName(TargetRoleName).Get();
 	if (!TargetPawnClass)
 	{
 		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("ToggleRoleWhenNotFoundTargetRoleClass", "Can't find Target Role Class."));
@@ -302,7 +300,7 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 	}
 
 	// check target pawn and current pawn isn't Parent-child
-	if (CurrentPawnClass->IsChildOf(TargetPawnClass) || TargetPawnClass->IsChildOf(CurrentPawnClass))
+	if (CurrentRoleName == TargetRoleName)
 	{
 		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("ToggleRoleWhenSameRole", "Already is the target Role, needn't to toggle."));
 		return;
@@ -311,7 +309,7 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 	// after code only run on server
 	if (!HasAuthority())
 	{
-		ServerToggleRole(NumberIndex);
+		ServerToggleRole(TargetRoleName);
 		return;
 	}
 
@@ -319,7 +317,7 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 	// Hide current Pawn and disable it's collision
 	APawn* OwnerPawn = GetPawn();
 	
-	check(OwnerPawn);
+	checkf(OwnerPawn, TEXT("Can't find old pawn when toggle pawn"));
 
 	OwnerPawn->SetActorEnableCollision(false);
 	OwnerPawn->SetActorHiddenInGame(true);
@@ -331,7 +329,7 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	AGamePawn* NewPawn = GetWorld()->SpawnActor<AGamePawn>(TargetPawnClass, Location, OwnerPawn->GetActorForwardVector().Rotation());
-	check(NewPawn);
+	checkf(NewPawn, TEXT("Can't create new pawn when toggle pawn"));
 	Possess(NewPawn);
 
 
@@ -346,10 +344,10 @@ void APlayerPawnController::ToggoleRole(int32 NumberIndex)
 	CurrentRoleName = TargetRoleName;
 }
 
-bool APlayerPawnController::ServerToggleRole_Validate(int32 NumberIndex) { return true; }
-void APlayerPawnController::ServerToggleRole_Implementation(int32 NumberIndex)
+bool APlayerPawnController::ServerToggleRole_Validate(const FName& TargetRoleName) { return true; }
+void APlayerPawnController::ServerToggleRole_Implementation(const FName& TargetRoleName)
 {
-	ToggoleRole(NumberIndex);
+	ToggleRoleWithName(TargetRoleName);
 }
 
 
