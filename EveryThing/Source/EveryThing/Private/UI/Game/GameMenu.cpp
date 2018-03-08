@@ -38,7 +38,7 @@ FReply UGameMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& 
 		return FReply::Handled();
 	}
 
-	return NativeOnKeyDown(InGeometry, InKeyEvent);
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
 
 void UGameMenu::Confing()
