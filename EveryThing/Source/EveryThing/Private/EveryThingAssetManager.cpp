@@ -34,10 +34,11 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 	LoadUserWidgetFromDataable();
 }
 
-UEveryThingAssetManager::~UEveryThingAssetManager()
+void UEveryThingAssetManager::BeginDestroy()
 {
 	AssetManager = nullptr;
-	if (GamePawnManager) { GamePawnManager->BeginDestroy(); }
+
+	Super::BeginDestroy();
 }
 
 UEveryThingAssetManager* UEveryThingAssetManager::GetAssetManagerInstance()
@@ -217,7 +218,7 @@ UGamePawnManager* UEveryThingAssetManager::GetGamePawnManager()
 {
 	if (!GamePawnManager)
 	{
-		GamePawnManager = NewObject<UGamePawnManager>();
+		GamePawnManager = NewObject<UGamePawnManager>(this);
 	}
 
 	checkf(GamePawnManager, TEXT("The GamePawnManager must exists"));

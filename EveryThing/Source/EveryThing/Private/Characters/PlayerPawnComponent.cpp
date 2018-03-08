@@ -56,7 +56,7 @@ void UPlayerPawnComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
-	if (OwnerPawn)
+	if (OwnerPawn && OwnerPawn->GetController() && OwnerPawn->GetController()->IsLocalController())
 	{
 		AActor* SelectedHitAbleActor = TryToGetHitAbleActor();
 

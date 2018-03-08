@@ -23,7 +23,6 @@ public:
 	void OnToggleToTargetRoleSuccess(const FName& TargetRoleName);
 	void OnToggleToTargetRoleFailure(const FName& TargetRoleName, const FText& ErrorInfo);
 	
-
 	void OnPlayerJoinGame(class APlayerState* InPlayerState);
 	void OnPlayerLeaveGame(class APlayerState* InPlayerState);
 

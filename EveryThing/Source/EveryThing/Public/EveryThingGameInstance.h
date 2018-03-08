@@ -8,6 +8,7 @@
 #include "EveryThingGameInstance.generated.h"
 
 class UEveryThingSaveArchive;
+class ULoadingMap;
 
 /**
  * 
@@ -20,12 +21,29 @@ class EVERYTHING_API UEveryThingGameInstance : public UGameInstance
 public:
 	UEveryThingGameInstance();
 
+	virtual void Init() override;
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Level
 public:
 	void OpenMenuLevel();
 	void OpenGameLevel(const FString& MapType, const FString& MapName);
 	void ExitGameApplication();
+
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Loading Map
+public:
+	void BeginLoadingMap(const FString& MapName);
+	void EndLoadingMap(UWorld* LoadedWorld);
+
+
+	UFUNCTION(BlueprintCallable)
+	bool IsLoadingMapFinished() const;
+private:
+	class IGameMoviePlayer* LoadingMapMoviePlayer;
+	UPROPERTY(Transient)
+	ULoadingMap* LoadingMap;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Match
@@ -40,7 +58,10 @@ private:
 	class AEveryThingGameSession* GetGameSession();
 public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-		FName MenuLevelName;
+	FName MenuLevelName;
+
+
+
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Player Info

@@ -7,9 +7,14 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFrameWork/OnlineSession.h"
 
+#include "MoviePlayer.h"
+
 #include "Online/EveryThingGameMode_Menu.h"
 #include "Online/EveryThingGameSession.h"
 
+#include "UI/LoadingMap.h"
+
+#include "EveryThingAssetManager.h"
 #include "EveryThingSaveArchive.h"
 #include "EveryThingSaveArchivesList.h"
 
@@ -17,6 +22,13 @@ UEveryThingGameInstance::UEveryThingGameInstance()
 {
 }
 
+void UEveryThingGameInstance::Init()
+{
+	Super::Init();
+
+	FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UEveryThingGameInstance::BeginLoadingMap);
+	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UEveryThingGameInstance::EndLoadingMap);
+}
 
 //////////////////////////////////////////////////////////////////////////
 /// Level
@@ -35,6 +47,55 @@ void UEveryThingGameInstance::ExitGameApplication()
 {
 	APlayerController* OwnerPC = GetFirstLocalPlayerController();
 	if (OwnerPC) { OwnerPC->ConsoleCommand("quit"); }
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Loading Map
+void UEveryThingGameInstance::BeginLoadingMap(const FString& MapName)
+{
+	if (!IsRunningDedicatedServer())
+	{
+		LoadingMapMoviePlayer = GetMoviePlayer();
+		if (LoadingMapMoviePlayer)
+		{
+			if (!LoadingMap)
+			{
+				TSubclassOf<UUserWidget> LoadingMapClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("LoadingMap");
+				LoadingMap = LoadingMapClass ? CreateWidget<ULoadingMap>(this, LoadingMapClass) : nullptr;
+			}
+			if(LoadingMap)
+			{
+				LoadingMap->InitializeLoadingMap(this, MapName);
+
+				FLoadingScreenAttributes LoadingScreenAttributes;
+				LoadingScreenAttributes.bAutoCompleteWhenLoadingCompletes = false;
+				LoadingScreenAttributes.bMoviesAreSkippable = true;
+				LoadingScreenAttributes.bWaitForManualStop = true;
+				LoadingScreenAttributes.PlaybackType = EMoviePlaybackType::MT_Looped;
+				LoadingScreenAttributes.WidgetLoadingScreen = LoadingMap->TakeWidget();
+
+				// May only support h264 encoded 720P  mp4
+				LoadingScreenAttributes.MoviePaths.Add(TEXT("LoadingMap"));
+
+				LoadingMapMoviePlayer->SetupLoadingScreen(LoadingScreenAttributes);
+				
+			}
+		}
+	}
+}
+
+bool UEveryThingGameInstance::IsLoadingMapFinished() const
+{
+	return LoadingMapMoviePlayer ? LoadingMapMoviePlayer->IsLoadingFinished() : true;
+}
+
+void UEveryThingGameInstance::EndLoadingMap(UWorld* LoadedWorld)
+{
+	if (!IsRunningDedicatedServer())
+	{
+		LoadingMapMoviePlayer = nullptr;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
