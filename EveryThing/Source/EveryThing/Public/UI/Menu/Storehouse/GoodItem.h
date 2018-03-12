@@ -19,8 +19,9 @@ public:
 	void InitializeGoodsItem(int32 InCost, bool bInHaveGoods);
 	
 	bool IsHaveEnoughMoney() const;
-	virtual bool BuyGoodsItem();
 
+	virtual bool BuyGoodsItem() { return false; }
+	UFUNCTION(BlueprintPure)
 	int32 GetGoodsCost() const { return GoodCost; }
 	bool HaveGoods() const { return bHaveGoods; }
 protected:

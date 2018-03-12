@@ -17,11 +17,16 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void InitializeRoleItem(const FName& InRoleName, int32 InCost, bool bInHaveGoods);
 	
-	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateRoleItemDisplay(const FName& InRoleName, int32 InCost, bool bInHaveGoods);
+	UFUNCTION(BlueprintNativeEvent)
+	void InitializeRoleItemDisplay(const FName& InRoleName, bool bInHaveGoods);
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UpdateRoleItemDisplay(bool bInHaveGoods);
+
+	UFUNCTION(BlueprintPure)
+	const FName& GetRoleName() { return RoleName; }
 
 	UFUNCTION(BlueprintCallable)
-	void OnRoleItemClicked();
+	void OnBuyRoleItem();
 	
 	virtual bool BuyGoodsItem() override;
 private:

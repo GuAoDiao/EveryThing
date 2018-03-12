@@ -21,21 +21,3 @@ bool UGoodsItem::IsHaveEnoughMoney() const
 	}
 	return false;
 }
-
-bool UGoodsItem::BuyGoodsItem()
-{
-	UEveryThingGameInstance* OwnerETGI = GetOwningPlayer() ? Cast<UEveryThingGameInstance>(GetOwningPlayer()->GetGameInstance()) : nullptr;
-	if (OwnerETGI)
-	{
-		FPlayerInfo& PlayerInfo = OwnerETGI->GetPlayerInfo();
-		if (PlayerInfo.Gold >= GoodCost)
-		{
-			PlayerInfo.Gold -= GoodCost;
-			
-			OwnerETGI->SaveCurrentArchive();
-
-			return true;
-		}
-	}
-	return false;
-}

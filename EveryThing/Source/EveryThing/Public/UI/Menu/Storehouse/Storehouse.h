@@ -26,11 +26,19 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void InitializeStorehouse(const FPlayerInfo& InPlayerInfo);
 	
+	UFUNCTION(BlueprintNativeEvent)
+	void InitializeStorehouseDisplay(const FPlayerInfo& InPlayerInfo);
+
 	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateStorehouseDisplay(const FPlayerInfo& InPlayerInfo);
+	void UpdateRoleItemListDisplay(const TArray<FName>& InAllHaveRolesName);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdatePlayerGoldDisplay(int32 Gold);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void AddRoleItem(URoleItem* RoleItem);
+
+	void OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo);
 
 	UFUNCTION(BlueprintCallable)
 	void Backup();

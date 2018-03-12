@@ -76,15 +76,25 @@ public:
 	bool SaveArchiveWithName(const FString& ArchiveName);
 	bool SaveCurrentArchive();
 
-	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo) { PlayerInfo = InPlayerInfo; SaveCurrentArchive(); }
+
+
+
+
 	UFUNCTION(BlueprintPure)
 	FPlayerInfo& GetPlayerInfo() { return PlayerInfo; }
 	UFUNCTION(BlueprintPure)
 	const FString& GetArchiveName() const { return CurrentSaveArchiveName; }
 	
-private:
-	TArray<FString> CurrentArchivesList;
+	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo) { PlayerInfo = InPlayerInfo; UpdatePlayerInfo(); }
 
-	FPlayerInfo PlayerInfo;
+	void UpdatePlayerInfo() { OnPlayerInfoUpdateDelegate.Broadcast(PlayerInfo); SaveCurrentArchive(); }
+	
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerInfoUpdateDelegate, const FPlayerInfo&);
+	FOnPlayerInfoUpdateDelegate& GetOnPlayerInfoUpdateDelegate() {return OnPlayerInfoUpdateDelegate;}
+private:
+	FOnPlayerInfoUpdateDelegate OnPlayerInfoUpdateDelegate;
+
 	FString CurrentSaveArchiveName;
+	FPlayerInfo PlayerInfo;
+	TArray<FString> CurrentArchivesList;
 };

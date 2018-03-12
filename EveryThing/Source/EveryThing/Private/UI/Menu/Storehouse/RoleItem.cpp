@@ -11,33 +11,35 @@ void URoleItem::InitializeRoleItem_Implementation(const FName& InRoleName, int32
 
 	RoleName = InRoleName;
 
-	UpdateRoleItemDisplay(RoleName, InCost, bInHaveGoods);
+	InitializeRoleItemDisplay(RoleName, bInHaveGoods);
 }
 
-void URoleItem::OnRoleItemClicked()
+void URoleItem::InitializeRoleItemDisplay_Implementation(const FName& InRoleName, bool bInHaveGoods)
 {
-	if (HaveGoods())
-	{
+	UpdateRoleItemDisplay(bInHaveGoods);
+}
 
-	}
-	else
-	{
-		BuyGoodsItem();
-	}
+void URoleItem::OnBuyRoleItem()
+{
+	BuyGoodsItem();
 }
 
 
 bool URoleItem::BuyGoodsItem()
 {
-	if (Super::BuyGoodsItem())
+	if (IsHaveEnoughMoney())
 	{
 		UEveryThingGameInstance* OwnerETGI = GetOwningPlayer() ? Cast<UEveryThingGameInstance>(GetOwningPlayer()->GetGameInstance()) : nullptr;
 		if (OwnerETGI)
 		{
 			FPlayerInfo& PlayerInfo = OwnerETGI->GetPlayerInfo();
 			PlayerInfo.AllHaveRolesName.Add(RoleName);
+			PlayerInfo.Gold -= GoodCost;
 
-			OwnerETGI->SaveCurrentArchive();
+			OwnerETGI->UpdatePlayerInfo();
+
+			UpdateRoleItemDisplay(true);
+
 			return true;
 		}
 	}

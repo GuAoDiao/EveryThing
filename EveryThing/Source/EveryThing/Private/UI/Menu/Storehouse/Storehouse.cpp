@@ -11,15 +11,23 @@
 void UStorehouse::NativeConstruct()
 {
 	UEveryThingGameInstance* OwnerETGI = GetOwningPlayer() ? Cast<UEveryThingGameInstance>(GetOwningPlayer()->GetGameInstance()) : nullptr;
-	if (OwnerETGI) { InitializeStorehouse(OwnerETGI->GetPlayerInfo()); }
+	if (OwnerETGI)
+	{
+		InitializeStorehouse(OwnerETGI->GetPlayerInfo());
 
+		OwnerETGI->GetOnPlayerInfoUpdateDelegate().AddUObject(this, &UStorehouse::OnPlayerInfoUpdate);
+	}
+	
 	Super::NativeConstruct();
 }
 
 void UStorehouse::InitializeStorehouse_Implementation(const FPlayerInfo& InPlayerInfo)
 {
-	UpdateStorehouseDisplay(InPlayerInfo);
+	InitializeStorehouseDisplay(InPlayerInfo);
+}
 
+void UStorehouse::InitializeStorehouseDisplay_Implementation(const FPlayerInfo& InPlayerInfo)
+{
 	TSubclassOf<UUserWidget> RoleItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("RoleItem");
 	APlayerController* OnwerPC = GetOwningPlayer();
 
@@ -37,8 +45,16 @@ void UStorehouse::InitializeStorehouse_Implementation(const FPlayerInfo& InPlaye
 			}
 		}
 	}
+
+	OnPlayerInfoUpdate(InPlayerInfo);
 }
 
+void UStorehouse::OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo)
+{
+	UpdateRoleItemListDisplay(InPlayerInfo.AllHaveRolesName);
+
+	UpdatePlayerGoldDisplay(InPlayerInfo.Gold);
+}
 
 void UStorehouse::Backup()
 {
