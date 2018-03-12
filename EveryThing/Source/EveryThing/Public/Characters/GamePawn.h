@@ -78,7 +78,7 @@ protected:
 	/// Game Pawn Skin
 public:
 	void AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin);
-	void ToggleToNewPawnSkin(int32 Index, bool bIsCauser = true);
+	void ToggleToNewPawnSkin(int32 Index);
 private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerToggleToNewPawnSkin(int32 Index);

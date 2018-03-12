@@ -169,9 +169,9 @@ FGamePawnForm* AGamePawn::GetGamePawnForm(int32 Index)
 
 void AGamePawn::AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin) { if (InGamePawnSkin) { OwnerGamePawnSkins.Add(InGamePawnSkin); } }
 
-void AGamePawn::ToggleToNewPawnSkin(int32 Index, bool bIsCauser)
+void AGamePawn::ToggleToNewPawnSkin(int32 Index)
 {
-	if (bIsCauser && !HasAuthority())
+	if (Role == ROLE_AutonomousProxy && !HasAuthority())
 	{
 		ServerToggleToNewPawnSkin(Index);
 	}
@@ -186,7 +186,7 @@ void AGamePawn::ToggleToNewPawnSkin(int32 Index, bool bIsCauser)
 }
 bool AGamePawn::ServerToggleToNewPawnSkin_Validate(int32 Index) { return true; }
 void AGamePawn::ServerToggleToNewPawnSkin_Implementation(int32 Index) { ToggleToNewPawnSkin(Index); }
-void AGamePawn::OnRep_CurrentGamePawnSkinIndex() { ToggleToNewPawnSkin(CurrentGamePawnSkinIndex, false); }
+void AGamePawn::OnRep_CurrentGamePawnSkinIndex() { ToggleToNewPawnSkin(CurrentGamePawnSkinIndex); }
 
 void AGamePawn::ToggleToTargetPawnSkin(FGamePawnSkin* TargetGamePawnSkin)
 {
