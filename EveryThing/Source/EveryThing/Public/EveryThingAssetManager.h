@@ -15,7 +15,6 @@
 class UStaticMesh;
 class UParticleSystem;
 class UMaterialInstanceConstant;
-class UUserWidget;
 class UGamePawnManager;
 
 USTRUCT(BlueprintType)

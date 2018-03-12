@@ -156,6 +156,7 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
+/// Role Info
 USTRUCT(BlueprintType)
 struct FRoleInfo : public FTableRowBase
 {
