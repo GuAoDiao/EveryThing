@@ -199,9 +199,9 @@ void APlayerPawnController::ToggleToNewAttackComponent(UAttackComponent* InAttac
 
 	if (InAttackComp)
 	{
-		FMoves* CommonAttack = InAttackComp->GetCommantAttackSkilledness();
+		FGamePawnMoves* CommonAttack = InAttackComp->GetCommantAttackSkilledness();
 		if (CommonAttack) { CommonAttack->RebindInput(InputComponent); }
-		FMoves* SpecialAttack = InAttackComp->GetSpecialAttackSkilledness();
+		FGamePawnMoves* SpecialAttack = InAttackComp->GetSpecialAttackSkilledness();
 		if (SpecialAttack) { SpecialAttack->RebindInput(InputComponent); }
 	}
 }
@@ -214,13 +214,13 @@ void APlayerPawnController::ToggleToNewSkillComponent(USkillComponent* InSkillCo
 
 	if (InSkillComp)
 	{
-		FMoves* FirstSkill = InSkillComp->GetFirstSkillSkilledness();
+		FGamePawnMoves* FirstSkill = InSkillComp->GetFirstSkillSkilledness();
 		if (FirstSkill) { FirstSkill->RebindInput(InputComponent); }
 
-		FMoves* SecondSkill = InSkillComp->GetSecondSkillSkilledness();
+		FGamePawnMoves* SecondSkill = InSkillComp->GetSecondSkillSkilledness();
 		if (SecondSkill) { SecondSkill->RebindInput(InputComponent); }
 
-		FMoves* UltimateSkill = InSkillComp->GetUltimateSkillSkilledness();
+		FGamePawnMoves* UltimateSkill = InSkillComp->GetUltimateSkillSkilledness();
 		if (UltimateSkill) { UltimateSkill->RebindInput(InputComponent); }
 	}
 }

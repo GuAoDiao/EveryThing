@@ -5,6 +5,8 @@
 #include "FootballAttackComponent.h"
 #include "FootballSkillComponent.h"
 
+IMPLEMENT_GAMEPAWNFORM_CLASS("FootballForm", FFootballForm);
+
 FFootballForm::FFootballForm(AGamePawn* InGamePawn) : FGamePawnForm(InGamePawn)
 {
 	AttackCompClass = UFootballAttackComponent::StaticClass();

@@ -173,7 +173,10 @@ T* AEveryThingMenuHUD::CreateAndDisplayWidget(EMenuUIState InNeededUIState, cons
 	if (IsTargetGameUIState(InNeededUIState))
 	{
 		TSubclassOf<UUserWidget> TargetClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(InUserWidgetName);
-		if (!ResultWidget && TargetClass) { ResultWidget = CreateWidget<T>(GetGameInstance(), TargetClass); }
+		if (!ResultWidget && TargetClass)
+		{
+			ResultWidget = CreateWidget<T>(GetGameInstance(), TargetClass);
+		}
 
 		if (ResultWidget)
 		{

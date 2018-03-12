@@ -152,6 +152,10 @@ public:
 	int32 Experience;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FName> AllHaveRolesName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FName> AllHaveRoleSkinsName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FName> AllHaveRoleMovesName;
 };
 
 

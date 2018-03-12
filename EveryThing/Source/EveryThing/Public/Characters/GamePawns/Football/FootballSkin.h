@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/GamePawnSkin.h"
+#include "Characters/Skin/GamePawnSkin.h"
 
 /**
  * 
@@ -12,4 +12,6 @@ class EVERYTHING_API FFootballSkin : public FGamePawnSkin
 {
 public:
 	FFootballSkin(UStaticMeshComponent* StaticMeshComp);
+
+	DECLARE_GAMEPAWNSKIN_CLASS("FootballSkin");
 };

@@ -34,7 +34,7 @@ void USkillComponent::ExcuteUltimateSkill(float AxisValue) {}
 
 void USkillComponent::RebindAll()
 {
-	FirstSkill.RebindFunction((FMoves::SkillednessAction)&USkillComponent::StartFirstSkill, (FMoves::SkillednessAction)&USkillComponent::StopFirstSkill, (FMoves::SkillednessAxis)&USkillComponent::ExcuteFirstSkill);
-	SecondSkill.RebindFunction((FMoves::SkillednessAction)&USkillComponent::StartSecondSkill, (FMoves::SkillednessAction)&USkillComponent::StopSecondSkill, (FMoves::SkillednessAxis)&USkillComponent::ExcuteSecondSkill);
-	UltimateSkill.RebindFunction((FMoves::SkillednessAction)&USkillComponent::StartUltimateSkill, (FMoves::SkillednessAction) &USkillComponent::StopUltimateSkill, (FMoves::SkillednessAxis)&USkillComponent::ExcuteUltimateSkill);
+	FirstSkill.RebindFunction((FGamePawnMoves::SkillednessAction)&USkillComponent::StartFirstSkill, (FGamePawnMoves::SkillednessAction)&USkillComponent::StopFirstSkill, (FGamePawnMoves::SkillednessAxis)&USkillComponent::ExcuteFirstSkill);
+	SecondSkill.RebindFunction((FGamePawnMoves::SkillednessAction)&USkillComponent::StartSecondSkill, (FGamePawnMoves::SkillednessAction)&USkillComponent::StopSecondSkill, (FGamePawnMoves::SkillednessAxis)&USkillComponent::ExcuteSecondSkill);
+	UltimateSkill.RebindFunction((FGamePawnMoves::SkillednessAction)&USkillComponent::StartUltimateSkill, (FGamePawnMoves::SkillednessAction) &USkillComponent::StopUltimateSkill, (FGamePawnMoves::SkillednessAxis)&USkillComponent::ExcuteUltimateSkill);
 }

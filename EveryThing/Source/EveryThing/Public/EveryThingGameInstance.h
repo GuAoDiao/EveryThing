@@ -42,7 +42,7 @@ public:
 	bool IsLoadingMapFinished() const;
 private:
 	class IGameMoviePlayer* LoadingMapMoviePlayer;
-	UPROPERTY(Transient)
+	UPROPERTY()
 	ULoadingMap* LoadingMap;
 
 	//////////////////////////////////////////////////////////////////////////

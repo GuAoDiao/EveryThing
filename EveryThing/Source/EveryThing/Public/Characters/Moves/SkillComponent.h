@@ -17,9 +17,9 @@ public:
 
 	virtual void RebindInputComp(UInputComponent* OwnerInputComp) override;
 
-	inline FMoves* GetFirstSkillSkilledness() { return &FirstSkill; }
-	inline FMoves* GetSecondSkillSkilledness() { return &SecondSkill; }
-	inline FMoves* GetUltimateSkillSkilledness() { return &UltimateSkill; }
+	inline FGamePawnMoves* GetFirstSkillSkilledness() { return &FirstSkill; }
+	inline FGamePawnMoves* GetSecondSkillSkilledness() { return &SecondSkill; }
+	inline FGamePawnMoves* GetUltimateSkillSkilledness() { return &UltimateSkill; }
 
 protected:
 	virtual void StartFirstSkill();
@@ -37,7 +37,7 @@ protected:
 	virtual void RebindAll() override;
 
 protected:
-	FMoves FirstSkill;
-	FMoves SecondSkill;
-	FMoves UltimateSkill;
+	FGamePawnMoves FirstSkill;
+	FGamePawnMoves SecondSkill;
+	FGamePawnMoves UltimateSkill;
 };

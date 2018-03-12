@@ -27,6 +27,6 @@ void UAttackComponent::ExcuteSpecialAttack(float AxisValue) {}
 
 void UAttackComponent::RebindAll()
 {
-	CommonAttack.RebindFunction((FMoves::SkillednessAction)&UAttackComponent::StartCommonAttack, (FMoves::SkillednessAction)&UAttackComponent::StopCommonAttack, (FMoves::SkillednessAxis)&UAttackComponent::ExcuteCommonAttack);
-	SpecialAttack.RebindFunction((FMoves::SkillednessAction)&UAttackComponent::StartSpecialAttack, (FMoves::SkillednessAction)&UAttackComponent::StopSpecialAttack, (FMoves::SkillednessAxis)&UAttackComponent::ExcuteSpecialAttack);
+	CommonAttack.RebindFunction((FGamePawnMoves::SkillednessAction)&UAttackComponent::StartCommonAttack, (FGamePawnMoves::SkillednessAction)&UAttackComponent::StopCommonAttack, (FGamePawnMoves::SkillednessAxis)&UAttackComponent::ExcuteCommonAttack);
+	SpecialAttack.RebindFunction((FGamePawnMoves::SkillednessAction)&UAttackComponent::StartSpecialAttack, (FGamePawnMoves::SkillednessAction)&UAttackComponent::StopSpecialAttack, (FGamePawnMoves::SkillednessAxis)&UAttackComponent::ExcuteSpecialAttack);
 }

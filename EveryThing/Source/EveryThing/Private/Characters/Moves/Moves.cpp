@@ -6,7 +6,7 @@
 #include "Characters/Moves/MovesComponent.h"
 
 
-FMoves::FMoves(UMovesComponent* InMovesComp)
+FGamePawnMoves::FGamePawnMoves(UMovesComponent* InMovesComp)
 {
 	
 	bIsEnableAxis = bIsEnableActionPressed = bIsEnableActionReleased = false;
@@ -15,14 +15,14 @@ FMoves::FMoves(UMovesComponent* InMovesComp)
 	ExcuteSkilledness = nullptr;
 }
 
-void FMoves::RebindFunction(SkillednessAction InPressedFunc, SkillednessAction InReleasedFunc, SkillednessAxis InExcuteFunc)
+void FGamePawnMoves::RebindFunction(SkillednessAction InPressedFunc, SkillednessAction InReleasedFunc, SkillednessAxis InExcuteFunc)
 {
 	StartSkilledness = bIsEnableActionPressed ? InPressedFunc : nullptr;
 	StopSkilledness = bIsEnableActionReleased ? InReleasedFunc : nullptr;
 	ExcuteSkilledness = bIsEnableAxis ? InExcuteFunc : nullptr;
 }
 
-void FMoves::RebindInput(UInputComponent* OwnerInputComp)
+void FGamePawnMoves::RebindInput(UInputComponent* OwnerInputComp)
 {
 	if (OwnerInputComp && MovesComp)
 	{

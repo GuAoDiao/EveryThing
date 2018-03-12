@@ -5,12 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 
 #include "EveryThingAssetManager.h"
-
-#include "Characters/GamePawns/Football/FootballForm.h"
-#include "Characters/GamePawns/Football/FootballTestForm.h"
-
-#include "Characters/GamePawns/Football/FootballSkin.h"
-#include "Characters/GamePawns/Football/FootballFireSkin.h"
+#include "Characters/GamePawnManager.h"
 
 AFootballPawn::AFootballPawn()
 {
@@ -19,15 +14,19 @@ AFootballPawn::AFootballPawn()
 	UStaticMesh* FootballMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Football"));
 	if (FootballMesh) { StaticMeshComp->SetStaticMesh(FootballMesh); }
 
-	AddGamePawnSkin(new FFootballSkin(StaticMeshComp));
-	AddGamePawnSkin(new FFootballFireSkin(StaticMeshComp));
+	FGamePawnSkin* GamePawnSkin;
+	GamePawnSkin = UGamePawnManager::GetGamePawnSkinFromName("FootballSkin", StaticMeshComp);
+	if (GamePawnSkin) { AddGamePawnSkin(GamePawnSkin); }
+	GamePawnSkin = UGamePawnManager::GetGamePawnSkinFromName("FootballFireSkin", StaticMeshComp);
+	if (GamePawnSkin) { AddGamePawnSkin(GamePawnSkin); }
 
 	ToggleToNewPawnSkin(0);
 
-	// base form
-	AddGamePawnForm(new FFootballForm(this));
-	// test form
-	AddGamePawnForm(new FFootballTestForm(this));
+	FGamePawnForm* GamePawnForm;
+	GamePawnForm = UGamePawnManager::GetGamePawnFormFromName("FootballForm", this);
+	if (GamePawnForm) { AddGamePawnForm(GamePawnForm); }
+	GamePawnForm = UGamePawnManager::GetGamePawnFormFromName("FootballTestForm", this);
+	if (GamePawnForm) { AddGamePawnForm(GamePawnForm); }
 
 	ToggleToNewPawnForm(0);
 }

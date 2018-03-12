@@ -7,13 +7,13 @@
 class UMovesComponent;
 class UInputComponent;
 
-struct EVERYTHING_API FMoves
+struct EVERYTHING_API FGamePawnMoves
 {
 public:
 	typedef void(UMovesComponent::*SkillednessAction)();
 	typedef void(UMovesComponent::*SkillednessAxis)(float AxisValue);
 
-	FMoves(UMovesComponent* InMovesComp = nullptr);
+	FGamePawnMoves(UMovesComponent* InMovesComp = nullptr);
 private:
 	UMovesComponent* MovesComp;
 public:

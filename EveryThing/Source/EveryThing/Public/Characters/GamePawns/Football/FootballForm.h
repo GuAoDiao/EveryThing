@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 
-#include "GamePawnForm.h"
+#include "Characters/Form/GamePawnForm.h"
 
 class EVERYTHING_API FFootballForm : public FGamePawnForm
 {
 public:
 	FFootballForm(AGamePawn* InGamePawn);
+
+	DECLARE_GAMEPAWNFORM_CLASS("FootballForm");
 };

@@ -16,8 +16,8 @@ public:
 
 	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) override;
 
-	inline FMoves* GetCommantAttackSkilledness() { return &CommonAttack; }
-	inline FMoves* GetSpecialAttackSkilledness() { return &SpecialAttack; }
+	inline FGamePawnMoves* GetCommantAttackSkilledness() { return &CommonAttack; }
+	inline FGamePawnMoves* GetSpecialAttackSkilledness() { return &SpecialAttack; }
 protected:
 	virtual void StartCommonAttack();
 	virtual void StopCommonAttack();
@@ -30,6 +30,6 @@ protected:
 	virtual void RebindAll() override;
 
 protected:
-	FMoves CommonAttack;
-	FMoves SpecialAttack;
+	FGamePawnMoves CommonAttack;
+	FGamePawnMoves SpecialAttack;
 };

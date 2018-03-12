@@ -7,6 +7,10 @@
 
 #include "EveryThingAssetManager.h"
 
+
+IMPLEMENT_GAMEPAWNSKIN_CLASS("GamePawnSkin", FGamePawnSkin);
+
+
 FGamePawnSkin::FGamePawnSkin(UStaticMeshComponent* StaticMeshComp)
 {
 	OwnerStaticMeshComp = StaticMeshComp;

@@ -8,8 +8,8 @@
 
 #include "EveryThingAssetManager.h"
 #include "Online/EveryThingGameMode.h"
-#include "Characters/GamePawnForm.h"
-#include "Characters/GamePawnSkin.h"
+#include "Characters/Form/GamePawnForm.h"
+#include "Characters/Skin/GamePawnSkin.h"
 #include "Characters/Moves/AttackComponent.h"
 #include "Characters/Moves/SkillComponent.h"
 #include "Characters/PlayerPawnController.h"

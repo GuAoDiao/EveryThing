@@ -4,6 +4,8 @@
 
 #include "EveryThingAssetManager.h"
 
+IMPLEMENT_GAMEPAWNSKIN_CLASS("FootballFireSkin", FFootballFireSkin);
+
 FFootballFireSkin::FFootballFireSkin(UStaticMeshComponent* StaticMeshComp) : FGamePawnSkin(StaticMeshComp)
 {
 	MaterialNames.Add(TEXT("FootballBlack_Fire"));

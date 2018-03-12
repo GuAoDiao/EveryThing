@@ -11,4 +11,5 @@ class EVERYTHING_API FFootballTestForm : public FGamePawnForm
 public:
 	FFootballTestForm(AGamePawn* InGamePawn);
 
+	DECLARE_GAMEPAWNFORM_CLASS("FootballTestForm");
 };

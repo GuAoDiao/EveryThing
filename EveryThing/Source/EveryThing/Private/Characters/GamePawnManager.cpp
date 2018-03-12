@@ -4,6 +4,12 @@
 
 #include "Characters/GamePawn.h"
 #include "EveryThingAssetManager.h"
+#include "Characters/Skin/GamePawnSkin.h"
+#include "Characters/Form/GamePawnForm.h"
+
+
+TMap<FName, FGamePawnSkinClassInfo*> UGamePawnManager::AllGamePawnSkinClassInfo;
+TMap<FName, FGamePawnFormClassInfo*> UGamePawnManager::AllGamePawnFormClassInfo;
 
 UGamePawnManager::UGamePawnManager()
 {
@@ -56,4 +62,32 @@ FName UGamePawnManager::GetRoleNameFromClass(UClass* RoleClass) const
 const TMap<FName, FRoleInfo>& UGamePawnManager::GetAllRolesInfo() const
 {
 	return AllRolesInfo;
+}
+
+
+FGamePawnSkin* UGamePawnManager::GetGamePawnSkinFromName(const FName& Name, UStaticMeshComponent* InStaticMeshComp)
+{
+	if (AllGamePawnSkinClassInfo.Contains(Name))
+	{
+		return AllGamePawnSkinClassInfo[Name]->GetClass(InStaticMeshComp);
+	}
+	return nullptr;
+}
+
+void UGamePawnManager::RegisterGamePawnSkinWithName(const FName& Name, FGamePawnSkinClassInfo* ClassInfo)
+{
+	AllGamePawnSkinClassInfo.Add(Name, ClassInfo);
+}
+
+FGamePawnForm* UGamePawnManager::GetGamePawnFormFromName(const FName& Name, AGamePawn* InGamePawn)
+{
+	if (AllGamePawnFormClassInfo.Contains(Name))
+	{
+		return AllGamePawnFormClassInfo[Name]->GetClass(InGamePawn);
+	}
+	return nullptr;
+}
+void UGamePawnManager::RegisterGamePawnFormWithName(const FName& Name, FGamePawnFormClassInfo* ClassInfo)
+{
+	AllGamePawnFormClassInfo.Add(Name, ClassInfo);
 }
