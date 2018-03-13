@@ -18,8 +18,15 @@ class EVERYTHING_API USelectFormsBox : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+	UFUNCTION(BlueprintNativeEvent)
+	void InitializeSelectFormsBoxDisplay(const FName& TargetRoleName);
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateSelectFormsBoxDisplay(const TArray<FName>& AllHaveRoleNames);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AddSelectItem(class USelectItem* SelectItem);
+
 
 	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);	
 };

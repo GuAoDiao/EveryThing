@@ -116,9 +116,7 @@ void AGamePawn::AddDurability_Implementation(float InOffset, EElementType InType
 
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn Form
-void AGamePawn::ToggleToNewFormWithIndex(int32 Index)
-{
-}
+void AGamePawn::ToggleToNewFormWithIndex(int32 Index) { if (AllGamePawnFormName.IsValidIndex(Index)) { ToggleToTargetForm(AllGamePawnFormName[Index]); } }
 
 bool AGamePawn::ServerToggleToTargetForm_Validate(const FName& FormName) { return true; }
 void AGamePawn::ServerToggleToTargetForm_Implementation(const FName& FormName) { ToggleToTargetForm(FormName); }
@@ -126,28 +124,35 @@ void AGamePawn::OnRep_CurrentGamePawnFormName() { ToggleToTargetForm(CurrentGame
 
 void AGamePawn::ToggleToTargetForm(const FName& FormName)
 {
-	if (!AllHaveGamePawnFormName.Contains(FormName)) { return; }
+	if (!AllHaveGamePawnFormName.Contains(FormName))
+	{
+		FFormatNamedArguments Arguments;
+		Arguments.Add(TEXT("FormName"), FText::FromName(FormName));
+		OnToggleToTargetSkinFailureDelegate.Broadcast(FormName, FText::Format(LOCTEXT("ToggleSkinWhenNotHaveTargetForm", "Don't have Target form name : {FormName}."), Arguments));
+		return;
+	}
 
-	if (FormName == CurrentGamePawnFormName) { return; }
-
-
+	if (FormName == CurrentGamePawnFormName)
+	{
+		OnToggleToTargetFormFailureDelegate.Broadcast(FormName, LOCTEXT("ToggleSkinWhenSameForm", "Already is the target Form, needn't to toggle."));
+		return;
+	}
+	
 	if (Role == ROLE_AutonomousProxy && !HasAuthority())
 	{
 		ServerToggleToTargetForm(FormName);
 	}
 
-	CurrentGamePawnFormName = FormName;
-
-
-	UE_LOG(LogTemp, Log, TEXT("-_- Toggle To Pawn Form (%s)."), *FormName.ToString());
-	FGamePawnForm* TargetGamePawnForm = UGamePawnManager::GetGamePawnFormFromName(FormName, this);
-
 	if (CurrentGamePawnForm) { CurrentGamePawnForm->UnloadGamePawnForm();}
 	delete CurrentGamePawnForm;
 
+	FGamePawnForm* TargetGamePawnForm = UGamePawnManager::GetGamePawnFormFromName(FormName, this);
+	CurrentGamePawnFormName = FormName;
 	CurrentGamePawnForm = TargetGamePawnForm;
 
 	if (CurrentGamePawnForm) { CurrentGamePawnForm->LoadGamePawnForm(); }
+
+	OnToggleToTargetSkinSuccessDelegate.Broadcast(FormName);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -179,13 +184,12 @@ void AGamePawn::ToggleToTargetSkin(const FName& SkinName)
 	{
 		ServerToggleToTargetSkin(SkinName);
 	}
-
-	CurrentGamePawnSkinName = SkinName;
-
+	
 	if (CurrentGamePawnSkin) { CurrentGamePawnSkin->UnloadGamePawnSkin(); }
 	delete CurrentGamePawnSkin;
 
 	FGamePawnSkin* TargetGamePawnSkin = UGamePawnManager::GetGamePawnSkinFromName(SkinName, StaticMeshComp);
+	CurrentGamePawnSkinName = SkinName;
 	CurrentGamePawnSkin = TargetGamePawnSkin;
 
 	if (CurrentGamePawnSkin) { CurrentGamePawnSkin->LoadGamePawnSkin(); }

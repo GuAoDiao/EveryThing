@@ -185,6 +185,7 @@ bool UEveryThingGameInstance::CreateArchive(const FString& ArchiveName, const FS
 		CurrentSaveGame->PlayerInfo.Experience = 0;
 		CurrentSaveGame->PlayerInfo.AllHaveRoleNames.Add("Football");
 		CurrentSaveGame->PlayerInfo.AllHaveGamePawnSkinNames.Add("FootballSkin");
+		CurrentSaveGame->PlayerInfo.AllHaveGamePawnFormNames.Add("FootballForm");
 
 		if (UGameplayStatics::SaveGameToSlot(CurrentSaveGame, ArchiveName, 0))
 		{
