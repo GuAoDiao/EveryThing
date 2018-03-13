@@ -12,9 +12,9 @@
 #include "Characters/PlayerPawns/PlayerChairPawn.h"
 #include "Characters/PlayerPawns/PlayerFootballPawn.h"
 
-void AEveryThingPlayerState::BeginPlay()
+void AEveryThingPlayerState::OnConstruction(const FTransform& Transform)
 {
-	Super::BeginPlay();
+	Super::OnConstruction(Transform);
 	
 	UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetWorld()->GetGameInstance()) : nullptr;
 	if (OwnerETGI) { SetPlayerInfo( OwnerETGI->GetPlayerInfo()); }

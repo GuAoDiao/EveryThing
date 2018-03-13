@@ -6,8 +6,6 @@
 #include "Characters/Moves/SkillComponent.h"
 #include "Characters/Moves/AttackComponent.h"
 
-IMPLEMENT_GAMEPAWNFORM_CLASS("GamePawnForm", FGamePawnForm);
-
 FGamePawnForm::FGamePawnForm(AGamePawn* InGamePawn)
 {
 	OwnerGamePawn = InGamePawn;

@@ -151,11 +151,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Experience;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FName> AllHaveRolesName;
+	TArray<FName> AllHaveRoleNames;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FName> AllHaveRoleSkinsName;
+	TArray<FName> AllHaveGamePawnSkinNames;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FName> AllHaveRoleMovesName;
+	TArray<FName> AllHaveGamePawnFormNames;
 };
 
 

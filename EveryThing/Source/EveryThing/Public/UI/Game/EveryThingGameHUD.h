@@ -57,6 +57,9 @@ public:
 	void RemoveGameMenu();
 
 	void ToggleSelectRolesBox(bool bIsDisplay);
+	void ToggleSelectSkinsBox(bool bIsDisplay);
+	void ToggleSelectFormsBox(bool bIsDisplay);
+
 private:
 	UPROPERTY(Transient)
 	class UGameMenu* GameMenu;

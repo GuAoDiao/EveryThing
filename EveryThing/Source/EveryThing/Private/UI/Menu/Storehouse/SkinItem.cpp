@@ -1,31 +1,31 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "RoleItem.h"
+#include "SkinItem.h"
 
 #include "EveryThingGameInstance.h"
 
 
-void URoleItem::InitializeRoleItem_Implementation(const FName& InRoleName, int32 InCost, bool bInHaveGoods)
+void USkinItem::InitializeSkinItem_Implementation(const FName& InSkinName, int32 InCost, bool bInHaveGoods)
 {
 	InitializeGoodsItem(InCost, bInHaveGoods);
 
-	RoleName = InRoleName;
+	SkinName = InSkinName;
 
-	InitializeRoleItemDisplay(RoleName, bInHaveGoods);
+	InitializeSkinItemDisplay(SkinName, bInHaveGoods);
 }
 
-void URoleItem::InitializeRoleItemDisplay_Implementation(const FName& InRoleName, bool bInHaveGoods)
+void USkinItem::InitializeSkinItemDisplay_Implementation(const FName& InSkinName, bool bInHaveGoods)
 {
-	UpdateRoleItemDisplay(bInHaveGoods);
+	UpdateSkinItemDisplay(bInHaveGoods);
 }
 
-void URoleItem::OnBuyRoleItem()
+void USkinItem::OnBuyRoleItem()
 {
 	BuyGoodsItem();
 }
 
 
-bool URoleItem::BuyGoodsItem()
+bool USkinItem::BuyGoodsItem()
 {
 	if (IsHaveEnoughMoney())
 	{
@@ -33,12 +33,12 @@ bool URoleItem::BuyGoodsItem()
 		if (OwnerETGI)
 		{
 			FPlayerInfo& PlayerInfo = OwnerETGI->GetPlayerInfo();
-			PlayerInfo.AllHaveRoleNames.AddUnique(RoleName);
+			PlayerInfo.AllHaveGamePawnSkinNames.AddUnique(SkinName);
 			PlayerInfo.Gold -= GoodCost;
 
 			OwnerETGI->UpdatePlayerInfo();
 
-			UpdateRoleItemDisplay(true);
+			UpdateSkinItemDisplay(true);
 
 			return true;
 		}

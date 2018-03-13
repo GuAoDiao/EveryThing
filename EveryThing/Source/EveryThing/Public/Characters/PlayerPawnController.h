@@ -73,15 +73,14 @@ public:
 	/// Toggle Role
 
 public:
+	const FName& GetCurrentRoleName() const { return CurrentRoleName; }
 	void StartToggleRole();
 	void StopToggleRole();
 
 	bool bIsWantedTogglePawn;
 
 	void ToggleRoleWithIndex(int32 NumberIndex);
-
-
-
+	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetRoleSuccessDelegate, const FName& /* TargetRoleName */);
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetRoleFailureDelegate, const FName& /* TargetRoleName */, const FText&  /* ErrorInfo */);
 
@@ -98,4 +97,5 @@ private:
 
 	UPROPERTY(Transient, Replicated)
 	FName CurrentRoleName;
+	TArray<FName> AllRoleNames;
 };

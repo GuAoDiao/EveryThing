@@ -74,6 +74,19 @@ FGamePawnSkin* UGamePawnManager::GetGamePawnSkinFromName(const FName& Name, USta
 	return nullptr;
 }
 
+TArray<FName> UGamePawnManager::GetAllGamePawnSkinWithRoleName(const FName& RoleName)
+{
+	TArray<FName> Result;
+	for (TMap<FName, FGamePawnSkinClassInfo*>::TConstIterator GamePawnSkinClassInfoItr(AllGamePawnSkinClassInfo); GamePawnSkinClassInfoItr; ++GamePawnSkinClassInfoItr)
+	{
+		if (GamePawnSkinClassInfoItr.Value() && GamePawnSkinClassInfoItr.Value()->RoleName == RoleName)
+		{
+			Result.AddUnique(GamePawnSkinClassInfoItr.Value()->SkinName);
+		}
+	}
+	return Result;
+}
+
 void UGamePawnManager::RegisterGamePawnSkinWithName(const FName& Name, FGamePawnSkinClassInfo* ClassInfo)
 {
 	AllGamePawnSkinClassInfo.Add(Name, ClassInfo);
@@ -87,6 +100,22 @@ FGamePawnForm* UGamePawnManager::GetGamePawnFormFromName(const FName& Name, AGam
 	}
 	return nullptr;
 }
+
+
+TArray<FName> UGamePawnManager::GetAllGamePawnFormWithRoleName(const FName& RoleName)
+{
+	TArray<FName> Result;
+	for (TMap<FName, FGamePawnFormClassInfo*>::TConstIterator GamePawnFormClassInfoItr(AllGamePawnFormClassInfo); GamePawnFormClassInfoItr; ++GamePawnFormClassInfoItr)
+	{
+		if (GamePawnFormClassInfoItr.Value() && GamePawnFormClassInfoItr.Value()->RoleName == RoleName)
+		{
+			Result.AddUnique(GamePawnFormClassInfoItr.Value()->FormName);
+		}
+	}
+	return Result;
+}
+
+
 void UGamePawnManager::RegisterGamePawnFormWithName(const FName& Name, FGamePawnFormClassInfo* ClassInfo)
 {
 	AllGamePawnFormClassInfo.Add(Name, ClassInfo);

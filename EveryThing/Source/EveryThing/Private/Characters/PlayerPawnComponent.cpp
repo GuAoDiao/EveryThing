@@ -7,6 +7,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "TimerManager.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -50,6 +51,53 @@ UPlayerPawnComponent::UPlayerPawnComponent()
 	/// Attack Target
 	CurrentAttackTarget = nullptr;
 	LastAttackTarget = nullptr;
+}
+
+
+void UPlayerPawnComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerPawnComponent::DelayBindEveryThingPlayerState, 1.f, false);
+}
+
+
+void UPlayerPawnComponent::DelayBindEveryThingPlayerState()
+{
+	APlayerController* OwnerPC = OwnerPawn ? Cast<APlayerController>(OwnerPawn->GetController()) : nullptr;
+	AEveryThingPlayerState* OwnerETPS = OwnerPC ? Cast<AEveryThingPlayerState>(OwnerPC->PlayerState) : nullptr;
+	if (OwnerETPS)
+	{
+		OnUpdatePlayerInfo(OwnerETPS->GetPlayerInfo());
+		OwnerETPS->GetOnUpdatePlayerInfoDelegate().AddUObject(this, &UPlayerPawnComponent::OnUpdatePlayerInfo);
+	}
+}
+
+void UPlayerPawnComponent::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
+{
+	if (OwnerPawn)
+	{
+		OwnerPawn->AllHaveGamePawnFormName.Empty();
+		for (const FName& FormName : OwnerPawn->AllGamePawnFormName)
+		{
+			UE_LOG(LogTemp, Log, TEXT("-_- current pawn has FormName: %s"), *FormName.ToString());
+			if (InPlayerInfo.AllHaveGamePawnFormNames.Contains(FormName))
+			{
+				OwnerPawn->AllHaveGamePawnFormName.AddUnique(FormName);
+			}
+		}
+
+		OwnerPawn->AllHaveGamePawnSkinName.Empty();
+		for (const FName& SkinName : OwnerPawn->AllGamePawnSkinName)
+		{
+			UE_LOG(LogTemp, Log, TEXT("-_- current pawn has SkinName: %s"), *SkinName.ToString());
+			if (InPlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinName))
+			{
+				OwnerPawn->AllHaveGamePawnSkinName.AddUnique(SkinName);
+			}
+		}
+	}
 }
 
 void UPlayerPawnComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
@@ -201,18 +249,7 @@ void UPlayerPawnComponent::OnPressNumberKeyboard(int32 NumberIndex)
 	}
 	else
 	{
-		if (bIsWantedTogglePawnSkin)
-		{
-			TogglePawnSkin(NumberIndex);
-		}
-		else if (bIsWantedTogglePawnForm)
-		{
-			TogglePawnForm(NumberIndex);
-		}
-		else
-		{
-			UseProp(NumberIndex);
-		}
+		UseProp(NumberIndex);
 	}
 }
 
@@ -221,5 +258,45 @@ void UPlayerPawnComponent::UseProp(int32 NumberIndex)
 	UE_LOG(LogTemp, Log, TEXT("-_- Use Prop Of Index: %d"), NumberIndex)
 }
 
-void UPlayerPawnComponent::TogglePawnForm(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewPawnForm(NumberIndex); } }
-void UPlayerPawnComponent::TogglePawnSkin(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewPawnSkin(NumberIndex); } }
+void UPlayerPawnComponent::TogglePawnForm(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewFormWithIndex(NumberIndex); } }
+void UPlayerPawnComponent::TogglePawnSkin(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewSkinWithIndex(NumberIndex); } }
+
+
+AEveryThingGameHUD* UPlayerPawnComponent::GetEveryThingGameHUD() const
+{
+	APlayerController* OwnerPC = OwnerPawn ? Cast<APlayerController>(OwnerPawn->GetController()) : nullptr;
+	return OwnerPC ? Cast<AEveryThingGameHUD>(OwnerPC->GetHUD()) : nullptr;
+}
+
+void UPlayerPawnComponent::StartTogglePawnSkin()
+{
+	AEveryThingGameHUD* OwnerETGH = GetEveryThingGameHUD();
+	if (OwnerETGH) { OwnerETGH->ToggleSelectSkinsBox(true); }
+
+	GetOnPressNumberKeyboardDelegate().BindUObject(this, &UPlayerPawnComponent::TogglePawnSkin);
+}
+
+void UPlayerPawnComponent::StopTogglePawnSkin()
+{
+	AEveryThingGameHUD* OwnerETGH = GetEveryThingGameHUD();
+	if (OwnerETGH) { OwnerETGH->ToggleSelectSkinsBox(false); }
+
+	GetOnPressNumberKeyboardDelegate().Unbind();
+}
+
+
+void UPlayerPawnComponent::StartTogglePawnForm()
+{
+	AEveryThingGameHUD* OwnerETGH = GetEveryThingGameHUD();
+	if (OwnerETGH) { OwnerETGH->ToggleSelectFormsBox(true); }
+
+	GetOnPressNumberKeyboardDelegate().BindUObject(this, &UPlayerPawnComponent::TogglePawnForm);
+}
+
+void UPlayerPawnComponent::StopTogglePawnForm()
+{
+	AEveryThingGameHUD* OwnerETGH = GetEveryThingGameHUD();
+	if (OwnerETGH) { OwnerETGH->ToggleSelectFormsBox(false); }
+
+	GetOnPressNumberKeyboardDelegate().Unbind();
+}

@@ -22,7 +22,7 @@
 #include "Characters/GamePawnManager.h"
 
 
-#define LOCTEXT_NAMESPACE "Everything_Online_PlayerPawnController"
+#define LOCTEXT_NAMESPACE "Everything_Characters_PlayerPawnController"
 
 APlayerPawnController::APlayerPawnController()
 {
@@ -35,6 +35,12 @@ void APlayerPawnController::BeginPlay()
 
 	UClass* CurrentPawnClass = GetPawn() ? GetPawn()->GetClass() : nullptr;
 	CurrentRoleName = CurrentPawnClass ? UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleNameFromClass(CurrentPawnClass) : NAME_None;
+
+	const TMap<FName, FRoleInfo>& AllRolesInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllRolesInfo();
+	for (TMap<FName, FRoleInfo>::TConstIterator It(AllRolesInfo); It; ++It)
+	{
+		AllRoleNames.Add(It.Key());
+	}
 
 	SetInputMode(FInputModeGameOnly());
 }
@@ -250,17 +256,8 @@ void APlayerPawnController::StopToggleRole()
 
 void APlayerPawnController::ToggleRoleWithIndex(int32 NumberIndex)
 {
-	// Get owning EverythingPlayerState and the world is exists
-	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
-	if (!OwnerETPS)
-	{
-		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), LOCTEXT("ToggleRoleWhenNotFonutPlayer", "Can't find Owner Player State."));
-		return;
-	}
-
 	// try to find Target Role Name is exists
-	const FPlayerInfo& PlayerInfo = OwnerETPS->GetPlayerInfo();
-	if (!PlayerInfo.AllHaveRolesName.IsValidIndex(NumberIndex))
+	if (!AllRoleNames.IsValidIndex(NumberIndex))
 	{
 		FFormatNamedArguments Arguments;
 		Arguments.Add(TEXT("Index"), NumberIndex);
@@ -268,7 +265,7 @@ void APlayerPawnController::ToggleRoleWithIndex(int32 NumberIndex)
 		return;
 	}
 
-	ToggleRoleWithName(PlayerInfo.AllHaveRolesName[NumberIndex]);
+	ToggleRoleWithName(AllRoleNames[NumberIndex]);
 }
 
 void APlayerPawnController::ToggleRoleWithName(const FName& TargetRoleName)
@@ -277,17 +274,17 @@ void APlayerPawnController::ToggleRoleWithName(const FName& TargetRoleName)
 	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
 	if (!OwnerETPS)
 	{
-		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), LOCTEXT("ToggleRoleWhenNotFonutPlayer", "Can't find Owner Player State."));
+		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("ToggleRoleWhenNotFonutPlayer", "Can't find Owner Player State."));
 		return;
 	}
 	
 	// try to find Target Role Name is exists
 	const FPlayerInfo& PlayerInfo = OwnerETPS->GetPlayerInfo();
-	if (!PlayerInfo.AllHaveRolesName.Contains(TargetRoleName))
+	if (!PlayerInfo.AllHaveRoleNames.Contains(TargetRoleName))
 	{
 		FFormatNamedArguments Arguments;
 		Arguments.Add(TEXT("TargetRoleName"), FText::FromName(TargetRoleName));
-		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), FText::Format(LOCTEXT("ToggleRoleWhenNotFoundTargetRole", "Can'f find Target role name : {TargetRoleName}."), Arguments));
+		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, FText::Format(LOCTEXT("ToggleRoleWhenNotHaveTargetRole", "Don't have Target role name : {TargetRoleName}."), Arguments));
 		return;
 	}
 	

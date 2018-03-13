@@ -9,24 +9,20 @@
 
 AFootballPawn::AFootballPawn()
 {
-	ResetInfoFromDataTable("Football");
+	RoleName = "Football";
+
+	ResetInfoFromDataTable(RoleName);
 		
-	UStaticMesh* FootballMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(TEXT("Football"));
+	UStaticMesh* FootballMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(RoleName);
 	if (FootballMesh) { StaticMeshComp->SetStaticMesh(FootballMesh); }
 
-	FGamePawnSkin* GamePawnSkin;
-	GamePawnSkin = UGamePawnManager::GetGamePawnSkinFromName("FootballSkin", StaticMeshComp);
-	if (GamePawnSkin) { AddGamePawnSkin(GamePawnSkin); }
-	GamePawnSkin = UGamePawnManager::GetGamePawnSkinFromName("FootballFireSkin", StaticMeshComp);
-	if (GamePawnSkin) { AddGamePawnSkin(GamePawnSkin); }
+	AllGamePawnSkinName = UGamePawnManager::GetAllGamePawnSkinWithRoleName(RoleName);
+	
+	AllHaveGamePawnSkinName.Add("FootballSkin");
+	ToggleToTargetSkin("FootballSkin");
 
-	ToggleToNewPawnSkin(0);
+	AllGamePawnFormName = UGamePawnManager::GetAllGamePawnFormWithRoleName(RoleName);
 
-	FGamePawnForm* GamePawnForm;
-	GamePawnForm = UGamePawnManager::GetGamePawnFormFromName("FootballForm", this);
-	if (GamePawnForm) { AddGamePawnForm(GamePawnForm); }
-	GamePawnForm = UGamePawnManager::GetGamePawnFormFromName("FootballTestForm", this);
-	if (GamePawnForm) { AddGamePawnForm(GamePawnForm); }
-
-	ToggleToNewPawnForm(0);
+	AllHaveGamePawnFormName.Add("FootballForm");
+	ToggleToTargetForm("FootballForm");
 }

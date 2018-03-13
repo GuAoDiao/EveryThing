@@ -10,11 +10,13 @@ class FGamePawnSkin;
 class FGamePawnSkinClassInfo
 {
 public:
-	FGamePawnSkinClassInfo(const FName& InName, GamePawnSkinCreateFunc InCreateFunc)
+	FGamePawnSkinClassInfo(const FName& InName, const FName& InRoleName, int32 InCost, GamePawnSkinCreateFunc InCreateFunc)
 	{
 		UGamePawnManager::RegisterGamePawnSkinWithName(InName, this);
-		ClassName = InName;
+		SkinName = InName;
+		RoleName = InRoleName;
 		CreateFunc = InCreateFunc;
+		Cost = InCost;
 	}
 
 	FGamePawnSkin* GetClass(UStaticMeshComponent* InStaticMeshComp)
@@ -22,6 +24,8 @@ public:
 		return CreateFunc ? (*CreateFunc)(InStaticMeshComp) : nullptr;
 	}
 
-	FName ClassName;
+	FName SkinName;
+	FName RoleName;
+	int32 Cost;
 	GamePawnSkinCreateFunc CreateFunc;
 };

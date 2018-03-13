@@ -42,16 +42,18 @@ private:
 public:
 
 	static FGamePawnSkin* GetGamePawnSkinFromName(const FName& Name, UStaticMeshComponent* InStaticMeshComp);
+	static TArray<FName> GetAllGamePawnSkinWithRoleName(const FName& RoleName);
 	static void RegisterGamePawnSkinWithName(const FName& Name, FGamePawnSkinClassInfo* ClassInfo);
-
+	static const TMap<FName, FGamePawnSkinClassInfo*>& GetAllGamePawnSkinClassInfo() {return AllGamePawnSkinClassInfo; }
 private:
 	static TMap<FName, FGamePawnSkinClassInfo*> AllGamePawnSkinClassInfo;
 	//////////////////////////////////////////////////////////////////////////
 	/// Role Form
 public:
 	static FGamePawnForm* GetGamePawnFormFromName(const FName& Name, AGamePawn* InGamePawn);
+	static TArray<FName> GetAllGamePawnFormWithRoleName(const FName& RoleName);
 	static void RegisterGamePawnFormWithName(const FName& Name, FGamePawnFormClassInfo* ClassInfo);
-
+	static const TMap<FName, FGamePawnFormClassInfo*>& GetAllGamePawnFormClassInfo() { return AllGamePawnFormClassInfo; }
 private:
 	static TMap<FName, FGamePawnFormClassInfo*> AllGamePawnFormClassInfo;
 };

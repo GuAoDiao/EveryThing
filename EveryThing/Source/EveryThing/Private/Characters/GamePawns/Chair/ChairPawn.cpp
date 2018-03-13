@@ -9,6 +9,8 @@
 
 AChairPawn::AChairPawn()
 {
+	RoleName = "Chair";
+
 	ResetInfoFromDataTable("Chair");
 
 	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
@@ -20,7 +22,6 @@ AChairPawn::AChairPawn()
 	UMaterialInstanceConstant* ChairWoodMaterial = AssetManager->GetMaterialFromName("ChairWood");
 	UMaterialInstanceConstant* ChairMatMaterial = AssetManager->GetMaterialFromName("ChairMat");
 	UMaterialInstanceConstant* ChairTidyMaterial = AssetManager->GetMaterialFromName("ChairTidy");
-
 
 	if (ChairWoodMaterial && ChairMatMaterial && ChairTidyMaterial)
 	{

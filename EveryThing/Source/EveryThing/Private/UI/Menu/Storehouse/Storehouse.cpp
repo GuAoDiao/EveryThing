@@ -7,6 +7,10 @@
 #include "Characters/GamePawnManager.h"
 #include "UI/Menu/EveryThingMenuHUD.h"
 #include "UI/Menu/Storehouse/RoleItem.h"
+#include "UI/Menu/Storehouse/SkinItem.h"
+#include "UI/Menu/Storehouse/FormItem.h"
+#include "Characters/Form/GamePawnFormClassInfo.h"
+#include "Characters/Skin/GamePawnSkinClassInfo.h"
 
 void UStorehouse::NativeConstruct()
 {
@@ -40,8 +44,47 @@ void UStorehouse::InitializeStorehouseDisplay_Implementation(const FPlayerInfo& 
 			URoleItem* RoleItem = CreateWidget<URoleItem>(OnwerPC, RoleItemClass);
 			if (RoleItem)
 			{
-				RoleItem->InitializeRoleItem(RoleInfo.Name, RoleInfo.Cost, InPlayerInfo.AllHaveRolesName.Contains(RoleInfo.Name));
+				RoleItem->InitializeRoleItem(RoleInfo.Name, RoleInfo.Cost, InPlayerInfo.AllHaveRoleNames.Contains(RoleInfo.Name));
 				AddRoleItem(RoleItem);
+			}
+		}
+	}
+
+	TSubclassOf<UUserWidget> SkinItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("SkinItem");
+	if (SkinItemClass)
+	{
+		const TMap<FName, FGamePawnSkinClassInfo*>& AllGamePawnSkinClassInfo = UGamePawnManager::GetAllGamePawnSkinClassInfo();
+		for (TMap<FName, FGamePawnSkinClassInfo*>::TConstIterator It(AllGamePawnSkinClassInfo); It; ++It)
+		{
+			FGamePawnSkinClassInfo* SkinClassInfo = It.Value();
+			if (SkinClassInfo)
+			{
+				USkinItem* SkinItem = CreateWidget<USkinItem>(OnwerPC, SkinItemClass);
+				if (SkinItem)
+				{
+					SkinItem->InitializeSkinItem(SkinClassInfo->SkinName, SkinClassInfo->Cost, InPlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinClassInfo->SkinName));
+					AddSkinItem(SkinItem);
+				}
+			}
+		}
+	}
+
+
+	TSubclassOf<UUserWidget> FormItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("FormItem");
+	if (FormItemClass)
+	{
+		const TMap<FName, FGamePawnFormClassInfo*>& AllGamePawnFormClassInfo = UGamePawnManager::GetAllGamePawnFormClassInfo();
+		for (TMap<FName, FGamePawnFormClassInfo*>::TConstIterator It(AllGamePawnFormClassInfo); It; ++It)
+		{
+			FGamePawnFormClassInfo* FormClassInfo = It.Value();
+			if (FormClassInfo)
+			{
+				UFormItem* FormItem = CreateWidget<UFormItem>(OnwerPC, FormItemClass);
+				if (FormItem)
+				{
+					FormItem->InitializeFormItem(FormClassInfo->FormName, FormClassInfo->Cost, InPlayerInfo.AllHaveGamePawnFormNames.Contains(FormClassInfo->FormName));
+					AddFormItem(FormItem);
+				}
 			}
 		}
 	}
@@ -51,9 +94,7 @@ void UStorehouse::InitializeStorehouseDisplay_Implementation(const FPlayerInfo& 
 
 void UStorehouse::OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo)
 {
-	UpdateRoleItemListDisplay(InPlayerInfo.AllHaveRolesName);
-
-	UpdatePlayerGoldDisplay(InPlayerInfo.Gold);
+	UpdateStoreHoustDisplay(InPlayerInfo);
 }
 
 void UStorehouse::Backup()

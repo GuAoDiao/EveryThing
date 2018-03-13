@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/GamePawnManager.h"
 #include "Characters/Skin/GamePawnSkinClassInfo.h"
 
 class UStaticMeshComponent;
@@ -16,8 +15,8 @@ public: \
 	virtual const FGamePawnSkinClassInfo* GetGamePawnSkinClassInfo() const; \
 	static FGamePawnSkin* CreateGamePawnSkin(class UStaticMeshComponent* InStaticMeshComp);
 
-#define IMPLEMENT_GAMEPAWNSKIN_CLASS(SkinName, SkinClass) \
-	const FGamePawnSkinClassInfo SkinClass::SkinClassInfo = FGamePawnSkinClassInfo(SkinName, &SkinClass::CreateGamePawnSkin); \
+#define IMPLEMENT_GAMEPAWNSKIN_CLASS(SkinName, RoleName, InCost, SkinClass) \
+	const FGamePawnSkinClassInfo SkinClass::SkinClassInfo = FGamePawnSkinClassInfo(SkinName, RoleName, InCost, &SkinClass::CreateGamePawnSkin); \
 	const FGamePawnSkinClassInfo* SkinClass::GetGamePawnSkinClassInfo() const {return &SkinClass::SkinClassInfo; } \
 	FGamePawnSkin* SkinClass::CreateGamePawnSkin(class UStaticMeshComponent* InStaticMeshComp) {return new SkinClass(InStaticMeshComp);}
 
@@ -27,8 +26,6 @@ public:
 	FGamePawnSkin(UStaticMeshComponent* StaticMeshComp);
 	virtual ~FGamePawnSkin() {}
 	
-	DECLARE_GAMEPAWNSKIN_CLASS("GamePawnSkin");
-
 	void LoadAllGameSkinMaterial();
 
 	virtual void LoadGamePawnSkin();

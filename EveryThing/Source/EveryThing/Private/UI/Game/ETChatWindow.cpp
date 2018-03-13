@@ -15,23 +15,36 @@
 #include "ChatWindow/Channel/SystemChatChannel.h"
 #include "ChatWindow/ChatWindowPlayerStateInterface.h"
 
+#include "Characters/GamePawn.h"
+
 #define LOCTEXT_NAMESPACE "EveryThing_GmaeUI_ETChatWindow"
 
 void UETChatWindow::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	APlayerController* OwnerPC = GetOwningPlayer();
-	UWorld* World = OwnerPC ? OwnerPC->GetWorld() : nullptr;
-
-	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(OwnerPC);
+	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
 	if (OwnerPPC)
 	{
 		OwnerPPC->GetOnToggleToTargetRoleSuccessDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetRoleSuccess);
 		OwnerPPC->GetOnToggleToTargetRoleFailureDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetRoleFailure);
+		
+		OnToglleToTargetRole(Cast<AGamePawn>(OwnerPPC->GetPawn()));
 	}
 }
 
+void UETChatWindow::OnToglleToTargetRole(AGamePawn* InGamePawn)
+{
+	if (InGamePawn)
+	{
+		InGamePawn->GetOnToggleToTargetFormFailureDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetFormFailure);
+		InGamePawn->GetOnToggleToTargetFormSuccessDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetFormSuccess);
+
+		InGamePawn->GetOnToggleToTargetSkinFailureDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetSkinFailure);
+		InGamePawn->GetOnToggleToTargetSkinSuccessDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetSkinSuccess);
+	}
+
+}
 
 void UETChatWindow::OnToggleToTargetRoleSuccess(const FName& TargetRoleName)
 {
@@ -40,6 +53,9 @@ void UETChatWindow::OnToggleToTargetRoleSuccess(const FName& TargetRoleName)
 
 	FText DisplayInfo = FText::Format(LOCTEXT("OnToggleToTargetRoleSuccess", "Success toggle toggle to target role : {TargetRoleName}."), Arguments);
 
+	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
+	OnToglleToTargetRole(OwnerPPC ? Cast<AGamePawn>(OwnerPPC->GetPawn()) : nullptr);
+	
 	AddSystemMessage(ESystemMessageType::Success, DisplayInfo);
 }
 
@@ -55,6 +71,56 @@ void UETChatWindow::OnToggleToTargetRoleFailure(const FName& TargetRoleName, con
 
 	AddSystemMessage(ESystemMessageType::Error, DisplayInfo);
 }
+
+void UETChatWindow::OnToggleToTargetSkinSuccess(const FName& TargetSkinName)
+{
+	FFormatNamedArguments Arguments;
+	Arguments.Add(TEXT("TargetSkinName"), FText::FromName(TargetSkinName));
+
+	FText DisplayInfo = FText::Format(LOCTEXT("OnToggleToTargetSkinSuccess", "Success toggle toggle to target skin : {TargetSkinName}."), Arguments);
+
+	AddSystemMessage(ESystemMessageType::Success, DisplayInfo);
+}
+
+
+void UETChatWindow::OnToggleToTargetSkinFailure(const FName& TargetSkinName, const FText& ErrorInfo)
+{
+	FFormatNamedArguments Arguments;
+	Arguments.Add(TEXT("TargetSkinName"), FText::FromName(TargetSkinName));
+	Arguments.Add(TEXT("ErrorInfo"), ErrorInfo);
+
+
+	FText DisplayInfo = FText::Format(LOCTEXT("OnToggleToTargetSkinFailure", "Failure toggle to target skin : {TargetSkinName}, because: {ErrorInfo}"), Arguments);
+
+	AddSystemMessage(ESystemMessageType::Error, DisplayInfo);
+}
+
+void UETChatWindow::OnToggleToTargetFormSuccess(const FName& TargetFormName)
+{
+	FFormatNamedArguments Arguments;
+	Arguments.Add(TEXT("TargetFormName"), FText::FromName(TargetFormName));
+
+	FText DisplayInfo = FText::Format(LOCTEXT("OnToggleToTargetFormSuccess", "Success toggle toggle to target form : {TargetFormName}."), Arguments);
+
+	AddSystemMessage(ESystemMessageType::Success, DisplayInfo);
+}
+
+
+void UETChatWindow::OnToggleToTargetFormFailure(const FName& TargetFormName, const FText& ErrorInfo)
+{
+	FFormatNamedArguments Arguments;
+	Arguments.Add(TEXT("TargetFormName"), FText::FromName(TargetFormName));
+	Arguments.Add(TEXT("ErrorInfo"), ErrorInfo);
+
+
+	FText DisplayInfo = FText::Format(LOCTEXT("OnToggleToTargetFormFailure", "Failure toggle to target form : {TargetFormName}, because: {ErrorInfo}"), Arguments);
+
+	AddSystemMessage(ESystemMessageType::Error, DisplayInfo);
+}
+
+
+
+
 
 void UETChatWindow::OnPlayerJoinGame(APlayerState* InPlayerState)
 {

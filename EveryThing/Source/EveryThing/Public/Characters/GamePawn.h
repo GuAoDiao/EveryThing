@@ -30,6 +30,8 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 
+	FName RoleName;
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Component
 public:
@@ -56,46 +58,64 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn Form
 public:
-	void AddGamePawnForm(FGamePawnForm* InGamePawnForm);
-	void ToggleToNewPawnForm(int32 Index);
+	void ToggleToNewFormWithIndex(int32 Index);
+
+	TArray<FName> AllGamePawnFormName;
+	TArray<FName> AllHaveGamePawnFormName;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetFormSuccessDelegate, const FName& /* TargetFormName */);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetFormFailureDelegate, const FName& /* TargetFormName */, const FText&  /* ErrorInfo */);
+
+	FOnToggleToTargetFormSuccessDelegate& GetOnToggleToTargetFormSuccessDelegate() { return OnToggleToTargetFormSuccessDelegate; }
+	FOnToggleToTargetFormFailureDelegate& GetOnToggleToTargetFormFailureDelegate() { return OnToggleToTargetFormFailureDelegate; }
+private:
+	FOnToggleToTargetFormSuccessDelegate OnToggleToTargetFormSuccessDelegate;
+	FOnToggleToTargetFormFailureDelegate OnToggleToTargetFormFailureDelegate;
+
+protected:
+	// actual implementation
+	void ToggleToTargetForm(const FName& FormName);
+
 private:
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerToggleToNewPawnForm(int32 Index);
-	// actual implementation
-	void ToggleToTargetPawnForm(FGamePawnForm* TargetGamePawnForm);
+	void ServerToggleToTargetForm(const FName& FormName);
 	UFUNCTION()
-	void OnRep_CurrentGamePawnFormIndex();
-public:
-	FGamePawnForm* GetGamePawnForm(int32 Index);
-	const TArray<FGamePawnForm*>& GetGamePawnForms() { return OwnerGamePawnForms; }
-protected:
-	UPROPERTY(Replicated, ReplicatedUsing = OnRep_CurrentGamePawnFormIndex)
-	int32 CurrentGamePawnFormIndex;
+	void OnRep_CurrentGamePawnFormName();
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_CurrentGamePawnFormName)
+	FName CurrentGamePawnFormName;
 	FGamePawnForm* CurrentGamePawnForm;
-	TArray<FGamePawnForm*> OwnerGamePawnForms;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn Skin
 public:
-	void AddGamePawnSkin(FGamePawnSkin* InGamePawnSkin);
-	void ToggleToNewPawnSkin(int32 Index);
+	void ToggleToNewSkinWithIndex(int32 Index);
+
+	TArray<FName> AllGamePawnSkinName;
+	TArray<FName> AllHaveGamePawnSkinName;
+	
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetSkinSuccessDelegate, const FName& /* TargetSkinName */);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetSkinFailureDelegate, const FName& /* TargetSkinName */, const FText&  /* ErrorInfo */);
+
+	FOnToggleToTargetSkinSuccessDelegate& GetOnToggleToTargetSkinSuccessDelegate() { return OnToggleToTargetSkinSuccessDelegate; }
+	FOnToggleToTargetSkinFailureDelegate& GetOnToggleToTargetSkinFailureDelegate() { return OnToggleToTargetSkinFailureDelegate; }
 private:
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerToggleToNewPawnSkin(int32 Index);
-	// actual implementation
-	void ToggleToTargetPawnSkin(FGamePawnSkin* TargetGamePawnSkin);
-	UFUNCTION()
-	void OnRep_CurrentGamePawnSkinIndex();
-public:
-	FGamePawnSkin* GetGamePawnSkin(int32 Index);
-	const TArray<FGamePawnSkin*>& GetGamePawnSkins() { return OwnerGamePawnSkins; }
+	FOnToggleToTargetSkinSuccessDelegate OnToggleToTargetSkinSuccessDelegate;
+	FOnToggleToTargetSkinFailureDelegate OnToggleToTargetSkinFailureDelegate;
 
 protected:
-	UPROPERTY(ReplicatedUsing = OnRep_CurrentGamePawnSkinIndex)
-	int32 CurrentGamePawnSkinIndex;
+	void ToggleToTargetSkin(const FName& SkinName);
+private:
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerToggleToTargetSkin(const FName& SkinName);
+	// actual implementation
+	UFUNCTION()
+	void OnRep_CurrentGamePawnSkinName();
+	
+protected:
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentGamePawnSkinName)
+	FName CurrentGamePawnSkinName;
 	FGamePawnSkin* CurrentGamePawnSkin;
-	TArray<FGamePawnSkin*> OwnerGamePawnSkins;
-
+	
 	//////////////////////////////////////////////////////////////////////////
 	/// Attack and Skill
 public:

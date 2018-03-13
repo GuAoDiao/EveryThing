@@ -22,7 +22,7 @@ class EVERYTHING_API AEveryThingPlayerState : public APlayerState, public IChatW
 	GENERATED_BODY()
 	
 public:
-	virtual void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// PlayerInfo

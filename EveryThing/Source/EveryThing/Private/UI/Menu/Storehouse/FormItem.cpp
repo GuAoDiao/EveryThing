@@ -1,31 +1,32 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "RoleItem.h"
+#include "FormItem.h"
+
 
 #include "EveryThingGameInstance.h"
 
 
-void URoleItem::InitializeRoleItem_Implementation(const FName& InRoleName, int32 InCost, bool bInHaveGoods)
+void UFormItem::InitializeFormItem_Implementation(const FName& InFormName, int32 InCost, bool bInHaveGoods)
 {
 	InitializeGoodsItem(InCost, bInHaveGoods);
 
-	RoleName = InRoleName;
+	FormName = InFormName;
 
-	InitializeRoleItemDisplay(RoleName, bInHaveGoods);
+	InitializeFormItemDisplay(FormName, bInHaveGoods);
 }
 
-void URoleItem::InitializeRoleItemDisplay_Implementation(const FName& InRoleName, bool bInHaveGoods)
+void UFormItem::InitializeFormItemDisplay_Implementation(const FName& InFormName, bool bInHaveGoods)
 {
-	UpdateRoleItemDisplay(bInHaveGoods);
+	UpdateFormItemDisplay(bInHaveGoods);
 }
 
-void URoleItem::OnBuyRoleItem()
+void UFormItem::OnBuyFormItem()
 {
 	BuyGoodsItem();
 }
 
 
-bool URoleItem::BuyGoodsItem()
+bool UFormItem::BuyGoodsItem()
 {
 	if (IsHaveEnoughMoney())
 	{
@@ -33,15 +34,18 @@ bool URoleItem::BuyGoodsItem()
 		if (OwnerETGI)
 		{
 			FPlayerInfo& PlayerInfo = OwnerETGI->GetPlayerInfo();
-			PlayerInfo.AllHaveRoleNames.AddUnique(RoleName);
+			PlayerInfo.AllHaveGamePawnFormNames.AddUnique(FormName);
 			PlayerInfo.Gold -= GoodCost;
 
 			OwnerETGI->UpdatePlayerInfo();
 
-			UpdateRoleItemDisplay(true);
+			UpdateFormItemDisplay(true);
 
 			return true;
 		}
 	}
 	return false;
 }
+
+
+

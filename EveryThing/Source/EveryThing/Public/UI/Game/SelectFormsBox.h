@@ -4,27 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
 #include "EveryThingTypes.h"
-
-#include "SelectRolesBox.generated.h"
+#include "SelectFormsBox.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API USelectRolesBox : public UUserWidget
+class EVERYTHING_API USelectFormsBox : public UUserWidget
 {
 	GENERATED_BODY()
 	
 public:
 	virtual void NativeConstruct() override;
-	
-	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateSelectRolesBoxDisplay(const TArray<FName>& AllHaveRoleNames);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void AddSelectItem(class USelectItem* SelectItem);
+	void UpdateSelectFormsBoxDisplay(const TArray<FName>& AllHaveRoleNames);
 
-	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);
+	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);	
 };

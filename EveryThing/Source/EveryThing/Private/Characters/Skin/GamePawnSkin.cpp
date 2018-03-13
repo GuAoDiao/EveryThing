@@ -8,8 +8,6 @@
 #include "EveryThingAssetManager.h"
 
 
-IMPLEMENT_GAMEPAWNSKIN_CLASS("GamePawnSkin", FGamePawnSkin);
-
 
 FGamePawnSkin::FGamePawnSkin(UStaticMeshComponent* StaticMeshComp)
 {
@@ -34,11 +32,8 @@ void FGamePawnSkin::LoadGamePawnSkin()
 
 		for (int32 i = 0; i < MaterialNames.Num(); ++i)
 		{
-			UMaterialInstanceConstant* MaterialInstance = AssetManager->GetMaterialFromName(MaterialNames[i]);
-			if (MaterialInstance)
-			{
-				OwnerStaticMeshComp->SetMaterial(i, MaterialInstance);
-			}
+			UMaterialInstanceConstant* MaterialInstance = AssetManager->GetMaterialFromName(MaterialNames[i], true);
+			if (MaterialInstance) { OwnerStaticMeshComp->SetMaterial(i, MaterialInstance); }
 		}
 	}
 }

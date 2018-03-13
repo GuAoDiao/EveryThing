@@ -80,14 +80,26 @@ void AEveryThingGameHUD::ToggleSelectRolesBox(bool bIsDisplay)
 {
 	if (GameLayout)
 	{
-		if (bIsDisplay)
-		{
-			GameLayout->DisplaySelectRolesBox();
-		}
-		else
-		{
-			GameLayout->RemoveSelectRolesBox();
-		}
+		if (bIsDisplay) { GameLayout->DisplaySelectRolesBox(); }
+		else { GameLayout->RemoveSelectRolesBox(); }
+	}
+}
+
+void AEveryThingGameHUD::ToggleSelectSkinsBox(bool bIsDisplay)
+{
+	if (GameLayout)
+	{
+		if (bIsDisplay) { GameLayout->DisplaySelectSkinsBox(); }
+		else { GameLayout->RemoveSelectSkinsBox(); }
+	}
+}
+
+void AEveryThingGameHUD::ToggleSelectFormsBox(bool bIsDisplay)
+{
+	if (GameLayout)
+	{
+		if (bIsDisplay) { GameLayout->DisplaySelectFormsBox(); }
+		else { GameLayout->RemoveSelectFormsBox(); }
 	}
 }
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "EveryThingTypes.h"
 #include "PlayerPawnComponent.generated.h"
 
 class IHitAbleInterface;
@@ -16,18 +17,21 @@ class EVERYTHING_API UPlayerPawnComponent : public UActorComponent
 public:	
 	UPlayerPawnComponent();
 	
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
+	void DelayBindEveryThingPlayerState();
+	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);
 	//////////////////////////////////////////////////////////////////////////
 	/// For Input Component
 	void RebindInputComp(class UInputComponent* OwnerInputComp);
 
 
-	void StartTogglePawnForm() { bIsWantedTogglePawnForm = true; }
-	void StopTogglePawnForm() { bIsWantedTogglePawnForm = false; }
+	void StartTogglePawnForm();
+	void StopTogglePawnForm();
 
-	void StartTogglePawnSkin() { bIsWantedTogglePawnSkin = true; }
-	void StopTogglePawnSkin() { bIsWantedTogglePawnSkin = false; }
+	void StartTogglePawnSkin();
+	void StopTogglePawnSkin();
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Visual Angle
@@ -55,12 +59,12 @@ private:
 	FOnPressNumberKeyboardDelegate OnPressNumberKeyboardDelegate;
 
 private:
+	class AEveryThingGameHUD* GetEveryThingGameHUD() const;
+
 	void UseProp(int32 NumberIndex);
 	void TogglePawnForm(int32 NumberIndex);
 	void TogglePawnSkin(int32 NumberIndex);
 
-	bool bIsWantedTogglePawnSkin;
-	bool bIsWantedTogglePawnForm;
 	class AGamePawn* OwnerPawn;
 
 	//////////////////////////////////////////////////////////////////////////

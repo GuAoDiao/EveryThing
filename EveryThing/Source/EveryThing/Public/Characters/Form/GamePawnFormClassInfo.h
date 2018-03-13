@@ -11,11 +11,13 @@ class AGamePawn;
 class FGamePawnFormClassInfo
 {
 public:
-	FGamePawnFormClassInfo(const FName& InName, GamePawnFormCreateFunc InCreateFunc)
+	FGamePawnFormClassInfo(const FName& InName, const FName& InRoleName, int32 InCost ,GamePawnFormCreateFunc InCreateFunc)
 	{
 		UGamePawnManager::RegisterGamePawnFormWithName(InName, this);
-		ClassName = InName;
+		FormName = InName;
+		RoleName = InRoleName;
 		CreateFunc = InCreateFunc;
+		Cost = InCost;
 	}
 
 	FGamePawnForm* GetClass(AGamePawn* InGamePawn)
@@ -23,6 +25,8 @@ public:
 		return CreateFunc ? (*CreateFunc)(InGamePawn) : nullptr;
 	}
 
-	FName ClassName;
+	int32 Cost;
+	FName FormName;
+	FName RoleName;
 	GamePawnFormCreateFunc CreateFunc;
 };

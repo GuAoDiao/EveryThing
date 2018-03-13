@@ -10,6 +10,8 @@
 #include "Storehouse.generated.h"
 
 class URoleItem;
+class USkinItem;
+class UFormItem;
 
 /**
  * 
@@ -30,13 +32,14 @@ public:
 	void InitializeStorehouseDisplay(const FPlayerInfo& InPlayerInfo);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateRoleItemListDisplay(const TArray<FName>& InAllHaveRolesName);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void UpdatePlayerGoldDisplay(int32 Gold);
+	void UpdateStoreHoustDisplay(const FPlayerInfo& InPlayerInfo);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void AddRoleItem(URoleItem* RoleItem);
+	UFUNCTION(BlueprintImplementableEvent)
+	void AddSkinItem(USkinItem* SkinItem);
+	UFUNCTION(BlueprintImplementableEvent)
+	void AddFormItem(UFormItem* FormItem);
 
 	void OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo);
 

@@ -23,6 +23,15 @@ public:
 	void OnToggleToTargetRoleSuccess(const FName& TargetRoleName);
 	void OnToggleToTargetRoleFailure(const FName& TargetRoleName, const FText& ErrorInfo);
 	
+	void OnToggleToTargetSkinSuccess(const FName& TargetSkinName);
+	void OnToggleToTargetSkinFailure(const FName& TargetSkinName, const FText& ErrorInfo);
+
+	void OnToggleToTargetFormSuccess(const FName& TargetFormName);
+	void OnToggleToTargetFormFailure(const FName& TargetFormName, const FText& ErrorInfo);
+
+
+	void OnToglleToTargetRole(class AGamePawn* InGamePawn);
+
 	void OnPlayerJoinGame(class APlayerState* InPlayerState);
 	void OnPlayerLeaveGame(class APlayerState* InPlayerState);
 
