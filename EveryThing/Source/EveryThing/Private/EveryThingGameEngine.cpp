@@ -3,8 +3,10 @@
 #include "EveryThingGameEngine.h"
 
 #include "EveryThingGameUserSettings.h"
+#include "EveryThingGameViewportClient.h"
 
 UEveryThingGameEngine::UEveryThingGameEngine()
 {
 	GameUserSettingsClass = UEveryThingGameUserSettings::StaticClass();
+	GameViewportClientClass = UEveryThingGameViewportClient::StaticClass();
 }

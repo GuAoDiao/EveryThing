@@ -17,6 +17,7 @@
 #include "EveryThingAssetManager.h"
 #include "EveryThingSaveArchive.h"
 #include "EveryThingSaveArchivesList.h"
+#include "EveryThingGameViewportClient.h"
 
 UEveryThingGameInstance::UEveryThingGameInstance()
 {
@@ -79,7 +80,6 @@ void UEveryThingGameInstance::BeginLoadingMap(const FString& MapName)
 				LoadingScreenAttributes.MoviePaths.Add(TEXT("LoadingMap"));
 
 				LoadingMapMoviePlayer->SetupLoadingScreen(LoadingScreenAttributes);
-				
 			}
 		}
 	}
@@ -95,6 +95,9 @@ void UEveryThingGameInstance::EndLoadingMap(UWorld* LoadedWorld)
 	if (!IsRunningDedicatedServer())
 	{
 		LoadingMapMoviePlayer = nullptr;
+
+		UEveryThingGameViewportClient* OwnerETGVC = Cast<UEveryThingGameViewportClient>(GetGameViewportClient());
+		if (OwnerETGVC) { OwnerETGVC->Fade(5.f, false); }
 	}
 }
 

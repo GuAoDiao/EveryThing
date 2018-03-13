@@ -23,6 +23,8 @@
 #include "UI/Menu/ErrorDialog.h"
 
 
+#include "EveryThingGameViewportClient.h"
+
 AEveryThingMenuHUD::AEveryThingMenuHUD()
 {
 	CurrentGameUIState = EMenuUIState::StartUp;

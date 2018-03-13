@@ -256,16 +256,7 @@ void APlayerPawnController::StopToggleRole()
 
 void APlayerPawnController::ToggleRoleWithIndex(int32 NumberIndex)
 {
-	// try to find Target Role Name is exists
-	if (!AllRoleNames.IsValidIndex(NumberIndex))
-	{
-		FFormatNamedArguments Arguments;
-		Arguments.Add(TEXT("Index"), NumberIndex);
-		OnToggleToTargetRoleFailureDelegate.Broadcast(FName("None"), FText::Format(LOCTEXT("ToggleRoleWhenNotFoundTargetRole", "Can'f find Target role name with index : {Index}."), Arguments));
-		return;
-	}
-
-	ToggleRoleWithName(AllRoleNames[NumberIndex]);
+	if (AllRoleNames.IsValidIndex(NumberIndex)) { ToggleRoleWithName(AllRoleNames[NumberIndex]); }
 }
 
 void APlayerPawnController::ToggleRoleWithName(const FName& TargetRoleName)
