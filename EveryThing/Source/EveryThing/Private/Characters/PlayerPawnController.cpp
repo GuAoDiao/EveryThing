@@ -45,15 +45,6 @@ void APlayerPawnController::BeginPlay()
 	SetInputMode(FInputModeGameOnly());
 }
 
-void APlayerPawnController::SetupInputComponent()
-{
-	if (!InputComponent)
-	{
-		InputComponent = NewObject<UInputComponent>(this, UInputComponent::StaticClass());
-		InputComponent->RegisterComponent();
-	}
-}
-
 void APlayerPawnController::RebindInput()
 {
 	if (!InputComponent) { return; }

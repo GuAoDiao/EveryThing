@@ -26,10 +26,7 @@ public:
 	APlayerPawnController();
 	
 
-	virtual void BeginPlay() override;
-
-	virtual void SetupInputComponent() override;
-	
+	virtual void BeginPlay() override;	
 	virtual void SetPawn(APawn* InPawn) override;
 protected:
 	void RebindInput();
