@@ -3,20 +3,26 @@
 #include "SkinItem.h"
 
 #include "EveryThingGameInstance.h"
+#include "EveryThingAssetManager.h"
+#include "Characters/GamePawnManager.h"
 #include "UI/Menu/Storehouse/Storehouse.h"
 
 
-void USkinItem::InitializeSkinItem_Implementation(UStorehouse* StoreHouse, const FName& InSkinName, int32 InCost, bool bInHaveGoods)
+void USkinItem::InitializeSkinItem(UStorehouse* StoreHouse, const FName& InSkinName, bool bInHaveGoods)
 {
-	InitializeGoodsItem(InCost, bInHaveGoods);
-
 	SkinName = InSkinName;
 	OwnerStoreHouse = StoreHouse;
 
-	InitializeSkinItemDisplay(SkinName, bInHaveGoods);
-}
+	UGamePawnManager* GamePawnManager = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager();
+	if (GamePawnManager->GetRoleSkinInfoFromName(InSkinName, SkinInfo) && SkinInfo)
+	{
+		InitializeGoodsItem(SkinInfo->Cost, bInHaveGoods);
 
-void USkinItem::InitializeSkinItemDisplay_Implementation(const FName& InSkinName, bool bInHaveGoods) { UpdateSkinItemDisplay(bInHaveGoods); }
+		InitializeSkinItemDisplay();
+
+		UpdateIsHaveGoods(bInHaveGoods);
+	}
+}
 
 void USkinItem::OnBuySkinItem(){BuyGoodsItem();}
 bool USkinItem::BuyGoodsItem()
@@ -32,7 +38,7 @@ bool USkinItem::BuyGoodsItem()
 
 			OwnerETGI->UpdatePlayerInfo();
 
-			UpdateSkinItemDisplay(true);
+			UpdateIsHaveGoods(true);
 
 			return true;
 		}

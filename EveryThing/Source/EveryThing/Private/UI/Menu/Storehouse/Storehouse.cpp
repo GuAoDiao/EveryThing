@@ -92,7 +92,7 @@ void UStorehouse::InitializeRoleListDisplay_Implementation(const FPlayerInfo& In
 			URoleItem* RoleItem = CreateWidget<URoleItem>(OnwerPC, RoleItemClass);
 			if (RoleItem)
 			{
-				RoleItem->InitializeRoleItem(this, RoleInfo.Name, RoleInfo.Cost, InPlayerInfo.AllHaveRoleNames.Contains(RoleInfo.Name));
+				RoleItem->InitializeRoleItem(this, It.Key(), InPlayerInfo.AllHaveRoleNames.Contains(It.Key()));
 				AddRoleItem(RoleItem);
 			}
 		}
@@ -113,15 +113,12 @@ void UStorehouse::InitializeRoleSkinAndFormListDisplay_Implementation(const FPla
 		const TArray<FName>& AllRoleSkinName = GamePawnManager->GetAllGamePawnSkinWithRoleName(CurrentDisplayRoleName);
 		for (const FName& SkinName : AllRoleSkinName)
 		{
-			const FRoleSkinInfo* SkinInfo;
-			if (GamePawnManager->GetRoleSkinInfoFromName(SkinName, SkinInfo) && SkinInfo)
+			
+			USkinItem* SkinItem = CreateWidget<USkinItem>(OnwerPC, SkinItemClass);
+			if (SkinItem)
 			{
-				USkinItem* SkinItem = CreateWidget<USkinItem>(OnwerPC, SkinItemClass);
-				if (SkinItem)
-				{
-					SkinItem->InitializeSkinItem(this, SkinInfo->Name, SkinInfo->Cost, InPlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinInfo->Name));
-					AddSkinItem(SkinItem);
-				}
+				SkinItem->InitializeSkinItem(this, SkinName, InPlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinName));
+				AddSkinItem(SkinItem);
 			}
 		}
 	}
@@ -133,15 +130,11 @@ void UStorehouse::InitializeRoleSkinAndFormListDisplay_Implementation(const FPla
 		const TArray<FName>& AllRoleFormName = GamePawnManager->GetAllGamePawnFormWithRoleName(CurrentDisplayRoleName);
 		for (const FName& FormName : AllRoleFormName)
 		{
-			const FRoleFormInfo* FormInfo;
-			if (GamePawnManager->GetRoleFormInfoFromName(FormName, FormInfo) && FormInfo)
+			UFormItem* FormItem = CreateWidget<UFormItem>(OnwerPC, FormItemClass);
+			if (FormItem)
 			{
-				UFormItem* FormItem = CreateWidget<UFormItem>(OnwerPC, FormItemClass);
-				if (FormItem)
-				{
-					FormItem->InitializeFormItem(FormInfo->Name, FormInfo->Cost, InPlayerInfo.AllHaveGamePawnFormNames.Contains(FormInfo->Name));
-					AddFormItem(FormItem);
-				}
+				FormItem->InitializeFormItem(FormName, InPlayerInfo.AllHaveGamePawnFormNames.Contains(FormName));
+				AddFormItem(FormItem);
 			}
 		}
 	}

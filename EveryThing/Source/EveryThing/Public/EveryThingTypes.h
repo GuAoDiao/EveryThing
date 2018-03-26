@@ -177,7 +177,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FName DefaultFormName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UTexture* Icon;
+	class UTexture2D* Icon;
 };
 
 USTRUCT(BlueprintType)
@@ -192,7 +192,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Cost;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UTexture* Icon;
+	class UTexture2D* Icon;
 };
 
 USTRUCT(BlueprintType)
@@ -207,7 +207,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Cost;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UTexture* Icon;
+	class UTexture2D* Icon;
 };
 
 USTRUCT(BlueprintType)
