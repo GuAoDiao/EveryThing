@@ -16,8 +16,8 @@ public: \
 	virtual const FGamePawnFormClassInfo* GetGamePawnSkinClassInfo() const; \
 	static FGamePawnForm* CreateGamePawnForm(class AGamePawn* InGamePawn);
 
-#define IMPLEMENT_GAMEPAWNFORM_CLASS(FormName, RoleName, Cost, FormClass) \
-	const FGamePawnFormClassInfo FormClass::FormClassInfo = FGamePawnFormClassInfo(FormName, RoleName, Cost, &FormClass::CreateGamePawnForm); \
+#define IMPLEMENT_GAMEPAWNFORM_CLASS(FormName, FormClass) \
+	const FGamePawnFormClassInfo FormClass::FormClassInfo = FGamePawnFormClassInfo(FormName, &FormClass::CreateGamePawnForm); \
 	const FGamePawnFormClassInfo* FormClass::GetGamePawnSkinClassInfo() const {return &FormClass::FormClassInfo; } \
 	FGamePawnForm* FormClass::CreateGamePawnForm(class AGamePawn* InGamePawn) {return new FormClass(InGamePawn);}
 

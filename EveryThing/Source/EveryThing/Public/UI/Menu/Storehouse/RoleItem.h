@@ -15,7 +15,7 @@ class EVERYTHING_API URoleItem : public UGoodsItem
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintNativeEvent)
-	void InitializeRoleItem(const FName& InRoleName, int32 InCost, bool bInHaveGoods);
+	void InitializeRoleItem(class UStorehouse* StoreHouse, const FName& InRoleName, int32 InCost, bool bInHaveGoods);
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void InitializeRoleItemDisplay(const FName& InRoleName, bool bInHaveGoods);
@@ -28,7 +28,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnBuyRoleItem();
 	
+	UFUNCTION(BlueprintCallable)
+	void OnDisplayRoleItem();
+
 	virtual bool BuyGoodsItem() override;
 private:
 	FName RoleName;
+	UStorehouse* OwnerStoreHouse;
 };

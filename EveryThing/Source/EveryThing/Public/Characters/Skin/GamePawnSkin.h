@@ -15,8 +15,8 @@ public: \
 	virtual const FGamePawnSkinClassInfo* GetGamePawnSkinClassInfo() const; \
 	static FGamePawnSkin* CreateGamePawnSkin(class UStaticMeshComponent* InStaticMeshComp);
 
-#define IMPLEMENT_GAMEPAWNSKIN_CLASS(SkinName, RoleName, InCost, SkinClass) \
-	const FGamePawnSkinClassInfo SkinClass::SkinClassInfo = FGamePawnSkinClassInfo(SkinName, RoleName, InCost, &SkinClass::CreateGamePawnSkin); \
+#define IMPLEMENT_GAMEPAWNSKIN_CLASS(SkinName, SkinClass) \
+	const FGamePawnSkinClassInfo SkinClass::SkinClassInfo = FGamePawnSkinClassInfo(SkinName, &SkinClass::CreateGamePawnSkin); \
 	const FGamePawnSkinClassInfo* SkinClass::GetGamePawnSkinClassInfo() const {return &SkinClass::SkinClassInfo; } \
 	FGamePawnSkin* SkinClass::CreateGamePawnSkin(class UStaticMeshComponent* InStaticMeshComp) {return new SkinClass(InStaticMeshComp);}
 

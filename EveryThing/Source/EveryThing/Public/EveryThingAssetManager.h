@@ -145,7 +145,7 @@ private:
 	/// Game Pawn
 public:
 	UGamePawnManager* GetGamePawnManager();
-
+protected:
 	UPROPERTY()
 	UGamePawnManager* GamePawnManager;
 };

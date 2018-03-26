@@ -12,7 +12,7 @@ void USelectRolesBox::NativeConstruct()
 	Super::NativeConstruct();
 
 	AEveryThingPlayerState* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
-	if (OwnerPlaterState) { OwnerPlaterState->GetOnUpdatePlayerInfoDelegate().AddUObject(this, &USelectRolesBox::OnUpdatePlayerInfo); }
+	if (OwnerPlaterState) { OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectRolesBox::OnUpdatePlayerInfo); }
 
 	TSubclassOf<UUserWidget> SelectItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("SelectItem");
 	APlayerController* OnwerPC = GetOwningPlayer();

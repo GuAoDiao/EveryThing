@@ -6,6 +6,7 @@
 #include "Materials/MaterialInstanceConstant.h"
 
 #include "EveryThingAssetManager.h"
+#include "Characters/GamePawnManager.h"
 
 AChairPawn::AChairPawn()
 {
@@ -14,19 +15,13 @@ AChairPawn::AChairPawn()
 	ResetInfoFromDataTable("Chair");
 
 	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
+	UGamePawnManager* GamePawnManager = AssetManager->GetGamePawnManager();
 
 	UStaticMesh* ChairMesh = AssetManager->GetMeshFromName("Chair");
 	if (ChairMesh) { StaticMeshComp->SetStaticMesh(ChairMesh); }
 
-	
-	UMaterialInstanceConstant* ChairWoodMaterial = AssetManager->GetMaterialFromName("ChairWood");
-	UMaterialInstanceConstant* ChairMatMaterial = AssetManager->GetMaterialFromName("ChairMat");
-	UMaterialInstanceConstant* ChairTidyMaterial = AssetManager->GetMaterialFromName("ChairTidy");
+	AllGamePawnSkinName = GamePawnManager->GetAllGamePawnSkinWithRoleName(RoleName);
 
-	if (ChairWoodMaterial && ChairMatMaterial && ChairTidyMaterial)
-	{
-		StaticMeshComp->SetMaterial(0, ChairMatMaterial);
-		StaticMeshComp->SetMaterial(1, ChairWoodMaterial);
-		StaticMeshComp->SetMaterial(2, ChairTidyMaterial);
-	}
+	AllHaveGamePawnSkinName.Add("ChairSkin");
+	ToggleToTargetSkin("ChairSkin");
 }

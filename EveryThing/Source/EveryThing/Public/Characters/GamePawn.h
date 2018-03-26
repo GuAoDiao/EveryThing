@@ -56,6 +56,11 @@ protected:
 	virtual void OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit);
 
 	//////////////////////////////////////////////////////////////////////////
+	/// Game Pawn Form And Skin
+protected:
+	void ResetDefaultSkinAndFormFromDataTable();
+
+	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn Form
 public:
 	void ToggleToNewFormWithIndex(int32 Index);
@@ -64,12 +69,8 @@ public:
 	TArray<FName> AllHaveGamePawnFormName;
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetFormSuccessDelegate, const FName& /* TargetFormName */);
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetFormFailureDelegate, const FName& /* TargetFormName */, const FText&  /* ErrorInfo */);
-
-	FOnToggleToTargetFormSuccessDelegate& GetOnToggleToTargetFormSuccessDelegate() { return OnToggleToTargetFormSuccessDelegate; }
-	FOnToggleToTargetFormFailureDelegate& GetOnToggleToTargetFormFailureDelegate() { return OnToggleToTargetFormFailureDelegate; }
-private:
 	FOnToggleToTargetFormSuccessDelegate OnToggleToTargetFormSuccessDelegate;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetFormFailureDelegate, const FName& /* TargetFormName */, const FText&  /* ErrorInfo */);
 	FOnToggleToTargetFormFailureDelegate OnToggleToTargetFormFailureDelegate;
 
 protected:
@@ -94,12 +95,8 @@ public:
 	TArray<FName> AllHaveGamePawnSkinName;
 	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetSkinSuccessDelegate, const FName& /* TargetSkinName */);
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetSkinFailureDelegate, const FName& /* TargetSkinName */, const FText&  /* ErrorInfo */);
-
-	FOnToggleToTargetSkinSuccessDelegate& GetOnToggleToTargetSkinSuccessDelegate() { return OnToggleToTargetSkinSuccessDelegate; }
-	FOnToggleToTargetSkinFailureDelegate& GetOnToggleToTargetSkinFailureDelegate() { return OnToggleToTargetSkinFailureDelegate; }
-private:
 	FOnToggleToTargetSkinSuccessDelegate OnToggleToTargetSkinSuccessDelegate;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetSkinFailureDelegate, const FName& /* TargetSkinName */, const FText&  /* ErrorInfo */);
 	FOnToggleToTargetSkinFailureDelegate OnToggleToTargetSkinFailureDelegate;
 
 protected:

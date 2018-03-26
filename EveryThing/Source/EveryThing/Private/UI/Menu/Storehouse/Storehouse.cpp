@@ -2,35 +2,83 @@
 
 #include "Storehouse.h"
 
+#include "EngineUtils.h"
+#include "GameFramework/InputSettings.h"
+
 #include "EveryThingAssetManager.h"
 #include "EveryThingGameInstance.h"
 #include "Characters/GamePawnManager.h"
 #include "UI/Menu/EveryThingMenuHUD.h"
+#include "UI/RoleDisplay.h"
 #include "UI/Menu/Storehouse/RoleItem.h"
 #include "UI/Menu/Storehouse/SkinItem.h"
 #include "UI/Menu/Storehouse/FormItem.h"
 #include "Characters/Form/GamePawnFormClassInfo.h"
 #include "Characters/Skin/GamePawnSkinClassInfo.h"
 
+
+UStorehouse::UStorehouse(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	bIsFocusable = true;
+}
+
 void UStorehouse::NativeConstruct()
 {
 	UEveryThingGameInstance* OwnerETGI = GetOwningPlayer() ? Cast<UEveryThingGameInstance>(GetOwningPlayer()->GetGameInstance()) : nullptr;
 	if (OwnerETGI)
 	{
-		InitializeStorehouse(OwnerETGI->GetPlayerInfo());
-
+		InitializeRoleListDisplay(OwnerETGI->GetPlayerInfo());
 		OwnerETGI->GetOnPlayerInfoUpdateDelegate().AddUObject(this, &UStorehouse::OnPlayerInfoUpdate);
 	}
+
+	CurrentDisplayRoleName = "Football";
+	ToggleDisplayRole(CurrentDisplayRoleName);
 	
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		TActorIterator<ARoleDisplay> It(World);
+		if (It) { RoleDisplay = *It; }
+
+		OwnerPC = World->GetFirstPlayerController();
+		
+	}
+
+	UInputSettings* InpueSettings = UInputSettings::GetInputSettings();
+	if (InpueSettings)
+	{
+		TArray<FInputAxisKeyMapping> AxisMapping;
+		InpueSettings->GetAxisMappingByName("MoveForward", AxisMapping);
+		for (FInputAxisKeyMapping& AdjustUPAxis : AxisMapping)
+		{
+			AdjustUPKey.Add(AdjustUPAxis.Key, AdjustUPAxis.Scale);
+		}
+
+		InpueSettings->GetAxisMappingByName("MoveRight", AxisMapping);
+		for (FInputAxisKeyMapping& AdjustRightAxis : AxisMapping)
+		{
+			AdjustRightKey.Add(AdjustRightAxis.Key, AdjustRightAxis.Scale);
+		}
+	}
+
+
 	Super::NativeConstruct();
 }
 
-void UStorehouse::InitializeStorehouse_Implementation(const FPlayerInfo& InPlayerInfo)
-{
-	InitializeStorehouseDisplay(InPlayerInfo);
+
+FReply UStorehouse::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{	
+	const FKey& Key = InKeyEvent.GetKey();
+
+	if (AdjustUPKey.Contains(Key)) { AdjustDisplayRoleUp(AdjustUPKey[Key]); }
+	if (AdjustRightKey.Contains(Key)) { AdjustDisplayRoleRight(AdjustRightKey[Key]); }
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+
 }
 
-void UStorehouse::InitializeStorehouseDisplay_Implementation(const FPlayerInfo& InPlayerInfo)
+
+void UStorehouse::InitializeRoleListDisplay_Implementation(const FPlayerInfo& InPlayerInfo)
 {
 	TSubclassOf<UUserWidget> RoleItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("RoleItem");
 	APlayerController* OnwerPC = GetOwningPlayer();
@@ -44,25 +92,34 @@ void UStorehouse::InitializeStorehouseDisplay_Implementation(const FPlayerInfo& 
 			URoleItem* RoleItem = CreateWidget<URoleItem>(OnwerPC, RoleItemClass);
 			if (RoleItem)
 			{
-				RoleItem->InitializeRoleItem(RoleInfo.Name, RoleInfo.Cost, InPlayerInfo.AllHaveRoleNames.Contains(RoleInfo.Name));
+				RoleItem->InitializeRoleItem(this, RoleInfo.Name, RoleInfo.Cost, InPlayerInfo.AllHaveRoleNames.Contains(RoleInfo.Name));
 				AddRoleItem(RoleItem);
 			}
 		}
 	}
 
-	TSubclassOf<UUserWidget> SkinItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("SkinItem");
+}
+
+void UStorehouse::InitializeRoleSkinAndFormListDisplay_Implementation(const FPlayerInfo& InPlayerInfo)
+{
+	APlayerController* OnwerPC = GetOwningPlayer();
+
+	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
+	UGamePawnManager* GamePawnManager= AssetManager->GetGamePawnManager();
+
+	TSubclassOf<UUserWidget> SkinItemClass = AssetManager->GetUserWidgetFromName("SkinItem");
 	if (SkinItemClass)
 	{
-		const TMap<FName, FGamePawnSkinClassInfo*>& AllGamePawnSkinClassInfo = UGamePawnManager::GetAllGamePawnSkinClassInfo();
-		for (TMap<FName, FGamePawnSkinClassInfo*>::TConstIterator It(AllGamePawnSkinClassInfo); It; ++It)
+		const TArray<FName>& AllRoleSkinName = GamePawnManager->GetAllGamePawnSkinWithRoleName(CurrentDisplayRoleName);
+		for (const FName& SkinName : AllRoleSkinName)
 		{
-			FGamePawnSkinClassInfo* SkinClassInfo = It.Value();
-			if (SkinClassInfo)
+			const FRoleSkinInfo* SkinInfo;
+			if (GamePawnManager->GetRoleSkinInfoFromName(SkinName, SkinInfo) && SkinInfo)
 			{
 				USkinItem* SkinItem = CreateWidget<USkinItem>(OnwerPC, SkinItemClass);
 				if (SkinItem)
 				{
-					SkinItem->InitializeSkinItem(SkinClassInfo->SkinName, SkinClassInfo->Cost, InPlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinClassInfo->SkinName));
+					SkinItem->InitializeSkinItem(this, SkinInfo->Name, SkinInfo->Cost, InPlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinInfo->Name));
 					AddSkinItem(SkinItem);
 				}
 			}
@@ -70,31 +127,24 @@ void UStorehouse::InitializeStorehouseDisplay_Implementation(const FPlayerInfo& 
 	}
 
 
-	TSubclassOf<UUserWidget> FormItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("FormItem");
+	TSubclassOf<UUserWidget> FormItemClass = AssetManager->GetUserWidgetFromName("FormItem");
 	if (FormItemClass)
 	{
-		const TMap<FName, FGamePawnFormClassInfo*>& AllGamePawnFormClassInfo = UGamePawnManager::GetAllGamePawnFormClassInfo();
-		for (TMap<FName, FGamePawnFormClassInfo*>::TConstIterator It(AllGamePawnFormClassInfo); It; ++It)
+		const TArray<FName>& AllRoleFormName = GamePawnManager->GetAllGamePawnFormWithRoleName(CurrentDisplayRoleName);
+		for (const FName& FormName : AllRoleFormName)
 		{
-			FGamePawnFormClassInfo* FormClassInfo = It.Value();
-			if (FormClassInfo)
+			const FRoleFormInfo* FormInfo;
+			if (GamePawnManager->GetRoleFormInfoFromName(FormName, FormInfo) && FormInfo)
 			{
 				UFormItem* FormItem = CreateWidget<UFormItem>(OnwerPC, FormItemClass);
 				if (FormItem)
 				{
-					FormItem->InitializeFormItem(FormClassInfo->FormName, FormClassInfo->Cost, InPlayerInfo.AllHaveGamePawnFormNames.Contains(FormClassInfo->FormName));
+					FormItem->InitializeFormItem(FormInfo->Name, FormInfo->Cost, InPlayerInfo.AllHaveGamePawnFormNames.Contains(FormInfo->Name));
 					AddFormItem(FormItem);
 				}
 			}
 		}
 	}
-
-	OnPlayerInfoUpdate(InPlayerInfo);
-}
-
-void UStorehouse::OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo)
-{
-	UpdateStoreHoustDisplay(InPlayerInfo);
 }
 
 void UStorehouse::Backup()
@@ -102,3 +152,17 @@ void UStorehouse::Backup()
 	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
 	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::MasterInterface); }
 }
+
+
+void UStorehouse::AdjustDisplayRoleUp(float AxisValue) { if (RoleDisplay) { RoleDisplay->AdjustUp(AxisValue); } }
+void UStorehouse::AdjustDisplayRoleRight(float AxisValue) { if (RoleDisplay) { RoleDisplay->AdjustRight(AxisValue); } }
+void UStorehouse::ToggleDisplayRole(const FName& RoleName)
+{
+	CurrentDisplayRoleName = RoleName;
+
+	UEveryThingGameInstance* OwnerETGI = GetOwningPlayer() ? Cast<UEveryThingGameInstance>(GetOwningPlayer()->GetGameInstance()) : nullptr;
+	if (OwnerETGI) { InitializeRoleSkinAndFormListDisplay(OwnerETGI->GetPlayerInfo()); }
+
+	if (RoleDisplay) { RoleDisplay->ChangeRole(RoleName); }
+}
+void UStorehouse::ToggleDisplaySkin(const FName& SkinName) { if (RoleDisplay) { RoleDisplay->ChangeSkin(SkinName); } }

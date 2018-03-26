@@ -5,7 +5,7 @@
 #include "FootballAttackComponent.h"
 #include "FootballSkillComponent.h"
 
-IMPLEMENT_GAMEPAWNFORM_CLASS("FootballForm", "Football", 100, FFootballForm);
+IMPLEMENT_GAMEPAWNFORM_CLASS("FootballForm", FFootballForm);
 
 FFootballForm::FFootballForm(AGamePawn* InGamePawn) : FGamePawnForm(InGamePawn)
 {

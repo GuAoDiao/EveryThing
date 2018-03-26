@@ -16,7 +16,7 @@ class EVERYTHING_API USkinItem : public UGoodsItem
 	
 public:
 	UFUNCTION(BlueprintNativeEvent)
-	void InitializeSkinItem(const FName& InSkinName, int32 InCost, bool bInHaveGoods);
+	void InitializeSkinItem(class UStorehouse* StoreHouse, const FName& InSkinName, int32 InCost, bool bInHaveGoods);
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void InitializeSkinItemDisplay(const FName& InSkinName, bool bInHaveGoods);
@@ -27,11 +27,13 @@ public:
 	const FName& GetSkinName() { return SkinName; }
 
 	UFUNCTION(BlueprintCallable)
-	void OnBuyRoleItem();
+	void OnDisplaySkinItem();
+
+	UFUNCTION(BlueprintCallable)
+	void OnBuySkinItem();
 	
 	virtual bool BuyGoodsItem() override;
 private:
 	FName SkinName;
-	
-	
+	UStorehouse* OwnerStoreHouse;
 };

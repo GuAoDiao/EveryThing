@@ -23,16 +23,17 @@ class EVERYTHING_API UStorehouse : public UUserWidget
 	
 	
 public:
+	UStorehouse(const FObjectInitializer& ObjectInitializer);
+
 	virtual void NativeConstruct() override;
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 	UFUNCTION(BlueprintNativeEvent)
-	void InitializeStorehouse(const FPlayerInfo& InPlayerInfo);
-	
-	UFUNCTION(BlueprintNativeEvent)
-	void InitializeStorehouseDisplay(const FPlayerInfo& InPlayerInfo);
+	void InitializeRoleListDisplay(const FPlayerInfo& InPlayerInfo);
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateStoreHoustDisplay(const FPlayerInfo& InPlayerInfo);
+	UFUNCTION(BlueprintNativeEvent)
+	void InitializeRoleSkinAndFormListDisplay(const FPlayerInfo& InPlayerInfo);
+
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void AddRoleItem(URoleItem* RoleItem);
@@ -41,8 +42,27 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void AddFormItem(UFormItem* FormItem);
 
+
+	UFUNCTION(BlueprintCallable)
+	void AdjustDisplayRoleUp(float AxisValue);
+	UFUNCTION(BlueprintCallable)
+	void AdjustDisplayRoleRight(float AxisValue);
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleDisplayRole(const FName& RoleName);
+	UFUNCTION(BlueprintCallable)
+	void ToggleDisplaySkin(const FName& SkinName);
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo);
 
 	UFUNCTION(BlueprintCallable)
 	void Backup();
+
+protected:
+	class ARoleDisplay* RoleDisplay;
+	class APlayerController* OwnerPC;
+	TMap<FKey, float> AdjustUPKey;
+	TMap<FKey, float> AdjustRightKey;
+	FName CurrentDisplayRoleName;
 };

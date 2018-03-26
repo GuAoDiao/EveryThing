@@ -34,7 +34,7 @@ public:
 	void ServerSetPlayerInfo(const FPlayerInfo& InPlayerInfo);
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdatePlayerInfoDelegate, const FPlayerInfo&);
-	FOnUpdatePlayerInfoDelegate GetOnUpdatePlayerInfoDelegate() { return OnUpdatePlayerInfoDelegate; }
+	FOnUpdatePlayerInfoDelegate OnUpdatePlayerInfoDelegate;
 
 private:
 	UFUNCTION()
@@ -43,7 +43,6 @@ private:
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentPlayerInfo)
 	FPlayerInfo CurrentPlayerInfo;
-	FOnUpdatePlayerInfoDelegate OnUpdatePlayerInfoDelegate;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window Player State Interface

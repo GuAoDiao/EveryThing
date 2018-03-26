@@ -3,28 +3,24 @@
 #include "RoleItem.h"
 
 #include "EveryThingGameInstance.h"
+#include "EveryThingAssetManager.h"
+#include "Characters/GamePawnManager.h"
+#include "UI/Menu/Storehouse/Storehouse.h"
 
 
-void URoleItem::InitializeRoleItem_Implementation(const FName& InRoleName, int32 InCost, bool bInHaveGoods)
+void URoleItem::InitializeRoleItem_Implementation(UStorehouse* StoreHouse, const FName& InRoleName, int32 InCost, bool bInHaveGoods)
 {
 	InitializeGoodsItem(InCost, bInHaveGoods);
 
+	OwnerStoreHouse = StoreHouse;
 	RoleName = InRoleName;
 
 	InitializeRoleItemDisplay(RoleName, bInHaveGoods);
 }
 
-void URoleItem::InitializeRoleItemDisplay_Implementation(const FName& InRoleName, bool bInHaveGoods)
-{
-	UpdateRoleItemDisplay(bInHaveGoods);
-}
+void URoleItem::InitializeRoleItemDisplay_Implementation(const FName& InRoleName, bool bInHaveGoods) { UpdateRoleItemDisplay(bInHaveGoods); }
 
-void URoleItem::OnBuyRoleItem()
-{
-	BuyGoodsItem();
-}
-
-
+void URoleItem::OnBuyRoleItem() { BuyGoodsItem(); }
 bool URoleItem::BuyGoodsItem()
 {
 	if (IsHaveEnoughMoney())
@@ -34,8 +30,16 @@ bool URoleItem::BuyGoodsItem()
 		{
 			FPlayerInfo& PlayerInfo = OwnerETGI->GetPlayerInfo();
 			PlayerInfo.AllHaveRoleNames.AddUnique(RoleName);
-			PlayerInfo.Gold -= GoodCost;
+			
+			const FRoleInfo* RoleInfo;
+			if (UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleInfoFromName(RoleName, RoleInfo))
+			{
+				PlayerInfo.AllHaveGamePawnSkinNames.AddUnique(RoleInfo->DefaultSkinName);
+				PlayerInfo.AllHaveGamePawnFormNames.AddUnique(RoleInfo->DefaultFormName);
+			}
 
+			PlayerInfo.Gold -= GoodCost;
+			
 			OwnerETGI->UpdatePlayerInfo();
 
 			UpdateRoleItemDisplay(true);
@@ -45,3 +49,5 @@ bool URoleItem::BuyGoodsItem()
 	}
 	return false;
 }
+
+void URoleItem::OnDisplayRoleItem() { if (OwnerStoreHouse) { OwnerStoreHouse->ToggleDisplayRole(RoleName); } }
