@@ -27,6 +27,5 @@ void UCreateArchive::CreateArchive(const FString& ArchiveName, const FString& Pl
 			OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::ErrorDialog);
 			OwnerMenuHUD->SetErrorDialogMessage(TEXT("Can't Create Archive"));
 		}
-
 	}
 }

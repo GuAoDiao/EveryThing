@@ -37,7 +37,6 @@ ARole3DDisplay::ARole3DDisplay()
 		BodyInstance->MassScale = 1.f;
 		BodyInstance->SetMassOverride(100.f);
 		BodyInstance->AngularDamping = 10.f;
-		BodyInstance->UpdateMassProperties();
 	}
 	StaticMeshComp->SetupAttachment(CameraComp);
 	StaticMeshComp->SetRelativeLocation(FVector(500.f, 0.f, 0.f));
