@@ -70,7 +70,7 @@ void UPlayerPawnComponent::DelayBindEveryThingPlayerState()
 	if (OwnerETPS)
 	{
 		OnUpdatePlayerInfo(OwnerETPS->GetPlayerInfo());
-		OwnerETPS->GetOnUpdatePlayerInfoDelegate().AddUObject(this, &UPlayerPawnComponent::OnUpdatePlayerInfo);
+		OwnerETPS->OnUpdatePlayerInfoDelegate.AddUObject(this, &UPlayerPawnComponent::OnUpdatePlayerInfo);
 	}
 }
 

@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "UI/Menu/Storehouse/GoodItem.h"
+
+#include "EveryThingTypes.h"
+
 #include "FormItem.generated.h"
 
 /**
@@ -15,21 +18,21 @@ class EVERYTHING_API UFormItem : public UGoodsItem
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintNativeEvent)
-	void InitializeFormItem(const FName& InFormName, int32 InCost, bool bInHaveGoods);
+	void InitializeFormItem(const FName& InFormName, bool bInHaveGoods);
 	
-	UFUNCTION(BlueprintNativeEvent)
-	void InitializeFormItemDisplay(const FName& InFormName, bool bInHaveGoods);
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitializeFormItemDisplay();
+	
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-	void UpdateFormItemDisplay(bool bInHaveGoods);
+	void UpdateIsHaveGoods(bool bInHaveGoods);
 
 	UFUNCTION(BlueprintPure)
-	const FName& GetFormName() { return FormName; }
+	const FRoleFormInfo& GetFormInfo() const { check(FormInfo); return *FormInfo; }
 
 	UFUNCTION(BlueprintCallable)
 	void OnBuyFormItem();
 	
 	virtual bool BuyGoodsItem() override;
 private:
-	FName FormName;	
+	const FRoleFormInfo* FormInfo;
 };

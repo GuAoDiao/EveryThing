@@ -12,20 +12,15 @@ AFootballPawn::AFootballPawn()
 	RoleName = "Football";
 
 	ResetInfoFromDataTable(RoleName);
-		
-	UStaticMesh* FootballMesh = UEveryThingAssetManager::GetAssetManagerInstance()->GetMeshFromName(RoleName);
+	
+	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
+	UGamePawnManager* GamePawnManager = AssetManager->GetGamePawnManager();
+
+	UStaticMesh* FootballMesh = AssetManager->GetMeshFromName(RoleName);
 	if (FootballMesh) { StaticMeshComp->SetStaticMesh(FootballMesh); }
 
-	AllGamePawnSkinName = UGamePawnManager::GetAllGamePawnSkinWithRoleName(RoleName);
+	AllGamePawnSkinName = GamePawnManager->GetAllGamePawnSkinWithRoleName(RoleName);
+	AllGamePawnFormName = GamePawnManager->GetAllGamePawnFormWithRoleName(RoleName);
 	
-	AllHaveGamePawnSkinName.Add("FootballSkin");
-	ToggleToTargetSkin("FootballSkin");
-
-	AllGamePawnFormName = UGamePawnManager::GetAllGamePawnFormWithRoleName(RoleName);
-
-	AllHaveGamePawnFormName.Add("FootballForm");
-	ToggleToTargetForm("FootballForm");
-
-
-
+	ResetDefaultSkinAndFormFromDataTable();
 }

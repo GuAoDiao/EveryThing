@@ -2,9 +2,7 @@
 
 #include "FootballFireSkin.h"
 
-#include "EveryThingAssetManager.h"
-
-IMPLEMENT_GAMEPAWNSKIN_CLASS("FootballFireSkin", "Football", 700, FFootballFireSkin);
+IMPLEMENT_GAMEPAWNSKIN_CLASS("FootballFireSkin", FFootballFireSkin);
 
 FFootballFireSkin::FFootballFireSkin(UStaticMeshComponent* StaticMeshComp) : FGamePawnSkin(StaticMeshComp)
 {

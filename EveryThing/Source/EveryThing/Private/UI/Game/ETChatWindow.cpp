@@ -26,8 +26,8 @@ void UETChatWindow::NativeConstruct()
 	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
 	if (OwnerPPC)
 	{
-		OwnerPPC->GetOnToggleToTargetRoleSuccessDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetRoleSuccess);
-		OwnerPPC->GetOnToggleToTargetRoleFailureDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetRoleFailure);
+		OwnerPPC->OnToggleToTargetRoleSuccessDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetRoleSuccess);
+		OwnerPPC->OnToggleToTargetRoleFailureDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetRoleFailure);
 		
 		OnToglleToTargetRole(Cast<AGamePawn>(OwnerPPC->GetPawn()));
 	}
@@ -37,11 +37,11 @@ void UETChatWindow::OnToglleToTargetRole(AGamePawn* InGamePawn)
 {
 	if (InGamePawn)
 	{
-		InGamePawn->GetOnToggleToTargetFormFailureDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetFormFailure);
-		InGamePawn->GetOnToggleToTargetFormSuccessDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetFormSuccess);
+		InGamePawn->OnToggleToTargetFormFailureDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetFormFailure);
+		InGamePawn->OnToggleToTargetFormSuccessDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetFormSuccess);
 
-		InGamePawn->GetOnToggleToTargetSkinFailureDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetSkinFailure);
-		InGamePawn->GetOnToggleToTargetSkinSuccessDelegate().AddUObject(this, &UETChatWindow::OnToggleToTargetSkinSuccess);
+		InGamePawn->OnToggleToTargetSkinFailureDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetSkinFailure);
+		InGamePawn->OnToggleToTargetSkinSuccessDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetSkinSuccess);
 	}
 
 }

@@ -13,25 +13,60 @@ TMap<FName, FGamePawnFormClassInfo*> UGamePawnManager::AllGamePawnFormClassInfo;
 
 UGamePawnManager::UGamePawnManager()
 {
-	LoadRolesClassFromDatetable();
+	LoadAllRolesInfo();
+	LoadAllRoleSkinInfo();
+	LoadAllRoleFormInfo();
+
+	RoleDisplayInfoDT = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName(TEXT("RoleDisplayInfo"));
 }
 
-/// Game Pawn
-
-void UGamePawnManager::LoadRolesClassFromDatetable()
+//////////////////////////////////////////////////////////////////////////
+/// Load
+void UGamePawnManager::LoadAllRolesInfo()
 {
-	UDataTable* RoleNameDatatable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName(TEXT("RolesInfo"));
-	if (RoleNameDatatable)
+	UDataTable* RolesInfoDT = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName(TEXT("RolesInfo"));
+	if (RolesInfoDT)
 	{
-		TArray<FRoleInfo*> RolesNameDataInDatatable;
-		RoleNameDatatable->GetAllRows<FRoleInfo>(TEXT("found all Roles Name in DataTable"), RolesNameDataInDatatable);
-		for (FRoleInfo* RoleNameData : RolesNameDataInDatatable)
+		TArray<FRoleInfo*> RolesInfoInDatatable;
+		RolesInfoDT->GetAllRows<FRoleInfo>(TEXT("found all Roles Name in DataTable"), RolesInfoInDatatable);
+		for (FRoleInfo* RoleInfo : RolesInfoInDatatable)
 		{
-			AllRolesInfo.Add(RoleNameData->Name, *RoleNameData);
+			AllRolesInfo.Add(RoleInfo->Name, *RoleInfo);
 		}
 	}
 }
 
+void UGamePawnManager::LoadAllRoleSkinInfo()
+{
+	UDataTable* RoleSkinInfoDT = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName(TEXT("RoleSkinInfo"));
+	if (RoleSkinInfoDT)
+	{
+		TArray<FRoleSkinInfo*> RoleSkinInfoInDatatable;
+		RoleSkinInfoDT->GetAllRows<FRoleSkinInfo>(TEXT("found all Roles Name in DataTable"), RoleSkinInfoInDatatable);
+		for (FRoleSkinInfo* SkinInfo : RoleSkinInfoInDatatable)
+		{
+			AllRoleSkinInfo.Add(SkinInfo->Name, *SkinInfo);
+		}
+	}
+}
+
+void UGamePawnManager::LoadAllRoleFormInfo()
+{
+
+	UDataTable* RoleFormInfoDT = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName(TEXT("RoleFormInfo"));
+	if (RoleFormInfoDT)
+	{
+		TArray<FRoleFormInfo*> RoleFormInfoInDatatable;
+		RoleFormInfoDT->GetAllRows<FRoleFormInfo>(TEXT("found all Roles Name in DataTable"), RoleFormInfoInDatatable);
+		for (FRoleFormInfo* RoleFormInfo : RoleFormInfoInDatatable)
+		{
+			AllRoleFormInfo.Add(RoleFormInfo->Name, *RoleFormInfo);
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+/// Role Info
 TSoftClassPtr<AGamePawn> UGamePawnManager::GetRoleClassFromName(const FName& RolesName) const
 {
 	if (AllRolesInfo.Contains(RolesName))
@@ -59,32 +94,119 @@ FName UGamePawnManager::GetRoleNameFromClass(UClass* RoleClass) const
 	return NAME_None;
 }
 
+bool UGamePawnManager::GetRoleInfoFromName(const FName& RoleName, const FRoleInfo* & OutRoleInfo) const
+{
+	if (AllRolesInfo.Contains(RoleName))
+	{
+		OutRoleInfo = &AllRolesInfo[RoleName];
+		return true;
+	}
+
+	return false;
+}
+
 const TMap<FName, FRoleInfo>& UGamePawnManager::GetAllRolesInfo() const
 {
 	return AllRolesInfo;
 }
 
-
-FGamePawnSkin* UGamePawnManager::GetGamePawnSkinFromName(const FName& Name, UStaticMeshComponent* InStaticMeshComp)
-{
-	if (AllGamePawnSkinClassInfo.Contains(Name))
-	{
-		return AllGamePawnSkinClassInfo[Name]->GetClass(InStaticMeshComp);
-	}
-	return nullptr;
-}
+//////////////////////////////////////////////////////////////////////////
+/// Role Skin Info
 
 TArray<FName> UGamePawnManager::GetAllGamePawnSkinWithRoleName(const FName& RoleName)
 {
 	TArray<FName> Result;
-	for (TMap<FName, FGamePawnSkinClassInfo*>::TConstIterator GamePawnSkinClassInfoItr(AllGamePawnSkinClassInfo); GamePawnSkinClassInfoItr; ++GamePawnSkinClassInfoItr)
+	for (TMap<FName, FRoleSkinInfo>::TConstIterator It(AllRoleSkinInfo); It; ++It)
 	{
-		if (GamePawnSkinClassInfoItr.Value() && GamePawnSkinClassInfoItr.Value()->RoleName == RoleName)
+		if (It.Value().RoleName == RoleName)
 		{
-			Result.AddUnique(GamePawnSkinClassInfoItr.Value()->SkinName);
+			Result.AddUnique(It.Key());
 		}
 	}
 	return Result;
+}
+
+bool UGamePawnManager::GetRoleSkinInfoFromName(const FName& SkinName, const FRoleSkinInfo* & OutRoleSkinInfo) const
+{
+	if (AllRoleSkinInfo.Contains(SkinName))
+	{
+		OutRoleSkinInfo = &AllRoleSkinInfo[SkinName];
+		return true;
+	}
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Role Form Info
+bool UGamePawnManager::GetRoleFormInfoFromName(const FName& FormName, const FRoleFormInfo* & OutRoleFormInfo) const
+{
+	if (AllRoleFormInfo.Contains(FormName))
+	{
+		OutRoleFormInfo = &AllRoleFormInfo[FormName];
+		return true;
+	}
+	return false;
+}
+
+
+
+TArray<FName> UGamePawnManager::GetAllGamePawnFormWithRoleName(const FName& RoleName)
+{
+	TArray<FName> Result;
+	for (TMap<FName, FRoleFormInfo>::TConstIterator It(AllRoleFormInfo); It; ++It)
+	{
+		if (It.Value().RoleName == RoleName)
+		{
+			Result.AddUnique(It.Key());
+		}
+	}
+	return Result;
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Role Display Info
+
+bool UGamePawnManager::GetRoleDisplayInfoFromName(const FName& RoleName, FRoleDisplayInfo const*& OutRoleDisplayInfo)
+{
+	if (AllRoleDisplayInfo.Contains(RoleName))
+	{
+		OutRoleDisplayInfo = &AllRoleDisplayInfo[RoleName];
+		return true;
+	}
+
+
+	if (RoleDisplayInfoDT)
+	{
+		FRoleDisplayInfo* RoleDisplayInfo = RoleDisplayInfoDT->FindRow<FRoleDisplayInfo>(RoleName, TEXT("-_- find role display info"));
+		if (RoleDisplayInfo)
+		{
+			AllRoleDisplayInfo.Add(RoleName, *RoleDisplayInfo);
+			OutRoleDisplayInfo = &AllRoleDisplayInfo[RoleName];
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Skin and Form class info
+
+FGamePawnSkin* UGamePawnManager::CreateGamePawnSkinFromName(const FName& Name, UStaticMeshComponent* InStaticMeshComp)
+{
+	if (AllGamePawnSkinClassInfo.Contains(Name))
+	{
+		return AllGamePawnSkinClassInfo[Name]->CreateObject(InStaticMeshComp);
+	}
+	return nullptr;
 }
 
 void UGamePawnManager::RegisterGamePawnSkinWithName(const FName& Name, FGamePawnSkinClassInfo* ClassInfo)
@@ -92,29 +214,16 @@ void UGamePawnManager::RegisterGamePawnSkinWithName(const FName& Name, FGamePawn
 	AllGamePawnSkinClassInfo.Add(Name, ClassInfo);
 }
 
-FGamePawnForm* UGamePawnManager::GetGamePawnFormFromName(const FName& Name, AGamePawn* InGamePawn)
+
+
+FGamePawnForm* UGamePawnManager::CreateGamePawnFormFromName(const FName& Name, AGamePawn* InGamePawn)
 {
 	if (AllGamePawnFormClassInfo.Contains(Name))
 	{
-		return AllGamePawnFormClassInfo[Name]->GetClass(InGamePawn);
+		return AllGamePawnFormClassInfo[Name]->CreateObject(InGamePawn);
 	}
 	return nullptr;
 }
-
-
-TArray<FName> UGamePawnManager::GetAllGamePawnFormWithRoleName(const FName& RoleName)
-{
-	TArray<FName> Result;
-	for (TMap<FName, FGamePawnFormClassInfo*>::TConstIterator GamePawnFormClassInfoItr(AllGamePawnFormClassInfo); GamePawnFormClassInfoItr; ++GamePawnFormClassInfoItr)
-	{
-		if (GamePawnFormClassInfoItr.Value() && GamePawnFormClassInfoItr.Value()->RoleName == RoleName)
-		{
-			Result.AddUnique(GamePawnFormClassInfoItr.Value()->FormName);
-		}
-	}
-	return Result;
-}
-
 
 void UGamePawnManager::RegisterGamePawnFormWithName(const FName& Name, FGamePawnFormClassInfo* ClassInfo)
 {

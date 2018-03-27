@@ -79,14 +79,11 @@ public:
 	void ToggleRoleWithIndex(int32 NumberIndex);
 	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetRoleSuccessDelegate, const FName& /* TargetRoleName */);
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetRoleFailureDelegate, const FName& /* TargetRoleName */, const FText&  /* ErrorInfo */);
-
-	FOnToggleToTargetRoleSuccessDelegate& GetOnToggleToTargetRoleSuccessDelegate() { return OnToggleToTargetRoleSuccessDelegate; }
-	FOnToggleToTargetRoleFailureDelegate& GetOnToggleToTargetRoleFailureDelegate() { return OnToggleToTargetRoleFailureDelegate; }
-private:
 	FOnToggleToTargetRoleSuccessDelegate OnToggleToTargetRoleSuccessDelegate;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetRoleFailureDelegate, const FName& /* TargetRoleName */, const FText&  /* ErrorInfo */);
 	FOnToggleToTargetRoleFailureDelegate OnToggleToTargetRoleFailureDelegate;
 	
+private:
 	void ToggleRoleWithName(const FName& TargetRoleName);
 
 	UFUNCTION(Server, WithValidation, Reliable)

@@ -15,7 +15,7 @@
 #include "Characters/PlayerPawnController.h"
 #include "Characters/Movement/Components/GamePawnMovementComponent.h"
 
-#define LOCTEXT_NAMESPACE "Everything_Characters__GamePawn"
+#define LOCTEXT_NAMESPACE "Everything_Characters_GamePawn"
 
 AGamePawn::AGamePawn()
 {
@@ -147,7 +147,7 @@ void AGamePawn::ToggleToTargetForm(const FName& FormName)
 	if (CurrentGamePawnForm) { CurrentGamePawnForm->UnloadGamePawnForm();}
 	delete CurrentGamePawnForm;
 
-	FGamePawnForm* TargetGamePawnForm = UGamePawnManager::GetGamePawnFormFromName(FormName, this);
+	FGamePawnForm* TargetGamePawnForm = UGamePawnManager::CreateGamePawnFormFromName(FormName, this);
 	CurrentGamePawnFormName = FormName;
 	CurrentGamePawnForm = TargetGamePawnForm;
 
@@ -186,10 +186,9 @@ void AGamePawn::ToggleToTargetSkin(const FName& SkinName)
 		ServerToggleToTargetSkin(SkinName);
 	}
 	
-	if (CurrentGamePawnSkin) { CurrentGamePawnSkin->UnloadGamePawnSkin(); }
-	delete CurrentGamePawnSkin;
+	if (CurrentGamePawnSkin) { CurrentGamePawnSkin->UnloadGamePawnSkin(); delete CurrentGamePawnSkin; }
 
-	FGamePawnSkin* TargetGamePawnSkin = UGamePawnManager::GetGamePawnSkinFromName(SkinName, StaticMeshComp);
+	FGamePawnSkin* TargetGamePawnSkin = UGamePawnManager::CreateGamePawnSkinFromName(SkinName, StaticMeshComp);
 	CurrentGamePawnSkinName = SkinName;
 	CurrentGamePawnSkin = TargetGamePawnSkin;
 
@@ -315,6 +314,18 @@ void AGamePawn::ResetDamping()
 		BodyInstance->LinearDamping  = OwnerInfo.LinearDamping;
 		BodyInstance->AngularDamping = OwnerInfo.AngularDamping;
 		BodyInstance->UpdateDampingProperties();
+	}
+}
+
+void AGamePawn::ResetDefaultSkinAndFormFromDataTable()
+{
+	const FRoleInfo* RoleInfo;
+	if (UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleInfoFromName(RoleName, RoleInfo) && RoleInfo)
+	{
+		AllHaveGamePawnSkinName.Add(RoleInfo->DefaultSkinName);
+		ToggleToTargetSkin(RoleInfo->DefaultSkinName);
+		AllHaveGamePawnFormName.Add(RoleInfo->DefaultFormName);
+		ToggleToTargetForm(RoleInfo->DefaultFormName);
 	}
 }
 

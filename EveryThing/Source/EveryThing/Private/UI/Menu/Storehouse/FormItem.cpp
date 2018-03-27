@@ -3,43 +3,41 @@
 #include "FormItem.h"
 
 
+#include "EveryThingAssetManager.h"
+#include "Characters/GamePawnManager.h"
 #include "EveryThingGameInstance.h"
 
 
-void UFormItem::InitializeFormItem_Implementation(const FName& InFormName, int32 InCost, bool bInHaveGoods)
+void UFormItem::InitializeFormItem(const FName& InFormName, bool bInHaveGoods)
 {
-	InitializeGoodsItem(InCost, bInHaveGoods);
+	UGamePawnManager* GamePawnManager = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager();
+	if (GamePawnManager->GetRoleFormInfoFromName(InFormName, FormInfo) && FormInfo)
+	{
+		InitializeGoodsItem(FormInfo->Cost, bInHaveGoods);
 
-	FormName = InFormName;
+		InitializeFormItemDisplay();
 
-	InitializeFormItemDisplay(FormName, bInHaveGoods);
+		UpdateIsHaveGoods(bInHaveGoods);
+	}
 }
 
-void UFormItem::InitializeFormItemDisplay_Implementation(const FName& InFormName, bool bInHaveGoods)
-{
-	UpdateFormItemDisplay(bInHaveGoods);
-}
-
-void UFormItem::OnBuyFormItem()
-{
-	BuyGoodsItem();
-}
+void UFormItem::OnBuyFormItem() { BuyGoodsItem(); }
 
 
 bool UFormItem::BuyGoodsItem()
 {
-	if (IsHaveEnoughMoney())
+	if (FormInfo && IsHaveEnoughMoney())
 	{
 		UEveryThingGameInstance* OwnerETGI = GetOwningPlayer() ? Cast<UEveryThingGameInstance>(GetOwningPlayer()->GetGameInstance()) : nullptr;
 		if (OwnerETGI)
 		{
 			FPlayerInfo& PlayerInfo = OwnerETGI->GetPlayerInfo();
-			PlayerInfo.AllHaveGamePawnFormNames.AddUnique(FormName);
+			PlayerInfo.AllHaveGamePawnFormNames.AddUnique(FormInfo->Name);
 			PlayerInfo.Gold -= GoodCost;
 
 			OwnerETGI->UpdatePlayerInfo();
 
-			UpdateFormItemDisplay(true);
+			UpdateIsHaveGoods(true);
 
 			return true;
 		}

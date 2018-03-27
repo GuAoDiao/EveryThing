@@ -14,12 +14,12 @@ void USelectFormsBox::NativeConstruct()
 	Super::NativeConstruct();
 
 	AEveryThingPlayerState* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
-	if (OwnerPlaterState) { OwnerPlaterState->GetOnUpdatePlayerInfoDelegate().AddUObject(this, &USelectFormsBox::OnUpdatePlayerInfo); }
+	if (OwnerPlaterState) { OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectFormsBox::OnUpdatePlayerInfo); }
 
 	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
 	if (OwnerPPC)
 	{
-		OwnerPPC->GetOnToggleToTargetRoleSuccessDelegate().AddUObject(this, &USelectFormsBox::InitializeSelectFormsBoxDisplay);
+		OwnerPPC->OnToggleToTargetRoleSuccessDelegate.AddUObject(this, &USelectFormsBox::InitializeSelectFormsBoxDisplay);
 		InitializeSelectFormsBoxDisplay(OwnerPPC->GetCurrentRoleName());
 	}
 }
@@ -33,7 +33,7 @@ void USelectFormsBox::InitializeSelectFormsBoxDisplay_Implementation(const FName
 	if (SelectItemClass && OwnerPPC && OwnerPlaterState)
 	{
 		const FPlayerInfo& PlayerInfo = OwnerPlaterState->GetPlayerInfo();
-		for (const FName& FormName : UGamePawnManager::GetAllGamePawnFormWithRoleName(TargetRoleName))
+		for (const FName& FormName : UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllGamePawnFormWithRoleName(TargetRoleName))
 		{
 			USelectItem* SelectItem = CreateWidget<USelectItem>(OwnerPPC, SelectItemClass);
 			if (SelectItem)

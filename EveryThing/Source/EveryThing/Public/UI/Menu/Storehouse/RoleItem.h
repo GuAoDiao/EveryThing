@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "UI/Menu/Storehouse/GoodItem.h"
+
+#include "EveryThingTypes.h"
+
 #include "RoleItem.generated.h"
 
 /**
@@ -14,21 +17,27 @@ class EVERYTHING_API URoleItem : public UGoodsItem
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintNativeEvent)
-	void InitializeRoleItem(const FName& InRoleName, int32 InCost, bool bInHaveGoods);
+	void InitializeRoleItem(class UStorehouse* StoreHouse, const FName& InRoleName, bool bInHaveGoods);
 	
-	UFUNCTION(BlueprintNativeEvent)
-	void InitializeRoleItemDisplay(const FName& InRoleName, bool bInHaveGoods);
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitializeRoleItemDisplay();
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-	void UpdateRoleItemDisplay(bool bInHaveGoods);
+	void UpdateIsHaveGoods(bool bInHaveGoods);
 
 	UFUNCTION(BlueprintPure)
 	const FName& GetRoleName() { return RoleName; }
+	UFUNCTION(BlueprintPure)
+	const FRoleInfo& GetRoleInfo() { check(RoleInfo); return *RoleInfo; }
+
+	virtual bool BuyGoodsItem() override;
 
 	UFUNCTION(BlueprintCallable)
 	void OnBuyRoleItem();
-	
-	virtual bool BuyGoodsItem() override;
+	UFUNCTION(BlueprintCallable)
+	void OnDisplayRoleItem();
+
 private:
+	const FRoleInfo* RoleInfo;
 	FName RoleName;
+	UStorehouse* OwnerStoreHouse;
 };

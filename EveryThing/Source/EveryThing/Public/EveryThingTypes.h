@@ -172,4 +172,59 @@ public:
 	TSoftClassPtr<class AGamePawn> RoleClass;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Cost;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName DefaultSkinName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName DefaultFormName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UTexture2D* Icon;
+};
+
+USTRUCT(BlueprintType)
+struct FRoleSkinInfo : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName Name;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName RoleName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Cost;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UTexture2D* Icon;
+};
+
+USTRUCT(BlueprintType)
+struct FRoleFormInfo : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName Name;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName RoleName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Cost;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UTexture2D* Icon;
+};
+
+USTRUCT(BlueprintType)
+struct FRoleDisplayInfo : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FName RoleName;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FName DefaultSkinName;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FRotator DisplayRotation;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FVector DisplayScale;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	class UStaticMesh* DisplayStaticMesh;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	class USkeletalMesh* DisplaySkeletalMesh;
 };
