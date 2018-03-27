@@ -8,7 +8,7 @@
 #include "ChatWindow/ChatWindowPlayerStateInterface.h"
 #include "EveryThingTypes.h"
 
-#include "EveryThingPlayerState.generated.h"
+#include "EveryThingPlayerState_Game.generated.h"
 
 
 class AGamePawn;
@@ -17,7 +17,7 @@ class APlayerController_Game;
  * 
  */
 UCLASS()
-class EVERYTHING_API AEveryThingPlayerState : public APlayerState, public IChatWindowPlayerStateInterface
+class EVERYTHING_API AEveryThingPlayerState_Game : public APlayerState, public IChatWindowPlayerStateInterface
 {
 	GENERATED_BODY()
 	

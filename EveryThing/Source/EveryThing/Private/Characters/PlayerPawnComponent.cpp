@@ -14,7 +14,7 @@
 
 #include "Characters/GamePawn.h"
 #include "Online/PlayerController_Game.h"
-#include "Online/EveryThingPlayerState.h"
+#include "Online/EveryThingPlayerState_Game.h"
 #include "UI/EveryThingHUD_Game.h"
 
 UPlayerPawnComponent::UPlayerPawnComponent()
@@ -66,7 +66,7 @@ void UPlayerPawnComponent::BeginPlay()
 void UPlayerPawnComponent::DelayBindEveryThingPlayerState()
 {
 	APlayerController* OwnerPC = OwnerPawn ? Cast<APlayerController>(OwnerPawn->GetController()) : nullptr;
-	AEveryThingPlayerState* OwnerETPS = OwnerPC ? Cast<AEveryThingPlayerState>(OwnerPC->PlayerState) : nullptr;
+	AEveryThingPlayerState_Game* OwnerETPS = OwnerPC ? Cast<AEveryThingPlayerState_Game>(OwnerPC->PlayerState) : nullptr;
 	if (OwnerETPS)
 	{
 		OnUpdatePlayerInfo(OwnerETPS->GetPlayerInfo());

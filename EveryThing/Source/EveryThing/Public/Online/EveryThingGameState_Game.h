@@ -7,16 +7,16 @@
 
 #include "ChatWIndow/ChatWindowGameStateInterface.h"
 
-#include "EveryThingGameState.generated.h"
+#include "EveryThingGameState_Game.generated.h"
 
 
-class AEveryThingPlayerState;
+class AEveryThingPlayerState_Game;
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API AEveryThingGameState : public AGameStateBase, public IChatWindowGameStateInterface
+class EVERYTHING_API AEveryThingGameState_Game : public AGameStateBase, public IChatWindowGameStateInterface
 {
 	GENERATED_BODY()
 	

@@ -45,7 +45,7 @@ UEveryThingAssetManager* UEveryThingAssetManager::GetAssetManagerInstance()
 {
 	if (!AssetManager)
 	{
-		AssetManager = NewObject<UEveryThingAssetManager>((UObject*)GetTransientPackage(), TEXT("Blueprint'/Game/EveryThing/Blueprints/BP_AssetManager.BP_AssetManager'"));
+		AssetManager = NewObject<UEveryThingAssetManager>();
 	}
 
 	checkf(AssetManager, TEXT("The Asset Manager must be exists."));

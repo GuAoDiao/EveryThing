@@ -2,7 +2,7 @@
 
 #include "SelectSkinsBox.h"
 
-#include "Online/EveryThingPlayerState.h"
+#include "Online/EveryThingPlayerState_Game.h"
 #include "Online/PlayerController_Game.h"
 #include "EveryThingAssetManager.h"
 #include "Characters/GamePawnManager.h"
@@ -13,7 +13,7 @@ void USelectSkinsBox::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	AEveryThingPlayerState* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
+	AEveryThingPlayerState_Game* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState_Game>(GetOwningPlayer()->PlayerState) : nullptr;
 	if (OwnerPlaterState) { OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectSkinsBox::OnUpdatePlayerInfo); }
 
 	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
@@ -26,7 +26,7 @@ void USelectSkinsBox::NativeConstruct()
 
 void USelectSkinsBox::InitializeSelectSkinsBoxDisplay_Implementation(const FName& TargetRoleName)
 {
-	AEveryThingPlayerState* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
+	AEveryThingPlayerState_Game* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState_Game>(GetOwningPlayer()->PlayerState) : nullptr;
 	TSubclassOf<UUserWidget> SelectItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("SelectItem");
 	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
 

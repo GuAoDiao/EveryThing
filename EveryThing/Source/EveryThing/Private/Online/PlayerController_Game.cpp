@@ -18,7 +18,7 @@
 #include "Characters/Moves/SkillComponent.h"
 #include "Characters/Movement/Components/GamePawnMovementComponent.h"
 #include "SceneObject/HitAbleInterface.h"
-#include "Online/EveryThingPlayerState.h"
+#include "Online/EveryThingPlayerState_Game.h"
 #include "Characters/GamePawnManager.h"
 
 
@@ -249,7 +249,7 @@ void APlayerController_Game::ToggleRoleWithIndex(int32 NumberIndex)
 void APlayerController_Game::ToggleRoleWithName(const FName& TargetRoleName)
 {
 	// Get owning EverythingPlayerState and the world is exists
-	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
+	AEveryThingPlayerState_Game* OwnerETPS = Cast<AEveryThingPlayerState_Game>(PlayerState);
 	if (!OwnerETPS)
 	{
 		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("ToggleRoleWhenNotFonutPlayer", "Can't find Owner Player State."));

@@ -5,8 +5,8 @@
 #include "Package.h"
 #include "Engine/World.h"
 
-#include "Online/EveryThingGameState.h"
-#include "Online/EveryThingPlayerState.h"
+#include "Online/EveryThingGameState_Game.h"
+#include "Online/EveryThingPlayerState_Game.h"
 
 #include "Online/PlayerController_Game.h"
 #include "ChatWindow/ChatWindowTypes.h"

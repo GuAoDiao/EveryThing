@@ -1,26 +1,26 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "EveryThingGameState.h"
+#include "EveryThingGameState_Game.h"
 
 #include "UnrealNetwork.h"
 
-#include "Online/EveryThingPlayerState.h"
+#include "Online/EveryThingPlayerState_Game.h"
 
-const FString AEveryThingGameState::PlayerChatName_NONE = FString("NONE");
+const FString AEveryThingGameState_Game::PlayerChatName_NONE = FString("NONE");
 
-void AEveryThingGameState::HandleBeginPlay()
+void AEveryThingGameState_Game::HandleBeginPlay()
 {
 	Super::HandleBeginPlay();
 }
 
 
-void AEveryThingGameState::AddPlayerState(APlayerState* PlayerState)
+void AEveryThingGameState_Game::AddPlayerState(APlayerState* PlayerState)
 {
 	Super::AddPlayerState(PlayerState);
 
 	if (PlayerState && Cast<IChatWindowPlayerStateInterface>(PlayerState))
 	{
-		AEveryThingPlayerState* TargetETPS = Cast<AEveryThingPlayerState>(PlayerState);
+		AEveryThingPlayerState_Game* TargetETPS = Cast<AEveryThingPlayerState_Game>(PlayerState);
 		if (TargetETPS)
 		{
 			int32 Index = AllChatPlayerState.Add(PlayerState);
@@ -29,7 +29,7 @@ void AEveryThingGameState::AddPlayerState(APlayerState* PlayerState)
 	}
 }
 
-void AEveryThingGameState::RemovePlayerState(APlayerState* PlayerState)
+void AEveryThingGameState_Game::RemovePlayerState(APlayerState* PlayerState)
 {
 	if (PlayerState)
 	{
@@ -45,11 +45,11 @@ void AEveryThingGameState::RemovePlayerState(APlayerState* PlayerState)
 	Super::RemovePlayerState(PlayerState);
 }
 
-const FString& AEveryThingGameState::GetPlayerChatName(int32 PlayerID) const
+const FString& AEveryThingGameState_Game::GetPlayerChatName(int32 PlayerID) const
 {
 	if (AllChatPlayerState.IsValidIndex(PlayerID) && AllChatPlayerState[PlayerID])
 	{
-		AEveryThingPlayerState* TargetETPS = Cast<AEveryThingPlayerState>(AllChatPlayerState[PlayerID]);
+		AEveryThingPlayerState_Game* TargetETPS = Cast<AEveryThingPlayerState_Game>(AllChatPlayerState[PlayerID]);
 
 		return TargetETPS->GetPlayerChatName();
 	}
@@ -59,9 +59,9 @@ const FString& AEveryThingGameState::GetPlayerChatName(int32 PlayerID) const
 
 
 
-void AEveryThingGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+void AEveryThingGameState_Game::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AEveryThingGameState, AllChatPlayerState);
+	DOREPLIFETIME(AEveryThingGameState_Game, AllChatPlayerState);
 }

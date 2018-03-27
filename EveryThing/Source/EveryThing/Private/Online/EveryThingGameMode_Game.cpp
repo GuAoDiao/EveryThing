@@ -3,8 +3,8 @@
 #include "EveryThingGameMode_Game.h"
 
 #include "Online/PlayerController_Game.h"
-#include "Online/EveryThingPlayerState.h"
-#include "Online/EveryThingGameState.h"
+#include "Online/EveryThingPlayerState_Game.h"
+#include "Online/EveryThingGameState_Game.h"
 #include "UI/EveryThingHUD_Game.h"
 
 AEveryThingGameMode_Game::AEveryThingGameMode_Game()
@@ -14,8 +14,8 @@ AEveryThingGameMode_Game::AEveryThingGameMode_Game()
 
 	DefaultPawnClass = nullptr;
 	PlayerControllerClass = APlayerController_Game::StaticClass();
-	PlayerStateClass = AEveryThingPlayerState::StaticClass();
-	GameStateClass = AEveryThingGameState::StaticClass();
+	PlayerStateClass = AEveryThingPlayerState_Game::StaticClass();
+	GameStateClass = AEveryThingGameState_Game::StaticClass();
 	HUDClass = AEveryThingHUD_Game::StaticClass();
 }
 

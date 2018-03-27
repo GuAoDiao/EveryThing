@@ -2,7 +2,7 @@
 
 #include "SelectRolesBox.h"
 
-#include "Online/EveryThingPlayerState.h"
+#include "Online/EveryThingPlayerState_Game.h"
 #include "EveryThingAssetManager.h"
 #include "Characters/GamePawnManager.h"
 #include "UI/Game/SelectItem.h"
@@ -11,7 +11,7 @@ void USelectRolesBox::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	AEveryThingPlayerState* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
+	AEveryThingPlayerState_Game* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState_Game>(GetOwningPlayer()->PlayerState) : nullptr;
 	if (OwnerPlaterState) { OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectRolesBox::OnUpdatePlayerInfo); }
 
 	TSubclassOf<UUserWidget> SelectItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("SelectItem");
