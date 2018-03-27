@@ -100,19 +100,20 @@ void AGamePawn::OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor,
 }
 
 
-
-
-
-bool AGamePawn::AddDurability_Validate(float InOffset, EElementType InType) { return true; }
-void AGamePawn::AddDurability_Implementation(float InOffset, EElementType InType)
+bool AGamePawn::ServerAddEnergy_Validate(float value) { return true; }
+void AGamePawn::ServerAddEnergy_Implementation(float value)
 {
-	UWorld* World = GetWorld();
-	AEveryThingGameMode* OwnerGameMode = World ? World->GetAuthGameMode<AEveryThingGameMode>() : nullptr;
-	if (OwnerGameMode)
-	{
-		OwnerInfo.Durability += OwnerGameMode->GetActualDamage(InOffset, InType, OwnerInfo.ElementType[0], OwnerInfo.ElementResistance[OwnerInfo.ElementType[0]]);
-	}
+	ChangeEnergy(GetEnergy() + value);
 }
+void AGamePawn::ChangeEnergy(float value) { if (HasAuthority()) { Energy = value; } }
+
+bool AGamePawn::ServerAddDurability_Validate(float value) { return true; }
+void AGamePawn::ServerAddDurability_Implementation(float value)
+{
+	ChangeDurability(GetDurability() + value);
+}
+void AGamePawn::ChangeDurability(float value) {	if (HasAuthority()) { Durability = value; }}
+
 
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn Form
@@ -270,10 +271,13 @@ void AGamePawn::ResetInfoFromDataTable(const FName& GamePawnName)
 	}
 }
 
-
 void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 {
 	OwnerInfo = *InInfo;
+	MaxDurability = InInfo->MaxDurability;
+	MaxEnergy = InInfo->MaxEnergy;
+	Durability = MaxDurability;
+	Energy = MaxEnergy;
 }
 
 void AGamePawn::UpdateInfo()
@@ -328,6 +332,8 @@ void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AGamePawn, OwnerSkillComp);
 
 	DOREPLIFETIME(AGamePawn, OwnerInfo);
+	DOREPLIFETIME(AGamePawn, Durability);
+	DOREPLIFETIME(AGamePawn, Energy);
 }
 
 

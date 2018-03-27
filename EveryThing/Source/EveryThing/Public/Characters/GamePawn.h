@@ -149,14 +149,31 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Replicated, ReplicatedUsing = OnRep_Info)
 	FGamePawnInfo OwnerInfo;
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	float Durability;
+	UPROPERTY(BlueprintReadOnly)
+	float MaxDurability;
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	float Energy;
+	UPROPERTY(BlueprintReadOnly)
+	float MaxEnergy;
 public:
 	UFUNCTION(BlueprintPure)
-	float GetDurability() const { return OwnerInfo.Durability; }
+	float GetDurability() const { return Durability; }	
+	void ChangeEnergy(float value);
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void AddDurability(float InOffset, EElementType InType = EElementType::None);
-
+	void ServerAddDurability(float value);
+	UFUNCTION(BlueprintPure)
+	float GetEnergy() const { return Energy; }
+	void ChangeDurability(float value);
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void ServerAddEnergy(float value);
 	float GetMaxHyperopiaDistance() const { return OwnerInfo.MaxHyperopiaDistance; }
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdateHealthDelegate, float);
+	FOnUpdateHealthDelegate& GetOnUpdateHealthDelegate() { return OnUpdateHealthDelegate; }
+private:
+	FOnUpdateHealthDelegate OnUpdateHealthDelegate;
 protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Element
@@ -171,4 +188,6 @@ protected:
 
 	void SetQualityScale(float InQualityScale);
 
+	//////////////////////////////////////////////////////////////////////////
+	///
 };

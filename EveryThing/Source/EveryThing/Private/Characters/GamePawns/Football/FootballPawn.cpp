@@ -25,4 +25,7 @@ AFootballPawn::AFootballPawn()
 
 	AllHaveGamePawnFormName.Add("FootballForm");
 	ToggleToTargetForm("FootballForm");
+
+
+
 }

@@ -92,10 +92,10 @@ struct FGamePawnInfo : public FTableRowBase
 public:
 	// _耐久度(HP)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float Durability;
+	float MaxDurability;
 	// _体力(_耐力)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float PhysicalPower;
+	float Endurance;
 	// _敏捷(_速度)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float Agility;
@@ -121,7 +121,7 @@ public:
 
 	// _蓄力值(_能量值)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float PowerValue;
+	float MaxEnergy;
 
 	// _质量(_隐藏属性)
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
