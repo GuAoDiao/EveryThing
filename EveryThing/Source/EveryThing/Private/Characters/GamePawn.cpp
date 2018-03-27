@@ -7,12 +7,12 @@
 #include "Components/StaticMeshComponent.h"
 
 #include "EveryThingAssetManager.h"
-#include "Online/EveryThingGameMode.h"
+#include "Online/EveryThingGameMode_Game.h"
 #include "Characters/Form/GamePawnForm.h"
 #include "Characters/Skin/GamePawnSkin.h"
 #include "Characters/Moves/AttackComponent.h"
 #include "Characters/Moves/SkillComponent.h"
-#include "Characters/PlayerPawnController.h"
+#include "Online/PlayerController_Game.h"
 #include "Characters/Movement/Components/GamePawnMovementComponent.h"
 
 #define LOCTEXT_NAMESPACE "Everything_Characters_GamePawn"
@@ -60,8 +60,8 @@ void AGamePawn::Tick(float DeltaTime)
 
 void AGamePawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if (CurrentGamePawnSkin) { delete CurrentGamePawnSkin; }
-	if (CurrentGamePawnForm) { delete CurrentGamePawnForm; }
+	if (CurrentRoleSkin) { delete CurrentRoleSkin; }
+	if (CurrentRoleForm) { delete CurrentRoleForm; }
 
 	Super::EndPlay(EndPlayReason);
 }
@@ -88,15 +88,7 @@ void AGamePawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimiti
 
 void AGamePawn::OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit)
 {
-	if (OwnerAttackComp && OwnerAttackComp->bWantedToAcceptHitFunction)
-	{
-		OwnerAttackComp->OnHitImplement(HitComp, OtherActor, OtherComp, NormalInpulse, Hit);
-	}
-
-	if (OwnerSkillComp && OwnerSkillComp->bWantedToAcceptHitFunction)
-	{
-		OwnerSkillComp->OnHitImplement(HitComp, OtherActor, OtherComp, NormalInpulse, Hit);
-	}
+	OnHitDelegate.Broadcast(HitComp, OtherActor, OtherComp, NormalInpulse, Hit);
 }
 
 
@@ -117,15 +109,15 @@ void AGamePawn::ChangeDurability(float value) {	if (HasAuthority()) { Durability
 
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn Form
-void AGamePawn::ToggleToNewFormWithIndex(int32 Index) { if (AllGamePawnFormName.IsValidIndex(Index)) { ToggleToTargetForm(AllGamePawnFormName[Index]); } }
+void AGamePawn::ToggleToNewFormWithIndex(int32 Index) { if (AllRoleFormName.IsValidIndex(Index)) { ToggleToTargetForm(AllRoleFormName[Index]); } }
 
 bool AGamePawn::ServerToggleToTargetForm_Validate(const FName& FormName) { return true; }
 void AGamePawn::ServerToggleToTargetForm_Implementation(const FName& FormName) { ToggleToTargetForm(FormName); }
-void AGamePawn::OnRep_CurrentGamePawnFormName() { ToggleToTargetForm(CurrentGamePawnFormName); }
+void AGamePawn::OnRep_CurrentRoleFormName() { ToggleToTargetForm(CurrentRoleFormName); }
 
 void AGamePawn::ToggleToTargetForm(const FName& FormName)
 {
-	if (!AllHaveGamePawnFormName.Contains(FormName))
+	if (!AllHaveRoleFormName.Contains(FormName))
 	{
 		FFormatNamedArguments Arguments;
 		Arguments.Add(TEXT("FormName"), FText::FromName(FormName));
@@ -133,7 +125,7 @@ void AGamePawn::ToggleToTargetForm(const FName& FormName)
 		return;
 	}
 
-	if (FormName == CurrentGamePawnFormName)
+	if (FormName == CurrentRoleFormName)
 	{
 		OnToggleToTargetFormFailureDelegate.Broadcast(FormName, LOCTEXT("ToggleSkinWhenSameForm", "Already is the target Form, needn't to toggle."));
 		return;
@@ -144,14 +136,14 @@ void AGamePawn::ToggleToTargetForm(const FName& FormName)
 		ServerToggleToTargetForm(FormName);
 	}
 
-	if (CurrentGamePawnForm) { CurrentGamePawnForm->UnloadGamePawnForm();}
-	delete CurrentGamePawnForm;
+	if (CurrentRoleForm) { CurrentRoleForm->UnloadGamePawnForm();}
+	delete CurrentRoleForm;
 
-	FGamePawnForm* TargetGamePawnForm = UGamePawnManager::CreateGamePawnFormFromName(FormName, this);
-	CurrentGamePawnFormName = FormName;
-	CurrentGamePawnForm = TargetGamePawnForm;
+	FRoleForm* TargetGamePawnForm = UGamePawnManager::CreateRoleForm(FormName, this);
+	CurrentRoleFormName = FormName;
+	CurrentRoleForm = TargetGamePawnForm;
 
-	if (CurrentGamePawnForm) { CurrentGamePawnForm->LoadGamePawnForm(); }
+	if (CurrentRoleForm) { CurrentRoleForm->LoadGamePawnForm(); }
 
 	OnToggleToTargetSkinSuccessDelegate.Broadcast(FormName);
 }
@@ -159,14 +151,14 @@ void AGamePawn::ToggleToTargetForm(const FName& FormName)
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn Skin
 
-void AGamePawn::ToggleToNewSkinWithIndex(int32 Index) { if (AllGamePawnSkinName.IsValidIndex(Index)) { ToggleToTargetSkin(AllGamePawnSkinName[Index]); } }
+void AGamePawn::ToggleToNewSkinWithIndex(int32 Index) { if (AllRoleSkinName.IsValidIndex(Index)) { ToggleToTargetSkin(AllRoleSkinName[Index]); } }
 bool AGamePawn::ServerToggleToTargetSkin_Validate(const FName& SkinName) { return true; }
 void AGamePawn::ServerToggleToTargetSkin_Implementation(const FName& SkinName) { ToggleToTargetSkin(SkinName); }
-void AGamePawn::OnRep_CurrentGamePawnSkinName() { ToggleToTargetSkin(CurrentGamePawnSkinName); }
+void AGamePawn::OnRep_CurrentRoleSkinName() { ToggleToTargetSkin(CurrentRoleSkinName); }
 
 void AGamePawn::ToggleToTargetSkin(const FName& SkinName)
 {
-	if (!AllHaveGamePawnSkinName.Contains(SkinName))
+	if (!AllHaveRoleSkinName.Contains(SkinName))
 	{
 		FFormatNamedArguments Arguments;
 		Arguments.Add(TEXT("SkinName"), FText::FromName(SkinName));
@@ -174,7 +166,7 @@ void AGamePawn::ToggleToTargetSkin(const FName& SkinName)
 		return;
 	}
 
-	if (SkinName == CurrentGamePawnSkinName)
+	if (SkinName == CurrentRoleSkinName)
 	{
 		OnToggleToTargetSkinFailureDelegate.Broadcast(SkinName, LOCTEXT("ToggleSkinWhenSameSkin", "Already is the target Skin, needn't to toggle."));
 		return;
@@ -186,13 +178,13 @@ void AGamePawn::ToggleToTargetSkin(const FName& SkinName)
 		ServerToggleToTargetSkin(SkinName);
 	}
 	
-	if (CurrentGamePawnSkin) { CurrentGamePawnSkin->UnloadGamePawnSkin(); delete CurrentGamePawnSkin; }
+	if (CurrentRoleSkin) { CurrentRoleSkin->UnloadGamePawnSkin(); delete CurrentRoleSkin; }
 
-	FGamePawnSkin* TargetGamePawnSkin = UGamePawnManager::CreateGamePawnSkinFromName(SkinName, StaticMeshComp);
-	CurrentGamePawnSkinName = SkinName;
-	CurrentGamePawnSkin = TargetGamePawnSkin;
+	FRoleSkin* TargetGamePawnSkin = UGamePawnManager::CreateRoleSkin(SkinName, StaticMeshComp);
+	CurrentRoleSkinName = SkinName;
+	CurrentRoleSkin = TargetGamePawnSkin;
 
-	if (CurrentGamePawnSkin) { CurrentGamePawnSkin->LoadGamePawnSkin(); }
+	if (CurrentRoleSkin) { CurrentRoleSkin->LoadGamePawnSkin(); }
 
 	OnToggleToTargetSkinSuccessDelegate.Broadcast(SkinName);
 }
@@ -203,7 +195,7 @@ void AGamePawn::ToggleToNewAttackComponent(UAttackComponent* InAttackComponent)
 {
 	OwnerAttackComp = InAttackComponent;
 
-	APlayerPawnController* OwnerPlayerPC = Cast<APlayerPawnController>(GetController());
+	APlayerController_Game* OwnerPlayerPC = Cast<APlayerController_Game>(GetController());
 	if (OwnerPlayerPC) { OwnerPlayerPC->ToggleToNewAttackComponent(OwnerAttackComp); }
 }
 
@@ -211,7 +203,7 @@ void AGamePawn::ToggleToNewSkillComponent(USkillComponent* InSkillComponent)
 {
 	OwnerSkillComp = InSkillComponent;
 
-	APlayerPawnController* OwnerPlayerPC = Cast<APlayerPawnController>(GetController());
+	APlayerController_Game* OwnerPlayerPC = Cast<APlayerController_Game>(GetController());
 	if (OwnerPlayerPC) { OwnerPlayerPC->ToggleToNewSkillComponent(OwnerSkillComp); }
 }
 
@@ -322,9 +314,9 @@ void AGamePawn::ResetDefaultSkinAndFormFromDataTable()
 	const FRoleInfo* RoleInfo;
 	if (UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleInfoFromName(RoleName, RoleInfo) && RoleInfo)
 	{
-		AllHaveGamePawnSkinName.Add(RoleInfo->DefaultSkinName);
+		AllHaveRoleSkinName.Add(RoleInfo->DefaultSkinName);
 		ToggleToTargetSkin(RoleInfo->DefaultSkinName);
-		AllHaveGamePawnFormName.Add(RoleInfo->DefaultFormName);
+		AllHaveRoleFormName.Add(RoleInfo->DefaultFormName);
 		ToggleToTargetForm(RoleInfo->DefaultFormName);
 	}
 }
@@ -336,8 +328,8 @@ void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AGamePawn, CurrentGamePawnSkinName);
-	DOREPLIFETIME(AGamePawn, CurrentGamePawnFormName);
+	DOREPLIFETIME(AGamePawn, CurrentRoleSkinName);
+	DOREPLIFETIME(AGamePawn, CurrentRoleFormName);
 
 	DOREPLIFETIME(AGamePawn, OwnerAttackComp);
 	DOREPLIFETIME(AGamePawn, OwnerSkillComp);

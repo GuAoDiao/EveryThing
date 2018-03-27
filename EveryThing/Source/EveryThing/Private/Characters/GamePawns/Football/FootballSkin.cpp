@@ -4,7 +4,7 @@
 
 IMPLEMENT_GAMEPAWNSKIN_CLASS("FootballSkin", FFootballSkin);
 
-FFootballSkin::FFootballSkin(UStaticMeshComponent* StaticMeshComp) : FGamePawnSkin(StaticMeshComp)
+FFootballSkin::FFootballSkin(UStaticMeshComponent* StaticMeshComp) : FRoleSkin(StaticMeshComp)
 {
 	MaterialNames.Add(TEXT("FootballBlack"));
 	MaterialNames.Add(TEXT("FootballWhite"));

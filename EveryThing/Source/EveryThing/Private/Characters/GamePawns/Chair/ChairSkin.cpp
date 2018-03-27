@@ -4,7 +4,7 @@
 
 IMPLEMENT_GAMEPAWNSKIN_CLASS("ChairSkin", FChairSkin);
 
-FChairSkin::FChairSkin(UStaticMeshComponent* StaticMeshComp) : FGamePawnSkin(StaticMeshComp)
+FChairSkin::FChairSkin(UStaticMeshComponent* StaticMeshComp) : FRoleSkin(StaticMeshComp)
 {
 	MaterialNames.Add(TEXT("ChairWood"));
 	MaterialNames.Add(TEXT("ChairMat"));

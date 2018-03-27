@@ -7,7 +7,7 @@
 
 #include "OnlineSessionSettings.h"
 
-#include "EveryThingMenuHUD.generated.h"
+#include "EveryThingHUD_Menu.generated.h"
 
 
 UENUM(BlueprintType)
@@ -55,12 +55,12 @@ class UErrorDialog;
  * 
  */
 UCLASS()
-class EVERYTHING_API AEveryThingMenuHUD : public AHUD
+class EVERYTHING_API AEveryThingHUD_Menu : public AHUD
 {
 	GENERATED_BODY()
 	
 public:
-	AEveryThingMenuHUD();
+	AEveryThingHUD_Menu();
 	virtual void BeginPlay() override;
 
 	//////////////////////////////////////////////////////////////////////////

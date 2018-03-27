@@ -7,7 +7,7 @@
 
 IMPLEMENT_GAMEPAWNFORM_CLASS("FootballTestForm", FFootballTestForm);
 
- FFootballTestForm::FFootballTestForm(AGamePawn* InGamePawn) : FGamePawnForm(InGamePawn)
+ FFootballTestForm::FFootballTestForm(AGamePawn* InGamePawn) : FRoleForm(InGamePawn)
 {
 	AttackCompClass = UFootballAttackComponent::StaticClass();
 	SkillCompClass = UFootballTestSkillComponent::StaticClass();

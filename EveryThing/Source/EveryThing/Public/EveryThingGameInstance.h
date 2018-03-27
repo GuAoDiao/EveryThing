@@ -8,7 +8,7 @@
 #include "EveryThingGameInstance.generated.h"
 
 class UEveryThingSaveArchive;
-class ULoadingMap;
+class UInterlude;
 
 /**
  * 
@@ -43,7 +43,7 @@ public:
 private:
 	class IGameMoviePlayer* LoadingMapMoviePlayer;
 	UPROPERTY()
-	ULoadingMap* LoadingMap;
+	UInterlude* LoadingMap;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Match

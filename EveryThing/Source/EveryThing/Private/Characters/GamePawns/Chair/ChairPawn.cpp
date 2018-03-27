@@ -20,8 +20,8 @@ AChairPawn::AChairPawn()
 	UStaticMesh* ChairMesh = AssetManager->GetMeshFromName("Chair");
 	if (ChairMesh) { StaticMeshComp->SetStaticMesh(ChairMesh); }
 
-	AllGamePawnSkinName = GamePawnManager->GetAllGamePawnSkinWithRoleName(RoleName);
+	AllRoleSkinName = GamePawnManager->GetAllRoleSkinWithRoleName(RoleName);
 
-	AllHaveGamePawnSkinName.Add("ChairSkin");
+	AllHaveRoleSkinName.Add("ChairSkin");
 	ToggleToTargetSkin("ChairSkin");
 }

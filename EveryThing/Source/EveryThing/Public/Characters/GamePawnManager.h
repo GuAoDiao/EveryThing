@@ -7,14 +7,14 @@
 #include "GamePawnManager.generated.h"
 
 class AGamePawn;
-class FGamePawnSkin;
-class FGamePawnForm;
+class FRoleSkin;
+class FRoleForm;
 class UStaticMeshComponent;
-class FGamePawnSkinClassInfo;
-class FGamePawnFormClassInfo;
+class FRoleSkinClassInfo;
+class FRoleFormClassInfo;
 
-typedef FGamePawnSkin*(*GamePawnSkinCreateFunc)(UStaticMeshComponent* /*InStatichMeshComp*/);
-typedef FGamePawnForm*(*GamePawnFormCreateFunc)(AGamePawn* /*InGamePawn*/);
+typedef FRoleSkin*(*RoleSkinCreateFunc)(UStaticMeshComponent* /*InStatichMeshComp*/);
+typedef FRoleForm*(*GamePawnFormCreateFunc)(AGamePawn* /*InGamePawn*/);
 
 /**
  * 
@@ -43,24 +43,24 @@ private:
 	/// Role Skin
 public:
 	void LoadAllRoleSkinInfo();
-	TArray<FName> GetAllGamePawnSkinWithRoleName(const FName& RoleName);
-	bool GetRoleSkinInfoFromName(const FName& SkinName, const FRoleSkinInfo* & OutRoleSkinInfo) const;
+	TArray<FName> GetAllRoleSkinWithRoleName(const FName& RoleName);
+	bool GetRoleSkinInfo(const FName& SkinName, const FRoleSkinInfo* & OutRoleSkinInfo) const;
 private:
-	TMap<FName, FRoleFormInfo> AllRoleFormInfo;
+	TMap<FName, FRoleSkinInfo> AllRoleSkinInfo;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Role Form
 public:
 	void LoadAllRoleFormInfo();
-	TArray<FName> GetAllGamePawnFormWithRoleName(const FName& RoleName);
-	bool GetRoleFormInfoFromName(const FName& SkinName, const FRoleFormInfo* & OutRoleFormInfo) const;
+	TArray<FName> GetAllRoleFormWithRoleName(const FName& RoleName);
+	bool GetRoleFormInfo(const FName& SkinName, const FRoleFormInfo* & OutRoleFormInfo) const;
 private:
-	TMap<FName, FRoleSkinInfo> AllRoleSkinInfo;
+	TMap<FName, FRoleFormInfo> AllRoleFormInfo;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Role Display Info
 public:
-	bool GetRoleDisplayInfoFromName(const FName& RoleName, FRoleDisplayInfo const*& OutRoleDisplayInfo);
+	bool GetRoleDisplayInfo(const FName& RoleName, FRoleDisplayInfo const*& OutRoleDisplayInfo);
 private:
 	class UDataTable* RoleDisplayInfoDT;
 	TMap<FName, FRoleDisplayInfo> AllRoleDisplayInfo;
@@ -69,13 +69,13 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	/// Skin and Form class info
 public:
-	static FGamePawnSkin* CreateGamePawnSkinFromName(const FName& Name, UStaticMeshComponent* InStaticMeshComp);
-	static void RegisterGamePawnSkinWithName(const FName& Name, FGamePawnSkinClassInfo* ClassInfo);
+	static FRoleSkin* CreateRoleSkin(const FName& Name, UStaticMeshComponent* InStaticMeshComp);
+	static void RegisterRoleSkin(const FName& Name, FRoleSkinClassInfo* ClassInfo);
 
-	static FGamePawnForm* CreateGamePawnFormFromName(const FName& Name, AGamePawn* InGamePawn);
-	static void RegisterGamePawnFormWithName(const FName& Name, FGamePawnFormClassInfo* ClassInfo);
+	static FRoleForm* CreateRoleForm(const FName& Name, AGamePawn* InGamePawn);
+	static void RegisterRoleForm(const FName& Name, FRoleFormClassInfo* ClassInfo);
 
 private:
-	static TMap<FName, FGamePawnSkinClassInfo*> AllGamePawnSkinClassInfo;
-	static TMap<FName, FGamePawnFormClassInfo*> AllGamePawnFormClassInfo;
+	static TMap<FName, FRoleSkinClassInfo*> AllRoleSkinClassInfo;
+	static TMap<FName, FRoleFormClassInfo*> AllRoleFormClassInfo;
 };

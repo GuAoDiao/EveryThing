@@ -19,8 +19,8 @@ AFootballPawn::AFootballPawn()
 	UStaticMesh* FootballMesh = AssetManager->GetMeshFromName(RoleName);
 	if (FootballMesh) { StaticMeshComp->SetStaticMesh(FootballMesh); }
 
-	AllGamePawnSkinName = GamePawnManager->GetAllGamePawnSkinWithRoleName(RoleName);
-	AllGamePawnFormName = GamePawnManager->GetAllGamePawnFormWithRoleName(RoleName);
+	AllRoleSkinName = GamePawnManager->GetAllRoleSkinWithRoleName(RoleName);
+	AllRoleFormName = GamePawnManager->GetAllRoleFormWithRoleName(RoleName);
 	
 	ResetDefaultSkinAndFormFromDataTable();
 }

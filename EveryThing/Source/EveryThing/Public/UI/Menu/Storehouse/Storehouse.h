@@ -60,7 +60,7 @@ public:
 	void Backup();
 
 protected:
-	class ARoleDisplay* RoleDisplay;
+	class ARole3DDisplay* RoleDisplay;
 	class APlayerController* OwnerPC;
 	TMap<FKey, float> AdjustUPKey;
 	TMap<FKey, float> AdjustRightKey;

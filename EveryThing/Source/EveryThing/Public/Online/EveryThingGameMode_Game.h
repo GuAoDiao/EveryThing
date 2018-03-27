@@ -7,25 +7,25 @@
 
 #include "EveryThingTypes.h"
 
-#include "EveryThingGameMode.generated.h"
+#include "EveryThingGameMode_Game.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API AEveryThingGameMode : public AGameModeBase
+class EVERYTHING_API AEveryThingGameMode_Game : public AGameModeBase
 {
 	GENERATED_BODY()
 	
 public:
-	AEveryThingGameMode();
+	AEveryThingGameMode_Game();
 
 	
 	//////////////////////////////////////////////////////////////////////////
 	/// Damage
 	virtual float GetActualDamage(float InDamage, EElementType InDamageType, EElementType PawnElementType, float ElementResistance) const;
 	virtual float UpdateEnergy(float energy, float value) { return energy + value; }
-	float AEveryThingGameMode::GetDamageScaleFromElementType(EElementType CauserElementType, EElementType AcceptElementType) const;
+	float GetDamageScaleFromElementType(EElementType CauserElementType, EElementType AcceptElementType) const;
 private:
 	float NormalDamageScale;
 	float SpecificToDamageScale;

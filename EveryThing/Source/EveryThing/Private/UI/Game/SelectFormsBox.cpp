@@ -6,7 +6,7 @@
 #include "EveryThingAssetManager.h"
 #include "Characters/GamePawnManager.h"
 #include "SelectItem.h"
-#include "Characters/PlayerPawnController.h"
+#include "Online/PlayerController_Game.h"
 #include "Characters/GamePawn.h"
 
 void USelectFormsBox::NativeConstruct()
@@ -16,7 +16,7 @@ void USelectFormsBox::NativeConstruct()
 	AEveryThingPlayerState* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
 	if (OwnerPlaterState) { OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectFormsBox::OnUpdatePlayerInfo); }
 
-	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
+	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
 	if (OwnerPPC)
 	{
 		OwnerPPC->OnToggleToTargetRoleSuccessDelegate.AddUObject(this, &USelectFormsBox::InitializeSelectFormsBoxDisplay);
@@ -28,12 +28,12 @@ void USelectFormsBox::InitializeSelectFormsBoxDisplay_Implementation(const FName
 {
 	AEveryThingPlayerState* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
 	TSubclassOf<UUserWidget> SelectItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("SelectItem");
-	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
+	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
 
 	if (SelectItemClass && OwnerPPC && OwnerPlaterState)
 	{
 		const FPlayerInfo& PlayerInfo = OwnerPlaterState->GetPlayerInfo();
-		for (const FName& FormName : UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllGamePawnFormWithRoleName(TargetRoleName))
+		for (const FName& FormName : UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllRoleFormWithRoleName(TargetRoleName))
 		{
 			USelectItem* SelectItem = CreateWidget<USelectItem>(OwnerPPC, SelectItemClass);
 			if (SelectItem)

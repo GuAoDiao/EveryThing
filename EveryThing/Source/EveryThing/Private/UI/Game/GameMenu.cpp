@@ -7,7 +7,7 @@
 
 
 #include "EveryThingGameInstance.h"
-#include "UI/Game/EveryThingGameHUD.h"
+#include "UI/EveryThingHUD_Game.h"
 
 UGameMenu::UGameMenu(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -48,7 +48,7 @@ void UGameMenu::Confing()
 
 void UGameMenu::Backup()
 {
-	AEveryThingGameHUD* OwnerETGH = GetOwningPlayer() ? Cast<AEveryThingGameHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
+	AEveryThingHUD_Game* OwnerETGH = GetOwningPlayer() ? Cast<AEveryThingHUD_Game>(GetOwningPlayer()->GetHUD()) : nullptr;
 	if (OwnerETGH) {OwnerETGH->RemoveGameMenu();}
 }
 

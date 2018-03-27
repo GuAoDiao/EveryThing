@@ -8,8 +8,8 @@
 #include "Characters/Form/GamePawnForm.h"
 
 
-TMap<FName, FGamePawnSkinClassInfo*> UGamePawnManager::AllGamePawnSkinClassInfo;
-TMap<FName, FGamePawnFormClassInfo*> UGamePawnManager::AllGamePawnFormClassInfo;
+TMap<FName, FRoleSkinClassInfo*> UGamePawnManager::AllRoleSkinClassInfo;
+TMap<FName, FRoleFormClassInfo*> UGamePawnManager::AllRoleFormClassInfo;
 
 UGamePawnManager::UGamePawnManager()
 {
@@ -113,7 +113,7 @@ const TMap<FName, FRoleInfo>& UGamePawnManager::GetAllRolesInfo() const
 //////////////////////////////////////////////////////////////////////////
 /// Role Skin Info
 
-TArray<FName> UGamePawnManager::GetAllGamePawnSkinWithRoleName(const FName& RoleName)
+TArray<FName> UGamePawnManager::GetAllRoleSkinWithRoleName(const FName& RoleName)
 {
 	TArray<FName> Result;
 	for (TMap<FName, FRoleSkinInfo>::TConstIterator It(AllRoleSkinInfo); It; ++It)
@@ -126,7 +126,7 @@ TArray<FName> UGamePawnManager::GetAllGamePawnSkinWithRoleName(const FName& Role
 	return Result;
 }
 
-bool UGamePawnManager::GetRoleSkinInfoFromName(const FName& SkinName, const FRoleSkinInfo* & OutRoleSkinInfo) const
+bool UGamePawnManager::GetRoleSkinInfo(const FName& SkinName, const FRoleSkinInfo* & OutRoleSkinInfo) const
 {
 	if (AllRoleSkinInfo.Contains(SkinName))
 	{
@@ -139,7 +139,7 @@ bool UGamePawnManager::GetRoleSkinInfoFromName(const FName& SkinName, const FRol
 
 //////////////////////////////////////////////////////////////////////////
 /// Role Form Info
-bool UGamePawnManager::GetRoleFormInfoFromName(const FName& FormName, const FRoleFormInfo* & OutRoleFormInfo) const
+bool UGamePawnManager::GetRoleFormInfo(const FName& FormName, const FRoleFormInfo* & OutRoleFormInfo) const
 {
 	if (AllRoleFormInfo.Contains(FormName))
 	{
@@ -151,7 +151,7 @@ bool UGamePawnManager::GetRoleFormInfoFromName(const FName& FormName, const FRol
 
 
 
-TArray<FName> UGamePawnManager::GetAllGamePawnFormWithRoleName(const FName& RoleName)
+TArray<FName> UGamePawnManager::GetAllRoleFormWithRoleName(const FName& RoleName)
 {
 	TArray<FName> Result;
 	for (TMap<FName, FRoleFormInfo>::TConstIterator It(AllRoleFormInfo); It; ++It)
@@ -170,7 +170,7 @@ TArray<FName> UGamePawnManager::GetAllGamePawnFormWithRoleName(const FName& Role
 //////////////////////////////////////////////////////////////////////////
 /// Role Display Info
 
-bool UGamePawnManager::GetRoleDisplayInfoFromName(const FName& RoleName, FRoleDisplayInfo const*& OutRoleDisplayInfo)
+bool UGamePawnManager::GetRoleDisplayInfo(const FName& RoleName, FRoleDisplayInfo const*& OutRoleDisplayInfo)
 {
 	if (AllRoleDisplayInfo.Contains(RoleName))
 	{
@@ -200,32 +200,32 @@ bool UGamePawnManager::GetRoleDisplayInfoFromName(const FName& RoleName, FRoleDi
 //////////////////////////////////////////////////////////////////////////
 /// Skin and Form class info
 
-FGamePawnSkin* UGamePawnManager::CreateGamePawnSkinFromName(const FName& Name, UStaticMeshComponent* InStaticMeshComp)
+FRoleSkin* UGamePawnManager::CreateRoleSkin(const FName& Name, UStaticMeshComponent* InStaticMeshComp)
 {
-	if (AllGamePawnSkinClassInfo.Contains(Name))
+	if (AllRoleSkinClassInfo.Contains(Name))
 	{
-		return AllGamePawnSkinClassInfo[Name]->CreateObject(InStaticMeshComp);
+		return AllRoleSkinClassInfo[Name]->CreateObject(InStaticMeshComp);
 	}
 	return nullptr;
 }
 
-void UGamePawnManager::RegisterGamePawnSkinWithName(const FName& Name, FGamePawnSkinClassInfo* ClassInfo)
+void UGamePawnManager::RegisterRoleSkin(const FName& Name, FRoleSkinClassInfo* ClassInfo)
 {
-	AllGamePawnSkinClassInfo.Add(Name, ClassInfo);
+	AllRoleSkinClassInfo.Add(Name, ClassInfo);
 }
 
 
 
-FGamePawnForm* UGamePawnManager::CreateGamePawnFormFromName(const FName& Name, AGamePawn* InGamePawn)
+FRoleForm* UGamePawnManager::CreateRoleForm(const FName& Name, AGamePawn* InGamePawn)
 {
-	if (AllGamePawnFormClassInfo.Contains(Name))
+	if (AllRoleFormClassInfo.Contains(Name))
 	{
-		return AllGamePawnFormClassInfo[Name]->CreateObject(InGamePawn);
+		return AllRoleFormClassInfo[Name]->CreateObject(InGamePawn);
 	}
 	return nullptr;
 }
 
-void UGamePawnManager::RegisterGamePawnFormWithName(const FName& Name, FGamePawnFormClassInfo* ClassInfo)
+void UGamePawnManager::RegisterRoleForm(const FName& Name, FRoleFormClassInfo* ClassInfo)
 {
-	AllGamePawnFormClassInfo.Add(Name, ClassInfo);
+	AllRoleFormClassInfo.Add(Name, ClassInfo);
 }

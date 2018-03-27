@@ -97,8 +97,8 @@ void UFootballAttackComponent::MulticastStartAttack_Implementation(bool bInIsCom
 {
 	bIsAutoAim = true;
 	bIsAttacking = true;
-	bWantedToAcceptHitFunction = true;
 	bIsCommonAttack = bInIsCommonAttack;
+	SetWantedToAcceptHitFunction(true);
 
 	CurrentAttackTarget = AttackTarget;
 
@@ -112,7 +112,7 @@ void UFootballAttackComponent::StopAttack()
 void UFootballAttackComponent::MulticastStopAttack_Implementation()
 {
 	bIsAttacking = false;
-	bWantedToAcceptHitFunction = false;
+	SetWantedToAcceptHitFunction(false);
 
 	CurrentAttackTarget = nullptr;
 

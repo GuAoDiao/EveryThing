@@ -2,7 +2,7 @@
 
 #include "ArchiveList.h"
 
-#include "UI/Menu/EveryThingMenuHUD.h"
+#include "UI/EveryThingHUD_Menu.h"
 #include "EveryThingGameInstance.h"
 
 
@@ -17,6 +17,6 @@ void UArchiveList::NativeConstruct()
 
 void UArchiveList::Backup()
 {
-	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
+	AEveryThingHUD_Menu* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingHUD_Menu>(GetOwningPlayer()->GetHUD()) : nullptr;
 	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::MainMenu); }
 }

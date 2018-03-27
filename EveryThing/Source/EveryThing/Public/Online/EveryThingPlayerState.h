@@ -12,7 +12,7 @@
 
 
 class AGamePawn;
-class APlayerPawnController;
+class APlayerController_Game;
 /**
  * 
  */

@@ -12,7 +12,7 @@
 #include "Online/EveryThingGameMode_Menu.h"
 #include "Online/EveryThingGameSession.h"
 
-#include "UI/LoadingMap.h"
+#include "UI/Interlude.h"
 
 #include "EveryThingAssetManager.h"
 #include "EveryThingSaveArchive.h"
@@ -63,7 +63,7 @@ void UEveryThingGameInstance::BeginLoadingMap(const FString& MapName)
 			if (!LoadingMap)
 			{
 				TSubclassOf<UUserWidget> LoadingMapClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("LoadingMap");
-				LoadingMap = LoadingMapClass ? CreateWidget<ULoadingMap>(this, LoadingMapClass) : nullptr;
+				LoadingMap = LoadingMapClass ? CreateWidget<UInterlude>(this, LoadingMapClass) : nullptr;
 			}
 			if(LoadingMap)
 			{

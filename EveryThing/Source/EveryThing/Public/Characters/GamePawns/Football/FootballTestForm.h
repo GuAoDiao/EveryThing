@@ -6,7 +6,7 @@
 
 #include "GamePawnForm.h"
 
-class EVERYTHING_API FFootballTestForm : public FGamePawnForm
+class EVERYTHING_API FFootballTestForm : public FRoleForm
 {
 public:
 	FFootballTestForm(AGamePawn* InGamePawn);

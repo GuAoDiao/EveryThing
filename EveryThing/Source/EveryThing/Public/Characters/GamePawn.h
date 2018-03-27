@@ -12,8 +12,8 @@
 
 class UAttackComponent;
 class USkillComponent;
-class FGamePawnForm;
-class FGamePawnSkin;
+class FRoleForm;
+class FRoleSkin;
 class UGamePawnMovementComponent;
 
 UCLASS()
@@ -55,6 +55,11 @@ public:
 protected:
 	virtual void OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit);
 
+public:
+	DECLARE_MULTICAST_DELEGATE_FiveParams(FOnHitDelegate, UPrimitiveComponent* /* HitComp */, AActor* /* OtherActor */, UPrimitiveComponent* /* OtherComp */, FVector /* NormalInpulse */, const FHitResult& /* Hit */);
+	FOnHitDelegate OnHitDelegate;
+	
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn Form And Skin
 protected:
@@ -65,8 +70,8 @@ protected:
 public:
 	void ToggleToNewFormWithIndex(int32 Index);
 
-	TArray<FName> AllGamePawnFormName;
-	TArray<FName> AllHaveGamePawnFormName;
+	TArray<FName> AllRoleFormName;
+	TArray<FName> AllHaveRoleFormName;
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetFormSuccessDelegate, const FName& /* TargetFormName */);
 	FOnToggleToTargetFormSuccessDelegate OnToggleToTargetFormSuccessDelegate;
@@ -81,18 +86,18 @@ private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerToggleToTargetForm(const FName& FormName);
 	UFUNCTION()
-	void OnRep_CurrentGamePawnFormName();
-	UPROPERTY(Replicated, ReplicatedUsing = OnRep_CurrentGamePawnFormName)
-	FName CurrentGamePawnFormName;
-	FGamePawnForm* CurrentGamePawnForm;
+	void OnRep_CurrentRoleFormName();
+	UPROPERTY(Replicated, ReplicatedUsing = OnRep_CurrentRoleFormName)
+	FName CurrentRoleFormName;
+	FRoleForm* CurrentRoleForm;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn Skin
 public:
 	void ToggleToNewSkinWithIndex(int32 Index);
 
-	TArray<FName> AllGamePawnSkinName;
-	TArray<FName> AllHaveGamePawnSkinName;
+	TArray<FName> AllRoleSkinName;
+	TArray<FName> AllHaveRoleSkinName;
 	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetSkinSuccessDelegate, const FName& /* TargetSkinName */);
 	FOnToggleToTargetSkinSuccessDelegate OnToggleToTargetSkinSuccessDelegate;
@@ -106,12 +111,12 @@ private:
 	void ServerToggleToTargetSkin(const FName& SkinName);
 	// actual implementation
 	UFUNCTION()
-	void OnRep_CurrentGamePawnSkinName();
+	void OnRep_CurrentRoleSkinName();
 	
 protected:
-	UPROPERTY(ReplicatedUsing = OnRep_CurrentGamePawnSkinName)
-	FName CurrentGamePawnSkinName;
-	FGamePawnSkin* CurrentGamePawnSkin;
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentRoleSkinName)
+	FName CurrentRoleSkinName;
+	FRoleSkin* CurrentRoleSkin;
 	
 	//////////////////////////////////////////////////////////////////////////
 	/// Attack and Skill
@@ -167,10 +172,8 @@ public:
 	void ServerAddEnergy(float value);
 	float GetMaxHyperopiaDistance() const { return OwnerInfo.MaxHyperopiaDistance; }
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdateHealthDelegate, float);
-	FOnUpdateHealthDelegate& GetOnUpdateHealthDelegate() { return OnUpdateHealthDelegate; }
-private:
-	FOnUpdateHealthDelegate OnUpdateHealthDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdateDurabilityDelegate, float /* Durability */);
+	FOnUpdateDurabilityDelegate OnUpdateDurabilityDelegate;
 protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Element

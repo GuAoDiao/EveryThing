@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "EveryThingGameHUD.h"
+#include "EveryThingHUD_Game.h"
 
 #include "UI/Game/GameMenu.h"
 #include "UI/Game/GameLayout.h"
@@ -10,7 +10,7 @@
 #include "ChatWIndow/UI/ChatLine.h"
 
 
-void AEveryThingGameHUD::BeginPlay()
+void AEveryThingHUD_Game::BeginPlay()
 {
 	TSubclassOf<UUserWidget> GameLayoutClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("GameLayout"));
 	if (GameLayoutClass)
@@ -31,7 +31,7 @@ void AEveryThingGameHUD::BeginPlay()
 
 
 
-void AEveryThingGameHUD::DisplayGameMenu()
+void AEveryThingHUD_Game::DisplayGameMenu()
 {
 	if (!GameMenu)
 	{
@@ -58,7 +58,7 @@ void AEveryThingGameHUD::DisplayGameMenu()
 		}
 	}
 }
-void AEveryThingGameHUD::RemoveGameMenu()
+void AEveryThingHUD_Game::RemoveGameMenu()
 {
 	if (GameMenu)
 	{
@@ -76,7 +76,7 @@ void AEveryThingGameHUD::RemoveGameMenu()
 }
 
 
-void AEveryThingGameHUD::ToggleSelectRolesBox(bool bIsDisplay)
+void AEveryThingHUD_Game::ToggleSelectRolesBox(bool bIsDisplay)
 {
 	if (GameLayout)
 	{
@@ -85,7 +85,7 @@ void AEveryThingGameHUD::ToggleSelectRolesBox(bool bIsDisplay)
 	}
 }
 
-void AEveryThingGameHUD::ToggleSelectSkinsBox(bool bIsDisplay)
+void AEveryThingHUD_Game::ToggleSelectSkinsBox(bool bIsDisplay)
 {
 	if (GameLayout)
 	{
@@ -94,7 +94,7 @@ void AEveryThingGameHUD::ToggleSelectSkinsBox(bool bIsDisplay)
 	}
 }
 
-void AEveryThingGameHUD::ToggleSelectFormsBox(bool bIsDisplay)
+void AEveryThingHUD_Game::ToggleSelectFormsBox(bool bIsDisplay)
 {
 	if (GameLayout)
 	{
@@ -107,12 +107,12 @@ void AEveryThingGameHUD::ToggleSelectFormsBox(bool bIsDisplay)
 //////////////////////////////////////////////////////////////////////////
 /// For Chat Window HUD Interface
 
-void AEveryThingGameHUD::InitializeChatWindow()
+void AEveryThingHUD_Game::InitializeChatWindow()
 {
 	if (ChatWindow) { ChatWindow->InitializeChatWindow(); }
 }
 
-void AEveryThingGameHUD::FocusToChatWindow()
+void AEveryThingHUD_Game::FocusToChatWindow()
 {
 	if (ChatWindow)
 	{
@@ -130,7 +130,7 @@ void AEveryThingGameHUD::FocusToChatWindow()
 	}
 }
 
-void AEveryThingGameHUD::RemoveChatWidnowFocus()
+void AEveryThingHUD_Game::RemoveChatWidnowFocus()
 {
 	APlayerController* OwnerPC = GetOwningPlayerController();
 	if (OwnerPC)
@@ -142,20 +142,20 @@ void AEveryThingGameHUD::RemoveChatWidnowFocus()
 	}
 }
 
-void AEveryThingGameHUD::FocusToChatInput() { if (ChatWindow) { ChatWindow->FocusToChatInput(); } }
-void AEveryThingGameHUD::FocusToChatReply() { if (ChatWindow) { ChatWindow->FocusToChatReply(); } }
-void AEveryThingGameHUD::FocusToChatCommand() { if (ChatWindow) { ChatWindow->FocusToChatCommand(); } }
+void AEveryThingHUD_Game::FocusToChatInput() { if (ChatWindow) { ChatWindow->FocusToChatInput(); } }
+void AEveryThingHUD_Game::FocusToChatReply() { if (ChatWindow) { ChatWindow->FocusToChatReply(); } }
+void AEveryThingHUD_Game::FocusToChatCommand() { if (ChatWindow) { ChatWindow->FocusToChatCommand(); } }
 
-TSubclassOf<UUserWidget> AEveryThingGameHUD::GetChatLineWidgetClass()
+TSubclassOf<UUserWidget> AEveryThingHUD_Game::GetChatLineWidgetClass()
 {
 	return UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("ChatLine");
 }
-TSubclassOf<UUserWidget> AEveryThingGameHUD::GetChatWindowWidgetClass()
+TSubclassOf<UUserWidget> AEveryThingHUD_Game::GetChatWindowWidgetClass()
 {
 	return UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("ChatWindow");
 }
 
-void AEveryThingGameHUD::ReceiveChatMessage(const FChatChannel* ChatChannel, const FChatMessageInfo& ChatMessage)
+void AEveryThingHUD_Game::ReceiveChatMessage(const FChatChannel* ChatChannel, const FChatMessageInfo& ChatMessage)
 {
 	if (ChatWindow) { ChatWindow->ReceiveChatMessage(ChatChannel, ChatMessage); }
 }

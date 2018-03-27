@@ -9,12 +9,12 @@
 
 
 
-FGamePawnSkin::FGamePawnSkin(UStaticMeshComponent* StaticMeshComp)
+FRoleSkin::FRoleSkin(UStaticMeshComponent* StaticMeshComp)
 {
 	OwnerStaticMeshComp = StaticMeshComp;
 }
 
-void FGamePawnSkin::LoadAllGameSkinMaterial()
+void FRoleSkin::LoadAllGameSkinMaterial()
 {
 	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
 
@@ -24,7 +24,7 @@ void FGamePawnSkin::LoadAllGameSkinMaterial()
 	}
 }
 
-void FGamePawnSkin::LoadGamePawnSkin()
+void FRoleSkin::LoadGamePawnSkin()
 {
 	if (OwnerStaticMeshComp)
 	{
@@ -38,7 +38,7 @@ void FGamePawnSkin::LoadGamePawnSkin()
 	}
 }
 
-void FGamePawnSkin::UnloadGamePawnSkin()
+void FRoleSkin::UnloadGamePawnSkin()
 {
 
 }

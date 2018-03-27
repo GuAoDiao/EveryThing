@@ -2,7 +2,7 @@
 
 #include "ArchiveRow.h"
 
-#include "UI/Menu/EveryThingMenuHUD.h"
+#include "UI/EveryThingHUD_Menu.h"
 #include "EveryThingGameInstance.h"
 
 void UArchiveRow::InitializeArchiveRow_Implementation(const FString& InArchiveName)
@@ -14,7 +14,7 @@ void UArchiveRow::LoadArchive()
 {
 
 	UEveryThingGameInstance* OwnerETGI = GetOwningPlayer() ? Cast<UEveryThingGameInstance>(GetOwningPlayer()->GetGameInstance()) : nullptr;
-	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
+	AEveryThingHUD_Menu* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingHUD_Menu>(GetOwningPlayer()->GetHUD()) : nullptr;
 	if (OwnerETGI && OwnerMenuHUD)
 	{
 		if (OwnerETGI->LoadArchiveFromName(ArchiveName))

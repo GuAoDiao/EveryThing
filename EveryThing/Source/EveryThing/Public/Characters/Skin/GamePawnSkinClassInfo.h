@@ -5,21 +5,21 @@
 #include "CoreMinimal.h"
 #include "Characters/GamePawnManager.h"
 
-class FGamePawnSkin;
+class FRoleSkin;
 
-class FGamePawnSkinClassInfo
+class FRoleSkinClassInfo
 {
 public:
-	FGamePawnSkinClassInfo(const FName& InName, GamePawnSkinCreateFunc InCreateFunc)
+	FRoleSkinClassInfo(const FName& InName, RoleSkinCreateFunc InCreateFunc)
 	{
-		UGamePawnManager::RegisterGamePawnSkinWithName(InName, this);
+		UGamePawnManager::RegisterRoleSkin(InName, this);
 		CreateFunc = InCreateFunc;
 	}
 
-	FGamePawnSkin* CreateObject(UStaticMeshComponent* InStaticMeshComp)
+	FRoleSkin* CreateObject(UStaticMeshComponent* InStaticMeshComp)
 	{
 		return CreateFunc ? (*CreateFunc)(InStaticMeshComp) : nullptr;
 	}
 
-	GamePawnSkinCreateFunc CreateFunc;
+	RoleSkinCreateFunc CreateFunc;
 };

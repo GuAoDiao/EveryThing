@@ -8,7 +8,7 @@
 /**
  * 
  */
-class EVERYTHING_API FChairSkin : public FGamePawnSkin
+class EVERYTHING_API FChairSkin : public FRoleSkin
 {
 public:
 	FChairSkin(class UStaticMeshComponent* StaticMeshComp);

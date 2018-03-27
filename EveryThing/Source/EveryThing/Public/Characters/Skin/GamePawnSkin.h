@@ -10,21 +10,21 @@ class UStaticMeshComponent;
 
 #define DECLARE_GAMEPAWNSKIN_CLASS(SkinName) \
 protected: \
-	const static FGamePawnSkinClassInfo SkinClassInfo; \
+	const static FRoleSkinClassInfo SkinClassInfo; \
 public: \
-	virtual const FGamePawnSkinClassInfo* GetGamePawnSkinClassInfo() const; \
-	static FGamePawnSkin* CreateGamePawnSkin(class UStaticMeshComponent* InStaticMeshComp);
+	virtual const FRoleSkinClassInfo* GetGamePawnSkinClassInfo() const; \
+	static FRoleSkin* CreateGamePawnSkin(class UStaticMeshComponent* InStaticMeshComp);
 
 #define IMPLEMENT_GAMEPAWNSKIN_CLASS(SkinName, SkinClass) \
-	const FGamePawnSkinClassInfo SkinClass::SkinClassInfo = FGamePawnSkinClassInfo(SkinName, &SkinClass::CreateGamePawnSkin); \
-	const FGamePawnSkinClassInfo* SkinClass::GetGamePawnSkinClassInfo() const {return &SkinClass::SkinClassInfo; } \
-	FGamePawnSkin* SkinClass::CreateGamePawnSkin(class UStaticMeshComponent* InStaticMeshComp) {return new SkinClass(InStaticMeshComp);}
+	const FRoleSkinClassInfo SkinClass::SkinClassInfo = FRoleSkinClassInfo(SkinName, &SkinClass::CreateGamePawnSkin); \
+	const FRoleSkinClassInfo* SkinClass::GetGamePawnSkinClassInfo() const {return &SkinClass::SkinClassInfo; } \
+	FRoleSkin* SkinClass::CreateGamePawnSkin(class UStaticMeshComponent* InStaticMeshComp) {return new SkinClass(InStaticMeshComp);}
 
-class EVERYTHING_API FGamePawnSkin
+class EVERYTHING_API FRoleSkin
 {	
 public:
-	FGamePawnSkin(UStaticMeshComponent* StaticMeshComp);
-	virtual ~FGamePawnSkin() {}
+	FRoleSkin(UStaticMeshComponent* StaticMeshComp);
+	virtual ~FRoleSkin() {}
 	
 	void LoadAllGameSkinMaterial();
 

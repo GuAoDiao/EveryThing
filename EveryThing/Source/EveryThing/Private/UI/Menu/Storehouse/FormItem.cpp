@@ -11,7 +11,7 @@
 void UFormItem::InitializeFormItem(const FName& InFormName, bool bInHaveGoods)
 {
 	UGamePawnManager* GamePawnManager = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager();
-	if (GamePawnManager->GetRoleFormInfoFromName(InFormName, FormInfo) && FormInfo)
+	if (GamePawnManager->GetRoleFormInfo(InFormName, FormInfo) && FormInfo)
 	{
 		InitializeGoodsItem(FormInfo->Cost, bInHaveGoods);
 

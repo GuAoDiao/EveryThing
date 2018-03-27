@@ -8,7 +8,7 @@
 /**
  * 
  */
-class EVERYTHING_API FFootballSkin : public FGamePawnSkin
+class EVERYTHING_API FFootballSkin : public FRoleSkin
 {
 public:
 	FFootballSkin(UStaticMeshComponent* StaticMeshComp);

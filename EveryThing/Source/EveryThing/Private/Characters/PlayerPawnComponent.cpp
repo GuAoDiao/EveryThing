@@ -13,9 +13,9 @@
 #include "Kismet/KismetMathLibrary.h"
 
 #include "Characters/GamePawn.h"
-#include "Characters/PlayerPawnController.h"
+#include "Online/PlayerController_Game.h"
 #include "Online/EveryThingPlayerState.h"
-#include "UI/Game/EveryThingGameHUD.h"
+#include "UI/EveryThingHUD_Game.h"
 
 UPlayerPawnComponent::UPlayerPawnComponent()
 {
@@ -78,23 +78,21 @@ void UPlayerPawnComponent::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
 {
 	if (OwnerPawn)
 	{
-		OwnerPawn->AllHaveGamePawnFormName.Empty();
-		for (const FName& FormName : OwnerPawn->AllGamePawnFormName)
+		OwnerPawn->AllHaveRoleFormName.Empty();
+		for (const FName& FormName : OwnerPawn->AllRoleFormName)
 		{
-			UE_LOG(LogTemp, Log, TEXT("-_- current pawn has FormName: %s"), *FormName.ToString());
 			if (InPlayerInfo.AllHaveGamePawnFormNames.Contains(FormName))
 			{
-				OwnerPawn->AllHaveGamePawnFormName.AddUnique(FormName);
+				OwnerPawn->AllHaveRoleFormName.AddUnique(FormName);
 			}
 		}
 
-		OwnerPawn->AllHaveGamePawnSkinName.Empty();
-		for (const FName& SkinName : OwnerPawn->AllGamePawnSkinName)
+		OwnerPawn->AllHaveRoleSkinName.Empty();
+		for (const FName& SkinName : OwnerPawn->AllRoleSkinName)
 		{
-			UE_LOG(LogTemp, Log, TEXT("-_- current pawn has SkinName: %s"), *SkinName.ToString());
 			if (InPlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinName))
 			{
-				OwnerPawn->AllHaveGamePawnSkinName.AddUnique(SkinName);
+				OwnerPawn->AllHaveRoleSkinName.AddUnique(SkinName);
 			}
 		}
 	}
@@ -258,27 +256,27 @@ void UPlayerPawnComponent::UseProp(int32 NumberIndex)
 	UE_LOG(LogTemp, Log, TEXT("-_- Use Prop Of Index: %d"), NumberIndex)
 }
 
-void UPlayerPawnComponent::TogglePawnForm(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewFormWithIndex(NumberIndex); } }
-void UPlayerPawnComponent::TogglePawnSkin(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewSkinWithIndex(NumberIndex); } }
+void UPlayerPawnComponent::ToggleRoleForm(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewFormWithIndex(NumberIndex); } }
+void UPlayerPawnComponent::ToggleRoleSkin(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewSkinWithIndex(NumberIndex); } }
 
 
-AEveryThingGameHUD* UPlayerPawnComponent::GetEveryThingGameHUD() const
+AEveryThingHUD_Game* UPlayerPawnComponent::GetEveryThingGameHUD() const
 {
 	APlayerController* OwnerPC = OwnerPawn ? Cast<APlayerController>(OwnerPawn->GetController()) : nullptr;
-	return OwnerPC ? Cast<AEveryThingGameHUD>(OwnerPC->GetHUD()) : nullptr;
+	return OwnerPC ? Cast<AEveryThingHUD_Game>(OwnerPC->GetHUD()) : nullptr;
 }
 
 void UPlayerPawnComponent::StartTogglePawnSkin()
 {
-	AEveryThingGameHUD* OwnerETGH = GetEveryThingGameHUD();
+	AEveryThingHUD_Game* OwnerETGH = GetEveryThingGameHUD();
 	if (OwnerETGH) { OwnerETGH->ToggleSelectSkinsBox(true); }
 
-	GetOnPressNumberKeyboardDelegate().BindUObject(this, &UPlayerPawnComponent::TogglePawnSkin);
+	GetOnPressNumberKeyboardDelegate().BindUObject(this, &UPlayerPawnComponent::ToggleRoleSkin);
 }
 
 void UPlayerPawnComponent::StopTogglePawnSkin()
 {
-	AEveryThingGameHUD* OwnerETGH = GetEveryThingGameHUD();
+	AEveryThingHUD_Game* OwnerETGH = GetEveryThingGameHUD();
 	if (OwnerETGH) { OwnerETGH->ToggleSelectSkinsBox(false); }
 
 	GetOnPressNumberKeyboardDelegate().Unbind();
@@ -287,15 +285,15 @@ void UPlayerPawnComponent::StopTogglePawnSkin()
 
 void UPlayerPawnComponent::StartTogglePawnForm()
 {
-	AEveryThingGameHUD* OwnerETGH = GetEveryThingGameHUD();
+	AEveryThingHUD_Game* OwnerETGH = GetEveryThingGameHUD();
 	if (OwnerETGH) { OwnerETGH->ToggleSelectFormsBox(true); }
 
-	GetOnPressNumberKeyboardDelegate().BindUObject(this, &UPlayerPawnComponent::TogglePawnForm);
+	GetOnPressNumberKeyboardDelegate().BindUObject(this, &UPlayerPawnComponent::ToggleRoleForm);
 }
 
 void UPlayerPawnComponent::StopTogglePawnForm()
 {
-	AEveryThingGameHUD* OwnerETGH = GetEveryThingGameHUD();
+	AEveryThingHUD_Game* OwnerETGH = GetEveryThingGameHUD();
 	if (OwnerETGH) { OwnerETGH->ToggleSelectFormsBox(false); }
 
 	GetOnPressNumberKeyboardDelegate().Unbind();

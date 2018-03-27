@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PlayerPawnController.h"
+#include "PlayerController_Game.h"
 
 #include "UnrealNetwork.h"
 #include "GameFramework/InputSettings.h"
 
 #include "EveryThingTypes.h"
 #include "EveryThingGameInstance.h"
-#include "UI/Game/EveryThingGameHUD.h"
+#include "UI/EveryThingHUD_Game.h"
 #include "EveryThingAssetManager.h"
 #include "ChatWindow/ChatComponent.h"
 #include "Characters/GamePawn.h"
@@ -24,12 +24,12 @@
 
 #define LOCTEXT_NAMESPACE "Everything_Characters_PlayerPawnController"
 
-APlayerPawnController::APlayerPawnController()
+APlayerController_Game::APlayerController_Game()
 {
 	ChatComponent = CreateDefaultSubobject<UChatComponent>(TEXT("ChatComponent"));
 }
 
-void APlayerPawnController::BeginPlay()
+void APlayerController_Game::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -45,7 +45,7 @@ void APlayerPawnController::BeginPlay()
 	SetInputMode(FInputModeGameOnly());
 }
 
-void APlayerPawnController::RebindInput()
+void APlayerController_Game::RebindInput()
 {
 	if (!InputComponent) { return; }
 
@@ -54,15 +54,15 @@ void APlayerPawnController::RebindInput()
 	InputComponent->AxisBindings.Empty();
 	ResetAxisAndActionMapping();
 
-	InputComponent->BindAction("DisplayGameMenu", IE_Pressed, this, &APlayerPawnController::DisplayGameMenu);
-	InputComponent->BindAction("FocusToChatWindow", IE_Pressed, this, &APlayerPawnController::FocusToChatWindow);
+	InputComponent->BindAction("DisplayGameMenu", IE_Pressed, this, &APlayerController_Game::DisplayGameMenu);
+	InputComponent->BindAction("FocusToChatWindow", IE_Pressed, this, &APlayerController_Game::FocusToChatWindow);
 	
 
-	InputComponent->BindAxis("Turn", this, &APlayerPawnController::Turn);
-	InputComponent->BindAxis("LookUp", this, &APlayerPawnController::LookUp);
+	InputComponent->BindAxis("Turn", this, &APlayerController_Game::Turn);
+	InputComponent->BindAxis("LookUp", this, &APlayerController_Game::LookUp);
 
-	InputComponent->BindAction("TogglePawn", IE_Pressed, this, &APlayerPawnController::StartToggleRole);
-	InputComponent->BindAction("TogglePawn", IE_Released, this, &APlayerPawnController::StopToggleRole);
+	InputComponent->BindAction("TogglePawn", IE_Pressed, this, &APlayerController_Game::StartToggleRole);
+	InputComponent->BindAction("TogglePawn", IE_Released, this, &APlayerController_Game::StopToggleRole);
 
 	if (OwnerGamePawn)
 	{
@@ -75,7 +75,7 @@ void APlayerPawnController::RebindInput()
 	if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->RebindInputComp(InputComponent); }
 }
 
-void APlayerPawnController::SetPawn(APawn* InPawn)
+void APlayerController_Game::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
 
@@ -87,7 +87,7 @@ void APlayerPawnController::SetPawn(APawn* InPawn)
 }
 
 
-void APlayerPawnController::ResetAxisAndActionMapping()
+void APlayerController_Game::ResetAxisAndActionMapping()
 {
 	UInputSettings* InpueSettings = UInputSettings::GetInputSettings();
 	if (!InpueSettings) { return; }
@@ -139,7 +139,7 @@ void APlayerPawnController::ResetAxisAndActionMapping()
 	}
 }
 
-void APlayerPawnController::RemoveActionAndAxisBindings(const TArray<FName>& BindingsName)
+void APlayerController_Game::RemoveActionAndAxisBindings(const TArray<FName>& BindingsName)
 {
 	if (!InputComponent) { return; }
 
@@ -165,32 +165,32 @@ void APlayerPawnController::RemoveActionAndAxisBindings(const TArray<FName>& Bin
 
 //////////////////////////////////////////////////////////////////////////
 /// For IGamePawnControllerInterface
-AActor* APlayerPawnController::GetAttackTarget() { return OwnerPlayerPawnComp ? OwnerPlayerPawnComp->GetAttackTarget() : nullptr; }
+AActor* APlayerController_Game::GetAttackTarget() { return OwnerPlayerPawnComp ? OwnerPlayerPawnComp->GetAttackTarget() : nullptr; }
 
 //////////////////////////////////////////////////////////////////////////
 /// Visual Angle
-void APlayerPawnController::Turn(float AxisValue) { if (AxisValue != 0.f && OwnerPlayerPawnComp) { OwnerPlayerPawnComp->Turn(AxisValue); } }
-void APlayerPawnController::LookUp(float AxisValue) { if (AxisValue != 0.f && OwnerPlayerPawnComp) { OwnerPlayerPawnComp->LookUp(AxisValue); } }
+void APlayerController_Game::Turn(float AxisValue) { if (AxisValue != 0.f && OwnerPlayerPawnComp) { OwnerPlayerPawnComp->Turn(AxisValue); } }
+void APlayerController_Game::LookUp(float AxisValue) { if (AxisValue != 0.f && OwnerPlayerPawnComp) { OwnerPlayerPawnComp->LookUp(AxisValue); } }
 
 
 //////////////////////////////////////////////////////////////////////////
 /// UI
-void APlayerPawnController::DisplayGameMenu()
+void APlayerController_Game::DisplayGameMenu()
 {
-	AEveryThingGameHUD* OwnerETGH = Cast<AEveryThingGameHUD>(GetHUD());
+	AEveryThingHUD_Game* OwnerETGH = Cast<AEveryThingHUD_Game>(GetHUD());
 	if (OwnerETGH) { OwnerETGH->DisplayGameMenu(); }
 }
 
-void APlayerPawnController::FocusToChatWindow()
+void APlayerController_Game::FocusToChatWindow()
 {
-	AEveryThingGameHUD* OwnerETGH = Cast<AEveryThingGameHUD>(GetHUD());
+	AEveryThingHUD_Game* OwnerETGH = Cast<AEveryThingHUD_Game>(GetHUD());
 	if (OwnerETGH) { OwnerETGH->FocusToChatWindow(); }
 }
 
 //////////////////////////////////////////////////////////////////////////
 /// Attack
 
-void APlayerPawnController::ToggleToNewAttackComponent(UAttackComponent* InAttackComp)
+void APlayerController_Game::ToggleToNewAttackComponent(UAttackComponent* InAttackComp)
 {
 	RemoveActionAndAxisBindings(TArray<FName>{"CommonAttack", "SpecialAttack"});
 
@@ -205,7 +205,7 @@ void APlayerPawnController::ToggleToNewAttackComponent(UAttackComponent* InAttac
 
 //////////////////////////////////////////////////////////////////////////
 /// Skill
-void APlayerPawnController::ToggleToNewSkillComponent(USkillComponent* InSkillComp)
+void APlayerController_Game::ToggleToNewSkillComponent(USkillComponent* InSkillComp)
 {
 	RemoveActionAndAxisBindings(TArray<FName>{"FirstSkill", "SecondSkill", "UltimateSkill"});
 
@@ -226,31 +226,27 @@ void APlayerPawnController::ToggleToNewSkillComponent(USkillComponent* InSkillCo
 
 //////////////////////////////////////////////////////////////////////////
 /// Toggle Role
-void APlayerPawnController::StartToggleRole()
+void APlayerController_Game::StartToggleRole()
 {
-	AEveryThingGameHUD* OwnerETGH = Cast<AEveryThingGameHUD>(GetHUD());
+	AEveryThingHUD_Game* OwnerETGH = Cast<AEveryThingHUD_Game>(GetHUD());
 	if (OwnerETGH) { OwnerETGH->ToggleSelectRolesBox(true); }
 
-	if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->GetOnPressNumberKeyboardDelegate().BindUObject(this, &APlayerPawnController::ToggleRoleWithIndex); }
-
-	bIsWantedTogglePawn = true;
+	if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->GetOnPressNumberKeyboardDelegate().BindUObject(this, &APlayerController_Game::ToggleRoleWithIndex); }
 }
-void APlayerPawnController::StopToggleRole()
+void APlayerController_Game::StopToggleRole()
 {
-	AEveryThingGameHUD* OwnerETGH = Cast<AEveryThingGameHUD>(GetHUD());
+	AEveryThingHUD_Game* OwnerETGH = Cast<AEveryThingHUD_Game>(GetHUD());
 	if (OwnerETGH) { OwnerETGH->ToggleSelectRolesBox(false); }
 
 	if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->GetOnPressNumberKeyboardDelegate().Unbind(); }
-
-	bIsWantedTogglePawn = false;
 }
 
-void APlayerPawnController::ToggleRoleWithIndex(int32 NumberIndex)
+void APlayerController_Game::ToggleRoleWithIndex(int32 NumberIndex)
 {
 	if (AllRoleNames.IsValidIndex(NumberIndex)) { ToggleRoleWithName(AllRoleNames[NumberIndex]); }
 }
 
-void APlayerPawnController::ToggleRoleWithName(const FName& TargetRoleName)
+void APlayerController_Game::ToggleRoleWithName(const FName& TargetRoleName)
 {
 	// Get owning EverythingPlayerState and the world is exists
 	AEveryThingPlayerState* OwnerETPS = Cast<AEveryThingPlayerState>(PlayerState);
@@ -323,8 +319,8 @@ void APlayerPawnController::ToggleRoleWithName(const FName& TargetRoleName)
 	CurrentRoleName = TargetRoleName;
 }
 
-bool APlayerPawnController::ServerToggleRole_Validate(const FName& TargetRoleName) { return true; }
-void APlayerPawnController::ServerToggleRole_Implementation(const FName& TargetRoleName)
+bool APlayerController_Game::ServerToggleRole_Validate(const FName& TargetRoleName) { return true; }
+void APlayerController_Game::ServerToggleRole_Implementation(const FName& TargetRoleName)
 {
 	ToggleRoleWithName(TargetRoleName);
 }
@@ -332,11 +328,11 @@ void APlayerPawnController::ServerToggleRole_Implementation(const FName& TargetR
 
 
 
-void APlayerPawnController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
+void APlayerController_Game::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APlayerPawnController, CurrentRoleName);
+	DOREPLIFETIME(APlayerController_Game, CurrentRoleName);
 }
 
 

@@ -26,7 +26,9 @@ protected:
 
 	virtual void RebindAll() {};
 public:
-	bool bWantedToAcceptHitFunction;
+	void SetWantedToAcceptHitFunction(bool bWanted);
+	FDelegateHandle OnHitDelegateHandle;
 	// execute when bWantedToAcceptHitFunction is true
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit) { OnHitImplement(HitComp, OtherActor, OtherComp, NormalInpulse, Hit); }
 	virtual void OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit) {};
 };

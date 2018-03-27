@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "LoadingMap.generated.h"
+#include "Interlude.generated.h"
 
 class UEveryThingGameInstance;
 
@@ -12,7 +12,7 @@ class UEveryThingGameInstance;
  * 
  */
 UCLASS()
-class EVERYTHING_API ULoadingMap : public UUserWidget
+class EVERYTHING_API UInterlude : public UUserWidget
 {
 	GENERATED_BODY()
 	

@@ -4,7 +4,7 @@
 
 IMPLEMENT_GAMEPAWNSKIN_CLASS("ChairBlueSkin", FChairBlueSkin);
 
-FChairBlueSkin::FChairBlueSkin(UStaticMeshComponent* StaticMeshComp) : FGamePawnSkin(StaticMeshComp)
+FChairBlueSkin::FChairBlueSkin(UStaticMeshComponent* StaticMeshComp) : FRoleSkin(StaticMeshComp)
 {
 	MaterialNames.Add(TEXT("ChairWood_Blue"));
 	MaterialNames.Add(TEXT("ChairMat_Blue"));

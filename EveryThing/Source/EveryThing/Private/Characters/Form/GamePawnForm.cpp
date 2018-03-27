@@ -6,12 +6,12 @@
 #include "Characters/Moves/SkillComponent.h"
 #include "Characters/Moves/AttackComponent.h"
 
-FGamePawnForm::FGamePawnForm(AGamePawn* InGamePawn)
+FRoleForm::FRoleForm(AGamePawn* InGamePawn)
 {
 	OwnerGamePawn = InGamePawn;
 }
 
-void FGamePawnForm::LoadGamePawnForm()
+void FRoleForm::LoadGamePawnForm()
 {
 
 	if (OwnerGamePawn && OwnerGamePawn->HasAuthority())
@@ -39,7 +39,7 @@ void FGamePawnForm::LoadGamePawnForm()
 	}
 }
 
-void FGamePawnForm::UnloadGamePawnForm()
+void FRoleForm::UnloadGamePawnForm()
 {
 	if (OwnerGamePawn)
 	{

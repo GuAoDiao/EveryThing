@@ -4,10 +4,10 @@
 
 
 #include "EveryThingGameInstance.h"
-#include "UI/Menu/EveryThingMenuHUD.h"
+#include "UI/EveryThingHUD_Menu.h"
 
 void UErrorDialog::Close()
 {
-	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
+	AEveryThingHUD_Menu* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingHUD_Menu>(GetOwningPlayer()->GetHUD()) : nullptr;
 	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToLastGameUIState(); }
 }

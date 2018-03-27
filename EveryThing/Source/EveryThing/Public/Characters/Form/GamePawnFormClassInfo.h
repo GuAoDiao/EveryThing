@@ -5,18 +5,18 @@
 #include "CoreMinimal.h"
 #include "Characters/GamePawnManager.h"
 
-class FGamePawnForm;
+class FRoleForm;
 class AGamePawn;
 
-class FGamePawnFormClassInfo
+class FRoleFormClassInfo
 {
 public:
-	FGamePawnFormClassInfo(const FName& InName, GamePawnFormCreateFunc InCreateFunc)
+	FRoleFormClassInfo(const FName& InName, GamePawnFormCreateFunc InCreateFunc)
 	{
-		UGamePawnManager::RegisterGamePawnFormWithName(InName, this);
+		UGamePawnManager::RegisterRoleForm(InName, this);
 	}
 
-	FGamePawnForm* CreateObject(AGamePawn* InGamePawn)
+	FRoleForm* CreateObject(AGamePawn* InGamePawn)
 	{
 		return CreateFunc ? (*CreateFunc)(InGamePawn) : nullptr;
 	}

@@ -3,10 +3,10 @@
 #include "SelectSkinsBox.h"
 
 #include "Online/EveryThingPlayerState.h"
+#include "Online/PlayerController_Game.h"
 #include "EveryThingAssetManager.h"
 #include "Characters/GamePawnManager.h"
 #include "SelectItem.h"
-#include "Characters/PlayerPawnController.h"
 #include "Characters/GamePawn.h"
 
 void USelectSkinsBox::NativeConstruct()
@@ -16,7 +16,7 @@ void USelectSkinsBox::NativeConstruct()
 	AEveryThingPlayerState* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
 	if (OwnerPlaterState) { OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectSkinsBox::OnUpdatePlayerInfo); }
 
-	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
+	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
 	if (OwnerPPC)
 	{
 		OwnerPPC->OnToggleToTargetRoleSuccessDelegate.AddUObject(this, &USelectSkinsBox::InitializeSelectSkinsBoxDisplay);
@@ -28,12 +28,12 @@ void USelectSkinsBox::InitializeSelectSkinsBoxDisplay_Implementation(const FName
 {
 	AEveryThingPlayerState* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState>(GetOwningPlayer()->PlayerState) : nullptr;
 	TSubclassOf<UUserWidget> SelectItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("SelectItem");
-	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
+	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
 
 	if (SelectItemClass && OwnerPPC && OwnerPlaterState)
 	{
 		const FPlayerInfo& PlayerInfo = OwnerPlaterState->GetPlayerInfo();
-		for (const FName& SkinName : UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllGamePawnSkinWithRoleName(TargetRoleName))
+		for (const FName& SkinName : UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllRoleSkinWithRoleName(TargetRoleName))
 		{
 			USelectItem* SelectItem = CreateWidget<USelectItem>(OwnerPPC, SelectItemClass);
 			if (SelectItem)

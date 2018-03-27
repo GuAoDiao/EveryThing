@@ -7,7 +7,7 @@
 
 #include "VerticalBox.h"
 
-#include "Characters/PlayerPawnController.h"
+#include "Online/PlayerController_Game.h"
 #include "UI/Game/ImportantNote.h"
 #include "EveryThingAssetManager.h"
 

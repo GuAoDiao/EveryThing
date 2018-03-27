@@ -18,8 +18,6 @@ class EVERYTHING_API UEveryThingSaveArchive : public USaveGame
 	GENERATED_BODY()
 	
 public:
-	void InitializeDefaultPlayerInfo(const FString& PlayerName);
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FPlayerInfo PlayerInfo;	
 };

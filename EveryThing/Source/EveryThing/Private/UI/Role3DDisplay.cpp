@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "RoleDisplay.h"
+#include "Role3DDisplay.h"
 
 #include "Engine/TextureRenderTarget2D.h"
 #include "Camera/CameraComponent.h"
@@ -12,7 +12,7 @@
 #include "EveryThingAssetManager.h"
 #include "Characters/GamePawnManager.h"
 
-ARoleDisplay::ARoleDisplay()
+ARole3DDisplay::ARole3DDisplay()
 {
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetProjectionMode(ECameraProjectionMode::Orthographic);
@@ -47,13 +47,13 @@ ARoleDisplay::ARoleDisplay()
 }
 
 
-void ARoleDisplay::ChangeRole(const FName& RoleName)
+void ARole3DDisplay::ChangeRole(const FName& RoleName)
 {
 	UGamePawnManager* GamePawnManager = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager();
 	if (GamePawnManager)
 	{
 		const FRoleDisplayInfo* RoleDisplayInfo;
-		if (GamePawnManager->GetRoleDisplayInfoFromName(RoleName, RoleDisplayInfo) && RoleDisplayInfo)
+		if (GamePawnManager->GetRoleDisplayInfo(RoleName, RoleDisplayInfo) && RoleDisplayInfo)
 		{
 			StaticMeshComp->SetStaticMesh(RoleDisplayInfo->DisplayStaticMesh);
 			StaticMeshComp->SetRelativeRotation(RoleDisplayInfo->DisplayRotation);
@@ -63,21 +63,21 @@ void ARoleDisplay::ChangeRole(const FName& RoleName)
 	}
 }
 
-void ARoleDisplay::AdjustUp(float AxisValue)
+void ARole3DDisplay::AdjustUp(float AxisValue)
 {
 	if (AxisValue != 0.f && StaticMeshComp) { StaticMeshComp->AddTorqueInRadians(FVector(0.f, AxisValue * 100000000.f, 0.f)); }
 }
-void ARoleDisplay::AdjustRight(float AxisValue)
+void ARole3DDisplay::AdjustRight(float AxisValue)
 {
 	if (AxisValue != 0.f && StaticMeshComp) { StaticMeshComp->AddTorqueInRadians(FVector(0.f, 0.f, AxisValue * -100000000.f)); }
 }
 
 
-void ARoleDisplay::ChangeSkin(const FName& SkinName)
+void ARole3DDisplay::ChangeSkin(const FName& SkinName)
 {
 	if (SkinName == CurrentSkinName) { return; }
 
-	FGamePawnSkin* TargetGamePawnSkin = UGamePawnManager::CreateGamePawnSkinFromName(SkinName, StaticMeshComp);
+	FRoleSkin* TargetGamePawnSkin = UGamePawnManager::CreateRoleSkin(SkinName, StaticMeshComp);
 	if (TargetGamePawnSkin)
 	{
 		if (CurrentSkin) {CurrentSkin->UnloadGamePawnSkin(); delete CurrentSkin;}	

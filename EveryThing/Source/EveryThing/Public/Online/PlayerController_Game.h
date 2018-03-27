@@ -8,7 +8,7 @@
 #include "Characters/GamePawnControllerInterface.h"
 #include "ChatWindow/ChatWindowControllerInterface.h"
 
-#include "PlayerPawnController.generated.h"
+#include "PlayerController_Game.generated.h"
 
 class UAttackComponent;
 class USkillComponent;
@@ -18,12 +18,12 @@ class UChatComponent;
  * 
  */
 UCLASS()
-class EVERYTHING_API APlayerPawnController : public APlayerController, public IGamePawnControllerInterface, public IChatWindowControllerInterface
+class EVERYTHING_API APlayerController_Game : public APlayerController, public IGamePawnControllerInterface, public IChatWindowControllerInterface
 {
 	GENERATED_BODY()
 	
 public:
-	APlayerPawnController();
+	APlayerController_Game();
 	
 
 	virtual void BeginPlay() override;	
@@ -71,11 +71,10 @@ public:
 
 public:
 	const FName& GetCurrentRoleName() const { return CurrentRoleName; }
+	
 	void StartToggleRole();
 	void StopToggleRole();
-
-	bool bIsWantedTogglePawn;
-
+	
 	void ToggleRoleWithIndex(int32 NumberIndex);
 	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetRoleSuccessDelegate, const FName& /* TargetRoleName */);

@@ -6,7 +6,7 @@
 #include "OnlineSubsystemSessionSettings.h"
 
 #include "EveryThingGameInstance.h"
-#include "UI/Menu/EveryThingMenuHUD.h"
+#include "UI/EveryThingHUD_Menu.h"
 
 
 DECLARE_LOG_CATEGORY_CLASS(EveryThingOnline, Log, All);
@@ -189,7 +189,7 @@ void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool b
 		else
 		{
 			APlayerController* OwnerPC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
-			AEveryThingMenuHUD* OwnerETMH = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
+			AEveryThingHUD_Menu* OwnerETMH = OwnerPC ? Cast<AEveryThingHUD_Menu>(OwnerPC->GetHUD()) : nullptr;
 			if (OwnerETMH)
 			{
 				OwnerETMH->ToggleToNewGameUIState(EMenuUIState::ErrorDialog);
@@ -243,7 +243,7 @@ void AEveryThingGameSession::OnFindSessionsComplete(bool bWasSuccessful)
 			UE_LOG(EveryThingOnline, Log, TEXT("-_- Num Search Results: %d"), SearchSettings->SearchResults.Num());
 			
 			APlayerController* OwnerPC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
-			AEveryThingMenuHUD* OwnerETMH = OwnerPC ? Cast<AEveryThingMenuHUD>(OwnerPC->GetHUD()) : nullptr;
+			AEveryThingHUD_Menu* OwnerETMH = OwnerPC ? Cast<AEveryThingHUD_Menu>(OwnerPC->GetHUD()) : nullptr;
 			if(OwnerETMH){ OwnerETMH->UpdateHouseList(SearchSettings->SearchResults); }
 		}
 	}

@@ -59,11 +59,11 @@ private:
 	FOnPressNumberKeyboardDelegate OnPressNumberKeyboardDelegate;
 
 private:
-	class AEveryThingGameHUD* GetEveryThingGameHUD() const;
+	class AEveryThingHUD_Game* GetEveryThingGameHUD() const;
 
 	void UseProp(int32 NumberIndex);
-	void TogglePawnForm(int32 NumberIndex);
-	void TogglePawnSkin(int32 NumberIndex);
+	void ToggleRoleForm(int32 NumberIndex);
+	void ToggleRoleSkin(int32 NumberIndex);
 
 	class AGamePawn* OwnerPawn;
 

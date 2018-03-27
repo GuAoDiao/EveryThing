@@ -5,11 +5,11 @@
 #include "EveryThingGameInstance.h"
 
 #include "Online/EveryThingGameSession.h"
-#include "UI/Menu/EveryThingMenuHUD.h"
+#include "UI/EveryThingHUD_Menu.h"
 
 
 AEveryThingGameMode_Menu::AEveryThingGameMode_Menu()
 {
 	GameSessionClass = AEveryThingGameSession::StaticClass();
-	HUDClass = AEveryThingMenuHUD::StaticClass();
+	HUDClass = AEveryThingHUD_Menu::StaticClass();
 }

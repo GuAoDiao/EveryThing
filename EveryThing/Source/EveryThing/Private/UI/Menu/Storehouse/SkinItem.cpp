@@ -14,7 +14,7 @@ void USkinItem::InitializeSkinItem(UStorehouse* StoreHouse, const FName& InSkinN
 	OwnerStoreHouse = StoreHouse;
 
 	UGamePawnManager* GamePawnManager = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager();
-	if (GamePawnManager->GetRoleSkinInfoFromName(InSkinName, SkinInfo) && SkinInfo)
+	if (GamePawnManager->GetRoleSkinInfo(InSkinName, SkinInfo) && SkinInfo)
 	{
 		InitializeGoodsItem(SkinInfo->Cost, bInHaveGoods);
 

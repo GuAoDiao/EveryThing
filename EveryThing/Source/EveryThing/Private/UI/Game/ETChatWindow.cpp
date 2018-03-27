@@ -8,7 +8,7 @@
 #include "Online/EveryThingGameState.h"
 #include "Online/EveryThingPlayerState.h"
 
-#include "Characters/PlayerPawnController.h"
+#include "Online/PlayerController_Game.h"
 #include "ChatWindow/ChatWindowTypes.h"
 #include "ChatWindow/ChatComponent.h"
 #include "ChatWindow/ChatWindowControllerInterface.h"
@@ -23,7 +23,7 @@ void UETChatWindow::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
+	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
 	if (OwnerPPC)
 	{
 		OwnerPPC->OnToggleToTargetRoleSuccessDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetRoleSuccess);
@@ -53,7 +53,7 @@ void UETChatWindow::OnToggleToTargetRoleSuccess(const FName& TargetRoleName)
 
 	FText DisplayInfo = FText::Format(LOCTEXT("OnToggleToTargetRoleSuccess", "Success toggle toggle to target role : {TargetRoleName}."), Arguments);
 
-	APlayerPawnController* OwnerPPC = Cast<APlayerPawnController>(GetOwningPlayer());
+	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
 	OnToglleToTargetRole(OwnerPPC ? Cast<AGamePawn>(OwnerPPC->GetPawn()) : nullptr);
 	
 	AddSystemMessage(ESystemMessageType::Success, DisplayInfo);

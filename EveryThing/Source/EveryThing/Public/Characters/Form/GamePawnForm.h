@@ -11,21 +11,21 @@ class UAttackComponent;
 
 #define DECLARE_GAMEPAWNFORM_CLASS(FormName) \
 protected: \
-	const static FGamePawnFormClassInfo FormClassInfo; \
+	const static FRoleFormClassInfo FormClassInfo; \
 public: \
-	virtual const FGamePawnFormClassInfo* GetGamePawnSkinClassInfo() const; \
-	static FGamePawnForm* CreateGamePawnForm(class AGamePawn* InGamePawn);
+	virtual const FRoleFormClassInfo* GetGamePawnSkinClassInfo() const; \
+	static FRoleForm* CreateGamePawnForm(class AGamePawn* InGamePawn);
 
 #define IMPLEMENT_GAMEPAWNFORM_CLASS(FormName, FormClass) \
-	const FGamePawnFormClassInfo FormClass::FormClassInfo = FGamePawnFormClassInfo(FormName, &FormClass::CreateGamePawnForm); \
-	const FGamePawnFormClassInfo* FormClass::GetGamePawnSkinClassInfo() const {return &FormClass::FormClassInfo; } \
-	FGamePawnForm* FormClass::CreateGamePawnForm(class AGamePawn* InGamePawn) {return new FormClass(InGamePawn);}
+	const FRoleFormClassInfo FormClass::FormClassInfo = FRoleFormClassInfo(FormName, &FormClass::CreateGamePawnForm); \
+	const FRoleFormClassInfo* FormClass::GetGamePawnSkinClassInfo() const {return &FormClass::FormClassInfo; } \
+	FRoleForm* FormClass::CreateGamePawnForm(class AGamePawn* InGamePawn) {return new FormClass(InGamePawn);}
 
 
-class EVERYTHING_API FGamePawnForm
+class EVERYTHING_API FRoleForm
 {	
 public:
-	FGamePawnForm(AGamePawn* InGamePawn);
+	FRoleForm(AGamePawn* InGamePawn);
 
 	virtual void LoadGamePawnForm();
 	void UnloadGamePawnForm();

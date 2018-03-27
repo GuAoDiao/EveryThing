@@ -5,17 +5,17 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine/DataTable.h"
-#include "RoleDisplay.generated.h"
+#include "Role3DDisplay.generated.h"
 
 
 
 UCLASS()
-class EVERYTHING_API ARoleDisplay : public AActor
+class EVERYTHING_API ARole3DDisplay : public AActor
 {
 	GENERATED_BODY()
 	
 public:
-	ARoleDisplay();
+	ARole3DDisplay();
 	
 	void AdjustUp(float AxisValue);
 	void AdjustRight(float AxisValue);
@@ -26,7 +26,7 @@ public:
 
 	FName CurrentRoleName;
 	FName CurrentSkinName;
-	class FGamePawnSkin* CurrentSkin;
+	class FRoleSkin* CurrentSkin;
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UCameraComponent* CameraComp;

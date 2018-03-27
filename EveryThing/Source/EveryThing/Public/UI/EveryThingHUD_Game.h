@@ -7,7 +7,7 @@
 
 #include "ChatWindow/ChatWindowHUDInterface.h"
 
-#include "EveryThingGameHUD.generated.h"
+#include "EveryThingHUD_Game.generated.h"
 
 class UChatWindow;
 
@@ -15,7 +15,7 @@ class UChatWindow;
  * 
  */
 UCLASS()
-class EVERYTHING_API AEveryThingGameHUD : public AHUD, public IChatWindowHUDInterface
+class EVERYTHING_API AEveryThingHUD_Game : public AHUD, public IChatWindowHUDInterface
 {
 	GENERATED_BODY()
 	

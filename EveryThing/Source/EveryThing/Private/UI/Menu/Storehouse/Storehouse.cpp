@@ -8,8 +8,8 @@
 #include "EveryThingAssetManager.h"
 #include "EveryThingGameInstance.h"
 #include "Characters/GamePawnManager.h"
-#include "UI/Menu/EveryThingMenuHUD.h"
-#include "UI/RoleDisplay.h"
+#include "UI/EveryThingHUD_Menu.h"
+#include "UI/Role3DDisplay.h"
 #include "UI/Menu/Storehouse/RoleItem.h"
 #include "UI/Menu/Storehouse/SkinItem.h"
 #include "UI/Menu/Storehouse/FormItem.h"
@@ -37,7 +37,7 @@ void UStorehouse::NativeConstruct()
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		TActorIterator<ARoleDisplay> It(World);
+		TActorIterator<ARole3DDisplay> It(World);
 		if (It) { RoleDisplay = *It; }
 
 		OwnerPC = World->GetFirstPlayerController();
@@ -110,7 +110,7 @@ void UStorehouse::InitializeRoleSkinAndFormListDisplay_Implementation(const FPla
 	TSubclassOf<UUserWidget> SkinItemClass = AssetManager->GetUserWidgetFromName("SkinItem");
 	if (SkinItemClass)
 	{
-		const TArray<FName>& AllRoleSkinName = GamePawnManager->GetAllGamePawnSkinWithRoleName(CurrentDisplayRoleName);
+		const TArray<FName>& AllRoleSkinName = GamePawnManager->GetAllRoleSkinWithRoleName(CurrentDisplayRoleName);
 		for (const FName& SkinName : AllRoleSkinName)
 		{
 			
@@ -127,7 +127,7 @@ void UStorehouse::InitializeRoleSkinAndFormListDisplay_Implementation(const FPla
 	TSubclassOf<UUserWidget> FormItemClass = AssetManager->GetUserWidgetFromName("FormItem");
 	if (FormItemClass)
 	{
-		const TArray<FName>& AllRoleFormName = GamePawnManager->GetAllGamePawnFormWithRoleName(CurrentDisplayRoleName);
+		const TArray<FName>& AllRoleFormName = GamePawnManager->GetAllRoleFormWithRoleName(CurrentDisplayRoleName);
 		for (const FName& FormName : AllRoleFormName)
 		{
 			UFormItem* FormItem = CreateWidget<UFormItem>(OnwerPC, FormItemClass);
@@ -142,7 +142,7 @@ void UStorehouse::InitializeRoleSkinAndFormListDisplay_Implementation(const FPla
 
 void UStorehouse::Backup()
 {
-	AEveryThingMenuHUD* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingMenuHUD>(GetOwningPlayer()->GetHUD()) : nullptr;
+	AEveryThingHUD_Menu* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingHUD_Menu>(GetOwningPlayer()->GetHUD()) : nullptr;
 	if (OwnerMenuHUD) { OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::MasterInterface); }
 }
 
