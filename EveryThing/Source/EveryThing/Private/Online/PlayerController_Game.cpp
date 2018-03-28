@@ -162,6 +162,15 @@ void APlayerController_Game::RemoveActionAndAxisBindings(const TArray<FName>& Bi
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// Player State
+void APlayerController_Game::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	OnPlayerStateUpdateDelegate.Broadcast(PlayerState);
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 /// For IGamePawnControllerInterface

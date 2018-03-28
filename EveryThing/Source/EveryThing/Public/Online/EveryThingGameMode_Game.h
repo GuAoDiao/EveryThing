@@ -26,6 +26,10 @@ public:
 	virtual float GetActualDamage(float InDamage, EElementType InDamageType, EElementType PawnElementType, float ElementResistance) const;
 	virtual float UpdateEnergy(float energy, float value) { return energy + value; }
 	float GetDamageScaleFromElementType(EElementType CauserElementType, EElementType AcceptElementType) const;
+
+
+
+	virtual void BeginDestroy() override;
 private:
 	float NormalDamageScale;
 	float SpecificToDamageScale;

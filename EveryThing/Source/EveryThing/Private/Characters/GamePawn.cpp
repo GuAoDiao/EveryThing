@@ -316,6 +316,7 @@ void AGamePawn::ResetDefaultSkinAndFormFromDataTable()
 	{
 		AllHaveRoleSkinName.Add(RoleInfo->DefaultSkinName);
 		ToggleToTargetSkin(RoleInfo->DefaultSkinName);
+		
 		AllHaveRoleFormName.Add(RoleInfo->DefaultFormName);
 		ToggleToTargetForm(RoleInfo->DefaultFormName);
 	}

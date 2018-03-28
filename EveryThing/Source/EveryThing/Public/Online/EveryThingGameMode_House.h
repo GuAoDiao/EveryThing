@@ -13,8 +13,13 @@ UCLASS()
 class EVERYTHING_API AEveryThingGameMode_House : public AGameModeBase
 {
 	GENERATED_BODY()
+		
+public:
+	AEveryThingGameMode_House();
+
+	void OpenGameFromHouseOwner();
 	
-	
-	
-	
+	void UpdateSessionSetting();
+
+	virtual void BeginPlay() override;
 };

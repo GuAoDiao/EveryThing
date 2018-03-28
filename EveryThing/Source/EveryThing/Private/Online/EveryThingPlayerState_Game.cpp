@@ -7,37 +7,49 @@
 #include "UnrealNetwork.h"
 
 #include "EveryThingGameInstance.h"
+#include "Online/EveryThingPlayerState_House.h"
 
 #include "Characters/GamePawn.h"
 #include "Characters/PlayerPawns/PlayerChairPawn.h"
 #include "Characters/PlayerPawns/PlayerFootballPawn.h"
 
-void AEveryThingPlayerState_Game::OnConstruction(const FTransform& Transform)
+void AEveryThingPlayerState_Game::BeginPlay()
 {
-	Super::OnConstruction(Transform);
+	Super::BeginPlay();
 	
-	UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetWorld()->GetGameInstance()) : nullptr;
-	if (OwnerETGI) { SetPlayerInfo( OwnerETGI->GetPlayerInfo()); }
+	if (Role == ROLE_AutonomousProxy && !bFromPreviousLevel)
+	{
+		UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetWorld()->GetGameInstance()) : nullptr;
+		if (OwnerETGI) { ServerSetPlayerInfo( OwnerETGI->GetPlayerInfo()); }
+	}
+}
+
+void AEveryThingPlayerState_Game::SeamlessTravelTo(class APlayerState* NewPlayerState)
+{
+	if (HasAuthority())
+	{
+		AEveryThingPlayerState_House* OldETPS_H = Cast<AEveryThingPlayerState_House>(NewPlayerState);
+		if (OldETPS_H)
+		{
+			SetPlayerInfo(OldETPS_H->GetPlayerInfo());
+			TeamID = OldETPS_H->GetTeamID();
+		}
+	}
 }
 
 void AEveryThingPlayerState_Game::SetPlayerInfo(const FPlayerInfo& InPlayerInfo)
 {
-	if (!HasAuthority())
+	if (HasAuthority())
 	{ 
-		ServerSetPlayerInfo(InPlayerInfo);
-	}
-
-	CurrentPlayerInfo = InPlayerInfo;
+		CurrentPlayerInfo = InPlayerInfo;
 	
-	OnPlayerInfoUpdate();
+		OnPlayerInfoUpdate();
+	}
 }
 
 
 bool AEveryThingPlayerState_Game::ServerSetPlayerInfo_Validate(const FPlayerInfo& InPlayerInfo) { return true; }
 void AEveryThingPlayerState_Game::ServerSetPlayerInfo_Implementation(const FPlayerInfo& InPlayerInfo) { SetPlayerInfo(InPlayerInfo); }
-
-void AEveryThingPlayerState_Game::OnPlayerInfoUpdate() { OnUpdatePlayerInfoDelegate.Broadcast(CurrentPlayerInfo); }
-void AEveryThingPlayerState_Game::OnRep_CurrentPlayerInfo() { OnPlayerInfoUpdate(); }
 
 void AEveryThingPlayerState_Game::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
 {
@@ -45,4 +57,5 @@ void AEveryThingPlayerState_Game::GetLifetimeReplicatedProps(TArray<FLifetimePro
 
 	DOREPLIFETIME(AEveryThingPlayerState_Game, CurrentPlayerInfo);
 	DOREPLIFETIME(AEveryThingPlayerState_Game, ChatID);
+	DOREPLIFETIME(AEveryThingPlayerState_Game, TeamID);
 }

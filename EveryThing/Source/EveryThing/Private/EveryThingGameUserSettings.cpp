@@ -5,7 +5,7 @@
 
 UEveryThingGameUserSettings::UEveryThingGameUserSettings()
 {
-	SetToDefaults();
+	FullscreenMode = EWindowMode::Windowed;
 }
 
 void UEveryThingGameUserSettings::SetToDefaults()

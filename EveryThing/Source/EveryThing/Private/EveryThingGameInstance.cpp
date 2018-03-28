@@ -38,6 +38,11 @@ void UEveryThingGameInstance::OpenGameLevel(const FString& MapType, const FStrin
 	UGameplayStatics::OpenLevel(this, *MapName, true, TEXT("listen"));
 }
 
+void UEveryThingGameInstance::OpenHouseLevel()
+{
+	UGameplayStatics::OpenLevel(this, HouseLevelName, true, TEXT("listen"));
+}
+
 void UEveryThingGameInstance::OpenMenuLevel()
 {
 	UGameplayStatics::OpenLevel(this, MenuLevelName, true);

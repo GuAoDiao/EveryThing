@@ -27,6 +27,7 @@ public:
 	/// Level
 public:
 	void OpenMenuLevel();
+	void OpenHouseLevel();
 	void OpenGameLevel(const FString& MapType, const FString& MapName);
 	void ExitGameApplication();
 
@@ -59,7 +60,8 @@ private:
 public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	FName MenuLevelName;
-
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FName HouseLevelName;
 
 
 

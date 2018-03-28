@@ -34,7 +34,7 @@ public:
 	void LoadAllRolesInfo();
 	TSoftClassPtr<AGamePawn> GetRoleClassFromName(const FName& Name) const;
 	FName GetRoleNameFromClass(UClass* RoleClass) const;
-	bool GetRoleInfoFromName(const FName& SkinName, const FRoleInfo* & OutRoleInfo) const;
+	bool GetRoleInfoFromName(const FName& RoleName, const FRoleInfo* & OutRoleInfo) const;
 	const TMap<FName, FRoleInfo>& GetAllRolesInfo() const;
 private:
 	TMap<FName, FRoleInfo> AllRolesInfo;

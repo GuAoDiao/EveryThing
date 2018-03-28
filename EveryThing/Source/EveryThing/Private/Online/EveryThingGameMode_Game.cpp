@@ -5,6 +5,7 @@
 #include "Online/PlayerController_Game.h"
 #include "Online/EveryThingPlayerState_Game.h"
 #include "Online/EveryThingGameState_Game.h"
+#include "Online/EveryThingGameSession.h"
 #include "UI/EveryThingHUD_Game.h"
 
 AEveryThingGameMode_Game::AEveryThingGameMode_Game()
@@ -13,6 +14,8 @@ AEveryThingGameMode_Game::AEveryThingGameMode_Game()
 	SpecificToDamageScale = 1.5f;
 
 	DefaultPawnClass = nullptr;
+	
+	GameSessionClass = AEveryThingGameSession::StaticClass();
 	PlayerControllerClass = APlayerController_Game::StaticClass();
 	PlayerStateClass = AEveryThingPlayerState_Game::StaticClass();
 	GameStateClass = AEveryThingGameState_Game::StaticClass();
@@ -42,3 +45,11 @@ float AEveryThingGameMode_Game::GetDamageScaleFromElementType(EElementType Cause
 }
 
 
+void AEveryThingGameMode_Game::BeginDestroy()
+{
+
+	AEveryThingGameSession* OwnerGameSession = Cast<AEveryThingGameSession>(GameSession);
+	if (OwnerGameSession) { OwnerGameSession->DestroySession(); }
+
+	Super::BeginDestroy();
+}

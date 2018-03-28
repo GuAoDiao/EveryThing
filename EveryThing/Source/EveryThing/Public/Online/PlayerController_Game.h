@@ -35,6 +35,14 @@ protected:
 	void ResetAxisAndActionMapping();
 
 	//////////////////////////////////////////////////////////////////////////
+	/// Player State
+public:
+	virtual void OnRep_PlayerState() override;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateUpdateDelegate, APlayerState* /* PlayerState */)
+	FOnPlayerStateUpdateDelegate OnPlayerStateUpdateDelegate;
+
+	//////////////////////////////////////////////////////////////////////////
 	/// For Game Pawn Controller Interface
 	virtual AActor* GetAttackTarget() override;
 

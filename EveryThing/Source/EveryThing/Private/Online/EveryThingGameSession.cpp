@@ -128,6 +128,17 @@ void AEveryThingGameSession::FindSessions(const FUniqueNetId& UserId, bool bIsLA
 	}
 }
 
+void AEveryThingGameSession::StartSession()
+{
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
+	{
+		OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
+		Sessions->StartSession(NAME_GameSession);
+	}
+}
+
 bool AEveryThingGameSession::JoinSession(const FUniqueNetId& UserId, int32 SessionIndexInSearResults)
 {
 	bool bResult = false;
@@ -179,22 +190,24 @@ void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool b
 	if (Sessions.IsValid())
 	{
 		Sessions->ClearOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegateHandle);
+	}
 
-		if (bWasSuccessful)
+	if (bWasSuccessful)
+	{
+		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
+		if (OwnerETGI)
 		{
-			OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
-
-			Sessions->StartSession(InSessionName);
+			OwnerETGI->OpenHouseLevel();
 		}
-		else
+	}
+	else
+	{
+		APlayerController* OwnerPC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
+		AEveryThingHUD_Menu* OwnerETMH = OwnerPC ? Cast<AEveryThingHUD_Menu>(OwnerPC->GetHUD()) : nullptr;
+		if (OwnerETMH)
 		{
-			APlayerController* OwnerPC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
-			AEveryThingHUD_Menu* OwnerETMH = OwnerPC ? Cast<AEveryThingHUD_Menu>(OwnerPC->GetHUD()) : nullptr;
-			if (OwnerETMH)
-			{
-				OwnerETMH->ToggleToNewGameUIState(EMenuUIState::ErrorDialog);
-				OwnerETMH->SetErrorDialogMessage(TEXT("Can't create session"));
-			}
+			OwnerETMH->ToggleToNewGameUIState(EMenuUIState::ErrorDialog);
+			OwnerETMH->SetErrorDialogMessage(TEXT("Can't create session"));
 		}
 	}
 }
@@ -207,23 +220,20 @@ void AEveryThingGameSession::OnStartOnlineGameComplete(FName InSessionName, bool
 	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
 	if (Sessions.IsValid())
 	{
-
 		Sessions->ClearOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegateHandle);
 	}
 
-
 	if (bWasSuccessful)
 	{
-		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
-		FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(InSessionName);
-
-		if (OwnerETGI && OwnerOnlineSessionSetting)
+		APlayerController* OwnerPC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
+		FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
+		if (OwnerPC && OwnerOnlineSessionSetting)
 		{
-			FString GameType, MapName;
-			OwnerOnlineSessionSetting->Get<FString>(SETTING_GAMEMODE, GameType);
+			FString MapName;
 			OwnerOnlineSessionSetting->Get<FString>(SETTING_MAPNAME, MapName);
-			OwnerETGI->OpenGameLevel(GameType, MapName);
+			OwnerPC->ConsoleCommand(FString::Printf(TEXT("ServerTravel %s?listen"), *MapName));
 		}
+
 	}
 }
 
@@ -244,7 +254,7 @@ void AEveryThingGameSession::OnFindSessionsComplete(bool bWasSuccessful)
 			
 			APlayerController* OwnerPC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
 			AEveryThingHUD_Menu* OwnerETMH = OwnerPC ? Cast<AEveryThingHUD_Menu>(OwnerPC->GetHUD()) : nullptr;
-			if(OwnerETMH){ OwnerETMH->UpdateHouseList(SearchSettings->SearchResults); }
+			if (OwnerETMH) { OwnerETMH->UpdateHouseList(SearchSettings->SearchResults); }
 		}
 	}
 }

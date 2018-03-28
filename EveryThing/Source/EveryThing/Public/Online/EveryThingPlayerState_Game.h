@@ -22,7 +22,9 @@ class EVERYTHING_API AEveryThingPlayerState_Game : public APlayerState, public I
 	GENERATED_BODY()
 	
 public:
-	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
+
+	virtual void SeamlessTravelTo(class APlayerState* NewPlayerState) override;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// PlayerInfo
@@ -35,15 +37,30 @@ public:
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdatePlayerInfoDelegate, const FPlayerInfo&);
 	FOnUpdatePlayerInfoDelegate OnUpdatePlayerInfoDelegate;
-
+	
 private:
 	UFUNCTION()
-	void OnRep_CurrentPlayerInfo();
-	void OnPlayerInfoUpdate();
+	void OnRep_CurrentPlayerInfo() { OnPlayerInfoUpdate(); }
+	void OnPlayerInfoUpdate() { OnUpdatePlayerInfoDelegate.Broadcast(CurrentPlayerInfo); }
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentPlayerInfo)
 	FPlayerInfo CurrentPlayerInfo;
 
+	//////////////////////////////////////////////////////////////////////////
+	/// Team
+public:
+	int32 GetTeamID() const { return TeamID; }
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnTeamIDUpdateDelegate, int32 /* TeamID */);
+	FOnTeamIDUpdateDelegate OnTeamIDUpdateDelegate;
+
+protected:
+	UFUNCTION()
+	void OnRep_TeamID() { OnTeamIDUpdate(); }
+	void OnTeamIDUpdate() { OnTeamIDUpdateDelegate.Broadcast(TeamID); }
+
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_TeamID)
+	int32 TeamID;
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window Player State Interface
 public:

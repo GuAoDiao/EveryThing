@@ -58,15 +58,17 @@ void UPlayerPawnComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerPawnComponent::DelayBindEveryThingPlayerState, 1.f, false);
+	APlayerController_Game* OwnerPC_G = OwnerPawn ? Cast<APlayerController_Game>(OwnerPawn->GetController()) : nullptr;
+	if (OwnerPC_G)
+	{
+		OwnerPC_G->OnPlayerStateUpdateDelegate.AddUObject(this, &UPlayerPawnComponent::OnPlayerStateUpdate);
+	}
 }
 
 
-void UPlayerPawnComponent::DelayBindEveryThingPlayerState()
+void UPlayerPawnComponent::OnPlayerStateUpdate(APlayerState* PlayerState)
 {
-	APlayerController* OwnerPC = OwnerPawn ? Cast<APlayerController>(OwnerPawn->GetController()) : nullptr;
-	AEveryThingPlayerState_Game* OwnerETPS = OwnerPC ? Cast<AEveryThingPlayerState_Game>(OwnerPC->PlayerState) : nullptr;
+	AEveryThingPlayerState_Game* OwnerETPS = Cast<AEveryThingPlayerState_Game>(PlayerState);
 	if (OwnerETPS)
 	{
 		OnUpdatePlayerInfo(OwnerETPS->GetPlayerInfo());
@@ -78,7 +80,6 @@ void UPlayerPawnComponent::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
 {
 	if (OwnerPawn)
 	{
-		OwnerPawn->AllHaveRoleFormName.Empty();
 		for (const FName& FormName : OwnerPawn->AllRoleFormName)
 		{
 			if (InPlayerInfo.AllHaveGamePawnFormNames.Contains(FormName))
@@ -87,7 +88,6 @@ void UPlayerPawnComponent::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
 			}
 		}
 
-		OwnerPawn->AllHaveRoleSkinName.Empty();
 		for (const FName& SkinName : OwnerPawn->AllRoleSkinName)
 		{
 			if (InPlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinName))
