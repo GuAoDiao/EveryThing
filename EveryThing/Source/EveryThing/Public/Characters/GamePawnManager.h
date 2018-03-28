@@ -14,7 +14,7 @@ class FRoleSkinClassInfo;
 class FRoleFormClassInfo;
 
 typedef FRoleSkin*(*RoleSkinCreateFunc)(UStaticMeshComponent* /*InStatichMeshComp*/);
-typedef FRoleForm*(*GamePawnFormCreateFunc)(AGamePawn* /*InGamePawn*/);
+typedef FRoleForm*(*RoleFormCreateFunc)(AGamePawn* /*InGamePawn*/);
 
 /**
  * 

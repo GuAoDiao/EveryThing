@@ -67,7 +67,7 @@ void UEveryThingGameInstance::BeginLoadingMap(const FString& MapName)
 		{
 			if (!LoadingMap)
 			{
-				TSubclassOf<UUserWidget> LoadingMapClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("LoadingMap");
+				TSubclassOf<UUserWidget> LoadingMapClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("Interlude");
 				LoadingMap = LoadingMapClass ? CreateWidget<UInterlude>(this, LoadingMapClass) : nullptr;
 			}
 			if(LoadingMap)

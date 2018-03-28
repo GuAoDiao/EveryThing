@@ -3,7 +3,7 @@
 #include "HouseLayout.h"
 
 #include "EveryThingAssetManager.h"
-#include "UI/Menu/House/HousePlayerItem.h"
+#include "UI/House/HousePlayerItem.h"
 #include "Online/EveryThingGameState_House.h"
 #include "Online/EveryThingPlayerState_House.h"
 #include "Online/PlayerController_House.h"
@@ -26,6 +26,7 @@ void UHouseLayout::NativeConstruct()
 	APlayerController_House* OwnerPC_H = Cast<APlayerController_House>(GetOwningPlayer());
 	if (OwnerPC_H)
 	{
+		OnPlayerStateUpdate(OwnerPC_H->PlayerState);
 		OwnerPC_H->OnPlayerStateUpdateDelegate.AddUObject(this, &UHouseLayout::OnPlayerStateUpdate);
 	}
 }
@@ -53,7 +54,19 @@ void UHouseLayout::OnAddPlayer(class APlayerState* PlayerState)
 		{
 			HousePlayerItem->InitializeHousePlayerItem(NewETPS);
 			AddHousePlayerItem(HousePlayerItem);
+
+			AllPlayerItemList.Add(PlayerState, HousePlayerItem);
 		}
+	}
+}
+
+void UHouseLayout::OnRemovePlayer(class APlayerState* PlayerState)
+{
+	if (AllPlayerItemList.Contains(PlayerState))
+	{
+		RemoveHousePlayerItem(AllPlayerItemList[PlayerState]);
+
+		AllPlayerItemList.Remove(PlayerState);
 	}
 }
 

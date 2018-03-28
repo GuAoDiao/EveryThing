@@ -8,12 +8,14 @@
 #include "Online/EveryThingGameSession.h"
 #include "UI/EveryThingHUD_Game.h"
 
+#include "PlayerFootballPawn.h"
+
 AEveryThingGameMode_Game::AEveryThingGameMode_Game()
 {
 	NormalDamageScale = 1.f;
 	SpecificToDamageScale = 1.5f;
 
-	DefaultPawnClass = nullptr;
+	DefaultPawnClass = APlayerFootballPawn::StaticClass();
 	
 	GameSessionClass = AEveryThingGameSession::StaticClass();
 	PlayerControllerClass = APlayerController_Game::StaticClass();

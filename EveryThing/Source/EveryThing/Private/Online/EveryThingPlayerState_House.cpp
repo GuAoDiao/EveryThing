@@ -22,21 +22,26 @@ void AEveryThingPlayerState_House::BeginPlay()
 	if (OwnerETGI) { SetPlayerInfo(OwnerETGI->GetPlayerInfo()); }
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// Player Info
 void AEveryThingPlayerState_House::SetPlayerInfo(const FPlayerInfo& InPlayerInfo)
 {
 	if (GetOwner() && GetOwner()->Role >= ROLE_AutonomousProxy) { ServerSetPlayerInfo(InPlayerInfo); }
 }
-
-
 bool AEveryThingPlayerState_House::ServerSetPlayerInfo_Validate(const FPlayerInfo& InPlayerInfo) { return true; }
-void AEveryThingPlayerState_House::ServerSetPlayerInfo_Implementation(const FPlayerInfo& InPlayerInfo) { CurrentPlayerInfo = InPlayerInfo; }
+void AEveryThingPlayerState_House::ServerSetPlayerInfo_Implementation(const FPlayerInfo& InPlayerInfo)
+{
+	CurrentPlayerInfo = InPlayerInfo;
+	OnCurrentPlayerInfoUpdate();
+}
 
+//////////////////////////////////////////////////////////////////////////
+/// Is Ready
 void AEveryThingPlayerState_House::SetIsReady(bool bInIsReady)
 {
 	bIsReady = bInIsReady;
 	OnIsReadyUptate();
 }
-
 void AEveryThingPlayerState_House::TooggleReadState()
 {
 	if (GetOwner() && GetOwner()->Role >= ROLE_AutonomousProxy){ServerTooggleReadState();}
@@ -44,12 +49,19 @@ void AEveryThingPlayerState_House::TooggleReadState()
 bool AEveryThingPlayerState_House::ServerTooggleReadState_Validate() { return true; }
 void AEveryThingPlayerState_House::ServerTooggleReadState_Implementation() { SetIsReady(!bIsReady); }
 
+
+//////////////////////////////////////////////////////////////////////////
+/// Team ID
 void AEveryThingPlayerState_House::SetTeamID(int32 InTeamID)
 {
 	if (GetOwner() && GetOwner()->Role >= ROLE_AutonomousProxy) { ServerSetTeamID(InTeamID); }
 }
 bool AEveryThingPlayerState_House::ServerSetTeamID_Validate(int32 InTeamID) { return true; }
-void AEveryThingPlayerState_House::ServerSetTeamID_Implementation(int32 InTeamID) { TeamID = InTeamID; }
+void AEveryThingPlayerState_House::ServerSetTeamID_Implementation(int32 InTeamID)
+{
+	TeamID = InTeamID;
+	OnTeamIDUpdate();
+}
 
 
 bool AEveryThingPlayerState_House::CheckIsHouseOwner()

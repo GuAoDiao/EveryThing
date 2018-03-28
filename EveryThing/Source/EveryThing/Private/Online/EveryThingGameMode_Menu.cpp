@@ -12,4 +12,5 @@ AEveryThingGameMode_Menu::AEveryThingGameMode_Menu()
 {
 	GameSessionClass = AEveryThingGameSession::StaticClass();
 	HUDClass = AEveryThingHUD_Menu::StaticClass();
+	DefaultPawnClass = nullptr;
 }

@@ -11,8 +11,9 @@ class AGamePawn;
 class FRoleFormClassInfo
 {
 public:
-	FRoleFormClassInfo(const FName& InName, GamePawnFormCreateFunc InCreateFunc)
+	FRoleFormClassInfo(const FName& InName, RoleFormCreateFunc InCreateFunc)
 	{
+		CreateFunc = InCreateFunc;
 		UGamePawnManager::RegisterRoleForm(InName, this);
 	}
 
@@ -21,5 +22,5 @@ public:
 		return CreateFunc ? (*CreateFunc)(InGamePawn) : nullptr;
 	}
 
-	GamePawnFormCreateFunc CreateFunc;
+	RoleFormCreateFunc CreateFunc;
 };

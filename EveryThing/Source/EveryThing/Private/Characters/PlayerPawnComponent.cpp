@@ -61,6 +61,7 @@ void UPlayerPawnComponent::BeginPlay()
 	APlayerController_Game* OwnerPC_G = OwnerPawn ? Cast<APlayerController_Game>(OwnerPawn->GetController()) : nullptr;
 	if (OwnerPC_G)
 	{
+		OnPlayerStateUpdate(OwnerPC_G->PlayerState);
 		OwnerPC_G->OnPlayerStateUpdateDelegate.AddUObject(this, &UPlayerPawnComponent::OnPlayerStateUpdate);
 	}
 }

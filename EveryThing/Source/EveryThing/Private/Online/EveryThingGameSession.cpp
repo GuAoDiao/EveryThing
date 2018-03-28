@@ -225,13 +225,13 @@ void AEveryThingGameSession::OnStartOnlineGameComplete(FName InSessionName, bool
 
 	if (bWasSuccessful)
 	{
-		APlayerController* OwnerPC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
+		UWorld* World = GetWorld();
 		FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
-		if (OwnerPC && OwnerOnlineSessionSetting)
+		if (World && OwnerOnlineSessionSetting)
 		{
 			FString MapName;
 			OwnerOnlineSessionSetting->Get<FString>(SETTING_MAPNAME, MapName);
-			OwnerPC->ConsoleCommand(FString::Printf(TEXT("ServerTravel %s?listen"), *MapName));
+			World->ServerTravel(FString::Printf(TEXT("%s?listen"), *MapName));
 		}
 
 	}

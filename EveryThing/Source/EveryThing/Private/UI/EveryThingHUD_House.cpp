@@ -3,7 +3,7 @@
 #include "EveryThingHUD_House.h"
 
 #include "EveryThingAssetManager.h"
-#include "UI/Menu/House/HouseLayout.h"
+#include "UI/House/HouseLayout.h"
 
 void AEveryThingHUD_House::BeginPlay()
 {

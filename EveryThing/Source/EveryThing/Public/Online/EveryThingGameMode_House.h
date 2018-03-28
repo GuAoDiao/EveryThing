@@ -17,9 +17,12 @@ class EVERYTHING_API AEveryThingGameMode_House : public AGameModeBase
 public:
 	AEveryThingGameMode_House();
 
+
+	virtual void BeginPlay() override;
+	// do nothing
+	virtual void RestartPlayer(class AController* NewPlayer) override {};
+
 	void OpenGameFromHouseOwner();
 	
 	void UpdateSessionSetting();
-
-	virtual void BeginPlay() override;
 };

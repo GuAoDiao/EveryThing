@@ -19,6 +19,8 @@ AEveryThingGameMode_House::AEveryThingGameMode_House()
 	GameStateClass = AEveryThingGameState_House::StaticClass();
 	PlayerControllerClass = APlayerController_House::StaticClass();
 	HUDClass = AEveryThingHUD_House::StaticClass();
+
+	bUseSeamlessTravel = true;
 }
 
 void AEveryThingGameMode_House::OpenGameFromHouseOwner()

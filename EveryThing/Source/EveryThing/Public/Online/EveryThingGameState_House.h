@@ -21,10 +21,12 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void AddPlayerState(APlayerState* PlayerState) override;
+	virtual void RemovePlayerState(APlayerState* PlayerState) override;
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAddPlayerDelegate, APlayerState* /* PlayerState */);
 	FOnAddPlayerDelegate OnAddPlayerDelegate;
-
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRemovePlayerDelegate, APlayerState* /* PlayerState */);
+	FOnRemovePlayerDelegate OnRemovePlayerDelegate;
 
 	bool CheckPlayerIsHouseOwner(AEveryThingPlayerState_House* InPlayer) const { return InPlayer == HouseOwner; }
 	bool CheckIsAllPlayerAreReady();

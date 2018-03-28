@@ -136,10 +136,11 @@ void AGamePawn::ToggleToTargetForm(const FName& FormName)
 		ServerToggleToTargetForm(FormName);
 	}
 
-	if (CurrentRoleForm) { CurrentRoleForm->UnloadGamePawnForm();}
-	delete CurrentRoleForm;
+	if (CurrentRoleForm) { CurrentRoleForm->UnloadGamePawnForm(); delete CurrentRoleForm; }
+	
 
 	FRoleForm* TargetGamePawnForm = UGamePawnManager::CreateRoleForm(FormName, this);
+
 	CurrentRoleFormName = FormName;
 	CurrentRoleForm = TargetGamePawnForm;
 

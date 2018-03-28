@@ -12,8 +12,8 @@ class FRoleSkinClassInfo
 public:
 	FRoleSkinClassInfo(const FName& InName, RoleSkinCreateFunc InCreateFunc)
 	{
-		UGamePawnManager::RegisterRoleSkin(InName, this);
 		CreateFunc = InCreateFunc;
+		UGamePawnManager::RegisterRoleSkin(InName, this);
 	}
 
 	FRoleSkin* CreateObject(UStaticMeshComponent* InStaticMeshComp)

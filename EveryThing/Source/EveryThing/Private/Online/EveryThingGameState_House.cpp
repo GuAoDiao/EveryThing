@@ -27,6 +27,13 @@ void AEveryThingGameState_House::AddPlayerState(APlayerState* PlayerState)
 	OnAddPlayerDelegate.Broadcast(PlayerState);
 }
 
+void AEveryThingGameState_House::RemovePlayerState(APlayerState* PlayerState)
+{
+	OnRemovePlayerDelegate.Broadcast(PlayerState);
+
+	Super::RemovePlayerState(PlayerState);
+}
+
 bool AEveryThingGameState_House::CheckIsAllPlayerAreReady()
 {	
 	for (APlayerState* Player : PlayerArray)

@@ -14,10 +14,10 @@
 
 #include "UI/Menu/Storehouse/Storehouse.h"
 
-#include "UI/Menu/House/HouseMenu.h"
-#include "UI/Menu/House/HouseList.h"
-#include "UI/Menu/House/HouseRow.h"
-#include "UI/Menu/House/HouseCreate.h"
+#include "UI/House/HouseMenu.h"
+#include "UI/House/HouseList.h"
+#include "UI/House/HouseRow.h"
+#include "UI/House/HouseCreate.h"
 
 #include "UI/Menu/LoadingScreen.h"
 #include "UI/Menu/ErrorDialog.h"
@@ -32,7 +32,18 @@ AEveryThingHUD_Menu::AEveryThingHUD_Menu()
 
 void AEveryThingHUD_Menu::BeginPlay()
 {
-	if (IsTargetGameUIState(EMenuUIState::StartUp)) { ToggleToNewGameUIState(EMenuUIState::MainMenu); }
+	if (IsTargetGameUIState(EMenuUIState::StartUp))
+	{
+		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
+		if (OwnerETGI && !OwnerETGI->GetArchiveName().IsEmpty())
+		{
+			ToggleToNewGameUIState(EMenuUIState::MasterInterface);
+		}
+		else
+		{
+			ToggleToNewGameUIState(EMenuUIState::MainMenu);
+		}
+	}
 
 	if (GetOwningPlayerController()) { GetOwningPlayerController()->bShowMouseCursor = true; }
 }

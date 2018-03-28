@@ -17,12 +17,22 @@ class EVERYTHING_API UHouseLayout : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+	//////////////////////////////////////////////////////////////////////////
+	/// Player Item
 
 	void OnAddPlayer(class APlayerState* PlayerState);
+	void OnRemovePlayer(class APlayerState* PlayerState);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void AddHousePlayerItem(class UHousePlayerItem* HousePlayerItem);
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void RemoveHousePlayerItem(class UHousePlayerItem* HousePlayerItem);
+
+	TMap<APlayerState*, UHousePlayerItem*> AllPlayerItemList;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Player Info
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateIsHouseOwner(bool bIsHouserOwner);
 
@@ -34,7 +44,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void StartGame();
-
-
+	
 	void OnPlayerStateUpdate(class APlayerState* PlayerState);
 };

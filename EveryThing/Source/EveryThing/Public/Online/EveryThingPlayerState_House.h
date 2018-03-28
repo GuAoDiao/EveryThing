@@ -35,7 +35,8 @@ protected:
 	void ServerSetPlayerInfo(const FPlayerInfo& InPlayerInfo);
 
 	UFUNCTION()
-	void OnRep_CurrentPlayerInfo() { OnPlayerInfoUpdateDelegate.Broadcast(CurrentPlayerInfo); }
+	void OnRep_CurrentPlayerInfo() { OnCurrentPlayerInfoUpdate(); }
+	void OnCurrentPlayerInfoUpdate() { OnPlayerInfoUpdateDelegate.Broadcast(CurrentPlayerInfo); }
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentPlayerInfo)
 	FPlayerInfo CurrentPlayerInfo;
@@ -75,8 +76,9 @@ protected:
 	
 
 	UFUNCTION()
-	void OnRep_TeamID() { OnTeamIDUpdateDelegate.Broadcast(TeamID); }
-	
+	void OnRep_TeamID() { OnTeamIDUpdate(); }
+	void OnTeamIDUpdate() { OnTeamIDUpdateDelegate.Broadcast(TeamID); }
+
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_TeamID)
 	int32 TeamID;
 
