@@ -23,9 +23,7 @@ class EVERYTHING_API AEveryThingPlayerState_Game : public APlayerState, public I
 	
 public:
 	virtual void BeginPlay() override;
-
-	virtual void SeamlessTravelTo(class APlayerState* NewPlayerState) override;
-
+	
 	//////////////////////////////////////////////////////////////////////////
 	/// PlayerInfo
 public:
@@ -50,7 +48,7 @@ private:
 	/// Team
 public:
 	int32 GetTeamID() const { return TeamID; }
-
+	void SetTeamID(int32 InTeamID);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnTeamIDUpdateDelegate, int32 /* TeamID */);
 	FOnTeamIDUpdateDelegate OnTeamIDUpdateDelegate;
 

@@ -20,6 +20,7 @@
 UStorehouse::UStorehouse(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bIsFocusable = true;
+	CurrentDisplayRoleName = "Football";
 }
 
 void UStorehouse::NativeConstruct()
@@ -28,10 +29,10 @@ void UStorehouse::NativeConstruct()
 	if (OwnerETGI)
 	{
 		InitializeRoleListDisplay(OwnerETGI->GetPlayerInfo());
+
 		OwnerETGI->GetOnPlayerInfoUpdateDelegate().AddUObject(this, &UStorehouse::OnPlayerInfoUpdate);
 	}
 
-	CurrentDisplayRoleName = "Football";
 	ToggleDisplayRole(CurrentDisplayRoleName);
 	
 	UWorld* World = GetWorld();
@@ -39,9 +40,6 @@ void UStorehouse::NativeConstruct()
 	{
 		TActorIterator<ARole3DDisplay> It(World);
 		if (It) { RoleDisplay = *It; }
-
-		OwnerPC = World->GetFirstPlayerController();
-		
 	}
 
 	UInputSettings* InpueSettings = UInputSettings::GetInputSettings();
@@ -88,7 +86,6 @@ void UStorehouse::InitializeRoleListDisplay_Implementation(const FPlayerInfo& In
 		const TMap<FName, FRoleInfo>& AllRolesInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllRolesInfo();
 		for (TMap<FName, FRoleInfo>::TConstIterator It(AllRolesInfo); It; ++It)
 		{
-			const FRoleInfo& RoleInfo = It.Value();
 			URoleItem* RoleItem = CreateWidget<URoleItem>(OnwerPC, RoleItemClass);
 			if (RoleItem)
 			{
@@ -97,7 +94,6 @@ void UStorehouse::InitializeRoleListDisplay_Implementation(const FPlayerInfo& In
 			}
 		}
 	}
-
 }
 
 void UStorehouse::InitializeRoleSkinAndFormListDisplay_Implementation(const FPlayerInfo& InPlayerInfo)
@@ -117,7 +113,7 @@ void UStorehouse::InitializeRoleSkinAndFormListDisplay_Implementation(const FPla
 			USkinItem* SkinItem = CreateWidget<USkinItem>(OnwerPC, SkinItemClass);
 			if (SkinItem)
 			{
-				SkinItem->InitializeSkinItem(this, SkinName, InPlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinName));
+				SkinItem->InitializeSkinItem(this, SkinName, InPlayerInfo.AllHaveRoleSkinNames.Contains(SkinName));
 				AddSkinItem(SkinItem);
 			}
 		}
@@ -133,7 +129,7 @@ void UStorehouse::InitializeRoleSkinAndFormListDisplay_Implementation(const FPla
 			UFormItem* FormItem = CreateWidget<UFormItem>(OnwerPC, FormItemClass);
 			if (FormItem)
 			{
-				FormItem->InitializeFormItem(FormName, InPlayerInfo.AllHaveGamePawnFormNames.Contains(FormName));
+				FormItem->InitializeFormItem(FormName, InPlayerInfo.AllHaveRoleFormNames.Contains(FormName));
 				AddFormItem(FormItem);
 			}
 		}

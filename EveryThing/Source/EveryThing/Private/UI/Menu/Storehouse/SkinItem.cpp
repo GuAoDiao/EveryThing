@@ -33,7 +33,7 @@ bool USkinItem::BuyGoodsItem()
 		if (OwnerETGI)
 		{
 			FPlayerInfo& PlayerInfo = OwnerETGI->GetPlayerInfo();
-			PlayerInfo.AllHaveGamePawnSkinNames.AddUnique(SkinName);
+			PlayerInfo.AllHaveRoleSkinNames.AddUnique(SkinName);
 			PlayerInfo.Gold -= GoodCost;
 
 			OwnerETGI->UpdatePlayerInfo();

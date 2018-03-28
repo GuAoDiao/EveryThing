@@ -8,6 +8,9 @@
 #include "Online/EveryThingGameState_House.h"
 #include "Online/EveryThingGameMode_House.h"
 
+
+
+
 void APlayerController_House::StartGameWhenIsHouseOwner()
 {
 	AEveryThingPlayerState_House* OwnerETPS_H = Cast<AEveryThingPlayerState_House>(PlayerState);

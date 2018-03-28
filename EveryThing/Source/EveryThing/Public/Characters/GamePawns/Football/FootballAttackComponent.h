@@ -39,6 +39,13 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Server
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerStartAttack(bool bInIsCommonAttack, AActor* AttackTarget);
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerStopAttack();
+
+	//////////////////////////////////////////////////////////////////////////
+	/// NetMulticast
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastStartAttack(bool bInIsCommonAttack, AActor* AttackTarget);
 	UFUNCTION(NetMulticast, Unreliable)

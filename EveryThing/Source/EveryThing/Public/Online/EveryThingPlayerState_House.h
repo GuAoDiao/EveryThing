@@ -21,6 +21,11 @@ public:
 	AEveryThingPlayerState_House();
 	virtual void BeginPlay() override;
 
+
+
+	virtual void SeamlessTravelTo(class APlayerState* NewPlayerState) override;
+
+
 	//////////////////////////////////////////////////////////////////////////
 	/// PlayerInfo
 

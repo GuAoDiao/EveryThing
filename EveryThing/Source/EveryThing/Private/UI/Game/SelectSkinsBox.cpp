@@ -13,40 +13,43 @@ void USelectSkinsBox::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	AEveryThingPlayerState_Game* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState_Game>(GetOwningPlayer()->PlayerState) : nullptr;
-	if (OwnerPlaterState) { OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectSkinsBox::OnUpdatePlayerInfo); }
-
-	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
-	if (OwnerPPC)
+	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(GetOwningPlayer());
+	if (OwnerPC_G)
 	{
-		OwnerPPC->OnToggleToTargetRoleSuccessDelegate.AddUObject(this, &USelectSkinsBox::InitializeSelectSkinsBoxDisplay);
-		InitializeSelectSkinsBoxDisplay(OwnerPPC->GetCurrentRoleName());
+		OnRoleNameUpdate(OwnerPC_G->GetCurrentRoleName());
+		OwnerPC_G->OnRoleNameUpdateDelegate.AddUObject(this, &USelectSkinsBox::OnRoleNameUpdate);
 	}
+}
+
+void USelectSkinsBox::OnRoleNameUpdate(const FName& RoleName)
+{
+	InitializeSelectSkinsBoxDisplay(RoleName);
 }
 
 void USelectSkinsBox::InitializeSelectSkinsBoxDisplay_Implementation(const FName& TargetRoleName)
 {
-	AEveryThingPlayerState_Game* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState_Game>(GetOwningPlayer()->PlayerState) : nullptr;
 	TSubclassOf<UUserWidget> SelectItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("SelectItem");
-	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
+	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(GetOwningPlayer());
+	AGamePawn* OwnerGamePawn = OwnerPC_G ? Cast<AGamePawn>(OwnerPC_G->GetPawn()) : nullptr;
 
-	if (SelectItemClass && OwnerPPC && OwnerPlaterState)
+	if (SelectItemClass && OwnerPC_G && OwnerGamePawn)
 	{
-		const FPlayerInfo& PlayerInfo = OwnerPlaterState->GetPlayerInfo();
-		for (const FName& SkinName : UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllRoleSkinWithRoleName(TargetRoleName))
+		for (const FName& SkinName : OwnerGamePawn->AllRoleSkinName)
 		{
-			USelectItem* SelectItem = CreateWidget<USelectItem>(OwnerPPC, SelectItemClass);
+			USelectItem* SelectItem = CreateWidget<USelectItem>(OwnerPC_G, SelectItemClass);
 			if (SelectItem)
 			{
-				SelectItem->InitializeSelectItem(SkinName, PlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinName));
+				SelectItem->InitializeSelectItem(SkinName, OwnerGamePawn->AllHaveRoleSkinName.Contains(SkinName));
 				AddSelectItem(SelectItem);
 			}
 		}
+
+		OwnerGamePawn->OnAllHaveRoleSkinNameUpdateDelegate.AddUObject(this, &USelectSkinsBox::OnAllHaveRoleSkinNameUpdate);
 	}
+
 }
 
-void USelectSkinsBox::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
+void USelectSkinsBox::OnAllHaveRoleSkinNameUpdate(const TArray<FName>& AllHaveSkinFormName)
 {
-	UpdateSelectSkinsBoxDisplay(InPlayerInfo.AllHaveGamePawnSkinNames);
+	UpdateSkinItemIsHave(AllHaveSkinFormName);
 }
-

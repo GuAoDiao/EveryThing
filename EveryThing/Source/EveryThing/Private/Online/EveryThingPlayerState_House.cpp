@@ -6,6 +6,7 @@
 #include "Engine/World.h"
 
 #include "Online/EveryThingGameState_House.h"
+#include "Online/EveryThingPlayerState_Game.h"
 #include "EveryThingGameInstance.h"
 
 AEveryThingPlayerState_House::AEveryThingPlayerState_House()
@@ -21,6 +22,20 @@ void AEveryThingPlayerState_House::BeginPlay()
 	UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetWorld()->GetGameInstance()) : nullptr;
 	if (OwnerETGI) { SetPlayerInfo(OwnerETGI->GetPlayerInfo()); }
 }
+
+
+void AEveryThingPlayerState_House::SeamlessTravelTo(class APlayerState* NewPlayerState)
+{
+	Super::SeamlessTravelTo(NewPlayerState);
+
+	AEveryThingPlayerState_Game* OldETPS_G = Cast<AEveryThingPlayerState_Game>(NewPlayerState);
+	if (OldETPS_G)
+	{
+		OldETPS_G->SetPlayerInfo(CurrentPlayerInfo);
+		OldETPS_G->SetTeamID(TeamID);
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 /// Player Info

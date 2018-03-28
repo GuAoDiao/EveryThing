@@ -52,6 +52,13 @@ void AGamePawn::OnConstruction(const FTransform& Transform)
 	UpdateInfo();
 }
 
+void AGamePawn::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	OnPossessedByControllerDelegate.Broadcast(NewController);
+}
+
 
 void AGamePawn::Tick(float DeltaTime)
 {
@@ -65,7 +72,6 @@ void AGamePawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	Super::EndPlay(EndPlayReason);
 }
-
 
 void AGamePawn::SetIsSelectedToHit(bool bInIsSelectedToHit)
 {
@@ -315,10 +321,12 @@ void AGamePawn::ResetDefaultSkinAndFormFromDataTable()
 	const FRoleInfo* RoleInfo;
 	if (UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleInfoFromName(RoleName, RoleInfo) && RoleInfo)
 	{
-		AllHaveRoleSkinName.Add(RoleInfo->DefaultSkinName);
+		AllHaveRoleSkinName.AddUnique(RoleInfo->DefaultSkinName);
+		OnAllHaveRoleSkinNameUpdate();
 		ToggleToTargetSkin(RoleInfo->DefaultSkinName);
 		
-		AllHaveRoleFormName.Add(RoleInfo->DefaultFormName);
+		AllHaveRoleFormName.AddUnique(RoleInfo->DefaultFormName);
+		OnAllHaveRoleFormNameUpdate();
 		ToggleToTargetForm(RoleInfo->DefaultFormName);
 	}
 }

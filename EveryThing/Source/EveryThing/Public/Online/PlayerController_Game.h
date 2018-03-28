@@ -86,7 +86,7 @@ public:
 	void ToggleRoleWithIndex(int32 NumberIndex);
 	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetRoleSuccessDelegate, const FName& /* TargetRoleName */);
-	FOnToggleToTargetRoleSuccessDelegate OnToggleToTargetRoleSuccessDelegate;
+	FOnToggleToTargetRoleSuccessDelegate OnRoleNameUpdateDelegate;
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetRoleFailureDelegate, const FName& /* TargetRoleName */, const FText&  /* ErrorInfo */);
 	FOnToggleToTargetRoleFailureDelegate OnToggleToTargetRoleFailureDelegate;
 	
@@ -96,7 +96,12 @@ private:
 	UFUNCTION(Server, WithValidation, Reliable)
 	void ServerToggleRole(const FName& TargetRoleName);
 
-	UPROPERTY(Transient, Replicated)
+	UFUNCTION()
+	void OnRep_CurrentRoleName() { OnCurrentRoleNameUpdate(); }
+	void OnCurrentRoleNameUpdate() { OnRoleNameUpdateDelegate.Broadcast(CurrentRoleName); }
+	
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentRoleName)
 	FName CurrentRoleName;
+
 	TArray<FName> AllRoleNames;
 };

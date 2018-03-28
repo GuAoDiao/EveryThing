@@ -27,4 +27,5 @@ public:
 	void AddSelectItem(class USelectItem* SelectItem);
 
 	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);
+	void OnPlayerStateUpdate(APlayerState* PlayerState);
 };

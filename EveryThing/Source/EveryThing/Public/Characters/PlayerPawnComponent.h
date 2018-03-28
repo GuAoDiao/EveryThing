@@ -17,8 +17,11 @@ class EVERYTHING_API UPlayerPawnComponent : public UActorComponent
 public:	
 	UPlayerPawnComponent();
 	
+	
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
+	void OnPossessedByController(class AController* NewController);
 
 	void OnPlayerStateUpdate(class APlayerState* PlayerState);
 	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);

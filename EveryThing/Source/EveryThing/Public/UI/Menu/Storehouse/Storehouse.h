@@ -61,7 +61,6 @@ public:
 
 protected:
 	class ARole3DDisplay* RoleDisplay;
-	class APlayerController* OwnerPC;
 	TMap<FKey, float> AdjustUPKey;
 	TMap<FKey, float> AdjustRightKey;
 	FName CurrentDisplayRoleName;

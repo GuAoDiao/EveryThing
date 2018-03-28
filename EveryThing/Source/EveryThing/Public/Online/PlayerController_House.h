@@ -15,7 +15,6 @@ class EVERYTHING_API APlayerController_House : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	
 	UFUNCTION(BlueprintCallable)
 	void StartGameWhenIsHouseOwner();
 

@@ -3,6 +3,7 @@
 #include "SelectRolesBox.h"
 
 #include "Online/EveryThingPlayerState_Game.h"
+#include "Online/PlayerController_Game.h"
 #include "EveryThingAssetManager.h"
 #include "Characters/GamePawnManager.h"
 #include "UI/Game/SelectItem.h"
@@ -11,25 +12,39 @@ void USelectRolesBox::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	AEveryThingPlayerState_Game* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState_Game>(GetOwningPlayer()->PlayerState) : nullptr;
-	if (OwnerPlaterState) { OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectRolesBox::OnUpdatePlayerInfo); }
+	APlayerController* OwnerPC = GetOwningPlayer();
 
 	TSubclassOf<UUserWidget> SelectItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("SelectItem");
-	APlayerController* OnwerPC = GetOwningPlayer();
-	if (SelectItemClass && OnwerPC && OwnerPlaterState)
+	if (SelectItemClass)
 	{
-		const FPlayerInfo& PlayerInfo = OwnerPlaterState->GetPlayerInfo();
 		const TMap<FName, FRoleInfo>& AllRolesInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllRolesInfo();
 		for (TMap<FName, FRoleInfo>::TConstIterator It(AllRolesInfo); It; ++It)
 		{
-			const FRoleInfo& RoleInfo = It.Value();
-			USelectItem* SelectItem = CreateWidget<USelectItem>(OnwerPC, SelectItemClass);
+			USelectItem* SelectItem = CreateWidget<USelectItem>(OwnerPC, SelectItemClass);
 			if (SelectItem)
 			{
-				SelectItem->InitializeSelectItem(RoleInfo.Name, PlayerInfo.AllHaveRoleNames.Contains(RoleInfo.Name));
+				const FRoleInfo& RoleInfo = It.Value();
+				SelectItem->InitializeSelectItem(RoleInfo.Name, false);
 				AddSelectItem(SelectItem);
 			}
 		}
+	}
+
+	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(OwnerPC);
+	if (OwnerPC_G)
+	{
+		OnPlayerStateUpdate(OwnerPC_G->PlayerState);
+		OwnerPC_G->OnPlayerStateUpdateDelegate.AddUObject(this, &USelectRolesBox::OnPlayerStateUpdate);
+	}
+}
+
+void USelectRolesBox::OnPlayerStateUpdate(APlayerState* PlayerState)
+{
+	AEveryThingPlayerState_Game* OwnerPlaterState = Cast<AEveryThingPlayerState_Game>(PlayerState);
+	if (OwnerPlaterState)
+	{
+		OnUpdatePlayerInfo(OwnerPlaterState->GetPlayerInfo());
+		OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectRolesBox::OnUpdatePlayerInfo);
 	}
 }
 

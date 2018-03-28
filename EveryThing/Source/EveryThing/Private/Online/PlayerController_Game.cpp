@@ -321,11 +321,10 @@ void APlayerController_Game::ToggleRoleWithName(const FName& TargetRoleName)
 	OwnerPawn->Destroy();
 
 	// update current pawn class
-	OnToggleToTargetRoleSuccessDelegate.Broadcast(TargetRoleName);
+	CurrentRoleName = TargetRoleName;
+	OnCurrentRoleNameUpdate();
 	
 	StopToggleRole();
-
-	CurrentRoleName = TargetRoleName;
 }
 
 bool APlayerController_Game::ServerToggleRole_Validate(const FName& TargetRoleName) { return true; }

@@ -153,9 +153,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FName> AllHaveRoleNames;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FName> AllHaveGamePawnSkinNames;
+	TArray<FName> AllHaveRoleSkinNames;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FName> AllHaveGamePawnFormNames;
+	TArray<FName> AllHaveRoleFormNames;
 };
 
 

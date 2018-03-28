@@ -60,6 +60,7 @@ void UFootballAttackComponent::OnHitImplement(UPrimitiveComponent* HitComp, AAct
 {
 	Super::OnHitImplement(HitComp, OtherActor, OtherComp, NormalInpulse, Hit);
 	
+	
 	if (Cast<IHitAbleInterface>(OtherActor))
 	{
 		if (HasAuthority())
@@ -68,12 +69,14 @@ void UFootballAttackComponent::OnHitImplement(UPrimitiveComponent* HitComp, AAct
 			{
 				OwnerPawn->GetRotaryMovementComponent()->AcceptForceImpulse(Hit.Location, -HitElasticScale * OwnerPawn->GetVelocity());
 			}
+			
+			StopAttack();
 		}
-
-		UParticleSystem*  HitEmitter = UEveryThingAssetManager::GetAssetManagerInstance()->GetParticleFromName(TEXT("Explosion"));
-		if (HitEmitter) { UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location); }
-
-		StopAttack();
+		else
+		{
+			UParticleSystem*  HitEmitter = UEveryThingAssetManager::GetAssetManagerInstance()->GetParticleFromName(TEXT("Explosion"));
+			if (HitEmitter) { UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location); }
+		}
 	}
 }
 
@@ -89,9 +92,18 @@ void UFootballAttackComponent::StartAttack(bool bInIsCommonAttack)
 
 	if (AttackTarget != nullptr)
 	{
-		MulticastStartAttack(bInIsCommonAttack, AttackTarget);
+		if (HasAuthority() || IsAutonomousProxy())
+		{
+			ServerStartAttack(bInIsCommonAttack, AttackTarget);
+		}
 	}
 }
+
+
+bool UFootballAttackComponent::ServerStartAttack_Validate(bool bInIsCommonAttack, AActor* AttackTarget) { return true; }
+void UFootballAttackComponent::ServerStartAttack_Implementation(bool bInIsCommonAttack, AActor* AttackTarget) { MulticastStartAttack(bInIsCommonAttack, AttackTarget); }
+bool UFootballAttackComponent::ServerStopAttack_Validate() { return true; }
+void UFootballAttackComponent::ServerStopAttack_Implementation() { MulticastStopAttack(); }
 
 void UFootballAttackComponent::MulticastStartAttack_Implementation(bool bInIsCommonAttack, AActor* AttackTarget)
 {
@@ -107,8 +119,12 @@ void UFootballAttackComponent::MulticastStartAttack_Implementation(bool bInIsCom
 
 void UFootballAttackComponent::StopAttack()
 {
-	MulticastStopAttack();
+	if (HasAuthority() || IsAutonomousProxy())
+	{
+		ServerStopAttack();
+	}
 }
+
 void UFootballAttackComponent::MulticastStopAttack_Implementation()
 {
 	bIsAttacking = false;

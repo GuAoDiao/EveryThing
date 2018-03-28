@@ -70,7 +70,7 @@ void URotaryMovementComponent::MoveRight(float AxisValue)
 
 void URotaryMovementComponent::Move(const FVector& Direction, float AxisValue)
 {
-	if (!HasAuthority())
+	if (!HasAuthority() && IsAutonomousProxy())
 	{
 		ServerMove(Direction, AxisValue);
 	}
@@ -88,7 +88,7 @@ void URotaryMovementComponent::MoveToLocation(const FVector& Location, float Axi
 
 void URotaryMovementComponent::AcceptForceImpulse(const FVector& Location, const FVector& Force)
 {
-	if (!HasAuthority())
+	if (!HasAuthority() && IsAutonomousProxy())
 	{
 		ServerAcceptForceImpulse(Location, Force);
 	}
@@ -100,7 +100,7 @@ void URotaryMovementComponent::ServerAcceptForceImpulse_Implementation(const FVe
 
 void URotaryMovementComponent::StartJump()
 {
-	if (!HasAuthority())
+	if (!HasAuthority() && IsAutonomousProxy())
 	{
 		ServerStartJump();
 	}
@@ -116,7 +116,7 @@ void URotaryMovementComponent::ServerStartJump_Implementation() { StartJump(); }
 
 void URotaryMovementComponent::ToogleMovementState()
 {
-	if (!HasAuthority())
+	if (!HasAuthority() && IsAutonomousProxy())
 	{
 		ServerToogleMovementState();
 	}

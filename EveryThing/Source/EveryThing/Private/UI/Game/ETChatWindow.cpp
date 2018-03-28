@@ -26,7 +26,7 @@ void UETChatWindow::NativeConstruct()
 	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
 	if (OwnerPPC)
 	{
-		OwnerPPC->OnToggleToTargetRoleSuccessDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetRoleSuccess);
+		OwnerPPC->OnRoleNameUpdateDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetRoleSuccess);
 		OwnerPPC->OnToggleToTargetRoleFailureDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetRoleFailure);
 		
 		OnToglleToTargetRole(Cast<AGamePawn>(OwnerPPC->GetPawn()));

@@ -19,6 +19,7 @@ public:
 protected:
 
 	bool HasAuthority();
+	bool IsAutonomousProxy();
 
 	float ActualMoveForce;
 	float MoveForceScale;

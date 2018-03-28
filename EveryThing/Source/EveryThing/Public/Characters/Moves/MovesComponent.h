@@ -23,6 +23,7 @@ public:
 
 protected:
 	bool HasAuthority();
+	bool IsAutonomousProxy();
 
 	virtual void RebindAll() {};
 public:

@@ -26,11 +26,20 @@ public:
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	virtual void Tick(float DeltaTime) override;
 
 	FName RoleName;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Possessed By
+
+	virtual void PossessedBy(AController* NewController) override;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPossessedByControllerDelegate, AController* /* NewController */);
+	FOnPossessedByControllerDelegate OnPossessedByControllerDelegate;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Component
@@ -73,6 +82,11 @@ public:
 	TArray<FName> AllRoleFormName;
 	TArray<FName> AllHaveRoleFormName;
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAllHaveRoleFormNameUpdateDelegate, const TArray<FName>& /* AllHaveRoleSkinName */);
+	FOnAllHaveRoleFormNameUpdateDelegate OnAllHaveRoleFormNameUpdateDelegate;
+
+	void OnAllHaveRoleFormNameUpdate() { OnAllHaveRoleFormNameUpdateDelegate.Broadcast(AllHaveRoleFormName); }
+
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetFormSuccessDelegate, const FName& /* TargetFormName */);
 	FOnToggleToTargetFormSuccessDelegate OnToggleToTargetFormSuccessDelegate;
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetFormFailureDelegate, const FName& /* TargetFormName */, const FText&  /* ErrorInfo */);
@@ -99,6 +113,10 @@ public:
 	TArray<FName> AllRoleSkinName;
 	TArray<FName> AllHaveRoleSkinName;
 	
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAllHaveRoleSkinNameUpdateDelegate, const TArray<FName>& /* AllHaveRoleSkinName */);
+	FOnAllHaveRoleSkinNameUpdateDelegate OnAllHaveRoleSkinNameUpdateDelegate;
+	void OnAllHaveRoleSkinNameUpdate() { OnAllHaveRoleSkinNameUpdateDelegate.Broadcast(AllHaveRoleSkinName); }
+
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetSkinSuccessDelegate, const FName& /* TargetSkinName */);
 	FOnToggleToTargetSkinSuccessDelegate OnToggleToTargetSkinSuccessDelegate;
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetSkinFailureDelegate, const FName& /* TargetSkinName */, const FText&  /* ErrorInfo */);

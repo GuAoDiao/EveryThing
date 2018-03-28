@@ -111,7 +111,7 @@ void UJumpMovementComponent::AutoAdjsutRotationPosition(float DeltaTime)
 
 void UJumpMovementComponent::AdjustPosition(bool bIsAdjsutLocation, bool bIsForward, float AxisValue)
 {
-	if (!HasAuthority())
+	if (!HasAuthority() && IsAutonomousProxy())
 	{
 		ServerAdjustPosition(bIsAdjsutLocation, bIsForward, AxisValue);
 	}
@@ -136,7 +136,7 @@ void UJumpMovementComponent::ServerAdjustPosition_Implementation(bool bIsAdjsutL
 
 void UJumpMovementComponent::RotatePawn(float AxisValue)
 {
-	if (!HasAuthority())
+	if (!HasAuthority() && IsAutonomousProxy())
 	{
 		ServerRotatePawn(AxisValue);
 	}
@@ -193,7 +193,7 @@ void UJumpMovementComponent::StopJump()
 
 void UJumpMovementComponent::Jump()
 {
-	if (!HasAuthority())
+	if (!HasAuthority() && IsAutonomousProxy())
 	{
 		ServerJump();
 	}
@@ -210,7 +210,7 @@ void UJumpMovementComponent::ServerJump_Implementation() { Jump(); }
 
 void UJumpMovementComponent::JumpMove(const FVector& Dircetion)
 {
-	if (!HasAuthority())
+	if (!HasAuthority() && IsAutonomousProxy())
 	{
 		ServerJumpMove(Dircetion);
 	}

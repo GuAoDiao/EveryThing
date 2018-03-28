@@ -2,50 +2,53 @@
 
 #include "SelectFormsBox.h"
 
-#include "Online/EveryThingPlayerState_Game.h"
-#include "EveryThingAssetManager.h"
-#include "Characters/GamePawnManager.h"
-#include "SelectItem.h"
-#include "Online/PlayerController_Game.h"
+#include "UI/Game/SelectItem.h"
 #include "Characters/GamePawn.h"
+#include "Characters/GamePawnManager.h"
+#include "Online/PlayerController_Game.h"
+#include "EveryThingAssetManager.h"
 
 void USelectFormsBox::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	AEveryThingPlayerState_Game* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState_Game>(GetOwningPlayer()->PlayerState) : nullptr;
-	if (OwnerPlaterState) { OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectFormsBox::OnUpdatePlayerInfo); }
-
-	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
-	if (OwnerPPC)
+	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(GetOwningPlayer());
+	if (OwnerPC_G)
 	{
-		OwnerPPC->OnToggleToTargetRoleSuccessDelegate.AddUObject(this, &USelectFormsBox::InitializeSelectFormsBoxDisplay);
-		InitializeSelectFormsBoxDisplay(OwnerPPC->GetCurrentRoleName());
+		OnRoleNameUpdate(OwnerPC_G->GetCurrentRoleName());
+		OwnerPC_G->OnRoleNameUpdateDelegate.AddUObject(this, &USelectFormsBox::OnRoleNameUpdate);
 	}
+}
+
+void USelectFormsBox::OnRoleNameUpdate(const FName& RoleName)
+{
+	InitializeSelectFormsBoxDisplay(RoleName);
 }
 
 void USelectFormsBox::InitializeSelectFormsBoxDisplay_Implementation(const FName& TargetRoleName)
 {
-	AEveryThingPlayerState_Game* OwnerPlaterState = GetOwningPlayer() ? Cast<AEveryThingPlayerState_Game>(GetOwningPlayer()->PlayerState) : nullptr;
 	TSubclassOf<UUserWidget> SelectItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("SelectItem");
-	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
+	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(GetOwningPlayer());
+	AGamePawn* OwnerGamePawn = OwnerPC_G ? Cast<AGamePawn>(OwnerPC_G->GetPawn()) : nullptr;
 
-	if (SelectItemClass && OwnerPPC && OwnerPlaterState)
+	if (SelectItemClass && OwnerPC_G && OwnerGamePawn)
 	{
-		const FPlayerInfo& PlayerInfo = OwnerPlaterState->GetPlayerInfo();
-		for (const FName& FormName : UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllRoleFormWithRoleName(TargetRoleName))
+		for (const FName& FormName : OwnerGamePawn->AllRoleFormName)
 		{
-			USelectItem* SelectItem = CreateWidget<USelectItem>(OwnerPPC, SelectItemClass);
+			USelectItem* SelectItem = CreateWidget<USelectItem>(OwnerPC_G, SelectItemClass);
 			if (SelectItem)
 			{
-				SelectItem->InitializeSelectItem(FormName, PlayerInfo.AllHaveGamePawnFormNames.Contains(FormName));
+				SelectItem->InitializeSelectItem(FormName, OwnerGamePawn->AllHaveRoleFormName.Contains(FormName));
 				AddSelectItem(SelectItem);
 			}
+
+			OwnerGamePawn->OnAllHaveRoleFormNameUpdateDelegate.AddUObject(this, &USelectFormsBox::OnAllHaveRoleFormNameUpdate);
 		}
+
 	}
 }
 
-void USelectFormsBox::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
+void USelectFormsBox::OnAllHaveRoleFormNameUpdate(const TArray<FName>& AllHaveRoleFormName)
 {
-	UpdateSelectFormsBoxDisplay(InPlayerInfo.AllHaveGamePawnFormNames);
+	UpdateFormItemIsHave(AllHaveRoleFormName);
 }

@@ -37,8 +37,8 @@ bool URoleItem::BuyGoodsItem()
 			
 			if (RoleInfo)
 			{
-				PlayerInfo.AllHaveGamePawnSkinNames.AddUnique(RoleInfo->DefaultSkinName);
-				PlayerInfo.AllHaveGamePawnFormNames.AddUnique(RoleInfo->DefaultFormName);
+				PlayerInfo.AllHaveRoleSkinNames.AddUnique(RoleInfo->DefaultSkinName);
+				PlayerInfo.AllHaveRoleFormNames.AddUnique(RoleInfo->DefaultFormName);
 			}
 
 			PlayerInfo.Gold -= GoodCost;

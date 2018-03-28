@@ -53,49 +53,74 @@ UPlayerPawnComponent::UPlayerPawnComponent()
 	LastAttackTarget = nullptr;
 }
 
-
 void UPlayerPawnComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APlayerController_Game* OwnerPC_G = OwnerPawn ? Cast<APlayerController_Game>(OwnerPawn->GetController()) : nullptr;
-	if (OwnerPC_G)
+	if (OwnerPawn)
 	{
-		OnPlayerStateUpdate(OwnerPC_G->PlayerState);
-		OwnerPC_G->OnPlayerStateUpdateDelegate.AddUObject(this, &UPlayerPawnComponent::OnPlayerStateUpdate);
+		AController* Controler = OwnerPawn->GetController();
+		if (Controler)
+		{
+			OnPossessedByController(Controler);
+		}
+		else
+		{
+			OwnerPawn->OnPossessedByControllerDelegate.AddUObject(this, &UPlayerPawnComponent::OnPossessedByController);
+		}
 	}
+	
 }
 
+void UPlayerPawnComponent::OnPossessedByController(AController* NewController)
+{
+	if (NewController)
+	{
+		if (NewController->PlayerState)
+		{
+			OnPlayerStateUpdate(NewController->PlayerState);
+		}
+		else
+		{
+			APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(NewController);
+			if (OwnerPC_G)
+			{
+				OwnerPC_G->OnPlayerStateUpdateDelegate.AddUObject(this, &UPlayerPawnComponent::OnPlayerStateUpdate);
+			}
+		}
+	}	
+}
 
 void UPlayerPawnComponent::OnPlayerStateUpdate(APlayerState* PlayerState)
 {
-	AEveryThingPlayerState_Game* OwnerETPS = Cast<AEveryThingPlayerState_Game>(PlayerState);
-	if (OwnerETPS)
+	AEveryThingPlayerState_Game* OwnerETPS_G = Cast<AEveryThingPlayerState_Game>(PlayerState);
+	if (OwnerETPS_G)
 	{
-		OnUpdatePlayerInfo(OwnerETPS->GetPlayerInfo());
-		OwnerETPS->OnUpdatePlayerInfoDelegate.AddUObject(this, &UPlayerPawnComponent::OnUpdatePlayerInfo);
+		OnUpdatePlayerInfo(OwnerETPS_G->GetPlayerInfo());
+		OwnerETPS_G->OnUpdatePlayerInfoDelegate.AddUObject(this, &UPlayerPawnComponent::OnUpdatePlayerInfo);
 	}
 }
-
 void UPlayerPawnComponent::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
 {
 	if (OwnerPawn)
 	{
-		for (const FName& FormName : OwnerPawn->AllRoleFormName)
-		{
-			if (InPlayerInfo.AllHaveGamePawnFormNames.Contains(FormName))
-			{
-				OwnerPawn->AllHaveRoleFormName.AddUnique(FormName);
-			}
-		}
-
 		for (const FName& SkinName : OwnerPawn->AllRoleSkinName)
 		{
-			if (InPlayerInfo.AllHaveGamePawnSkinNames.Contains(SkinName))
+			if (InPlayerInfo.AllHaveRoleSkinNames.Contains(SkinName))
 			{
 				OwnerPawn->AllHaveRoleSkinName.AddUnique(SkinName);
 			}
 		}
+		OwnerPawn->OnAllHaveRoleSkinNameUpdate();
+		
+		for (const FName& FormName : OwnerPawn->AllRoleFormName)
+		{
+			if (InPlayerInfo.AllHaveRoleFormNames.Contains(FormName))
+			{
+				OwnerPawn->AllHaveRoleFormName.AddUnique(FormName);
+			}
+		}
+		OwnerPawn->OnAllHaveRoleFormNameUpdate();
 	}
 }
 

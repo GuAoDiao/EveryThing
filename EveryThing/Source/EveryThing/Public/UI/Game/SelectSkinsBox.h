@@ -22,12 +22,12 @@ public:
 	void InitializeSelectSkinsBoxDisplay(const FName& TargetRoleName);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateSelectSkinsBoxDisplay(const TArray<FName>& AllHaveGamePawnSkinNames);
-
-	UFUNCTION(BlueprintImplementableEvent)
 	void AddSelectItem(class USelectItem* SelectItem);
 
-	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);
-	
-	
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateSkinItemIsHave(const TArray<FName>& AllHaveSkinFormName);
+
+	void OnRoleNameUpdate(const FName& RoleName);	
+
+	void OnAllHaveRoleSkinNameUpdate(const TArray<FName>& AllHaveSkinFormName);
 };

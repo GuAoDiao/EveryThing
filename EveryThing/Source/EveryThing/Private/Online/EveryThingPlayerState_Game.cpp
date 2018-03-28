@@ -17,23 +17,10 @@ void AEveryThingPlayerState_Game::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (Role == ROLE_AutonomousProxy && !bFromPreviousLevel)
+	if (GetOwner() && GetOwner()->Role == ROLE_AutonomousProxy && !bFromPreviousLevel)
 	{
-		UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetWorld()->GetGameInstance()) : nullptr;
+		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
 		if (OwnerETGI) { ServerSetPlayerInfo( OwnerETGI->GetPlayerInfo()); }
-	}
-}
-
-void AEveryThingPlayerState_Game::SeamlessTravelTo(class APlayerState* NewPlayerState)
-{
-	if (HasAuthority())
-	{
-		AEveryThingPlayerState_House* OldETPS_H = Cast<AEveryThingPlayerState_House>(NewPlayerState);
-		if (OldETPS_H)
-		{
-			SetPlayerInfo(OldETPS_H->GetPlayerInfo());
-			TeamID = OldETPS_H->GetTeamID();
-		}
 	}
 }
 
@@ -47,6 +34,14 @@ void AEveryThingPlayerState_Game::SetPlayerInfo(const FPlayerInfo& InPlayerInfo)
 	}
 }
 
+void AEveryThingPlayerState_Game::SetTeamID(int32 InTeamID)
+{
+	if (HasAuthority())
+	{
+		TeamID = InTeamID;
+		OnTeamIDUpdate();
+	}
+}
 
 bool AEveryThingPlayerState_Game::ServerSetPlayerInfo_Validate(const FPlayerInfo& InPlayerInfo) { return true; }
 void AEveryThingPlayerState_Game::ServerSetPlayerInfo_Implementation(const FPlayerInfo& InPlayerInfo) { SetPlayerInfo(InPlayerInfo); }

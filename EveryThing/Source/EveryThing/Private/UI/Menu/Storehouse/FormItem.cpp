@@ -32,7 +32,7 @@ bool UFormItem::BuyGoodsItem()
 		if (OwnerETGI)
 		{
 			FPlayerInfo& PlayerInfo = OwnerETGI->GetPlayerInfo();
-			PlayerInfo.AllHaveGamePawnFormNames.AddUnique(FormInfo->Name);
+			PlayerInfo.AllHaveRoleFormNames.AddUnique(FormInfo->Name);
 			PlayerInfo.Gold -= GoodCost;
 
 			OwnerETGI->UpdatePlayerInfo();

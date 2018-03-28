@@ -19,6 +19,12 @@ bool UGamePawnMovementComponent::HasAuthority()
 	return Owner ? Owner->HasAuthority() : false;
 }
 
+bool UGamePawnMovementComponent::IsAutonomousProxy()
+{
+	AActor* Owner = GetOwner();
+	return Owner ? Owner->Role == ROLE_AutonomousProxy : false;
+}
+
 void UGamePawnMovementComponent::UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale)
 {
 	ActualMoveForce = Quality * QualityScale * MoveForceScale;

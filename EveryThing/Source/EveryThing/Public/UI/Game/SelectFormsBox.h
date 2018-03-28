@@ -22,11 +22,13 @@ public:
 	void InitializeSelectFormsBoxDisplay(const FName& TargetRoleName);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateSelectFormsBoxDisplay(const TArray<FName>& AllHaveRoleNames);
-
-	UFUNCTION(BlueprintImplementableEvent)
 	void AddSelectItem(class USelectItem* SelectItem);
 
 
-	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);	
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateFormItemIsHave(const TArray<FName>& AllHaveRoleFormName);
+
+	void OnRoleNameUpdate(const FName& RoleName);
+
+	void OnAllHaveRoleFormNameUpdate(const TArray<FName>& AllHaveRoleFormName);
 };

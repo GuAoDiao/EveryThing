@@ -192,8 +192,8 @@ bool UEveryThingGameInstance::CreateArchive(const FString& ArchiveName, const FS
 		CurrentSaveGame->PlayerInfo.Gold = 2000;
 		CurrentSaveGame->PlayerInfo.Experience = 0;
 		CurrentSaveGame->PlayerInfo.AllHaveRoleNames.Add("Football");
-		CurrentSaveGame->PlayerInfo.AllHaveGamePawnSkinNames.Add("FootballSkin");
-		CurrentSaveGame->PlayerInfo.AllHaveGamePawnFormNames.Add("FootballForm");
+		CurrentSaveGame->PlayerInfo.AllHaveRoleSkinNames.Add("FootballSkin");
+		CurrentSaveGame->PlayerInfo.AllHaveRoleFormNames.Add("FootballForm");
 
 		if (UGameplayStatics::SaveGameToSlot(CurrentSaveGame, ArchiveName, 0))
 		{

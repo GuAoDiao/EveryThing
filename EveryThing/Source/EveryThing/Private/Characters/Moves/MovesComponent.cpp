@@ -17,6 +17,13 @@ bool UMovesComponent::HasAuthority()
 	return Owner ? Owner->HasAuthority() : false;
 }
 
+bool UMovesComponent::IsAutonomousProxy()
+{
+	AActor* Owner = GetOwner();
+	return Owner ? Owner->Role == ROLE_AutonomousProxy : false;
+}
+
+
 void UMovesComponent::SetWantedToAcceptHitFunction(bool bWanted)
 {
 	AGamePawn* OwnerGamePawn = Cast<AGamePawn>(GetOwner());

@@ -40,4 +40,6 @@ public:
 	class UImportantNoteBox* ImportNoteBox;
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class UChatWindow* ChatWindow;
+	UPROPERTY(BlueprintReadWrite, Transient)
+	class UUserInfoBox* UserInfoBox;
 };
