@@ -65,6 +65,7 @@ public:
 protected:
 	FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
 	FOnStartSessionCompleteDelegate OnStartSessionCompleteDelegate;
+	FOnUpdateSessionCompleteDelegate OnUpdateSessionCompleteDelegate;
 	FOnDestroySessionCompleteDelegate OnDestroySessionCompleteDelegate;
 	FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
 	FOnJoinSessionCompleteDelegate OnJoinSessionCompleteDelegate;
@@ -93,17 +94,19 @@ public:
 	static const int32 DEFAULT_PLAYERS_NUM = 8;
 
 	bool HostSession(const FUniqueNetId& UserId, FName SessionName, const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers);
+	void UpdateSession();
 	void StartSession();
 	void FindSessions(const FUniqueNetId& UserId, bool bIsLAN, bool bIsPresence);
 	bool JoinSession(const FUniqueNetId& UserId, int32 SessionIndexInSearResults);
 	bool JoinSession(const FUniqueNetId& UserId, const FOnlineSessionSearchResult& SearchResult);
 	bool DestroySession();
 protected:
-	virtual void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
-	void OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful);
+	virtual void OnCreateSessionComplete(FName InSessionName, bool bWasSuccessful);
+	void OnStartOnlineGameComplete(FName InSessionName, bool bWasSuccessful);
+	void OnUpdateSessionComplete(FName InSessionName, bool bWasSuccessful);
 	void OnFindSessionsComplete(bool bWasSuccessful);
-	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
-	virtual void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
+	void OnJoinSessionComplete(FName InSessionName, EOnJoinSessionCompleteResult::Type Result);
+	virtual void OnDestroySessionComplete(FName InSessionName, bool bWasSuccessful);
 
 
 public:
@@ -120,6 +123,7 @@ public:
 	bool TravelToSession(int32 ControllerId, FName SessionName);
 
 	FDelegateHandle OnCreateSessionCompleteDelegateHandle;
+	FDelegateHandle OnUpdateSessionCompleteDelegateHandle;
 	FDelegateHandle OnStartSessionCompleteDelegateHandle;
 	FDelegateHandle OnDestroySessionCompleteDelegateHandle;
 	FDelegateHandle OnFindSessionsCompleteDelegateHandle;

@@ -21,6 +21,9 @@ void UHouseLayout::NativeConstruct()
 		}
 
 		OwnerETGS_H->OnAddPlayerDelegate.AddUObject(this, &UHouseLayout::OnAddPlayer);
+		OwnerETGS_H->OnHouseSettingUpdateDelegate.AddUObject(this, &UHouseLayout::OnUpdateHouseSetting);
+
+		OwnerETGS_H->OnHouseSettingUpdate();
 	}
 
 	APlayerController_House* OwnerPC_H = Cast<APlayerController_House>(GetOwningPlayer());
@@ -87,4 +90,24 @@ void UHouseLayout::StartGame()
 {
 	APlayerController_House* OwnerPC_H = Cast<APlayerController_House>(GetOwningPlayer());
 	if (OwnerPC_H) { OwnerPC_H->StartGameWhenIsHouseOwner(); }
+}
+
+
+TArray<FString> UHouseLayout::GetAllMaps(const FString& MapType) const
+{
+	return UEveryThingAssetManager::GetAssetManagerInstance()->GetAllMapsFormType(MapType);
+}
+
+const TArray<FString>& UHouseLayout::GetAllMapsType() const
+{
+	return UEveryThingAssetManager::GetAssetManagerInstance()->GetAllMapsType();
+}
+
+void UHouseLayout::UpdateHouseSetting(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum)
+{
+	APlayerController_House* OwnerPC_H = Cast<APlayerController_House>(GetOwningPlayer());
+	if (OwnerPC_H)
+	{
+		OwnerPC_H->UpdateHouseSetting(HouseName, GameType, MapName, bIsLAN, MaxPlayersNum);
+	}
 }

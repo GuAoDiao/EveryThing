@@ -24,5 +24,5 @@ public:
 
 	void OpenGameFromHouseOwner();
 	
-	void UpdateSessionSetting();
+	void UpdateHouseSetting(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum);
 };

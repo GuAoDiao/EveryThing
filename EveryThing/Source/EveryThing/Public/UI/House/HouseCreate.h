@@ -15,8 +15,6 @@ class EVERYTHING_API UHouseCreate : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UHouseCreate(const FObjectInitializer& ObjectInitializer);
-
 	UFUNCTION(BlueprintCallable)
 	void HostGame(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, bool bIsPresence, int32 MaxPlayersNum);
 
@@ -26,9 +24,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FString> GetAllMaps(const FString& MapType) const;
 
-public:
-	UPROPERTY(BlueprintReadOnly, Transient)
-	TArray<FString> MapsType;
-private:
-	class UDataTable* MapsInfoDataTable;
+	UFUNCTION(BlueprintCallable)
+	const TArray<FString>& GetAllMapsType() const;
 };

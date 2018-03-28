@@ -32,17 +32,22 @@ public:
 	bool CheckIsAllPlayerAreReady();
 
 	void SetPlayerHouseOwner(AEveryThingPlayerState_House* InPlayer) { if (HasAuthority()) { HouseOwner = InPlayer; } }
+	
 
-	UPROPERTY(Transient, Replicated)
+	DECLARE_MULTICAST_DELEGATE_FiveParams(FOnHouseSettingUpdateDelegate, const FString& /*HouseName*/, const FString& /*GameType*/, const FString& /*MapName*/, bool /*bIsLAN*/, int32 /*MaxPlayersNum*/);
+	FOnHouseSettingUpdateDelegate OnHouseSettingUpdateDelegate;
+	UFUNCTION()
+	void OnHouseSettingUpdate() { OnHouseSettingUpdateDelegate.Broadcast(HouseName, GameType, MapName, bIsLANMatch, MaxPlayerNum); }
+
+	UPROPERTY(Transient, ReplicatedUsing = OnHouseSettingUpdate)
 	FString GameType;
-	UPROPERTY(Transient, Replicated)
+	UPROPERTY(Transient, ReplicatedUsing = OnHouseSettingUpdate)
 	FString MapName;
-	UPROPERTY(Transient, Replicated)
+	UPROPERTY(Transient, ReplicatedUsing = OnHouseSettingUpdate)
 	FString HouseName;
-
-	UPROPERTY(Transient, Replicated)
+	UPROPERTY(Transient, ReplicatedUsing = OnHouseSettingUpdate)
 	bool bIsLANMatch;
-	UPROPERTY(Transient, Replicated)
+	UPROPERTY(Transient, ReplicatedUsing = OnHouseSettingUpdate)
 	int32 MaxPlayerNum;
 
 	UPROPERTY(Transient, Replicated)

@@ -125,7 +125,7 @@ private:
 	/// User Widget
 public:
 
-	void LoadUserWidgetFromDataable();
+	void LoadUserWidgetFromDataTable();
 	TSubclassOf<UUserWidget> GetUserWidgetFromName(const FName& UserWidgetName);
 
 private:	
@@ -140,6 +140,17 @@ public:
 private:
 	TMap<FName, TSoftObjectPtr<UDataTable>> AllDataTableAsset;
 
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Map Info
+public:
+	void LoadAllMapInfoFromDataTable();
+	const FMapInfo* GetMapInfoFromName(const FName& MapName);
+	const TArray<FString>& GetAllMapsType() { return MapsType; }
+	TArray<FString> GetAllMapsFormType(const FString& MapType);
+private:
+	TArray<FString> MapsType;
+	TMap<FName, FMapInfo> AllMapsInfo;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn

@@ -31,7 +31,9 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 
 	LoadParticleFromDatatable();
 
-	LoadUserWidgetFromDataable();
+	LoadUserWidgetFromDataTable();
+
+	LoadAllMapInfoFromDataTable();
 }
 
 void UEveryThingAssetManager::BeginDestroy()
@@ -177,7 +179,7 @@ UParticleSystem* UEveryThingAssetManager::GetParticleFromName(const FName& Parti
 //////////////////////////////////////////////////////////////////////////
 /// User Widget
 
-void UEveryThingAssetManager::LoadUserWidgetFromDataable()
+void UEveryThingAssetManager::LoadUserWidgetFromDataTable()
 {
 	UDataTable* UserWidgetDatatable = GetDataTableFromName(TEXT("UserWidget"));
 	if (UserWidgetDatatable)
@@ -210,6 +212,47 @@ UDataTable* UEveryThingAssetManager::GetDataTableFromName(const FName& DataTable
 		AllDataTableAsset.Add(DataTableName, TSoftObjectPtr<UDataTable>(FString::Printf(TEXT("DataTable'/Game/EveryThing/DataTable/DT_%s.DT_%s'"), *DataTableName.ToString(), *DataTableName.ToString())));
 	}
 	return AllDataTableAsset[DataTableName].LoadSynchronous();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Map Info
+
+void UEveryThingAssetManager::LoadAllMapInfoFromDataTable()
+{
+	UDataTable* MapsInfoDataTable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName("MapsInfo");
+	if (MapsInfoDataTable)
+	{
+		TArray<FMapInfo*> MapsInfoInDataTable;
+		MapsInfoDataTable->GetAllRows<FMapInfo>(TEXT("look up all maps info"), MapsInfoInDataTable);
+		for (FMapInfo* MapInfo : MapsInfoInDataTable)
+		{
+			MapsType.AddUnique(MapInfo->MapType);
+			AllMapsInfo.Add(FName(*MapInfo->MapName), *MapInfo);
+		}
+	}
+}
+
+TArray<FString> UEveryThingAssetManager::GetAllMapsFormType(const FString& MapType)
+{
+	TArray<FString> Result;
+	for (TMap<FName, FMapInfo>::TConstIterator It(AllMapsInfo); It; ++It)
+	{
+		if (It.Value().MapType == MapType)
+		{
+			Result.AddUnique(It.Value().MapName);
+		}
+	}
+	return Result;
+}
+
+const FMapInfo* UEveryThingAssetManager::GetMapInfoFromName(const FName& MapName)
+{
+	if (AllMapsInfo.Contains(MapName))
+	{
+		return &AllMapsInfo[MapName];
+	}
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

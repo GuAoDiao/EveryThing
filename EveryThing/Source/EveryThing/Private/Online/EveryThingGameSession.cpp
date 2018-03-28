@@ -7,6 +7,7 @@
 
 #include "EveryThingGameInstance.h"
 #include "UI/EveryThingHUD_Menu.h"
+#include "EveryThingAssetManager.h"
 
 
 DECLARE_LOG_CATEGORY_CLASS(EveryThingOnline, Log, All);
@@ -49,6 +50,7 @@ AEveryThingGameSession::AEveryThingGameSession()
 	if (!HasAnyFlags(RF_ClassDefaultObject))
 	{
 		OnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnCreateSessionComplete);
+		OnUpdateSessionCompleteDelegate = FOnUpdateSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnUpdateSessionComplete);
 		OnStartSessionCompleteDelegate = FOnStartSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnStartOnlineGameComplete);
 		OnFindSessionsCompleteDelegate = FOnFindSessionsCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnFindSessionsComplete);
 		OnJoinSessionCompleteDelegate = FOnJoinSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnJoinSessionComplete);
@@ -96,6 +98,33 @@ bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSes
 	return false;
 }
 
+void AEveryThingGameSession::UpdateSession()
+{
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
+	{
+		FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
+		if (OwnerOnlineSessionSetting)
+		{
+			OnUpdateSessionCompleteDelegateHandle = Sessions->AddOnUpdateSessionCompleteDelegate_Handle(OnUpdateSessionCompleteDelegate);
+			Sessions->UpdateSession(NAME_GameSession, *OwnerOnlineSessionSetting, true);
+		}
+	}
+}
+
+void AEveryThingGameSession::StartSession()
+{
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
+	{
+		OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
+		Sessions->StartSession(NAME_GameSession);
+	}
+}
+
+
 void AEveryThingGameSession::FindSessions(const FUniqueNetId& UserId, bool bIsLAN, bool bIsPresence)
 {
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
@@ -128,16 +157,6 @@ void AEveryThingGameSession::FindSessions(const FUniqueNetId& UserId, bool bIsLA
 	}
 }
 
-void AEveryThingGameSession::StartSession()
-{
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-	if (Sessions.IsValid())
-	{
-		OnStartSessionCompleteDelegateHandle = Sessions->AddOnStartSessionCompleteDelegate_Handle(OnStartSessionCompleteDelegate);
-		Sessions->StartSession(NAME_GameSession);
-	}
-}
 
 bool AEveryThingGameSession::JoinSession(const FUniqueNetId& UserId, int32 SessionIndexInSearResults)
 {
@@ -212,6 +231,18 @@ void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool b
 	}
 }
 
+void AEveryThingGameSession::OnUpdateSessionComplete(FName InSessionName, bool bWasSuccessful)
+{
+	UE_LOG(EveryThingOnline, Log, TEXT("-_- OnUpdateSessionComplete bSuccess : %d "), bWasSuccessful);
+
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
+	{
+		Sessions->ClearOnUpdateSessionCompleteDelegate_Handle(OnUpdateSessionCompleteDelegateHandle);;
+	}
+}
+
 void AEveryThingGameSession::OnStartOnlineGameComplete(FName InSessionName, bool bWasSuccessful)
 {
 	UE_LOG(EveryThingOnline, Log, TEXT("-_- OnStartOnlineGameComplete bSuccess : %d "), bWasSuccessful);
@@ -227,13 +258,19 @@ void AEveryThingGameSession::OnStartOnlineGameComplete(FName InSessionName, bool
 	{
 		UWorld* World = GetWorld();
 		FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
+
+
 		if (World && OwnerOnlineSessionSetting)
 		{
 			FString MapName;
 			OwnerOnlineSessionSetting->Get<FString>(SETTING_MAPNAME, MapName);
-			World->ServerTravel(FString::Printf(TEXT("%s?listen"), *MapName));
-		}
+		
+			const FMapInfo* MapInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetMapInfoFromName(FName(*MapName));
 
+			checkf(MapInfo, TEXT("-_- the  map actual path must exist."));
+
+			World->ServerTravel(FString::Printf(TEXT("%s?listen"), *MapInfo->MapPath));
+		}
 	}
 }
 

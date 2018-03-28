@@ -46,4 +46,17 @@ public:
 	void StartGame();
 	
 	void OnPlayerStateUpdate(class APlayerState* PlayerState);
+
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FString> GetAllMaps(const FString& MapType) const;
+
+	UFUNCTION(BlueprintCallable)
+	const TArray<FString>& GetAllMapsType() const;
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateHouseSetting(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUpdateHouseSetting(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum);
 };

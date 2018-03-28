@@ -80,6 +80,8 @@ public:
 	FString MapType;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString MapName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString MapPath;
 };
 
 

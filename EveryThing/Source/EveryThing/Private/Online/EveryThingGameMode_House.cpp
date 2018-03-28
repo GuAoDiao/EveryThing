@@ -49,28 +49,43 @@ void AEveryThingGameMode_House::BeginPlay()
 				OwnerOnlineSessionSetting->Get<FString>(FName("HouseName"), OwnerETGS_H->HouseName);
 				OwnerETGS_H->bIsLANMatch = OwnerOnlineSessionSetting->bIsLANMatch;
 				OwnerETGS_H->MaxPlayerNum = OwnerOnlineSessionSetting->NumPublicConnections;
+				OwnerETGS_H->OnHouseSettingUpdate();
 			}
 		}
 	}
 }
 
-void AEveryThingGameMode_House::UpdateSessionSetting()
+void AEveryThingGameMode_House::UpdateHouseSetting(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum)
 {
-	AEveryThingGameState_House* OwnerETGS_H = GetGameState<AEveryThingGameState_House>();
-	if (OwnerETGS_H)
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	if (Sessions.IsValid())
 	{
-		IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-		IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-		if (Sessions.IsValid())
+		FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
+		if (OwnerOnlineSessionSetting)
 		{
-			FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
-			if (OwnerOnlineSessionSetting)
+			OwnerOnlineSessionSetting->Set(SETTING_GAMEMODE, GameType);
+			OwnerOnlineSessionSetting->Set(SETTING_MAPNAME, MapName);
+			OwnerOnlineSessionSetting->Set(FName("HouseName"), HouseName);
+
+			OwnerOnlineSessionSetting->bIsLANMatch = bIsLAN;
+			OwnerOnlineSessionSetting->NumPublicConnections = MaxPlayersNum;
+
+			AEveryThingGameSession* OwnerETGSeesion = Cast<AEveryThingGameSession>(GameSession);
+			if (OwnerETGSeesion)
 			{
-				OwnerOnlineSessionSetting->Set(SETTING_GAMEMODE, OwnerETGS_H->GameType);
-				OwnerOnlineSessionSetting->Set(SETTING_MAPNAME, OwnerETGS_H->MapName);
-				OwnerOnlineSessionSetting->Set(FName("HouseName"), OwnerETGS_H->HouseName);
-				OwnerOnlineSessionSetting->bIsLANMatch = OwnerETGS_H->bIsLANMatch;
-				OwnerOnlineSessionSetting->NumPublicConnections = OwnerETGS_H->MaxPlayerNum;
+				OwnerETGSeesion->UpdateSession();
+			}
+
+			AEveryThingGameState_House* OwnerETGS_H = GetGameState<AEveryThingGameState_House>();
+			if (OwnerETGS_H)
+			{
+				OwnerETGS_H->GameType= GameType;
+				OwnerETGS_H->MapName = MapName;
+				OwnerETGS_H->HouseName = HouseName;
+				OwnerETGS_H->bIsLANMatch = bIsLAN;
+				OwnerETGS_H->MaxPlayerNum = MaxPlayersNum;
+				OwnerETGS_H->OnHouseSettingUpdate();
 			}
 		}
 	}

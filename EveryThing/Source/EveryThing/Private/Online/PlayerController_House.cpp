@@ -50,18 +50,34 @@ void APlayerController_House::ApplyHouseSetting()
 		ServerStartGameWhenIsHouseOwner();
 		return;
 	}
-
-	UWorld* World = GetWorld();
-	if (World)
-	{
-		
-		AEveryThingGameMode_House* OwnerETGM_H = World->GetAuthGameMode<AEveryThingGameMode_House>();
-		if (OwnerETGM_H) { OwnerETGM_H->UpdateSessionSetting(); }
-	}
 }
 
 bool APlayerController_House::ServerApplyHouseSetting_Validate() { return true; }
 void APlayerController_House::ServerApplyHouseSetting_Implementation() { ApplyHouseSetting(); }
+
+
+void APlayerController_House::UpdateHouseSetting(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum)
+{
+	AEveryThingPlayerState_House* OwnerETPS_H = Cast<AEveryThingPlayerState_House>(PlayerState);
+
+	if (!OwnerETPS_H->CheckIsHouseOwner()) { return; }
+
+	if (!HasAuthority())
+	{
+		ServerStartGameWhenIsHouseOwner();
+		return;
+	}
+
+	
+	AEveryThingGameMode_House* OwnerETGD_H = GetWorld() ? GetWorld()->GetAuthGameMode<AEveryThingGameMode_House>() : nullptr;
+	if (OwnerETGD_H)
+	{
+		OwnerETGD_H->UpdateHouseSetting(HouseName, GameType, MapName, bIsLAN, MaxPlayersNum);
+	}
+}
+
+bool APlayerController_House::ServerUpdateHouseSetting_Validate(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum) { return true; }
+void APlayerController_House::ServerUpdateHouseSetting_Implementation(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum) { UpdateHouseSetting(HouseName, GameType, MapName, bIsLAN, MaxPlayersNum); }
 
 
 void APlayerController_House::OnRep_PlayerState()
