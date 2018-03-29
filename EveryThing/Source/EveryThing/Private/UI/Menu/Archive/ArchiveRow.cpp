@@ -26,6 +26,5 @@ void UArchiveRow::LoadArchive()
 			OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::ErrorDialog);
 			OwnerMenuHUD->SetErrorDialogMessage(TEXT("Can't load Archive"));
 		}
-
 	}
 }

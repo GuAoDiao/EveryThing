@@ -35,10 +35,11 @@ void APlayerController_Game::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// set all role names
 	const TMap<FName, FRoleInfo>& AllRolesInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllRolesInfo();
 	for (TMap<FName, FRoleInfo>::TConstIterator It(AllRolesInfo); It; ++It)
 	{
-		AllRoleNames.Add(It.Key());
+		AllRoleNames.AddUnique(It.Key());
 	}
 
 	SetInputMode(FInputModeGameOnly());
@@ -71,6 +72,7 @@ void APlayerController_Game::RebindInput()
 		UGamePawnMovementComponent* OwnerPlayerMovementComp = OwnerGamePawn->GetGamePawnMovementComponent();
 		if (OwnerPlayerMovementComp) { OwnerPlayerMovementComp->RebindInputComp(InputComponent); }
 	}
+
 	if (OwnerPlayerPawnComp) { OwnerPlayerPawnComp->RebindInputComp(InputComponent); }
 }
 
@@ -82,6 +84,7 @@ void APlayerController_Game::SetPawn(APawn* InPawn)
 	IPlayerPawnInterface* OwnerPlayerPawn = Cast<IPlayerPawnInterface>(InPawn);
 	OwnerPlayerPawnComp = OwnerPlayerPawn ? OwnerPlayerPawn->GetPlayerPawnComponent() : nullptr;
 
+	// try to get right role name when first SetPawn.
 	if (CurrentRoleName.IsNone() && OwnerGamePawn)
 	{
 		UClass* CurrentPawnClass = OwnerGamePawn->GetClass();
@@ -149,6 +152,7 @@ void APlayerController_Game::RemoveActionAndAxisBindings(const TArray<FName>& Bi
 {
 	if (!InputComponent) { return; }
 
+	// clear all axis bindings
 	for (int32 i = 0, l = InputComponent->AxisBindings.Num(); i < l; ++i)
 	{
 		if (BindingsName.Contains(InputComponent->AxisBindings[i].AxisName))
@@ -158,6 +162,7 @@ void APlayerController_Game::RemoveActionAndAxisBindings(const TArray<FName>& Bi
 		}
 	}
 
+	// clear all action bindings
 	for (int32 i = 0, l = InputComponent->GetNumActionBindings(); i < l; ++i)
 	{
 		if (BindingsName.Contains(InputComponent->GetActionBinding(i).ActionName))
@@ -171,7 +176,6 @@ void APlayerController_Game::RemoveActionAndAxisBindings(const TArray<FName>& Bi
 
 //////////////////////////////////////////////////////////////////////////
 /// Game flow path
-
 
 void APlayerController_Game::ClientWaitForHousePlayerLoad_Implementation()
 {

@@ -15,20 +15,10 @@ class EVERYTHING_API APlayerController_House : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable)
 	void StartGameWhenIsHouseOwner();
-
-	UFUNCTION(BlueprintCallable)
-	void ApplyHouseSetting();
-
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerApplyHouseSetting();
-
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerStartGameWhenIsHouseOwner();
-
-
-
+	
 	void UpdateHouseSetting(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum);
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerUpdateHouseSetting(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum);

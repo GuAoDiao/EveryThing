@@ -17,7 +17,6 @@ class EVERYTHING_API AEveryThingHUD_House : public AHUD
 	
 public:
 	virtual void BeginPlay() override;
-	virtual void BeginDestroy() override;
 
 	UPROPERTY(Transient)
 	class UHouseLayout* HouseLayout;

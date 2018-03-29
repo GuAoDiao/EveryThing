@@ -64,11 +64,11 @@ void ARole3DDisplay::ChangeRole(const FName& RoleName)
 
 void ARole3DDisplay::AdjustUp(float AxisValue)
 {
-	if (AxisValue != 0.f && StaticMeshComp) { StaticMeshComp->AddTorqueInRadians(FVector(0.f, AxisValue * 100000000.f, 0.f)); }
+	if (AxisValue != 0.f) { StaticMeshComp->AddTorqueInRadians(FVector(0.f, AxisValue * 100000000.f, 0.f)); }
 }
 void ARole3DDisplay::AdjustRight(float AxisValue)
 {
-	if (AxisValue != 0.f && StaticMeshComp) { StaticMeshComp->AddTorqueInRadians(FVector(0.f, 0.f, AxisValue * -100000000.f)); }
+	if (AxisValue != 0.f) { StaticMeshComp->AddTorqueInRadians(FVector(0.f, 0.f, AxisValue * -100000000.f)); }
 }
 
 

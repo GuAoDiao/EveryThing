@@ -8,6 +8,7 @@ void APlayerController_Menu::SetupInputComponent()
 
 	if (InputComponent)
 	{
+		// for Role 3D Display
 		InputComponent->BindAxis("MoveForward");
 		InputComponent->BindAxis("MoveRight");
 	}

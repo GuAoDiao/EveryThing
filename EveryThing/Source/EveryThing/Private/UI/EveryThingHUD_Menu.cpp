@@ -35,10 +35,12 @@ void AEveryThingHUD_Menu::BeginPlay()
 	if (IsTargetGameUIState(EMenuUIState::StartUp))
 	{
 		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
+		// if has ArchiveName, show MasterInterface
 		if (OwnerETGI && !OwnerETGI->GetArchiveName().IsEmpty())
 		{
 			ToggleToNewGameUIState(EMenuUIState::MasterInterface);
 		}
+		// else show MainMenu
 		else
 		{
 			ToggleToNewGameUIState(EMenuUIState::MainMenu);
@@ -53,7 +55,8 @@ void AEveryThingHUD_Menu::BeginPlay()
 
 void AEveryThingHUD_Menu::ToggleToNewGameUIState(EMenuUIState InGameUIState)
 {
-	if (InGameUIState != EMenuUIState::LoadingScreen)
+	// if NewUIState isn't LoadingScreen or ErrorDialog, remove old widget 
+	if (InGameUIState != EMenuUIState::LoadingScreen && InGameUIState != EMenuUIState::ErrorDialog)
 	{
 		FinishOldGameUIState(CurrentGameUIState);
 	}
@@ -161,7 +164,6 @@ void AEveryThingHUD_Menu::FinishOldGameUIState(EMenuUIState InGameUIState)
 //////////////////////////////////////////////////////////////////////////
 /// UI
 
-
 void AEveryThingHUD_Menu::SetErrorDialogMessage(const FString& ErrorMessage)
 {
 	if (IsTargetGameUIState(EMenuUIState::ErrorDialog) && ErrorDialog)
@@ -185,12 +187,14 @@ T* AEveryThingHUD_Menu::CreateAndDisplayWidget(EMenuUIState InNeededUIState, con
 {
 	if (IsTargetGameUIState(InNeededUIState))
 	{
+		// is widget don't exists. try create
 		TSubclassOf<UUserWidget> TargetClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(InUserWidgetName);
 		if (!ResultWidget && TargetClass)
 		{
 			ResultWidget = CreateWidget<T>(GetGameInstance(), TargetClass);
 		}
 
+		// is widget exists. display and set focus.
 		if (ResultWidget)
 		{
 			if (!ResultWidget->IsInViewport()) { ResultWidget->AddToViewport(); }
@@ -202,6 +206,8 @@ T* AEveryThingHUD_Menu::CreateAndDisplayWidget(EMenuUIState InNeededUIState, con
 	return ResultWidget;
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// Do Same Thing To Display Widget and Set Focus
 void AEveryThingHUD_Menu::ShowMainMenu() { MainMenu = CreateAndDisplayWidget<UMainMenu>(EMenuUIState::MainMenu, "MainMenu", MainMenu); }
 
 void AEveryThingHUD_Menu::ShowCreateArchive() { CreateArchive = CreateAndDisplayWidget<UCreateArchive>(EMenuUIState::CreateArchive, "CreateArchive", CreateArchive); }
@@ -217,6 +223,7 @@ void AEveryThingHUD_Menu::ShowHouseList() { HouseList = CreateAndDisplayWidget<U
 void AEveryThingHUD_Menu::ShowLoadingScreen() { LoadingScreen = CreateAndDisplayWidget<ULoadingScreen>(EMenuUIState::LoadingScreen, "LoadingScreen", LoadingScreen); }
 void AEveryThingHUD_Menu::ShowErrorDialog() { ErrorDialog = CreateAndDisplayWidget<UErrorDialog>(EMenuUIState::ErrorDialog, "ErrorDialog", ErrorDialog); }
 
+
 void AEveryThingHUD_Menu::SetWidgetOwnerAndInputModeToFocusWidget(UUserWidget* InWidget)
 {
 	APlayerController* OwnerPC = GetGameInstance()->GetFirstLocalPlayerController();
@@ -227,6 +234,7 @@ void AEveryThingHUD_Menu::SetWidgetOwnerAndInputModeToFocusWidget(UUserWidget* I
 		FInputModeUIOnly InputMode;
 		InputMode.SetWidgetToFocus(InWidget->TakeWidget());
 		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
 		OwnerPC->SetInputMode(InputMode);
 	}
 }

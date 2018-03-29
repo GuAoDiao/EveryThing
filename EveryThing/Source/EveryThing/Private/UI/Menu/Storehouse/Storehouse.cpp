@@ -25,23 +25,26 @@ UStorehouse::UStorehouse(const FObjectInitializer& ObjectInitializer) : Super(Ob
 
 void UStorehouse::NativeConstruct()
 {
+	InitializeRoleListDisplay();
+	ToggleDisplayRole(CurrentDisplayRoleName);
+
+	// Initialize Display with player info and bind delegate.
 	UEveryThingGameInstance* OwnerETGI = GetOwningPlayer() ? Cast<UEveryThingGameInstance>(GetOwningPlayer()->GetGameInstance()) : nullptr;
 	if (OwnerETGI)
 	{
-		InitializeRoleListDisplay(OwnerETGI->GetPlayerInfo());
-
-		OwnerETGI->GetOnPlayerInfoUpdateDelegate().AddUObject(this, &UStorehouse::OnPlayerInfoUpdate);
+		OnPlayerInfoUpdate(OwnerETGI->GetPlayerInfo());
+		OwnerETGI->OnPlayerInfoUpdateDelegate.AddUObject(this, &UStorehouse::OnPlayerInfoUpdate);
 	}
-
-	ToggleDisplayRole(CurrentDisplayRoleName);
 	
+	// try get first Role 3D Display
 	UWorld* World = GetWorld();
 	if (World)
 	{
 		TActorIterator<ARole3DDisplay> It(World);
-		if (It) { RoleDisplay = *It; }
+		if (It) { Role3DDisplay = *It; }
 	}
 
+	// get MoveForward and MoveRight binding key.
 	UInputSettings* InpueSettings = UInputSettings::GetInputSettings();
 	if (InpueSettings)
 	{
@@ -64,19 +67,10 @@ void UStorehouse::NativeConstruct()
 }
 
 
-FReply UStorehouse::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
-{	
-	const FKey& Key = InKeyEvent.GetKey();
-
-	if (AdjustUPKey.Contains(Key)) { AdjustDisplayRoleUp(AdjustUPKey[Key]); }
-	if (AdjustRightKey.Contains(Key)) { AdjustDisplayRoleRight(AdjustRightKey[Key]); }
-
-	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
-
-}
 
 
-void UStorehouse::InitializeRoleListDisplay_Implementation(const FPlayerInfo& InPlayerInfo)
+
+void UStorehouse::InitializeRoleListDisplay_Implementation()
 {
 	TSubclassOf<UUserWidget> RoleItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("RoleItem");
 	APlayerController* OnwerPC = GetOwningPlayer();
@@ -89,7 +83,7 @@ void UStorehouse::InitializeRoleListDisplay_Implementation(const FPlayerInfo& In
 			URoleItem* RoleItem = CreateWidget<URoleItem>(OnwerPC, RoleItemClass);
 			if (RoleItem)
 			{
-				RoleItem->InitializeRoleItem(this, It.Key(), InPlayerInfo.AllHaveRoleNames.Contains(It.Key()));
+				RoleItem->InitializeRoleItem(this, It.Key(), false);
 				AddRoleItem(RoleItem);
 			}
 		}
@@ -103,13 +97,14 @@ void UStorehouse::InitializeRoleSkinAndFormListDisplay_Implementation(const FPla
 	UEveryThingAssetManager* AssetManager = UEveryThingAssetManager::GetAssetManagerInstance();
 	UGamePawnManager* GamePawnManager= AssetManager->GetGamePawnManager();
 
+	// create skin and form item.
+
 	TSubclassOf<UUserWidget> SkinItemClass = AssetManager->GetUserWidgetFromName("SkinItem");
 	if (SkinItemClass)
 	{
 		const TArray<FName>& AllRoleSkinName = GamePawnManager->GetAllRoleSkinWithRoleName(CurrentDisplayRoleName);
 		for (const FName& SkinName : AllRoleSkinName)
 		{
-			
 			USkinItem* SkinItem = CreateWidget<USkinItem>(OnwerPC, SkinItemClass);
 			if (SkinItem)
 			{
@@ -143,8 +138,24 @@ void UStorehouse::Backup()
 }
 
 
-void UStorehouse::AdjustDisplayRoleUp(float AxisValue) { if (RoleDisplay) { RoleDisplay->AdjustUp(AxisValue); } }
-void UStorehouse::AdjustDisplayRoleRight(float AxisValue) { if (RoleDisplay) { RoleDisplay->AdjustRight(AxisValue); } }
+//////////////////////////////////////////////////////////////////////////
+/// Role 3d Display
+
+FReply UStorehouse::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	const FKey& Key = InKeyEvent.GetKey();
+
+	// when key down, adjust display role.
+	if (AdjustUPKey.Contains(Key)) { AdjustDisplayRoleUp(AdjustUPKey[Key]); }
+	if (AdjustRightKey.Contains(Key)) { AdjustDisplayRoleRight(AdjustRightKey[Key]); }
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+
+}
+
+void UStorehouse::AdjustDisplayRoleUp(float AxisValue) { if (Role3DDisplay) { Role3DDisplay->AdjustUp(AxisValue); } }
+void UStorehouse::AdjustDisplayRoleRight(float AxisValue) { if (Role3DDisplay) { Role3DDisplay->AdjustRight(AxisValue); } }
+
 void UStorehouse::ToggleDisplayRole(const FName& RoleName)
 {
 	CurrentDisplayRoleName = RoleName;
@@ -152,6 +163,6 @@ void UStorehouse::ToggleDisplayRole(const FName& RoleName)
 	UEveryThingGameInstance* OwnerETGI = GetOwningPlayer() ? Cast<UEveryThingGameInstance>(GetOwningPlayer()->GetGameInstance()) : nullptr;
 	if (OwnerETGI) { InitializeRoleSkinAndFormListDisplay(OwnerETGI->GetPlayerInfo()); }
 
-	if (RoleDisplay) { RoleDisplay->ChangeRole(RoleName); }
+	if (Role3DDisplay) { Role3DDisplay->ChangeRole(RoleName); }
 }
-void UStorehouse::ToggleDisplaySkin(const FName& SkinName) { if (RoleDisplay) { RoleDisplay->ChangeSkin(SkinName); } }
+void UStorehouse::ToggleDisplaySkin(const FName& SkinName) { if (Role3DDisplay) { Role3DDisplay->ChangeSkin(SkinName); } }

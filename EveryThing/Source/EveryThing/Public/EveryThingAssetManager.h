@@ -97,7 +97,7 @@ public:
 	void NeededMeshFromName(const FName& MeshName);
 	UStaticMesh* GetMeshFromName(const FName& MeshName, bool bIsNeedForce = true);
 private:
-	void LoadMeshFromDatatable();
+	void LoadMeshFromDT();
 	TMap<FName, TSoftObjectPtr<UStaticMesh>> AllMeshAsset;
 
 
@@ -108,7 +108,7 @@ public:
 	UMaterialInstanceConstant* GetMaterialFromName(const FName& MaterialName, bool bIsNeedForce = false);
 
 private:
-	void LoadMaterialFromDatatable();
+	void LoadMaterialFromDT();
 	TMap<FName, TSoftObjectPtr<UMaterialInstanceConstant>> AllMaterialInstanceAsset;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -118,14 +118,14 @@ public:
 	UParticleSystem* GetParticleFromName(const FName& ParticleName, bool bIsNeedForce = false);
 
 private:
-	void LoadParticleFromDatatable();
+	void LoadParticleFromDT();
 	TMap<FName, TSoftObjectPtr<UParticleSystem>> AllParticleAsset;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// User Widget
 public:
 
-	void LoadUserWidgetFromDataTable();
+	void LoadAllUserWidgetFromDT();
 	TSubclassOf<UUserWidget> GetUserWidgetFromName(const FName& UserWidgetName);
 
 private:	
@@ -144,7 +144,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	/// Map Info
 public:
-	void LoadAllMapInfoFromDataTable();
+	void LoadAllMapInfoFromDT();
 	const FMapInfo* GetMapInfoFromName(const FName& MapName);
 	const TArray<FString>& GetAllMapsType() { return MapsType; }
 	TArray<FString> GetAllMapsFormType(const FString& MapType);

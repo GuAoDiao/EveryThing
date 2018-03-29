@@ -21,9 +21,6 @@ public:
 	bool IsHaveEnoughMoney() const;
 
 	virtual bool BuyGoodsItem() { return false; }
-	UFUNCTION(BlueprintPure)
-	int32 GetGoodsCost() const { return GoodCost; }
-	bool HaveGoods() const { return bHaveGoods; }
 protected:
 	int32 GoodCost;
 	bool bHaveGoods;

@@ -72,11 +72,9 @@ void UFootballAttackComponent::OnHitImplement(UPrimitiveComponent* HitComp, AAct
 			
 			StopAttack();
 		}
-		else
-		{
-			UParticleSystem*  HitEmitter = UEveryThingAssetManager::GetAssetManagerInstance()->GetParticleFromName(TEXT("Explosion"));
-			if (HitEmitter) { UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location); }
-		}
+
+		UParticleSystem*  HitEmitter = UEveryThingAssetManager::GetAssetManagerInstance()->GetParticleFromName(TEXT("Explosion"));
+		if (HitEmitter) { UGameplayStatics::SpawnEmitterAtLocation(this, HitEmitter, Hit.Location); }
 	}
 }
 

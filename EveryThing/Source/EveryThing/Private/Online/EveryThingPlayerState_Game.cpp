@@ -17,6 +17,7 @@ void AEveryThingPlayerState_Game::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// if not from SeamlessTravel, add in the middle of th game. set player info from GameInstance.
 	if (GetOwner() && GetOwner()->Role == ROLE_AutonomousProxy && !bFromPreviousLevel)
 	{
 		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
@@ -29,7 +30,6 @@ void AEveryThingPlayerState_Game::SetPlayerInfo(const FPlayerInfo& InPlayerInfo)
 	if (HasAuthority())
 	{ 
 		CurrentPlayerInfo = InPlayerInfo;
-	
 		OnPlayerInfoUpdate();
 	}
 }

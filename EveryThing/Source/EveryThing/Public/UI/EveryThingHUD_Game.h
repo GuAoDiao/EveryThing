@@ -25,9 +25,18 @@ public:
 
 	virtual void BeginPlay() override;
 
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Main Widget
+protected:
+	UPROPERTY(Transient)
+	class UGameMenu* GameMenu;
+	UPROPERTY(Transient)
+	class UGameLayout* GameLayout;
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Game UI State
-
+public:
 	EETGameState GetGameUIState() const { return CurrentGameUIState; }
 	void ToggleToTargetGameUIState(EETGameState InGameUIState);
 protected:
@@ -67,13 +76,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveGameMenu();
 
+	//////////////////////////////////////////////////////////////////////////
+	/// Select About Roles 
+public:
 	void ToggleSelectRolesBox(bool bIsDisplay);
 	void ToggleSelectSkinsBox(bool bIsDisplay);
 	void ToggleSelectFormsBox(bool bIsDisplay);
-
-private:
-	UPROPERTY(Transient)
-	class UGameMenu* GameMenu;
-	UPROPERTY(Transient)
-	class UGameLayout* GameLayout;
 };

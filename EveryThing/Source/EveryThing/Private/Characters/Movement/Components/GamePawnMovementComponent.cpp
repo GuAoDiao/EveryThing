@@ -3,6 +3,7 @@
 #include "GamePawnMovementComponent.h"
 
 #include "GameFramework/Actor.h"
+#include "Characters/GamePawn.h"
 
 UGamePawnMovementComponent::UGamePawnMovementComponent()
 {
@@ -11,6 +12,8 @@ UGamePawnMovementComponent::UGamePawnMovementComponent()
 	MoveForceScale = 10.f;
 	SpeedScale = 10.f;
 	JumpForceScale = 75.f;
+
+	OwnerGamePawn = Cast<AGamePawn>(GetOwner());
 }
 
 bool UGamePawnMovementComponent::HasAuthority()

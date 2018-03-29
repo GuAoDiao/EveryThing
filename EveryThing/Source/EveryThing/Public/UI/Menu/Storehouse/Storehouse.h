@@ -26,10 +26,9 @@ public:
 	UStorehouse(const FObjectInitializer& ObjectInitializer);
 
 	virtual void NativeConstruct() override;
-	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 	UFUNCTION(BlueprintNativeEvent)
-	void InitializeRoleListDisplay(const FPlayerInfo& InPlayerInfo);
+	void InitializeRoleListDisplay();
 
 	UFUNCTION(BlueprintNativeEvent)
 	void InitializeRoleSkinAndFormListDisplay(const FPlayerInfo& InPlayerInfo);
@@ -43,6 +42,20 @@ public:
 	void AddFormItem(UFormItem* FormItem);
 
 
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo);
+
+	UFUNCTION(BlueprintCallable)
+	void Backup();
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Role 3d Display
+
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
+
 	UFUNCTION(BlueprintCallable)
 	void AdjustDisplayRoleUp(float AxisValue);
 	UFUNCTION(BlueprintCallable)
@@ -52,15 +65,8 @@ public:
 	void ToggleDisplayRole(const FName& RoleName);
 	UFUNCTION(BlueprintCallable)
 	void ToggleDisplaySkin(const FName& SkinName);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo);
-
-	UFUNCTION(BlueprintCallable)
-	void Backup();
-
 protected:
-	class ARole3DDisplay* RoleDisplay;
+	class ARole3DDisplay* Role3DDisplay;
 	TMap<FKey, float> AdjustUPKey;
 	TMap<FKey, float> AdjustRightKey;
 	FName CurrentDisplayRoleName;

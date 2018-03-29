@@ -45,6 +45,7 @@ void UEveryThingGameViewportClient::DrawScreenFade(UCanvas* Canvas)
 			FLinearColor FadeColor = FLinearColor::Black;
 			FadeColor.A = bToBlack ? Alpha : 1 - Alpha;
 			Canvas->DrawColor = FadeColor.ToFColor(true);
+			// draw mask layer to implement fade in/out
 			Canvas->DrawTile(Canvas->DefaultTexture, 0.f, 0.f, Canvas->ClipX, Canvas->ClipY, 0.f, 0.f, Canvas->DefaultTexture->GetSizeX(), Canvas->DefaultTexture->GetSizeY());
 
 			Canvas->DrawColor = OldColor;

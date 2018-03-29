@@ -19,6 +19,7 @@ void UHouseRow::UpdateDisplay()
 {
 	if (SearchResult)
 	{
+		// get house info from SearchResult
  		const FOnlineSessionSettings& Settings = SearchResult->Session.SessionSettings;
 
 		FString GameType, MapName, HouseName;
@@ -31,7 +32,6 @@ void UHouseRow::UpdateDisplay()
 		int32 MaxPlayersNum = Settings.NumPublicConnections;
 		int32 Pin = SearchResult->PingInMs;
 		int32 CurrentPlayersNum = MaxPlayersNum - SearchResult->Session.NumOpenPublicConnections;
-		UE_LOG(LogTemp, Log, TEXT("-_- the num A: %d and the num B : %d"), SearchResult->Session.NumOpenPublicConnections, SearchResult->Session.NumOpenPrivateConnections);
 
 		InitializeDisplay(HouseName, GameType, MapName, CurrentPlayersNum, MaxPlayersNum, Pin);
 	}

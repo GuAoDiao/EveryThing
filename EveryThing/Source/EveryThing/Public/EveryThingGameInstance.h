@@ -28,8 +28,13 @@ public:
 public:
 	void OpenMenuLevel();
 	void OpenHouseLevel();
-	void OpenGameLevel(const FString& MapType, const FString& MapName);
 	void ExitGameApplication();
+
+protected:
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FName MenuLevelName;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FName HouseLevelName;
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -44,7 +49,7 @@ public:
 private:
 	class IGameMoviePlayer* LoadingMapMoviePlayer;
 	UPROPERTY()
-	UInterlude* LoadingMap;
+	UInterlude* Interlude;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Match
@@ -57,41 +62,38 @@ public:
 
 private:
 	class AEveryThingGameSession* GetGameSession();
-public:
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	FName MenuLevelName;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	FName HouseLevelName;
-
 
 
 	//////////////////////////////////////////////////////////////////////////
-	/// Player Info
+	/// Archive
 public:
 	bool LoadArchivesList();
 	void UpdateArchivesList();
 	const TArray<FString>& GetArchivesList() { return CurrentArchivesList; }
 
 	bool CreateArchive(const FString& ArchiveName, const FString& PlayerName);
-
 	bool LoadArchiveFromName(const FString& ArchiveName);
 	bool SaveArchiveWithName(const FString& ArchiveName);
 	bool SaveCurrentArchive();
+	
+	const FString& GetArchiveName() const { return CurrentSaveArchiveName; }
+
+protected:
+	FString CurrentSaveArchiveName;
+	TArray<FString> CurrentArchivesList;
+	//////////////////////////////////////////////////////////////////////////
+	/// Player Info
+public:
 
 	UFUNCTION(BlueprintPure)
 	FPlayerInfo& GetPlayerInfo() { return PlayerInfo; }
-	UFUNCTION(BlueprintPure)
-	const FString& GetArchiveName() const { return CurrentSaveArchiveName; }
 	
 	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo) { PlayerInfo = InPlayerInfo; UpdatePlayerInfo(); }
 
-	void UpdatePlayerInfo() { OnPlayerInfoUpdateDelegate.Broadcast(PlayerInfo); SaveCurrentArchive(); }
-
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerInfoUpdateDelegate, const FPlayerInfo&);
-	FOnPlayerInfoUpdateDelegate& GetOnPlayerInfoUpdateDelegate() {return OnPlayerInfoUpdateDelegate;}
-private:
 	FOnPlayerInfoUpdateDelegate OnPlayerInfoUpdateDelegate;
-	FString CurrentSaveArchiveName;
+
+	void UpdatePlayerInfo() { OnPlayerInfoUpdateDelegate.Broadcast(PlayerInfo); SaveCurrentArchive(); }
+protected:
 	FPlayerInfo PlayerInfo;
-	TArray<FString> CurrentArchivesList;
 };

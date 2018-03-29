@@ -207,5 +207,9 @@ protected:
 	void SetQualityScale(float InQualityScale);
 
 	//////////////////////////////////////////////////////////////////////////
-	///
+	/// On Use Force 
+public:
+	void OnConsumeForce(FVector Force) {};
+	void OnConsumeTorqueInRadians(FVector Torque) {};
+	void OnConsumeImpulse(FVector Impulse) {};
 };

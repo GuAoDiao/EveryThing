@@ -21,20 +21,16 @@ void AEveryThingHUD_Game::BeginPlay()
 	UWorld* World = GetWorld();
 	if (World)
 	{
+		// remove all widget, because if from ServerTravel, the HouseLayout will display in screen.
 		UGameViewportClient* OwnerGameViewport =  World->GetGameViewport();
-		if (OwnerGameViewport)
-		{
-			OwnerGameViewport->RemoveAllViewportWidgets();
-		}
+		if (OwnerGameViewport) { OwnerGameViewport->RemoveAllViewportWidgets(); }
 
+		// update current UI state
 		AEveryThingGameState_Game* OwnerETGS_G = World->GetGameState<AEveryThingGameState_Game>();
-		if (OwnerETGS_G)
-		{
-			CurrentGameUIState = OwnerETGS_G->GetETGameState();
-		}
-
+		if (OwnerETGS_G) { CurrentGameUIState = OwnerETGS_G->GetETGameState(); }
 	}
 
+	// try create GameLatyout and initialize then display
 	APlayerController* OwnerPC = GetOwningPlayerController();
 	TSubclassOf<UUserWidget> GameLayoutClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("GameLayout"));
 	if (OwnerPC && GameLayoutClass)
@@ -53,6 +49,8 @@ void AEveryThingHUD_Game::BeginPlay()
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// Game UI State
 
 void AEveryThingHUD_Game::ToggleToTargetGameUIState(EETGameState InGameUIState)
 {
@@ -60,6 +58,9 @@ void AEveryThingHUD_Game::ToggleToTargetGameUIState(EETGameState InGameUIState)
 	if (GameLayout) { GameLayout->UpdateGameUIDisplay(CurrentGameUIState); }
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+/// Game Menu
 void AEveryThingHUD_Game::DisplayGameMenu()
 {
 	if (!GameMenu)
@@ -104,6 +105,9 @@ void AEveryThingHUD_Game::RemoveGameMenu()
 	}
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+/// Select About Roles 
 
 void AEveryThingHUD_Game::ToggleSelectRolesBox(bool bIsDisplay)
 {

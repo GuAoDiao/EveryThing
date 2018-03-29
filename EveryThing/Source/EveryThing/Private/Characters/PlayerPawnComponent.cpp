@@ -57,6 +57,7 @@ void UPlayerPawnComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// we need PlayerState, but not always exists. but we know the Controller muse exists.
 	if (OwnerPawn)
 	{
 		AController* Controler = OwnerPawn->GetController();
@@ -74,6 +75,7 @@ void UPlayerPawnComponent::BeginPlay()
 
 void UPlayerPawnComponent::OnPossessedByController(AController* NewController)
 {
+	// now we get the Controller. then we can get player state from controller.
 	if (NewController)
 	{
 		if (NewController->PlayerState)
@@ -93,6 +95,7 @@ void UPlayerPawnComponent::OnPossessedByController(AController* NewController)
 
 void UPlayerPawnComponent::OnPlayerStateUpdate(APlayerState* PlayerState)
 {
+	// so, we get player info final, and bind delegate.
 	AEveryThingPlayerState_Game* OwnerETPS_G = Cast<AEveryThingPlayerState_Game>(PlayerState);
 	if (OwnerETPS_G)
 	{
@@ -104,6 +107,7 @@ void UPlayerPawnComponent::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
 {
 	if (OwnerPawn)
 	{
+		// update all Skin and From we have;
 		for (const FName& SkinName : OwnerPawn->AllRoleSkinName)
 		{
 			if (InPlayerInfo.AllHaveRoleSkinNames.Contains(SkinName))
@@ -127,7 +131,7 @@ void UPlayerPawnComponent::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
 void UPlayerPawnComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
+
 	if (OwnerPawn && OwnerPawn->GetController() && OwnerPawn->GetController()->IsLocalController())
 	{
 		AActor* SelectedHitAbleActor = TryToGetHitAbleActor();

@@ -12,6 +12,7 @@ void AEveryThingGameState_House::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// get HouseOwner, now select the first PlayerController.
 	if (HasAuthority() && GetWorld())
 	{
 		APlayerController* OwnerPC = GetWorld()->GetFirstPlayerController();
@@ -23,14 +24,12 @@ void AEveryThingGameState_House::BeginPlay()
 void AEveryThingGameState_House::AddPlayerState(APlayerState* PlayerState)
 {
 	Super::AddPlayerState(PlayerState);
-
 	OnAddPlayerDelegate.Broadcast(PlayerState);
 }
 
 void AEveryThingGameState_House::RemovePlayerState(APlayerState* PlayerState)
 {
 	OnRemovePlayerDelegate.Broadcast(PlayerState);
-
 	Super::RemovePlayerState(PlayerState);
 }
 
@@ -42,7 +41,6 @@ bool AEveryThingGameState_House::CheckIsAllPlayerAreReady()
 		if (!CurrentETPS_H) { return false; }
 		if (!CurrentETPS_H->CheckIsHouseOwner() && !CurrentETPS_H->GetIsReady()) { return false; }
 	}
-
 
 	return true;
 }

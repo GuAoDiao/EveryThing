@@ -19,6 +19,7 @@ void AEveryThingPlayerState_House::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// update player info from GameInstance.
 	UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetWorld()->GetGameInstance()) : nullptr;
 	if (OwnerETGI) { SetPlayerInfo(OwnerETGI->GetPlayerInfo()); }
 }
@@ -28,6 +29,7 @@ void AEveryThingPlayerState_House::SeamlessTravelTo(class APlayerState* NewPlaye
 {
 	Super::SeamlessTravelTo(NewPlayerState);
 
+	// move old info to new
 	AEveryThingPlayerState_Game* OldETPS_G = Cast<AEveryThingPlayerState_Game>(NewPlayerState);
 	if (OldETPS_G)
 	{

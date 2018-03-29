@@ -104,6 +104,7 @@ private:
 	void ShowLoadingScreen();
 	void ShowErrorDialog();
 
+	// one help function.
 	template<typename T>
 	T* CreateAndDisplayWidget(EMenuUIState InNeededUIState, const FName& InUserWidgetName, T* ResultWidget);
 

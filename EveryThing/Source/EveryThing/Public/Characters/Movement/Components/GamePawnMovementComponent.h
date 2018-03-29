@@ -28,6 +28,7 @@ protected:
 	float ActualSpeed;
 	float SpeedScale;
 
+	class AGamePawn* OwnerGamePawn;
 public:
 	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) {}
 };

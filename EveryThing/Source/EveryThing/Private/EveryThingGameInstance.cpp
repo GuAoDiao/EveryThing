@@ -27,17 +27,13 @@ void UEveryThingGameInstance::Init()
 {
 	Super::Init();
 
+	// bind delegate to PreLoadMap And  LoadMapFinished
 	FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UEveryThingGameInstance::BeginLoadingMap);
 	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UEveryThingGameInstance::EndLoadingMap);
 }
 
 //////////////////////////////////////////////////////////////////////////
 /// Level
-void UEveryThingGameInstance::OpenGameLevel(const FString& MapType, const FString& MapName)
-{
-	UGameplayStatics::OpenLevel(this, *MapName, true, TEXT("listen"));
-}
-
 void UEveryThingGameInstance::OpenHouseLevel()
 {
 	UGameplayStatics::OpenLevel(this, HouseLevelName, true, TEXT("listen"));
@@ -47,7 +43,6 @@ void UEveryThingGameInstance::OpenMenuLevel()
 {
 	UGameplayStatics::OpenLevel(this, MenuLevelName, true);
 }
-
 
 void UEveryThingGameInstance::ExitGameApplication()
 {
@@ -65,23 +60,24 @@ void UEveryThingGameInstance::BeginLoadingMap(const FString& MapName)
 		LoadingMapMoviePlayer = GetMoviePlayer();
 		if (LoadingMapMoviePlayer)
 		{
-			if (!LoadingMap)
+			// create Interlude widget
+			if (!Interlude)
 			{
-				TSubclassOf<UUserWidget> LoadingMapClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("Interlude");
-				LoadingMap = LoadingMapClass ? CreateWidget<UInterlude>(this, LoadingMapClass) : nullptr;
+				TSubclassOf<UUserWidget> InterludeClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("Interlude");
+				Interlude = InterludeClass ? CreateWidget<UInterlude>(this, InterludeClass) : nullptr;
 			}
-			if(LoadingMap)
-			{
-				LoadingMap->InitializeLoadingMap(this, MapName);
 
+			if(Interlude)
+			{
+				Interlude->InitializeLoadingMap(this, MapName);
+
+				// set attr and use LoadingScreen.
 				FLoadingScreenAttributes LoadingScreenAttributes;
 				LoadingScreenAttributes.bAutoCompleteWhenLoadingCompletes = false;
 				LoadingScreenAttributes.bMoviesAreSkippable = true;
 				LoadingScreenAttributes.bWaitForManualStop = true;
 				LoadingScreenAttributes.PlaybackType = EMoviePlaybackType::MT_Looped;
-				LoadingScreenAttributes.WidgetLoadingScreen = LoadingMap->TakeWidget();
-
-				// May only support h264 encoded 720P  mp4
+				LoadingScreenAttributes.WidgetLoadingScreen = Interlude->TakeWidget();
 				LoadingScreenAttributes.MoviePaths.Add(TEXT("LoadingMap"));
 
 				LoadingMapMoviePlayer->SetupLoadingScreen(LoadingScreenAttributes);
@@ -90,7 +86,7 @@ void UEveryThingGameInstance::BeginLoadingMap(const FString& MapName)
 	}
 }
 
-bool UEveryThingGameInstance::IsLoadingMapFinished() const
+inline bool UEveryThingGameInstance::IsLoadingMapFinished() const
 {
 	return LoadingMapMoviePlayer ? LoadingMapMoviePlayer->IsLoadingFinished() : true;
 }
@@ -157,6 +153,7 @@ void UEveryThingGameInstance::JoinGame(int32 SearchResultIndex)
 
 void UEveryThingGameInstance::ExitGame()
 {
+	// TODO: Not Implementation
 	bool bSuccess = false;
 	AEveryThingGameSession* OwnerETGS = GetGameSession();
 	if (OwnerETGS)
@@ -176,21 +173,25 @@ void UEveryThingGameInstance::ExitGame()
 	if (bSuccess) { OpenMenuLevel(); }
 }
 
-AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()
+inline AEveryThingGameSession* UEveryThingGameInstance::GetGameSession()
 {
 	AGameModeBase* OwnerGameMode = GetWorld() ? GetWorld()->GetAuthGameMode() : nullptr;
 	return OwnerGameMode ? Cast<AEveryThingGameSession>(OwnerGameMode->GameSession) : nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// Archive
 
 bool UEveryThingGameInstance::CreateArchive(const FString& ArchiveName, const FString& PlayerName)
 {
 	UEveryThingSaveArchive* CurrentSaveGame = Cast<UEveryThingSaveArchive>(UGameplayStatics::CreateSaveGameObject(UEveryThingSaveArchive::StaticClass()));;
 	if (CurrentSaveGame)
 	{
+		// add default pawn football.
 		CurrentSaveGame->PlayerInfo.PlayerName = PlayerName;
 		CurrentSaveGame->PlayerInfo.Gold = 2000;
 		CurrentSaveGame->PlayerInfo.Experience = 0;
+
 		CurrentSaveGame->PlayerInfo.AllHaveRoleNames.Add("Football");
 		CurrentSaveGame->PlayerInfo.AllHaveRoleSkinNames.Add("FootballSkin");
 		CurrentSaveGame->PlayerInfo.AllHaveRoleFormNames.Add("FootballForm");
@@ -199,6 +200,8 @@ bool UEveryThingGameInstance::CreateArchive(const FString& ArchiveName, const FS
 		{
 			CurrentSaveArchiveName = ArchiveName;
 			PlayerInfo = CurrentSaveGame->PlayerInfo;
+			
+			// if save success update archive list
 			CurrentArchivesList.Add(ArchiveName);
 			UpdateArchivesList();
 
@@ -223,8 +226,7 @@ bool UEveryThingGameInstance::LoadArchiveFromName(const FString& ArchiveName)
 	return false;
 }
 
-bool UEveryThingGameInstance::SaveCurrentArchive() { return SaveArchiveWithName(CurrentSaveArchiveName); }
-
+inline bool UEveryThingGameInstance::SaveCurrentArchive() { return SaveArchiveWithName(CurrentSaveArchiveName); }
 bool UEveryThingGameInstance::SaveArchiveWithName(const FString& ArchiveName)
 {
 	UEveryThingSaveArchive* OwnerETSA = Cast<UEveryThingSaveArchive>(UGameplayStatics::CreateSaveGameObject(UEveryThingSaveArchive::StaticClass()));;
@@ -261,6 +263,6 @@ void UEveryThingGameInstance::UpdateArchivesList()
 		OwnerETSAL->ArchivesList = CurrentArchivesList;
 		bool bSuccess = UGameplayStatics::SaveGameToSlot(OwnerETSAL, TEXT("EveryThingArchivesList"), 0);
 		
-		check(bSuccess);
+		checkf(bSuccess, TEXT("-_- Save ArchiveList must be success"));
 	}
 }

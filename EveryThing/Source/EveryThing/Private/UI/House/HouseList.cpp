@@ -45,8 +45,9 @@ void UHouseList::UpdateHouseList(TArray<FOnlineSessionSearchResult>& SearchResul
 void UHouseList::BackUp()
 {
 	AEveryThingHUD_Menu* OwnerMenuHUD = GetOwningPlayer() ? Cast<AEveryThingHUD_Menu>(GetOwningPlayer()->GetHUD()) : nullptr;
+	// current state may is LoadingScreen or HouseList, only do when state is HouseList
 	if (OwnerMenuHUD && OwnerMenuHUD->IsTargetGameUIState(EMenuUIState::HouseList))
 	{
-		OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::HouseMenu);		
+		OwnerMenuHUD->ToggleToNewGameUIState(EMenuUIState::HouseMenu);	
 	}
 }

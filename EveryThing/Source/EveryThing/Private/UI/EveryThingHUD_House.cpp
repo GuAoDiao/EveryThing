@@ -9,6 +9,7 @@ void AEveryThingHUD_House::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// try create HouseLayout widget and change input mode
 	APlayerController* OwnerPC = GetOwningPlayerController();
 	TSubclassOf<UUserWidget> HouseLayoutClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("HouseLayout");
 	if (OwnerPC && HouseLayoutClass)
@@ -26,15 +27,4 @@ void AEveryThingHUD_House::BeginPlay()
 			OwnerPC->SetInputMode(InputMode);
 		}
 	}
-}
-
-void AEveryThingHUD_House::BeginDestroy()
-{
-	if (HouseLayout && HouseLayout->IsInViewport())
-	{
-		HouseLayout->RemoveFromViewport();
-		HouseLayout = nullptr;
-	}
-
-	Super::BeginDestroy();
 }

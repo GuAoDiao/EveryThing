@@ -14,6 +14,7 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 	SetFlags(RF_Standalone);
 	AssetManager = this;
 
+	// load all DataTable
 	UDataTable* AllDataTable = LoadObject<UDataTable>(nullptr, TEXT("DataTable'/Game/EveryThing/DataTable/DT_DataTable.DT_DataTable'"));
 	if (AllDataTable)
 	{
@@ -25,15 +26,12 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 		}
 	}
 
-	LoadMeshFromDatatable();
-
-	LoadMaterialFromDatatable();
-
-	LoadParticleFromDatatable();
-
-	LoadUserWidgetFromDataTable();
-
-	LoadAllMapInfoFromDataTable();
+	// load all info
+	LoadMeshFromDT();
+	LoadMaterialFromDT();
+	LoadParticleFromDT();
+	LoadAllUserWidgetFromDT();
+	LoadAllMapInfoFromDT();
 }
 
 void UEveryThingAssetManager::BeginDestroy()
@@ -63,7 +61,7 @@ void UEveryThingAssetManager::DestroyAssetManagerInstance()
 
 //////////////////////////////////////////////////////////////////////////
 /// Mesh
-void UEveryThingAssetManager::LoadMeshFromDatatable()
+void UEveryThingAssetManager::LoadMeshFromDT()
 {
 	UDataTable* StaticMeshDatatable = GetDataTableFromName(TEXT("StaticMesh"));
 	if (StaticMeshDatatable)
@@ -101,7 +99,7 @@ UStaticMesh* UEveryThingAssetManager::GetMeshFromName(const FName& MeshName, boo
 //////////////////////////////////////////////////////////////////////////
 /// Material instance
 
-void UEveryThingAssetManager::LoadMaterialFromDatatable()
+void UEveryThingAssetManager::LoadMaterialFromDT()
 {
 	UDataTable* MaterialInstaneDatatable = GetDataTableFromName(TEXT("MaterialInstance"));
 	if (MaterialInstaneDatatable)
@@ -140,7 +138,7 @@ UMaterialInstanceConstant* UEveryThingAssetManager::GetMaterialFromName(const FN
 //////////////////////////////////////////////////////////////////////////
 /// Particle
 
-void UEveryThingAssetManager::LoadParticleFromDatatable()
+void UEveryThingAssetManager::LoadParticleFromDT()
 {
 	UDataTable* ParticleSystemDatatable = GetDataTableFromName(TEXT("ParticleSystem"));
 	if (ParticleSystemDatatable)
@@ -179,7 +177,7 @@ UParticleSystem* UEveryThingAssetManager::GetParticleFromName(const FName& Parti
 //////////////////////////////////////////////////////////////////////////
 /// User Widget
 
-void UEveryThingAssetManager::LoadUserWidgetFromDataTable()
+void UEveryThingAssetManager::LoadAllUserWidgetFromDT()
 {
 	UDataTable* UserWidgetDatatable = GetDataTableFromName(TEXT("UserWidget"));
 	if (UserWidgetDatatable)
@@ -218,7 +216,7 @@ UDataTable* UEveryThingAssetManager::GetDataTableFromName(const FName& DataTable
 //////////////////////////////////////////////////////////////////////////
 /// Map Info
 
-void UEveryThingAssetManager::LoadAllMapInfoFromDataTable()
+void UEveryThingAssetManager::LoadAllMapInfoFromDT()
 {
 	UDataTable* MapsInfoDataTable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName("MapsInfo");
 	if (MapsInfoDataTable)
