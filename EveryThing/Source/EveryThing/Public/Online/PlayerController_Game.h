@@ -25,7 +25,6 @@ class EVERYTHING_API APlayerController_Game : public APlayerController, public I
 public:
 	APlayerController_Game();
 	
-
 	virtual void BeginPlay() override;	
 	virtual void SetPawn(APawn* InPawn) override;
 protected:
@@ -33,6 +32,16 @@ protected:
 
 	void RemoveActionAndAxisBindings(const TArray<FName>& BindingsName);
 	void ResetAxisAndActionMapping();
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Game flow path
+public:
+	UFUNCTION(Client, Reliable)
+	void ClientWaitForHousePlayerLoad();
+	UFUNCTION(Client, Reliable)
+	void ClientReadyToStart();
+	UFUNCTION(Client, Reliable)
+	void ClientStartPlayer();
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Player State

@@ -20,6 +20,21 @@ class EVERYTHING_API AEveryThingGameMode_Game : public AGameModeBase
 public:
 	AEveryThingGameMode_Game();
 
+	//////////////////////////////////////////////////////////////////////////
+	/// Game Flow Path
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+	virtual void InitGameState() override;
+	virtual void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC);
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void RestartPlayer(AController* NewPlayer) override;
+	virtual void Logout(AController* Exiting) override;
+
+	virtual void HandlePlayerLogin(APlayerController* NewPlayer);
+	virtual void HandleETGameReay();
+	virtual void HandleETGameStart();
+	virtual bool HandleETGameIsOver();
+	virtual void HandleETGameOver();
+
 	
 	//////////////////////////////////////////////////////////////////////////
 	/// Damage

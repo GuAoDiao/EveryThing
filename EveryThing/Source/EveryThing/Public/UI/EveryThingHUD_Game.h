@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 
+#include "Online/EveryThingGameState_Game.h"
 #include "ChatWindow/ChatWindowHUDInterface.h"
 
 #include "EveryThingHUD_Game.generated.h"
@@ -20,7 +21,17 @@ class EVERYTHING_API AEveryThingHUD_Game : public AHUD, public IChatWindowHUDInt
 	GENERATED_BODY()
 	
 public:
+	AEveryThingHUD_Game();
+
 	virtual void BeginPlay() override;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Game UI State
+
+	EETGameState GetGameUIState() const { return CurrentGameUIState; }
+	void ToggleToTargetGameUIState(EETGameState InGameUIState);
+protected:
+	EETGameState CurrentGameUIState;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window HUD Interface

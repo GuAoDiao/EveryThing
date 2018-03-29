@@ -9,19 +9,44 @@
 #include "ChatWindow/UI/ChatWindow.h"
 #include "ChatWIndow/UI/ChatLine.h"
 
+#include "Online/EveryThingGameState_Game.h"
+
+AEveryThingHUD_Game::AEveryThingHUD_Game()
+{
+	CurrentGameUIState = EETGameState::WaitForHousePlayerLoad;
+}
 
 void AEveryThingHUD_Game::BeginPlay()
 {
-	TSubclassOf<UUserWidget> GameLayoutClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("GameLayout"));
-	if (GameLayoutClass)
+	UWorld* World = GetWorld();
+	if (World)
 	{
-		GameLayout = CreateWidget<UGameLayout>(GetOwningPlayerController(), GameLayoutClass);
+		UGameViewportClient* OwnerGameViewport =  World->GetGameViewport();
+		if (OwnerGameViewport)
+		{
+			OwnerGameViewport->RemoveAllViewportWidgets();
+		}
+
+		AEveryThingGameState_Game* OwnerETGS_G = World->GetGameState<AEveryThingGameState_Game>();
+		if (OwnerETGS_G)
+		{
+			CurrentGameUIState = OwnerETGS_G->GetETGameState();
+		}
+
+	}
+
+	APlayerController* OwnerPC = GetOwningPlayerController();
+	TSubclassOf<UUserWidget> GameLayoutClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("GameLayout"));
+	if (OwnerPC && GameLayoutClass)
+	{
+		GameLayout = CreateWidget<UGameLayout>(OwnerPC, GameLayoutClass);
 		
 		if (GameLayout)
 		{
 			GameLayout->InitializeGameLayout();
 			ChatWindow = GameLayout->ChatWindow;
 			InitializeChatWindow();
+			GameLayout->UpdateGameUIDisplay(CurrentGameUIState);
 
 			GameLayout->AddToViewport();
 		}
@@ -29,7 +54,11 @@ void AEveryThingHUD_Game::BeginPlay()
 }
 
 
-
+void AEveryThingHUD_Game::ToggleToTargetGameUIState(EETGameState InGameUIState)
+{
+	CurrentGameUIState = InGameUIState;
+	if (GameLayout) { GameLayout->UpdateGameUIDisplay(CurrentGameUIState); }
+}
 
 void AEveryThingHUD_Game::DisplayGameMenu()
 {

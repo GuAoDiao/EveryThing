@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+
+#include "Online/EveryThingGameState_Game.h"
+
 #include "GameLayout.generated.h"
 
 /**
@@ -29,6 +32,8 @@ public:
 	void DisplaySelectFormsBox();
 	void RemoveSelectFormsBox();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateGameUIDisplay(EETGameState GameUIState);
 public:
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class USelectRolesBox* SelectRolesBox;
@@ -42,4 +47,6 @@ public:
 	class UChatWindow* ChatWindow;
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class UUserInfoBox* UserInfoBox;
+	UPROPERTY(BlueprintReadWrite, Transient)
+	class UReadyCountDown* ReadyCountDown;
 };

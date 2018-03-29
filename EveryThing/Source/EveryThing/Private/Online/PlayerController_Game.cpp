@@ -27,14 +27,13 @@
 APlayerController_Game::APlayerController_Game()
 {
 	ChatComponent = CreateDefaultSubobject<UChatComponent>(TEXT("ChatComponent"));
+
+	CurrentRoleName = NAME_None;
 }
 
 void APlayerController_Game::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UClass* CurrentPawnClass = GetPawn() ? GetPawn()->GetClass() : nullptr;
-	CurrentRoleName = CurrentPawnClass ? UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleNameFromClass(CurrentPawnClass) : NAME_None;
 
 	const TMap<FName, FRoleInfo>& AllRolesInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetAllRolesInfo();
 	for (TMap<FName, FRoleInfo>::TConstIterator It(AllRolesInfo); It; ++It)
@@ -82,7 +81,14 @@ void APlayerController_Game::SetPawn(APawn* InPawn)
 	OwnerGamePawn = Cast<AGamePawn>(InPawn);
 	IPlayerPawnInterface* OwnerPlayerPawn = Cast<IPlayerPawnInterface>(InPawn);
 	OwnerPlayerPawnComp = OwnerPlayerPawn ? OwnerPlayerPawn->GetPlayerPawnComponent() : nullptr;
-	
+
+	if (CurrentRoleName.IsNone() && OwnerGamePawn)
+	{
+		UClass* CurrentPawnClass = OwnerGamePawn->GetClass();
+		CurrentRoleName = CurrentPawnClass ? UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleNameFromClass(CurrentPawnClass) : NAME_None;
+		OnCurrentRoleNameUpdate();
+	}
+
 	RebindInput();
 }
 
@@ -160,6 +166,29 @@ void APlayerController_Game::RemoveActionAndAxisBindings(const TArray<FName>& Bi
 			--i; --l;
 		}
 	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Game flow path
+
+
+void APlayerController_Game::ClientWaitForHousePlayerLoad_Implementation()
+{
+	AEveryThingHUD_Game* OwnerETHUD_G = Cast<AEveryThingHUD_Game>(GetHUD());
+	if (OwnerETHUD_G) { OwnerETHUD_G->ToggleToTargetGameUIState(EETGameState::WaitForHousePlayerLoad); }
+}
+
+void APlayerController_Game::ClientReadyToStart_Implementation()
+{
+	AEveryThingHUD_Game* OwnerETHUD_G = Cast<AEveryThingHUD_Game>(GetHUD());
+	if (OwnerETHUD_G) { OwnerETHUD_G->ToggleToTargetGameUIState(EETGameState::ReadyToStart); }
+}
+
+void APlayerController_Game::ClientStartPlayer_Implementation()
+{
+	AEveryThingHUD_Game* OwnerETHUD_G = Cast<AEveryThingHUD_Game>(GetHUD());
+	if (OwnerETHUD_G) { OwnerETHUD_G->ToggleToTargetGameUIState(EETGameState::Gameing); }
 }
 
 //////////////////////////////////////////////////////////////////////////
