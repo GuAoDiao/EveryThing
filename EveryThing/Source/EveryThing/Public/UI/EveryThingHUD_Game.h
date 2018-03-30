@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 
-#include "Online/EveryThingGameState_Game.h"
+#include "EveryThingTypes.h"
 #include "ChatWindow/ChatWindowHUDInterface.h"
 
 #include "EveryThingHUD_Game.generated.h"

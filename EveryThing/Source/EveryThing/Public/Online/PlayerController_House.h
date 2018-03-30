@@ -26,5 +26,4 @@ public:
 	virtual void OnRep_PlayerState() override;
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateUpdateDelegate, APlayerState* /* PlayerState */)
 	FOnPlayerStateUpdateDelegate OnPlayerStateUpdateDelegate;
-
 };

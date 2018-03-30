@@ -99,11 +99,11 @@ void UPlayerPawnComponent::OnPlayerStateUpdate(APlayerState* PlayerState)
 	AEveryThingPlayerState_Game* OwnerETPS_G = Cast<AEveryThingPlayerState_Game>(PlayerState);
 	if (OwnerETPS_G)
 	{
-		OnUpdatePlayerInfo(OwnerETPS_G->GetPlayerInfo());
-		OwnerETPS_G->OnUpdatePlayerInfoDelegate.AddUObject(this, &UPlayerPawnComponent::OnUpdatePlayerInfo);
+		OnPlayerInfoUpdate(OwnerETPS_G->GetPlayerInfo());
+		OwnerETPS_G->OnPlayerInfoUpdateDelegate.AddUObject(this, &UPlayerPawnComponent::OnPlayerInfoUpdate);
 	}
 }
-void UPlayerPawnComponent::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
+void UPlayerPawnComponent::OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo)
 {
 	if (OwnerPawn)
 	{

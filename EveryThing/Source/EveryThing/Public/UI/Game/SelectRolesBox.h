@@ -26,6 +26,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void AddSelectItem(class USelectItem* SelectItem);
 
-	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);
+	void OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo);
 	void OnPlayerStateUpdate(APlayerState* PlayerState);
 };

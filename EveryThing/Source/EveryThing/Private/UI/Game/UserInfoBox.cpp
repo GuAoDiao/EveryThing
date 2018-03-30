@@ -26,8 +26,10 @@ void UUserInfoBox::OnPlayerStateUpdate(class APlayerState* PlayerState)
 	AEveryThingPlayerState_Game* OwnerETPS_G = Cast<AEveryThingPlayerState_Game>(PlayerState);
 	if (OwnerETPS_G)
 	{
-		OnUpdatePlayerInfo(OwnerETPS_G->GetPlayerInfo());
-		OwnerETPS_G->OnUpdatePlayerInfoDelegate.AddUObject(this, &UUserInfoBox::OnUpdatePlayerInfo);
+		OnPlayerInfoUpdate(OwnerETPS_G->GetPlayerInfo());
+		OnPlayerTeamUpdate(OwnerETPS_G->GetTeamID());
+		OwnerETPS_G->OnTeamIDUpdateDelegate.AddUObject(this, &UUserInfoBox::OnPlayerTeamUpdate);
+		OwnerETPS_G->OnPlayerInfoUpdateDelegate.AddUObject(this, &UUserInfoBox::OnPlayerInfoUpdate);
 	}
 }
 
@@ -51,5 +53,17 @@ void UUserInfoBox::OnRoleNameUpdate(const FName& RoleName)
 		OwnerGamePawn->OnMaxStaminaUpdateDelegate.AddUObject(this, &UUserInfoBox::OnMaxStaminaUpdate);
 		OwnerGamePawn->OnDurabilityUpdateDelegate.AddUObject(this, &UUserInfoBox::OnDurabilityUpdate);
 		OwnerGamePawn->OnStaminaUpdateDelegate.AddUObject(this, &UUserInfoBox::OnStaminaUpdate);
+	}
+}
+
+void UUserInfoBox::OnPlayerTeamUpdate(int32 TeamID)
+{
+	if (TeamID > 0)
+	{
+		UpdateTeamDisplay(true, TeamID);
+	}
+	else
+	{
+		UpdateTeamDisplay(false, -1);
 	}
 }

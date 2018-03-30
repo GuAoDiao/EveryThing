@@ -21,9 +21,13 @@ void UHouseLayout::NativeConstruct()
 		}
 
 		OwnerETGS_H->OnAddPlayerDelegate.AddUObject(this, &UHouseLayout::OnAddPlayer);
+		OwnerETGS_H->OnRemovePlayerDelegate.AddUObject(this, &UHouseLayout::OnRemovePlayer);
 		OwnerETGS_H->OnHouseSettingUpdateDelegate.AddUObject(this, &UHouseLayout::OnUpdateHouseSetting);
+		OwnerETGS_H->OnAllowedTeamNumChangeDelegate.AddUObject(this, &UHouseLayout::OnAllowedTeamNumUpdate);
 
+		// TODO : this is only implementation with the simple methods but may be a bug
 		OwnerETGS_H->OnHouseSettingUpdate();
+		OnAllowedTeamNumUpdate(OwnerETGS_H->GetAllowedTeamNum());
 	}
 
 	APlayerController_House* OwnerPC_H = Cast<APlayerController_House>(GetOwningPlayer());
@@ -41,7 +45,9 @@ void UHouseLayout::OnPlayerStateUpdate(class APlayerState* PlayerState)
 	{
 		UpdateIsHouseOwner(OwnerETPS_H->CheckIsHouseOwner());
 		UpdateReadyState(OwnerETPS_H->GetIsReady());
+		UpdateCurrentTeamID(OwnerETPS_H->GetTeamID());
 		OwnerETPS_H->OnbIsReadyUpdateDelegate.AddUObject(this, &UHouseLayout::UpdateReadyState);
+		OwnerETPS_H->OnTeamIDUpdateDelegate.AddUObject(this, &UHouseLayout::UpdateCurrentTeamID);
 	}
 }
 
@@ -82,7 +88,48 @@ void UHouseLayout::ToggleReadState()
 	if (OwnerETPS_H)
 	{
 		OwnerETPS_H->TooggleReadState();
-		UpdateReadyState(OwnerETPS_H->GetIsReady());
+	}
+}
+
+
+
+void UHouseLayout::OnAllowedTeamNumUpdate(int32 AllowedTeamNum)
+{
+	UpdateAllowedTeamNum(AllowedTeamNum);
+
+	bool bHasTeam = AllowedTeamNum >= 2;
+
+	for (TMap<APlayerState*, UHousePlayerItem*>::TIterator It(AllPlayerItemList); It; ++It)
+	{
+		if (It.Value())
+		{
+			It.Value()->SetTeamDisplayable(bHasTeam);
+		}
+	}
+
+	if (bHasTeam)
+	{
+		APlayerController* OwnerPC = GetOwningPlayer();
+		AEveryThingPlayerState_House* OwnerETPS_H = OwnerPC ? Cast<AEveryThingPlayerState_House>(OwnerPC->PlayerState) : nullptr;
+		if (OwnerETPS_H)
+		{
+			// may current TeamId not update in time. so do check
+			int32 CurrentTeamID = OwnerETPS_H->GetTeamID();
+			if (CurrentTeamID > 0 && CurrentTeamID <= AllowedTeamNum)
+			{
+				UpdateCurrentTeamID(CurrentTeamID);
+			}
+		}
+	}
+}
+
+void UHouseLayout::ChangeTeamID(int32 ID)
+{
+	APlayerController* OwnerPC = GetOwningPlayer();
+	AEveryThingPlayerState_House* OwnerETPS_H = OwnerPC ? Cast<AEveryThingPlayerState_House>(OwnerPC->PlayerState) : nullptr;
+	if (OwnerETPS_H)
+	{
+		OwnerETPS_H->ChangeTeamID(ID);
 	}
 }
 
@@ -91,6 +138,8 @@ void UHouseLayout::StartGame()
 	APlayerController_House* OwnerPC_H = Cast<APlayerController_House>(GetOwningPlayer());
 	if (OwnerPC_H) { OwnerPC_H->StartGameWhenIsHouseOwner(); }
 }
+
+
 
 
 TArray<FString> UHouseLayout::GetAllMaps(const FString& MapType) const

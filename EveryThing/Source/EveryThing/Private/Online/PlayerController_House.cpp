@@ -14,7 +14,6 @@
 void APlayerController_House::StartGameWhenIsHouseOwner()
 {
 	AEveryThingPlayerState_House* OwnerETPS_H = Cast<AEveryThingPlayerState_House>(PlayerState);
-	
 	if (!OwnerETPS_H->CheckIsHouseOwner()) { return; }
 	
 	if (!HasAuthority())
@@ -27,7 +26,7 @@ void APlayerController_House::StartGameWhenIsHouseOwner()
 	if (World)
 	{
 		AEveryThingGameState_House* OwnerETGS_H = World->GetGameState<AEveryThingGameState_House>();
-		if (OwnerETGS_H && OwnerETGS_H->CheckIsAllPlayerAreReady())
+		if (OwnerETGS_H && OwnerETGS_H->CheckIsAllPlayerAreReady() && OwnerETGS_H->CheckHaveEnoughTeams())
 		{
 			AEveryThingGameMode_House* OwnerETGM_H = World->GetAuthGameMode<AEveryThingGameMode_House>();
 			if (OwnerETGM_H) { OwnerETGM_H->OpenGameFromHouseOwner(); }

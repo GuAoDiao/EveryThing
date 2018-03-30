@@ -29,10 +29,13 @@ public:
 	void UpdateDurability(float Durability, float MaxDurability);
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateStamina(float Stamina, float MaxStamina);
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateTeamDisplay(bool bDisplay, int32 TeamID);
 
 	void OnRoleNameUpdate(const FName& RoleName);
-	void OnUpdatePlayerInfo(const FPlayerInfo& PlayerInfo) { UpdatePlayerInfo(PlayerInfo); }
+	void OnPlayerInfoUpdate(const FPlayerInfo& PlayerInfo) { UpdatePlayerInfo(PlayerInfo); }
 	void OnPlayerStateUpdate(class APlayerState* PlayerState);
+	void OnPlayerTeamUpdate(int32 TeamID);
 
 	void OnDurabilityUpdate(float InDurability) { Durability = InDurability; UpdateDurability(Durability, MaxDurability); }
 	void OnStaminaUpdate(float InStamina) { Stamina = InStamina; UpdateStamina(Stamina, MaxStamina); }

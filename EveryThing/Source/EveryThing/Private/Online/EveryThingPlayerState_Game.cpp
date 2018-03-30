@@ -27,20 +27,14 @@ void AEveryThingPlayerState_Game::BeginPlay()
 
 void AEveryThingPlayerState_Game::SetPlayerInfo(const FPlayerInfo& InPlayerInfo)
 {
-	if (HasAuthority())
-	{ 
-		CurrentPlayerInfo = InPlayerInfo;
-		OnPlayerInfoUpdate();
-	}
+	CurrentPlayerInfo = InPlayerInfo;
+	OnPlayerInfoUpdate();
 }
 
-void AEveryThingPlayerState_Game::SetTeamID(int32 InTeamID)
+void AEveryThingPlayerState_Game::ChangeTeamID(int32 InTeamID)
 {
-	if (HasAuthority())
-	{
-		TeamID = InTeamID;
-		OnTeamIDUpdate();
-	}
+	TeamID = InTeamID;
+	OnTeamIDUpdate();
 }
 
 bool AEveryThingPlayerState_Game::ServerSetPlayerInfo_Validate(const FPlayerInfo& InPlayerInfo) { return true; }

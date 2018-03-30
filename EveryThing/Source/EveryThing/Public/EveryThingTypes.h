@@ -93,6 +93,8 @@ public:
 	FString Type;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 AllowedTeamNum;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 NeededTeamNum;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -239,4 +241,16 @@ public:
 	class UStaticMesh* DisplayStaticMesh;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	class USkeletalMesh* DisplaySkeletalMesh;
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+/// EveryThing Game State
+UENUM(BlueprintType)
+enum class EETGameState : uint8
+{
+	WaitForHousePlayerLoad,
+	ReadyToStart,
+	Gameing,
+	GameOver,
 };

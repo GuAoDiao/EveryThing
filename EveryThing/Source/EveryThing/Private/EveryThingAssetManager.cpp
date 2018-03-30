@@ -267,6 +267,15 @@ const FMapInfo* UEveryThingAssetManager::GetMapInfoFromName(const FName& MapName
 	return nullptr;
 }
 
+const FMapTypeInfo* UEveryThingAssetManager::GetMapTypeInfoFromName(const FName& MapName)
+{
+	if (AllMapTypesInfo.Contains(MapName))
+	{
+		return &AllMapTypesInfo[MapName];
+	}
+	return nullptr;
+}
+
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn
 UGamePawnManager* UEveryThingAssetManager::GetGamePawnManager()

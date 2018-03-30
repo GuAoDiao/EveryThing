@@ -43,12 +43,12 @@ void USelectRolesBox::OnPlayerStateUpdate(APlayerState* PlayerState)
 	AEveryThingPlayerState_Game* OwnerPlaterState = Cast<AEveryThingPlayerState_Game>(PlayerState);
 	if (OwnerPlaterState)
 	{
-		OnUpdatePlayerInfo(OwnerPlaterState->GetPlayerInfo());
-		OwnerPlaterState->OnUpdatePlayerInfoDelegate.AddUObject(this, &USelectRolesBox::OnUpdatePlayerInfo);
+		OnPlayerInfoUpdate(OwnerPlaterState->GetPlayerInfo());
+		OwnerPlaterState->OnPlayerInfoUpdateDelegate.AddUObject(this, &USelectRolesBox::OnPlayerInfoUpdate);
 	}
 }
 
-void USelectRolesBox::OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo)
+void USelectRolesBox::OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo)
 {
 	UpdateSelectRolesBoxDisplay(InPlayerInfo.AllHaveRoleNames);
 }

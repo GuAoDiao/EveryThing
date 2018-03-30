@@ -32,12 +32,24 @@ public:
 	TMap<APlayerState*, UHousePlayerItem*> AllPlayerItemList;
 
 	//////////////////////////////////////////////////////////////////////////
-	/// Player Info
+	/// Player Info And State
+public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateIsHouseOwner(bool bIsHouserOwner);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateReadyState(bool bIsReady);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateAllowedTeamNum(int32 AllowedTeamNum);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateCurrentTeamID(int32 TeamID);
+
+	void OnAllowedTeamNumUpdate(int32 AllowedTeamNum);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeTeamID(int32 ID);
 
 	UFUNCTION(BlueprintCallable)
 	void ToggleReadState();
@@ -45,9 +57,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartGame();
 	
+protected:
 	void OnPlayerStateUpdate(class APlayerState* PlayerState);
 
-
+	//////////////////////////////////////////////////////////////////////////
+	/// House Setting
+public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FString> GetAllMaps(const FString& MapType) const;
 

@@ -5,21 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 
+#include "EveryThingTypes.h"
 #include "ChatWIndow/ChatWindowGameStateInterface.h"
 
 #include "EveryThingGameState_Game.generated.h"
 
 
 class AEveryThingPlayerState_Game;
-
-UENUM(BlueprintType)
-enum class EETGameState : uint8
-{
-	WaitForHousePlayerLoad,
-	ReadyToStart,
-	Gameing,
-	GameOver,
-};
 
 /**
  * 

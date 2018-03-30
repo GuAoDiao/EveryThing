@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
+
+#include "EveryThingTypes.h"
+
 #include "EveryThingGameState_House.generated.h"
 
 class AEveryThingPlayerState_House;
@@ -20,6 +23,9 @@ class EVERYTHING_API AEveryThingGameState_House : public AGameStateBase
 public:
 	virtual void BeginPlay() override;
 
+	//////////////////////////////////////////////////////////////////////////
+	/// House Player Info
+public:
 	virtual void AddPlayerState(APlayerState* PlayerState) override;
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
 
@@ -29,29 +35,52 @@ public:
 	FOnRemovePlayerDelegate OnRemovePlayerDelegate;
 
 	bool CheckPlayerIsHouseOwner(AEveryThingPlayerState_House* InPlayer) const { return InPlayer == HouseOwner; }
+	void SetPlayerHouseOwner(AEveryThingPlayerState_House* InPlayer) { HouseOwner = InPlayer; }
+
 	bool CheckIsAllPlayerAreReady();
+	bool CheckHaveEnoughTeams();
 
-	void SetPlayerHouseOwner(AEveryThingPlayerState_House* InPlayer) { if (HasAuthority()) { HouseOwner = InPlayer; } }
-	
-
+	//////////////////////////////////////////////////////////////////////////
+	/// House Setting
+public:
 	DECLARE_MULTICAST_DELEGATE_FiveParams(FOnHouseSettingUpdateDelegate, const FString& /*HouseName*/, const FString& /*GameType*/, const FString& /*MapName*/, bool /*bIsLAN*/, int32 /*MaxPlayersNum*/);
 	FOnHouseSettingUpdateDelegate OnHouseSettingUpdateDelegate;
 	UFUNCTION()
-	void OnHouseSettingUpdate() { OnHouseSettingUpdateDelegate.Broadcast(HouseName, GameType, MapName, bIsLANMatch, MaxPlayerNum); }
+	void OnRep_HouseSettingUpdate() { OnHouseSettingUpdate(); }
+	void OnHouseSettingUpdate();
 
-	UPROPERTY(Transient, ReplicatedUsing = OnHouseSettingUpdate)
+	void OnGameTypeChanged();
+
+
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_HouseSettingUpdate)
 	FString GameType;
-	UPROPERTY(Transient, ReplicatedUsing = OnHouseSettingUpdate)
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_HouseSettingUpdate)
 	FString MapName;
-	UPROPERTY(Transient, ReplicatedUsing = OnHouseSettingUpdate)
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_HouseSettingUpdate)
 	FString HouseName;
-	UPROPERTY(Transient, ReplicatedUsing = OnHouseSettingUpdate)
-	bool bIsLANMatch;
-	UPROPERTY(Transient, ReplicatedUsing = OnHouseSettingUpdate)
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_HouseSettingUpdate)
+	bool bIsLANMatch;	
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_HouseSettingUpdate)
 	int32 MaxPlayerNum;
 
-	UPROPERTY(Transient, Replicated)
-	FString CurrentHouseName;
+	//////////////////////////////////////////////////////////////////////////
+	/// Team
+public:
+	int32 GetAllowedTeamNum() const { return AllowedTeamNum; }
+	bool CheckTeamIDIsAllowed(int32 TeamID) const { return TeamID > 0 && TeamID <= AllowedTeamNum; }
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAllowedTeamNumChangeDelegate, int32 /* MaxTeam */);
+	FOnAllowedTeamNumChangeDelegate OnAllowedTeamNumChangeDelegate;
+	UFUNCTION()
+	void OnRep_AllowedTeamNum() { OnAllowedTeamNumChanged(); }
+	void OnAllowedTeamNumChanged() { OnAllowedTeamNumChangeDelegate.Broadcast(AllowedTeamNum); };
+	
+	int32 GetRandomTeamID() const;
+
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_AllowedTeamNum)
+	int32 AllowedTeamNum;
+
+	const FMapTypeInfo* MapTypeInfo;
 
 	UPROPERTY(Transient, Replicated)
 	AEveryThingPlayerState_House* HouseOwner;

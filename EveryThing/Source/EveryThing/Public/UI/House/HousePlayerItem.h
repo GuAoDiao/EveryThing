@@ -19,7 +19,8 @@ class EVERYTHING_API UHousePlayerItem : public UUserWidget
 	
 public:
 	void InitializeHousePlayerItem(class AEveryThingPlayerState_House* PlayerState);
-	
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetTeamDisplayable(bool bDisplayable);
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPlayerInfoUpdate(const FPlayerInfo& PlayerInfo);
 	UFUNCTION(BlueprintImplementableEvent)

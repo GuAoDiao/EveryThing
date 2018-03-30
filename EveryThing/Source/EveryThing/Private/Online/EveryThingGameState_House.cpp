@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "UnrealNetwork.h"
 
+#include "EveryThingAssetManager.h"
 #include "Online/EveryThingPlayerState_House.h"
 
 void AEveryThingGameState_House::BeginPlay()
@@ -45,9 +46,88 @@ bool AEveryThingGameState_House::CheckIsAllPlayerAreReady()
 	return true;
 }
 
+bool AEveryThingGameState_House::CheckHaveEnoughTeams()
+{
+	if (MapTypeInfo)
+	{
+		if (MapTypeInfo->NeededTeamNum == 0) { return true; }
 
+		TArray<int32> AllTeamPlayerNums;
+		int32 NeeedTemNum  = MapTypeInfo->NeededTeamNum;
 
+		for (APlayerState* PlayerState : PlayerArray)
+		{
+			AEveryThingPlayerState_House* OwnerETPS_H = Cast<AEveryThingPlayerState_House>(PlayerState);
+			if (OwnerETPS_H)
+			{
+				int32 TeamID = OwnerETPS_H->GetTeamID();
+				if (CheckTeamIDIsAllowed(TeamID) && !AllTeamPlayerNums.Contains(TeamID))
+				{
+					
+					AllTeamPlayerNums.Add(TeamID);
+					--NeeedTemNum;
+					if (NeeedTemNum <= 0) { return true; }
+				}
+			}
+		}
+	}
 
+	return false;
+}
+
+void AEveryThingGameState_House::OnHouseSettingUpdate()
+{
+	OnHouseSettingUpdateDelegate.Broadcast(HouseName, GameType, MapName, bIsLANMatch, MaxPlayerNum);
+
+	if (HasAuthority()) { OnGameTypeChanged(); }
+}
+
+void AEveryThingGameState_House::OnGameTypeChanged()
+{
+	MapTypeInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetMapTypeInfoFromName(FName(*GameType));
+	
+	checkf(MapTypeInfo, TEXT("-_- the map type info must be exists."));
+
+	AllowedTeamNum = MapTypeInfo->AllowedTeamNum;
+
+	OnAllowedTeamNumChanged();
+}
+
+int32 AEveryThingGameState_House::GetRandomTeamID() const
+{
+	TArray<int32> AllTeamPlayerNums;
+	for (int32 i = 0; i < AllowedTeamNum; ++i)
+	{
+		AllTeamPlayerNums.Add(0);
+	}
+
+	for (const APlayerState* PlayerState : PlayerArray)
+	{
+		const AEveryThingPlayerState_House* ETPS_H = Cast<AEveryThingPlayerState_House>(PlayerState);
+		if (ETPS_H)
+		{
+			int32 TeamID = ETPS_H->GetTeamID();
+			if (TeamID > 0 && TeamID <= AllowedTeamNum)
+			{
+				++AllTeamPlayerNums[TeamID - 1];
+			}
+		}
+	}
+
+	int32 PlayerNumMinTeam = 0;
+
+	int32 MinPlayerNum = INT_MAX;
+	for (int32 i = 0; i < AllTeamPlayerNums.Num(); ++i)
+	{
+		if (AllTeamPlayerNums[i] < MinPlayerNum)
+		{
+			PlayerNumMinTeam = i;
+			MinPlayerNum = AllTeamPlayerNums[i];
+		}
+	}
+
+	return PlayerNumMinTeam + 1;
+}
 
 
 void AEveryThingGameState_House::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
@@ -59,5 +139,6 @@ void AEveryThingGameState_House::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 	DOREPLIFETIME(AEveryThingGameState_House, HouseName);
 	DOREPLIFETIME(AEveryThingGameState_House, bIsLANMatch);
 	DOREPLIFETIME(AEveryThingGameState_House, MaxPlayerNum);
-	DOREPLIFETIME(AEveryThingGameState_House, CurrentHouseName);
+
+	DOREPLIFETIME(AEveryThingGameState_House, AllowedTeamNum);
 }

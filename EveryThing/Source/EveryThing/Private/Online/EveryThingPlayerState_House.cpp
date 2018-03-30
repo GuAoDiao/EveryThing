@@ -22,6 +22,16 @@ void AEveryThingPlayerState_House::BeginPlay()
 	// update player info from GameInstance.
 	UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetWorld()->GetGameInstance()) : nullptr;
 	if (OwnerETGI) { SetPlayerInfo(OwnerETGI->GetPlayerInfo()); }
+
+	if (HasAuthority())
+	{
+		AEveryThingGameState_House* OwnerETGS_H = GetWorld() ? GetWorld()->GetGameState<AEveryThingGameState_House>() : nullptr;
+		if (OwnerETGS_H)
+		{
+			OnAllowedTeamNumChanged(OwnerETGS_H->GetAllowedTeamNum());
+			OwnerETGS_H->OnAllowedTeamNumChangeDelegate.AddUObject(this, &AEveryThingPlayerState_House::OnAllowedTeamNumChanged);
+		}
+	}
 }
 
 
@@ -34,7 +44,7 @@ void AEveryThingPlayerState_House::SeamlessTravelTo(class APlayerState* NewPlaye
 	if (OldETPS_G)
 	{
 		OldETPS_G->SetPlayerInfo(CurrentPlayerInfo);
-		OldETPS_G->SetTeamID(TeamID);
+		OldETPS_G->ChangeTeamID(TeamID);
 	}
 }
 
@@ -69,12 +79,35 @@ void AEveryThingPlayerState_House::ServerTooggleReadState_Implementation() { Set
 
 //////////////////////////////////////////////////////////////////////////
 /// Team ID
-void AEveryThingPlayerState_House::SetTeamID(int32 InTeamID)
+
+void AEveryThingPlayerState_House::OnAllowedTeamNumChanged(int32 AllowedTeamNum)
 {
-	if (GetOwner() && GetOwner()->Role >= ROLE_AutonomousProxy) { ServerSetTeamID(InTeamID); }
+	if (TeamID > 0 && TeamID <= AllowedTeamNum)
+	{
+
+	}
+	else
+	{
+		AEveryThingGameState_House* OwnerETGS_H = GetWorld() ? GetWorld()->GetGameState<AEveryThingGameState_House>() : nullptr;
+		int32 NewTeamID = OwnerETGS_H ? OwnerETGS_H->GetRandomTeamID() : 1;
+		ChangeTeamID(NewTeamID);
+	}
 }
-bool AEveryThingPlayerState_House::ServerSetTeamID_Validate(int32 InTeamID) { return true; }
-void AEveryThingPlayerState_House::ServerSetTeamID_Implementation(int32 InTeamID)
+
+void AEveryThingPlayerState_House::ChangeTeamID(int32 InTeamID)
+{
+
+	AEveryThingGameState_House* OwnerETGS_H = GetWorld() ? GetWorld()->GetGameState<AEveryThingGameState_House>() : nullptr;
+	if (OwnerETGS_H && InTeamID > 0 && InTeamID <= OwnerETGS_H->GetAllowedTeamNum())
+	{
+		if (GetOwner() && GetOwner()->Role >= ROLE_AutonomousProxy)
+		{
+			ServerChangeTeamID(InTeamID);
+		}
+	}
+}
+bool AEveryThingPlayerState_House::ServerChangeTeamID_Validate(int32 InTeamID) { return true; }
+void AEveryThingPlayerState_House::ServerChangeTeamID_Implementation(int32 InTeamID)
 {
 	TeamID = InTeamID;
 	OnTeamIDUpdate();

@@ -71,13 +71,14 @@ protected:
 	/// Team ID
 public:
 	int32 GetTeamID() const { return TeamID; }
-	void SetTeamID(int32 InTeamID);
+	void ChangeTeamID(int32 InTeamID);
+	void OnAllowedTeamNumChanged(int32 AllowedTeamNum);
 	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnTeamIDUpdateDelegate, int32 /* TeamID */);
 	FOnTeamIDUpdateDelegate OnTeamIDUpdateDelegate;
 protected:
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerSetTeamID(int32 InTeamID);
+	void ServerChangeTeamID(int32 InTeamID);
 	
 
 	UFUNCTION()

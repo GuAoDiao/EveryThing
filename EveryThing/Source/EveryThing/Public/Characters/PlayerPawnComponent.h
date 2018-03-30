@@ -24,7 +24,7 @@ public:
 	void OnPossessedByController(class AController* NewController);
 
 	void OnPlayerStateUpdate(class APlayerState* PlayerState);
-	void OnUpdatePlayerInfo(const FPlayerInfo& InPlayerInfo);
+	void OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo);
 	//////////////////////////////////////////////////////////////////////////
 	/// For Input Component
 	void RebindInputComp(class UInputComponent* OwnerInputComp);

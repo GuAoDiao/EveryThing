@@ -34,12 +34,12 @@ public:
 	void ServerSetPlayerInfo(const FPlayerInfo& InPlayerInfo);
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdatePlayerInfoDelegate, const FPlayerInfo&);
-	FOnUpdatePlayerInfoDelegate OnUpdatePlayerInfoDelegate;
+	FOnUpdatePlayerInfoDelegate OnPlayerInfoUpdateDelegate;
 	
 private:
 	UFUNCTION()
 	void OnRep_CurrentPlayerInfo() { OnPlayerInfoUpdate(); }
-	void OnPlayerInfoUpdate() { OnUpdatePlayerInfoDelegate.Broadcast(CurrentPlayerInfo); }
+	void OnPlayerInfoUpdate() { OnPlayerInfoUpdateDelegate.Broadcast(CurrentPlayerInfo); }
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentPlayerInfo)
 	FPlayerInfo CurrentPlayerInfo;
@@ -48,7 +48,7 @@ private:
 	/// Team
 public:
 	int32 GetTeamID() const { return TeamID; }
-	void SetTeamID(int32 InTeamID);
+	void ChangeTeamID(int32 InTeamID);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnTeamIDUpdateDelegate, int32 /* TeamID */);
 	FOnTeamIDUpdateDelegate OnTeamIDUpdateDelegate;
 
