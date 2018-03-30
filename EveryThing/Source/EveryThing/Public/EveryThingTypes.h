@@ -96,7 +96,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////
-/// Gmaw Pawn
+/// Game Pawn
 USTRUCT(BlueprintType)
 struct FGamePawnInfo : public FTableRowBase
 {
@@ -107,7 +107,7 @@ public:
 	float MaxDurability;
 	// _体力(_耐力)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float Stamina;
+	float MaxStamina;
 	// _敏捷(_速度)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float Agility;
@@ -133,7 +133,7 @@ public:
 
 	// _蓄力值(_能量值)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float MaxStamina;
+	float MaxEnergy;
 
 	// _质量(_隐藏属性)
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)

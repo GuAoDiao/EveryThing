@@ -161,55 +161,81 @@ protected:
 	/// Game Pawn info
 public:
 	void UpdateInfo();
+
+	float GetMaxHyperopiaDistance() const { return BaseInfo.MaxHyperopiaDistance; }
 protected:
 	void ResetInfoFromDataTable(const FName& GamePawnName);
 	void SetInfo(const FGamePawnInfo* InInfo);
 	UFUNCTION()
-	void OnRep_Info();
+	void OnRep_BaseInfo();
 
-	UFUNCTION()
-	void OnRep_Durability() { OnDurabilityUpdate(); }
-	void OnDurabilityUpdate() { OnUpdateDurabilityDelegate.Broadcast(Durability); }
-	UFUNCTION()
-	void OnRep_Stamina() { OnStaminaUpdate(); }
-	void OnStaminaUpdate() { OnUpdateStaminaDelegate.Broadcast(Stamina); }
+	UPROPERTY(BlueprintReadOnly, Replicated, ReplicatedUsing = OnRep_BaseInfo)
+	FGamePawnInfo BaseInfo;
 
-	UPROPERTY(BlueprintReadOnly, Replicated, ReplicatedUsing = OnRep_Info)
-	FGamePawnInfo OwnerInfo;
-	UPROPERTY(BlueprintReadOnly, Replicated)
-	float Durability;
-	UPROPERTY(BlueprintReadOnly)
-	float MaxDurability;
-	UPROPERTY(BlueprintReadOnly, Replicated)
-	float Stamina;
-	UPROPERTY(BlueprintReadOnly)
-	float StaminaRecoverRate;
-	UPROPERTY(BlueprintReadOnly)
-	float MaxStamina;
+	//////////////////////////////////////////////////////////////////////////
+	/// Durability
 public:
 	UFUNCTION(BlueprintPure)
 	float GetDurability() const { return Durability; }	
+	UFUNCTION(BlueprintPure)
+	float GetMaxDurability() const { return MaxDurability; }
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDurabilityUpdateDelegate, float /* Durability */);
+	FOnDurabilityUpdateDelegate OnDurabilityUpdateDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMaxDurabilityUpdateDelegate, float /* MaxDurability */);
+	FOnMaxDurabilityUpdateDelegate OnMaxDurabilityUpdateDelegate;
 protected:
 	void ChangeDurability(float Value);
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-		void ServerChangeDurability(float Value);
+
+	UFUNCTION()
+	void OnRep_Durability() { OnDurabilityUpdate(); }
+	void OnDurabilityUpdate() { OnDurabilityUpdateDelegate.Broadcast(Durability); }
+
+	UFUNCTION()
+	void OnRep_MaxDurability() { OnMaxDurabilityUpdate(); }
+	void OnMaxDurabilityUpdate() { OnMaxDurabilityUpdateDelegate.Broadcast(MaxDurability); }
+
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Durability)
+	float Durability;
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxDurability)
+	float MaxDurability;
+	//////////////////////////////////////////////////////////////////////////
+	/// Stamina
 public:
 	UFUNCTION(BlueprintPure)
-		float GetStamina() const { return Stamina; }
+	float GetStamina() const { return Stamina; }
+	UFUNCTION(BlueprintPure)
+	float GetMaxStamina() const { return MaxStamina; }
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnStaminaUpdateDelegate, float /* Stamina */);
+	FOnStaminaUpdateDelegate OnStaminaUpdateDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMaxStaminaUpdateDelegate, float /* MaxStamina */);
+	FOnStaminaUpdateDelegate OnMaxStaminaUpdateDelegate;
 protected:
 	void SpendStamina(float Value);
 	void ChangeStaminaTick(float DeltaTime);
 	void ChangeStaminaRecovery(float Force);
 	void ResetStaminaRecovery();
-public:
-	float GetMaxHyperopiaDistance() const { return OwnerInfo.MaxHyperopiaDistance; }
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdateDurabilityDelegate, float /* Durability */);
-	FOnUpdateDurabilityDelegate OnUpdateDurabilityDelegate;
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdateStaminaDelegate, float /* Stamina */);
-	FOnUpdateStaminaDelegate OnUpdateStaminaDelegate;
+
+	UFUNCTION()
+	void OnRep_Stamina() { OnStaminaUpdate(); }
+	void OnStaminaUpdate() { OnStaminaUpdateDelegate.Broadcast(Stamina); }
+	UFUNCTION()
+	void OnRep_MaxStamina() { OnMaxStaminaUpdate(); }
+	void OnMaxStaminaUpdate() { OnMaxStaminaUpdateDelegate.Broadcast(MaxStamina); }
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina)
+	float Stamina;
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxStamina)
+	float MaxStamina;
+	UPROPERTY(BlueprintReadOnly)
+	float StaminaRecoverRate;
+
+	
 protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Element
@@ -230,4 +256,8 @@ public:
 	void OnConsumeForce(FVector Force) {};
 	void OnConsumeTorqueInRadians(FVector Torque) {};
 	void OnConsumeImpulse(FVector Impulse) {};
+
+	bool CanConsumeForce(FVector Force) { return true; }
+	bool CanConsumeTorqueInRadians(FVector Torque) { return true; }
+	bool CanConsumeImpulse(FVector Impulse) { return true; }
 };

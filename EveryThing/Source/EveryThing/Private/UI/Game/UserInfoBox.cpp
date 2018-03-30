@@ -4,6 +4,7 @@
 
 #include "Online/EveryThingPlayerState_Game.h"
 #include "Online/PlayerController_Game.h"
+#include "Characters/GamePawn.h"
 
 void UUserInfoBox::NativeConstruct()
 {
@@ -27,5 +28,28 @@ void UUserInfoBox::OnPlayerStateUpdate(class APlayerState* PlayerState)
 	{
 		OnUpdatePlayerInfo(OwnerETPS_G->GetPlayerInfo());
 		OwnerETPS_G->OnUpdatePlayerInfoDelegate.AddUObject(this, &UUserInfoBox::OnUpdatePlayerInfo);
+	}
+}
+
+void UUserInfoBox::OnRoleNameUpdate(const FName& RoleName)
+{
+	InitializeCurrentRoleName(RoleName);
+
+	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(GetOwningPlayer());
+	AGamePawn* OwnerGamePawn = OwnerPC_G ? Cast<AGamePawn>(OwnerPC_G->GetPawn()) : nullptr;
+	if (OwnerGamePawn)
+	{
+		Durability = OwnerGamePawn->GetDurability();
+		Stamina = OwnerGamePawn->GetStamina();
+		MaxDurability = OwnerGamePawn->GetMaxDurability();
+		MaxStamina = OwnerGamePawn->GetMaxStamina();
+
+		UpdateDurability(Durability, MaxDurability);
+		UpdateStamina(Stamina, MaxStamina);
+
+		OwnerGamePawn->OnMaxDurabilityUpdateDelegate.AddUObject(this, &UUserInfoBox::OnMaxDurabilityUpdate);
+		OwnerGamePawn->OnMaxStaminaUpdateDelegate.AddUObject(this, &UUserInfoBox::OnMaxStaminaUpdate);
+		OwnerGamePawn->OnDurabilityUpdateDelegate.AddUObject(this, &UUserInfoBox::OnDurabilityUpdate);
+		OwnerGamePawn->OnStaminaUpdateDelegate.AddUObject(this, &UUserInfoBox::OnStaminaUpdate);
 	}
 }

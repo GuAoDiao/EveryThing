@@ -138,14 +138,19 @@ void AGamePawn::OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor,
 	AcceptHitFrom(OtherActor, NormalInpulse, Hit);
 }
 
-void AGamePawn::SpendStamina(float value) { if (HasAuthority()) { Stamina -= value; } }
+void AGamePawn::SpendStamina(float value)
+{
+	Stamina -= value;
+
+	if (Stamina >= MaxStamina) { Stamina = MaxStamina; }
+	if (Stamina <= 0.f) { Stamina = 0.f; }
+
+	OnStaminaUpdateDelegate.Broadcast(Stamina);
+}
 
 void AGamePawn::ChangeStaminaTick(float DeltaTime)
 {
-	if (Stamina < MaxStamina)
-	{
-		Stamina += StaminaRecoverRate*DeltaTime;
-	}
+	SpendStamina(-StaminaRecoverRate*DeltaTime);
 }
 
 void AGamePawn::ChangeStaminaRecovery(float Force)
@@ -158,18 +163,16 @@ void AGamePawn::ResetStaminaRecovery()
 	StaminaRecoverRate = MaxStamina / 6.f;
 }
 
-bool AGamePawn::ServerChangeDurability_Validate(float value) { return true; }
-void AGamePawn::ServerChangeDurability_Implementation(float value)
+void AGamePawn::ChangeDurability(float value)
 {
-	ChangeDurability(GetDurability() + value);
+	Durability += value; OnDurabilityUpdateDelegate.Broadcast(Durability);
 }
-void AGamePawn::ChangeDurability(float value) { if (HasAuthority()) { Durability = value; } }
 
 
 float AGamePawn::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	ServerChangeDurability(-FinalDamage);
+	ChangeDurability(-FinalDamage);
 	return FinalDamage;
 }
 
@@ -332,7 +335,7 @@ void AGamePawn::ResetInfoFromDataTable(const FName& GamePawnName)
 
 void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 {
-	OwnerInfo = *InInfo;
+	BaseInfo = *InInfo;
 	MaxDurability = InInfo->MaxDurability;
 	MaxStamina = InInfo->MaxStamina;
 	Durability = MaxDurability;
@@ -344,25 +347,25 @@ void AGamePawn::UpdateInfo()
 	ResetQuality();
 	ResetDamping();
 
-	if (MovementComp) { MovementComp->UpdateAgilityAndQuality(OwnerInfo.Agility, OwnerInfo.Quality, OwnerInfo.QualityScale); }
+	if (MovementComp) { MovementComp->UpdateAgilityAndQuality(BaseInfo.Agility, BaseInfo.Quality, BaseInfo.QualityScale); }
 }
 
-void AGamePawn::OnRep_Info()
+void AGamePawn::OnRep_BaseInfo()
 {
 	UpdateInfo();
 }
 
 //////////////////////////////////////////////////////////////////////////
 /// Quality And Damping
-void AGamePawn::SetQualityScale(float InQualityScale) { OwnerInfo.QualityScale = InQualityScale; ResetQuality(); }
+void AGamePawn::SetQualityScale(float InQualityScale) { BaseInfo.QualityScale = InQualityScale; ResetQuality(); }
 
 void AGamePawn::ResetQuality()
 {
 	FBodyInstance* BodyInstance = StaticMeshComp->GetBodyInstance();
 	if (BodyInstance)
 	{
-		BodyInstance->MassScale = OwnerInfo.QualityScale;
-		BodyInstance->SetMassOverride(OwnerInfo.Quality);
+		BodyInstance->MassScale = BaseInfo.QualityScale;
+		BodyInstance->SetMassOverride(BaseInfo.Quality);
 		BodyInstance->UpdateMassProperties();
 	}
 }
@@ -371,8 +374,8 @@ void AGamePawn::ResetDamping()
 	FBodyInstance* BodyInstance = StaticMeshComp->GetBodyInstance();
 	if(BodyInstance)
 	{
-		BodyInstance->LinearDamping  = OwnerInfo.LinearDamping;
-		BodyInstance->AngularDamping = OwnerInfo.AngularDamping;
+		BodyInstance->LinearDamping  = BaseInfo.LinearDamping;
+		BodyInstance->AngularDamping = BaseInfo.AngularDamping;
 		BodyInstance->UpdateDampingProperties();
 	}
 }
@@ -405,9 +408,12 @@ void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AGamePawn, OwnerAttackComp);
 	DOREPLIFETIME(AGamePawn, OwnerSkillComp);
 
-	DOREPLIFETIME(AGamePawn, OwnerInfo);
+	DOREPLIFETIME(AGamePawn, BaseInfo);
+
 	DOREPLIFETIME(AGamePawn, Durability);
+	DOREPLIFETIME(AGamePawn, MaxDurability);
 	DOREPLIFETIME(AGamePawn, Stamina);
+	DOREPLIFETIME(AGamePawn, MaxStamina);
 }
 
 

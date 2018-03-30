@@ -1,0 +1,3 @@
+---,Name,RoleClass,Cost,DefaultSkinName,DefaultFormName,Icon
+Football,"Football","/Script/EveryThing.PlayerFootballPawn","500","FootballSkin","FootballForm","None"
+Chair,"Chair","/Script/EveryThing.PlayerChairPawn","500","ChairSkin","None","None"

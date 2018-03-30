@@ -1,0 +1,6 @@
+---,MapType,MapName,MapPath
+L_Cube,"TeamMatch","L_Cube","/Game/EveryThing/Levels/L_Cube"
+D_Test,"DeathMatch","L_Test","/Game/EveryThing/Levels/L_Test"
+T_Test2,"TeamMatch","L_Test2","/Game/EveryThing/Levels/L_Test2"
+DemoScene,"Test","DemoScene","/Game/IndustrialCity/Scenes/DemoScene"
+L_Sphere,"TeamMatch","L_Sphere","/Game/EveryThing/Levels/L_Sphere"

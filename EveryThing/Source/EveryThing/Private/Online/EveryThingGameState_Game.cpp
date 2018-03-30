@@ -14,7 +14,9 @@ const FString AEveryThingGameState_Game::PlayerChatName_NONE = FString("NONE");
 AEveryThingGameState_Game::AEveryThingGameState_Game()
 {
 	CurrentETGameState = EETGameState::WaitForHousePlayerLoad;
-	DefaultReadyTime = 15.f;
+	// TODO: close debug
+	// DefaultReadyTime = 15.f;
+	DefaultReadyTime = 1.f;
 	CurrentPlayerNum = 0;
 	bIsETGameStarted = false;
 }
