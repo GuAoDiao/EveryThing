@@ -154,16 +154,6 @@ void AGamePawn::ChangeStaminaTick(float DeltaTime)
 	SpendStamina(-StaminaRecoverRate*DeltaTime);
 }
 
-void AGamePawn::ChangeStaminaRecovery(float Force)
-{
-	StaminaRecoverRate -= Force*0.001;
-}
-
-void AGamePawn::ResetStaminaRecovery()
-{
-	StaminaRecoverRate = MaxStamina / 6.f;
-}
-
 void AGamePawn::ChangeDurability(float value)
 {
 	Durability += value; OnDurabilityUpdateDelegate.Broadcast(Durability);
@@ -341,6 +331,7 @@ void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 	MaxStamina = InInfo->MaxStamina;
 	Durability = MaxDurability;
 	Stamina = MaxStamina;
+	StaminaRecoverRate = MaxStamina / 16.f;
 }
 
 void AGamePawn::UpdateInfo()
@@ -387,31 +378,22 @@ void AGamePawn::ResetDamping()
 /// On Use Force 
 void AGamePawn::OnConsumeForce(const FVector& Force)
 {
-	if (CanConsumeForce(Force))
-	{
-		ChangeStaminaRecovery(Force.Size() / 75000);
-	}
+		SpendStamina(Force.Size() / ForceParam);
 }
 
 void AGamePawn::OnConsumeTorqueInRadians(const FVector& Torque)
 {
-	if (CanConsumeTorqueInRadians(Torque))
-	{
 		SpendStamina(Torque.Size() / 5000000);
-	}
 }
 
 void AGamePawn::OnConsumeImpulse(const FVector& Impulse)
 {
-	if (CanConsumeImpulse(Impulse))
-	{
 		SpendStamina(Impulse.Size() / 50000000);
-	}
 }
 
 bool AGamePawn::CanConsumeForce(const FVector& Force)
 {
-	if (Stamina>0)
+	if (Stamina>Force.Size() / ForceParam)
 	{
 		return true;
 	}
