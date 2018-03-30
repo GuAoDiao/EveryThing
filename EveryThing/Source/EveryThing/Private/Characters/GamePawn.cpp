@@ -385,7 +385,7 @@ void AGamePawn::ResetDamping()
 
 //////////////////////////////////////////////////////////////////////////
 /// On Use Force 
-void AGamePawn::OnConsumeForce(FVector Force)
+void AGamePawn::OnConsumeForce(const FVector& Force)
 {
 	if (CanConsumeForce(Force))
 	{
@@ -393,7 +393,7 @@ void AGamePawn::OnConsumeForce(FVector Force)
 	}
 }
 
-void AGamePawn::OnConsumeTorqueInRadians(FVector Torque)
+void AGamePawn::OnConsumeTorqueInRadians(const FVector& Torque)
 {
 	if (CanConsumeTorqueInRadians(Torque))
 	{
@@ -401,7 +401,7 @@ void AGamePawn::OnConsumeTorqueInRadians(FVector Torque)
 	}
 }
 
-void AGamePawn::OnConsumeImpulse(FVector Impulse)
+void AGamePawn::OnConsumeImpulse(const FVector& Impulse)
 {
 	if (CanConsumeImpulse(Impulse))
 	{
@@ -409,7 +409,7 @@ void AGamePawn::OnConsumeImpulse(FVector Impulse)
 	}
 }
 
-bool AGamePawn::CanConsumeForce(FVector Force)
+bool AGamePawn::CanConsumeForce(const FVector& Force)
 {
 	if (Stamina>0)
 	{
@@ -421,7 +421,7 @@ bool AGamePawn::CanConsumeForce(FVector Force)
 	}
 }
 
-bool AGamePawn::CanConsumeTorqueInRadians(FVector Torque)
+bool AGamePawn::CanConsumeTorqueInRadians(const FVector& Torque)
 {
 	if (Stamina > Torque.Size() / 5000000)
 	{
@@ -433,7 +433,7 @@ bool AGamePawn::CanConsumeTorqueInRadians(FVector Torque)
 	}
 }
 
-bool AGamePawn::CanConsumeImpulse(FVector Impulse)
+bool AGamePawn::CanConsumeImpulse(const FVector& Impulse)
 {
 	if (Stamina>Impulse.Size()/50000000)
 	{
