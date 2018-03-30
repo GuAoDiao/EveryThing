@@ -104,9 +104,7 @@ void UJumpMovementComponent::AutoAdjsutRotationPosition(float DeltaTime)
 
 		if (Force != FVector::ZeroVector)
 		{
-			FVector Torque = Force * AdjustRotationForce  * DeltaTime  * AtuoAdjustRotationForceStrength;
-			OwnerPrimitiveComp->AddTorqueInRadians(Torque);
-			if (OwnerGamePawn) { OwnerGamePawn->OnConsumeTorqueInRadians(Torque); }
+			AddTorqueInRadiansIfHaveEnoughStamina(Force * AdjustRotationForce  * DeltaTime  * AtuoAdjustRotationForceStrength);
 		}
 	}
 }
@@ -124,16 +122,12 @@ void UJumpMovementComponent::AdjustPosition(bool bIsAdjsutLocation, bool bIsForw
 		if (bIsAdjsutLocation)
 		{
 			FVector Direction = bIsForward ? OwnerPrimitiveComp->GetForwardVector() : OwnerPrimitiveComp->GetRightVector();
-			FVector Force = Direction * AdjustLocationForce * AxisValue;
-			OwnerPrimitiveComp->AddForce(Force);
-			if (OwnerGamePawn) { OwnerGamePawn->OnConsumeForce(Force); }
+			AddForceIfHaveEnoughStamina(Direction * AdjustLocationForce * AxisValue);
 		}
 		else
 		{
 			FVector Direction = bIsForward ? OwnerPrimitiveComp->GetRightVector() : -OwnerPrimitiveComp->GetForwardVector();
-			FVector Torque = Direction * AdjustRotationForce * AxisValue;
-			OwnerPrimitiveComp->AddTorqueInRadians(Torque);
-			if (OwnerGamePawn) { OwnerGamePawn->OnConsumeTorqueInRadians(Torque); }
+			AddTorqueInRadiansIfHaveEnoughStamina(Direction * AdjustRotationForce * AxisValue);
 		}
 	}
 }
@@ -153,13 +147,9 @@ void UJumpMovementComponent::RotatePawn(float AxisValue)
 		FVector Impulse = OwnerPrimitiveComp->GetUpVector() * 7500.f;
 		FVector Torque = OwnerPrimitiveComp->GetUpVector() * AdjustPawnRotationForce * AxisValue;
 
-		OwnerPrimitiveComp->AddImpulse(Impulse);
-		OwnerPrimitiveComp->AddTorqueInRadians(Torque);
-
-		if (OwnerGamePawn)
+		if (AddTorqueInRadiansIfHaveEnoughStamina(Torque))
 		{
-			OwnerGamePawn->OnConsumeTorqueInRadians(Torque);
-			OwnerGamePawn->OnConsumeImpulse(Impulse);
+			OwnerPrimitiveComp->AddImpulse(Impulse);
 		}
 	}
 }
@@ -216,11 +206,10 @@ void UJumpMovementComponent::Jump()
 
 	if (OwnerPrimitiveComp && bCanJump)
 	{		
-		FVector Impulse = OwnerPrimitiveComp->GetUpVector() * JumpHeightForce;
-		OwnerPrimitiveComp->AddImpulse(Impulse);
-		if (OwnerGamePawn) { OwnerGamePawn->OnConsumeImpulse(Impulse); }
-
-		bCanJump = false;
+		if (AddImpulseIfHaveEnoughStamina(OwnerPrimitiveComp->GetUpVector() * JumpHeightForce))
+		{
+			bCanJump = false;
+		}
 	}
 }
 bool UJumpMovementComponent::ServerJump_Validate() { return true; }
@@ -236,12 +225,10 @@ void UJumpMovementComponent::JumpMove(const FVector& Dircetion)
 
 	if (OwnerPrimitiveComp && bCanJump)
 	{
-
-		FVector Impulse = OwnerPrimitiveComp->GetUpVector() * JumpHeightForce + WantedMoveDirection * JumpForwardForce;
-		OwnerPrimitiveComp->AddImpulse(Impulse);
-		if (OwnerGamePawn) { OwnerGamePawn->OnConsumeImpulse(Impulse); }
-
-		bCanJump = false;
+		if (AddImpulseIfHaveEnoughStamina(OwnerPrimitiveComp->GetUpVector() * JumpHeightForce + WantedMoveDirection * JumpForwardForce))
+		{
+			bCanJump = false;
+		}
 	}
 }
 bool UJumpMovementComponent::ServerJumpMove_Validate(const FVector& Dircetion) { return true; }

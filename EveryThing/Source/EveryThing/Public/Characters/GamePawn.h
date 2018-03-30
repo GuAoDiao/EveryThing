@@ -263,11 +263,12 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// On Use Force 
 public:
-	void OnConsumeForce(FVector Force);
-	void OnConsumeTorqueInRadians(FVector Torque);
-	void OnConsumeImpulse(FVector Impulse);
 
-	bool CanConsumeForce(FVector Force);
-	bool CanConsumeTorqueInRadians(FVector Torque);
-	bool CanConsumeImpulse(FVector Impulse);
+	void OnConsumeForce(const FVector& Force);
+	void OnConsumeTorqueInRadians(const FVector& Torque);
+	void OnConsumeImpulse(const FVector& Impulse);
+
+	bool CanConsumeForce(const FVector& Force);
+	bool CanConsumeTorqueInRadians(const FVector& Torque);
+	bool CanConsumeImpulse(const FVector& Impulse);
 };

@@ -70,5 +70,4 @@ private:
 	bool bIsFastMovementState;
 
 	class IRotaryMovementPawnInterface* OwnerRotaryPawn;
-	class UPrimitiveComponent* OwnerPrimitiveComp;
 };
