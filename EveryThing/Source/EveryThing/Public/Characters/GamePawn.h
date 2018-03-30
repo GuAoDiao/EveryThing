@@ -23,12 +23,12 @@ class EVERYTHING_API AGamePawn : public APawn, public IHitAbleInterface
 
 public:
 	AGamePawn();
-	
+
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+
 	virtual void Tick(float DeltaTime) override;
 
 	FName RoleName;
@@ -47,9 +47,9 @@ public:
 	inline UGamePawnMovementComponent* GetGamePawnMovementComponent() const { return MovementComp; }
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
-	class UStaticMeshComponent* StaticMeshComp;
+		class UStaticMeshComponent* StaticMeshComp;
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
-	class UGamePawnMovementComponent* MovementComp;
+		class UGamePawnMovementComponent* MovementComp;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// HitAble
@@ -60,14 +60,14 @@ public:
 	/// Hit
 public:
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit);
+		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit);
 protected:
 	virtual void OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit);
 
 public:
 	DECLARE_MULTICAST_DELEGATE_FiveParams(FOnHitDelegate, UPrimitiveComponent* /* HitComp */, AActor* /* OtherActor */, UPrimitiveComponent* /* OtherComp */, FVector /* NormalInpulse */, const FHitResult& /* Hit */);
 	FOnHitDelegate OnHitDelegate;
-	
+
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn Form And Skin
@@ -98,11 +98,11 @@ protected:
 
 private:
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerToggleToTargetForm(const FName& FormName);
+		void ServerToggleToTargetForm(const FName& FormName);
 	UFUNCTION()
-	void OnRep_CurrentRoleFormName();
+		void OnRep_CurrentRoleFormName();
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_CurrentRoleFormName)
-	FName CurrentRoleFormName;
+		FName CurrentRoleFormName;
 	FRoleForm* CurrentRoleForm;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ public:
 
 	TArray<FName> AllRoleSkinName;
 	TArray<FName> AllHaveRoleSkinName;
-	
+
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAllHaveRoleSkinNameUpdateDelegate, const TArray<FName>& /* AllHaveRoleSkinName */);
 	FOnAllHaveRoleSkinNameUpdateDelegate OnAllHaveRoleSkinNameUpdateDelegate;
 	void OnAllHaveRoleSkinNameUpdate() { OnAllHaveRoleSkinNameUpdateDelegate.Broadcast(AllHaveRoleSkinName); }
@@ -126,16 +126,16 @@ protected:
 	void ToggleToTargetSkin(const FName& SkinName);
 private:
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerToggleToTargetSkin(const FName& SkinName);
+		void ServerToggleToTargetSkin(const FName& SkinName);
 	// actual implementation
 	UFUNCTION()
-	void OnRep_CurrentRoleSkinName();
-	
+		void OnRep_CurrentRoleSkinName();
+
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentRoleSkinName)
-	FName CurrentRoleSkinName;
+		FName CurrentRoleSkinName;
 	FRoleSkin* CurrentRoleSkin;
-	
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Attack and Skill
 public:
@@ -148,13 +148,13 @@ public:
 	void ToggleToNewSkillComponent(USkillComponent* InSkillComponent);
 protected:
 	UFUNCTION()
-	void OnRep_OwnerAttackComp();
+		void OnRep_OwnerAttackComp();
 	UFUNCTION()
-	void OnRep_OwnerSkillComp();
+		void OnRep_OwnerSkillComp();
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Replicated, ReplicatedUsing = OnRep_OwnerAttackComp)
-	UAttackComponent* OwnerAttackComp;
+		UAttackComponent* OwnerAttackComp;
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Replicated, ReplicatedUsing = OnRep_OwnerSkillComp)
-	USkillComponent* OwnerSkillComp;
+		USkillComponent* OwnerSkillComp;
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -167,18 +167,18 @@ protected:
 	void ResetInfoFromDataTable(const FName& GamePawnName);
 	void SetInfo(const FGamePawnInfo* InInfo);
 	UFUNCTION()
-	void OnRep_BaseInfo();
+		void OnRep_BaseInfo();
 
 	UPROPERTY(BlueprintReadOnly, Replicated, ReplicatedUsing = OnRep_BaseInfo)
-	FGamePawnInfo BaseInfo;
+		FGamePawnInfo BaseInfo;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Durability
 public:
 	UFUNCTION(BlueprintPure)
-	float GetDurability() const { return Durability; }	
+		float GetDurability() const { return Durability; }
 	UFUNCTION(BlueprintPure)
-	float GetMaxDurability() const { return MaxDurability; }
+		float GetMaxDurability() const { return MaxDurability; }
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDurabilityUpdateDelegate, float /* Durability */);
 	FOnDurabilityUpdateDelegate OnDurabilityUpdateDelegate;
@@ -188,26 +188,24 @@ protected:
 	void ChangeDurability(float Value);
 
 	UFUNCTION()
-	void OnRep_Durability() { OnDurabilityUpdate(); }
+		void OnRep_Durability() { OnDurabilityUpdate(); }
 	void OnDurabilityUpdate() { OnDurabilityUpdateDelegate.Broadcast(Durability); }
 
 	UFUNCTION()
-	void OnRep_MaxDurability() { OnMaxDurabilityUpdate(); }
+		void OnRep_MaxDurability() { OnMaxDurabilityUpdate(); }
 	void OnMaxDurabilityUpdate() { OnMaxDurabilityUpdateDelegate.Broadcast(MaxDurability); }
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
-
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Durability)
-	float Durability;
+		float Durability;
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxDurability)
-	float MaxDurability;
+		float MaxDurability;
 	//////////////////////////////////////////////////////////////////////////
 	/// Stamina
 public:
 	UFUNCTION(BlueprintPure)
-	float GetStamina() const { return Stamina; }
+		float GetStamina() const { return Stamina; }
 	UFUNCTION(BlueprintPure)
-	float GetMaxStamina() const { return MaxStamina; }
+		float GetMaxStamina() const { return MaxStamina; }
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnStaminaUpdateDelegate, float /* Stamina */);
 	FOnStaminaUpdateDelegate OnStaminaUpdateDelegate;
@@ -222,20 +220,32 @@ protected:
 
 
 	UFUNCTION()
-	void OnRep_Stamina() { OnStaminaUpdate(); }
+		void OnRep_Stamina() { OnStaminaUpdate(); }
 	void OnStaminaUpdate() { OnStaminaUpdateDelegate.Broadcast(Stamina); }
 	UFUNCTION()
-	void OnRep_MaxStamina() { OnMaxStaminaUpdate(); }
+		void OnRep_MaxStamina() { OnMaxStaminaUpdate(); }
 	void OnMaxStaminaUpdate() { OnMaxStaminaUpdateDelegate.Broadcast(MaxStamina); }
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina)
-	float Stamina;
+		float Stamina;
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxStamina)
-	float MaxStamina;
+		float MaxStamina;
 	UPROPERTY(BlueprintReadOnly)
-	float StaminaRecoverRate;
+		float StaminaRecoverRate;
 
-	
+protected:
+	//////////////////////////////////////////////////////////////////////////
+	/// Damage
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnHitableActorTakeDamageDelegate, AGamePawn*, AActor*, float);
+	FOnHitableActorTakeDamageDelegate OnHitableActorTakeDamageDelegate;
+
+	UFUNCTION()
+		void OnRep_HitableActorTakeDamage(AActor* HitableActor, float Damage) { OnHitableActorTakeDamage(HitableActor, Damage); }
+	void OnHitableActorTakeDamage(AActor* HitableActor, float Damage) { OnHitableActorTakeDamageDelegate.Broadcast(this, HitableActor, Damage); }
+
+
 protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Element
@@ -253,11 +263,11 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// On Use Force 
 public:
-	void OnConsumeForce(FVector Force) {};
-	void OnConsumeTorqueInRadians(FVector Torque) {};
-	void OnConsumeImpulse(FVector Impulse) {};
+	void OnConsumeForce(FVector Force);
+	void OnConsumeTorqueInRadians(FVector Torque);
+	void OnConsumeImpulse(FVector Impulse);
 
-	bool CanConsumeForce(FVector Force) { return true; }
-	bool CanConsumeTorqueInRadians(FVector Torque) { return true; }
-	bool CanConsumeImpulse(FVector Impulse) { return true; }
+	bool CanConsumeForce(FVector Force);
+	bool CanConsumeTorqueInRadians(FVector Torque);
+	bool CanConsumeImpulse(FVector Impulse);
 };

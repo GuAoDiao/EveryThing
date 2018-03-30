@@ -116,6 +116,7 @@ void AGamePawn::AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const F
 					Damage = GameMode->GetDamageFromHitableHit(this, NormalInpulse, Hit);
 					DamageEvent.Damage = Damage;
 					OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
+					OnHitableActorTakeDamageDelegate.Broadcast(this, OtherActor, Damage);
 				}
 			}
 			else
@@ -359,6 +360,7 @@ void AGamePawn::OnRep_BaseInfo()
 /// Quality And Damping
 void AGamePawn::SetQualityScale(float InQualityScale) { BaseInfo.QualityScale = InQualityScale; ResetQuality(); }
 
+
 void AGamePawn::ResetQuality()
 {
 	FBodyInstance* BodyInstance = StaticMeshComp->GetBodyInstance();
@@ -377,6 +379,69 @@ void AGamePawn::ResetDamping()
 		BodyInstance->LinearDamping  = BaseInfo.LinearDamping;
 		BodyInstance->AngularDamping = BaseInfo.AngularDamping;
 		BodyInstance->UpdateDampingProperties();
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/// On Use Force 
+void AGamePawn::OnConsumeForce(FVector Force)
+{
+	if (CanConsumeForce(Force))
+	{
+		ChangeStaminaRecovery(Force.Size() / 75000);
+	}
+}
+
+void AGamePawn::OnConsumeTorqueInRadians(FVector Torque)
+{
+	if (CanConsumeTorqueInRadians(Torque))
+	{
+		SpendStamina(Torque.Size() / 5000000);
+	}
+}
+
+void AGamePawn::OnConsumeImpulse(FVector Impulse)
+{
+	if (CanConsumeImpulse(Impulse))
+	{
+		SpendStamina(Impulse.Size() / 50000000);
+	}
+}
+
+bool AGamePawn::CanConsumeForce(FVector Force)
+{
+	if (Stamina>0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool AGamePawn::CanConsumeTorqueInRadians(FVector Torque)
+{
+	if (Stamina > Torque.Size() / 5000000)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool AGamePawn::CanConsumeImpulse(FVector Impulse)
+{
+	if (Stamina>Impulse.Size()/50000000)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 

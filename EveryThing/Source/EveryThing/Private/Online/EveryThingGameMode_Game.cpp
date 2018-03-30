@@ -215,10 +215,10 @@ float AEveryThingGameMode_Game::GetDamageFromGamePawnHit(AGamePawn* PlayerPawn, 
 		float Speed = FVector::DotProduct(PlayerPawn->GetVelocity(), Hit.Normal);
 		if (Speed > 200.f)
 		{
-			float OtherStability = 1.f;//1.00-2.00
+			float OtherStability = 100.f;//100-200
 			float MyAgility = 100.f;//100-200
 			float OtherAgility = 100.f;//100-200
-			Damage = (Speed / OtherStability)*(1 + (MyAgility - OtherAgility) / (MyAgility + OtherAgility))*NormalInpulse.Size() / 1000000.f;
+			Damage = (Speed / OtherStability)*(1 + (MyAgility - OtherAgility) / (MyAgility + OtherAgility))*NormalInpulse.Size() / 50000.f;
 			UE_LOG(LogTemp, Log, TEXT("Hit! speed %f,impulse %f, damage %f"), Speed, NormalInpulse.Size(), Damage);
 		}
 	}
