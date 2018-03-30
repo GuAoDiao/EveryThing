@@ -78,9 +78,7 @@ void URotaryMovementComponent::Move(const FVector& Direction, float AxisValue)
 
 	if (OwnerPrimitiveComp)
 	{
-		FVector Force = Direction * CurrentSpeed * AxisValue;
-		OwnerPrimitiveComp->AddForce(Force);
-		if (OwnerGamePawn) { OwnerGamePawn->OnConsumeForce(Force); }
+		AddForceIfHaveEnoughStamina(Direction * CurrentSpeed * AxisValue);
 	}
 }
 
@@ -113,11 +111,10 @@ void URotaryMovementComponent::StartJump()
 
 	if (CanJump() && OwnerRotaryPawn && OwnerPrimitiveComp)
 	{
-		FVector Impulse = OwnerRotaryPawn->GetActualUpVector() * CurrentJumpForce;
-		OwnerPrimitiveComp->AddImpulse(Impulse);
-		if (OwnerGamePawn) { OwnerGamePawn->OnConsumeImpulse(Impulse); }
-
-		SetIsJumping(true);
+		if (AddImpulseIfHaveEnoughStamina(OwnerRotaryPawn->GetActualUpVector() * CurrentJumpForce))
+		{
+			SetIsJumping(true);
+		}
 	}
 }
 bool URotaryMovementComponent::ServerStartJump_Validate() { return true; }

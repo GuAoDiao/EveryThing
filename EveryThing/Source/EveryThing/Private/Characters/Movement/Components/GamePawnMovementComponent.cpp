@@ -2,6 +2,7 @@
 
 #include "GamePawnMovementComponent.h"
 
+#include "Components/PrimitiveComponent.h"
 #include "GameFramework/Actor.h"
 #include "Characters/GamePawn.h"
 
@@ -33,4 +34,62 @@ void UGamePawnMovementComponent::UpdateAgilityAndQuality(float Agility, float Qu
 	ActualMoveForce = Quality * QualityScale * MoveForceScale;
 	ActualJumpForce = Agility * Quality * QualityScale * JumpForceScale;
 	ActualSpeed = Agility * SpeedScale;
+}
+
+bool UGamePawnMovementComponent::AddForceIfHaveEnoughStamina(const FVector& Force)
+{
+	if (OwnerGamePawn && OwnerPrimitiveComp)
+	{
+		if (OwnerGamePawn->CanConsumeForce(Force))
+		{
+			OwnerPrimitiveComp->AddForce(Force);
+			OwnerGamePawn->OnConsumeForce(Force);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UGamePawnMovementComponent::AddForceAtLocationIfHaveEnoughStamina(const FVector& Force, const FVector& Location)
+{
+	if (OwnerGamePawn && OwnerPrimitiveComp)
+	{
+		if (OwnerGamePawn->CanConsumeForce(Force))
+		{
+			OwnerPrimitiveComp->AddForceAtLocation(Force, Location);
+			OwnerGamePawn->OnConsumeForce(Force);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UGamePawnMovementComponent::AddTorqueInRadiansIfHaveEnoughStamina(const FVector& Torue)
+{
+	if (OwnerGamePawn && OwnerPrimitiveComp)
+	{
+		if (OwnerGamePawn->CanConsumeTorqueInRadians(Torue))
+		{
+			OwnerPrimitiveComp->AddTorqueInRadians(Torue);
+			OwnerGamePawn->OnConsumeTorqueInRadians(Torue);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UGamePawnMovementComponent::AddImpulseIfHaveEnoughStamina(const FVector& Impulse)
+{
+	if (OwnerGamePawn && OwnerPrimitiveComp)
+	{
+		if (OwnerGamePawn->CanConsumeImpulse(Impulse))
+		{
+			OwnerPrimitiveComp->AddImpulse(Impulse);
+			OwnerGamePawn->OnConsumeImpulse(Impulse);
+			return true;
+		}
+	}
+	return false;
 }

@@ -29,6 +29,13 @@ protected:
 	float SpeedScale;
 
 	class AGamePawn* OwnerGamePawn;
+	class UPrimitiveComponent* OwnerPrimitiveComp;
+
+	bool AddForceIfHaveEnoughStamina(const FVector& Force);
+	bool AddForceAtLocationIfHaveEnoughStamina(const FVector& Force, const FVector& Location);
+	bool AddTorqueInRadiansIfHaveEnoughStamina(const FVector& Torue);
+	bool AddImpulseIfHaveEnoughStamina(const FVector& Impulse);
+
 public:
 	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) {}
 };

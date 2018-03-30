@@ -24,7 +24,6 @@ public:
 
 protected:
 	class IJumpMovementPawnInterface* OwnerJumpPawn;
-	class UPrimitiveComponent* OwnerPrimitiveComp;
 private:
 	//////////////////////////////////////////////////////////////////////////
 	/// Server
