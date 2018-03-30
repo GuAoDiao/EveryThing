@@ -167,6 +167,64 @@ void AEveryThingGameMode_Game::HandleETGameOver()
 /// Damage
 
 
+bool AEveryThingGameMode_Game::CanTakeDamage(AGamePawn* PlayerPawn, AActor* OtherActor)
+{
+	return true;
+}
+
+float AEveryThingGameMode_Game::GetDamageFromHitableHit(AGamePawn* PlayerPawn, const FVector& NormalInpulse, const FHitResult& Hit) const
+{
+	float Damage = 0.f;
+	AActor* OtherActor = Hit.GetActor();
+	if (PlayerPawn && OtherActor)
+	{
+		float Speed = FVector::DotProduct(PlayerPawn->GetVelocity(), Hit.Normal);
+		if (Speed > 200.f)
+		{
+			Damage = NormalInpulse.Size() / 10000.f;
+			FString name = OtherActor->GetName();
+			UE_LOG(LogTemp, Log, TEXT("Hit! speed %f,impulse %f,name %s"), Speed, NormalInpulse.Size(), *name);
+		}
+	}
+	return Damage;
+}
+
+float AEveryThingGameMode_Game::GetDamageFromActorHit(AGamePawn* PlayerPawn, const FVector& NormalInpulse, const FHitResult& Hit) const
+{
+	float Damage = 0.f;
+	AActor* OtherActor = Hit.GetActor();
+	if (PlayerPawn && OtherActor)
+	{
+		float Speed = FVector::DotProduct(PlayerPawn->GetVelocity(), Hit.Normal);
+		if (Speed > 200.f)
+		{
+			float MyStability = 1.f;
+			Damage = (NormalInpulse.Size() / MyStability) / 10000.f;
+			FString name = OtherActor->GetName();
+			UE_LOG(LogTemp, Log, TEXT("Hit! speed %f,impulse %f,name %s"), Speed, NormalInpulse.Size(), *name);
+		}
+	}
+	return Damage;
+}
+
+float AEveryThingGameMode_Game::GetDamageFromGamePawnHit(AGamePawn* PlayerPawn, AGamePawn* OtherPawn, const FVector& NormalInpulse, const FHitResult& Hit) const
+{
+	float Damage = 0.f;
+	if (PlayerPawn && OtherPawn)
+	{
+		float Speed = FVector::DotProduct(PlayerPawn->GetVelocity(), Hit.Normal);
+		if (Speed > 200.f)
+		{
+			float OtherStability = 1.f;//1.00-2.00
+			float MyAgility = 100.f;//100-200
+			float OtherAgility = 100.f;//100-200
+			Damage = (Speed / OtherStability)*(1 + (MyAgility - OtherAgility) / (MyAgility + OtherAgility))*NormalInpulse.Size() / 1000000.f;
+			UE_LOG(LogTemp, Log, TEXT("Hit! speed %f,impulse %f, damage %f"), Speed, NormalInpulse.Size(), Damage);
+		}
+	}
+	return Damage;
+}
+
 float AEveryThingGameMode_Game::GetActualDamage(float InDamage, EElementType InDamageType, EElementType PawnElementType, float ElementResistance) const
 {
 	return InDamage * GetDamageScaleFromElementType(InDamageType, PawnElementType);

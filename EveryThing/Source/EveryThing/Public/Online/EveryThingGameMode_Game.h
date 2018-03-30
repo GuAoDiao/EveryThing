@@ -38,10 +38,12 @@ public:
 	
 	//////////////////////////////////////////////////////////////////////////
 	/// Damage
-	virtual float GetActualDamage(float InDamage, EElementType InDamageType, EElementType PawnElementType, float ElementResistance) const;
-	virtual float UpdateEnergy(float energy, float value) { return energy + value; }
+	virtual bool CanTakeDamage(AGamePawn* PlayerPawn, AActor* OtherActor);
+	virtual float GetDamageFromGamePawnHit(AGamePawn* PlayerPawn, AGamePawn* OtherPawn, const FVector& NormalInpulse, const FHitResult& Hit) const;
+	virtual float GetDamageFromHitableHit(AGamePawn* PlayerPawn, const FVector& NormalInpulse, const FHitResult& Hit)const;
+	virtual float GetDamageFromActorHit(AGamePawn* PlayerPawn, const FVector& NormalInpulse, const FHitResult& Hit)const;
+	virtual float GetActualDamage(float InDamage, EElementType InDamageType = EElementType::None, EElementType PawnElementType = EElementType::None, float ElementResistance = 0.f) const;
 	float GetDamageScaleFromElementType(EElementType CauserElementType, EElementType AcceptElementType) const;
-
 
 
 	virtual void BeginDestroy() override;
