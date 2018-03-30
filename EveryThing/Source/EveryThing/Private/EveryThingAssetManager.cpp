@@ -31,7 +31,7 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 	LoadMaterialFromDT();
 	LoadParticleFromDT();
 	LoadAllUserWidgetFromDT();
-	LoadAllMapInfoFromDT();
+	LoadAllMapTypeAndMapInfoFromDT();
 }
 
 void UEveryThingAssetManager::BeginDestroy()
@@ -216,8 +216,20 @@ UDataTable* UEveryThingAssetManager::GetDataTableFromName(const FName& DataTable
 //////////////////////////////////////////////////////////////////////////
 /// Map Info
 
-void UEveryThingAssetManager::LoadAllMapInfoFromDT()
+void UEveryThingAssetManager::LoadAllMapTypeAndMapInfoFromDT()
 {
+	UDataTable* MapTypeInfoDataTable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName("MapTypesInfo");
+	if (MapTypeInfoDataTable)
+	{
+		TArray<FMapTypeInfo*> MapsTypeInfoInDataTable;
+		MapTypeInfoDataTable->GetAllRows<FMapTypeInfo>(TEXT("look up all maps info"), MapsTypeInfoInDataTable);
+		for (FMapTypeInfo* MapTypeInfo : MapsTypeInfoInDataTable)
+		{
+			MapsType.AddUnique(MapTypeInfo->Type);
+			AllMapTypesInfo.Add(FName(*MapTypeInfo->Type), *MapTypeInfo);
+		}
+	}
+
 	UDataTable* MapsInfoDataTable = UEveryThingAssetManager::GetAssetManagerInstance()->GetDataTableFromName("MapsInfo");
 	if (MapsInfoDataTable)
 	{
@@ -225,8 +237,10 @@ void UEveryThingAssetManager::LoadAllMapInfoFromDT()
 		MapsInfoDataTable->GetAllRows<FMapInfo>(TEXT("look up all maps info"), MapsInfoInDataTable);
 		for (FMapInfo* MapInfo : MapsInfoInDataTable)
 		{
-			MapsType.AddUnique(MapInfo->MapType);
-			AllMapsInfo.Add(FName(*MapInfo->MapName), *MapInfo);
+			if (AllMapTypesInfo.Contains(FName(*MapInfo->MapType)))
+			{
+				AllMapsInfo.Add(FName(*MapInfo->MapName), *MapInfo);
+			}
 		}
 	}
 }

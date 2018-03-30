@@ -144,13 +144,14 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	/// Map Info
 public:
-	void LoadAllMapInfoFromDT();
+	void LoadAllMapTypeAndMapInfoFromDT();
 	const FMapInfo* GetMapInfoFromName(const FName& MapName);
 	const TArray<FString>& GetAllMapsType() { return MapsType; }
 	TArray<FString> GetAllMapsFormType(const FString& MapType);
 private:
 	TArray<FString> MapsType;
 	TMap<FName, FMapInfo> AllMapsInfo;
+	TMap<FName, FMapTypeInfo> AllMapTypesInfo;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn

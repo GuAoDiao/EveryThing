@@ -84,6 +84,16 @@ public:
 	FString MapPath;
 };
 
+USTRUCT(BlueprintType)
+struct FMapTypeInfo : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString Type;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 AllowedTeamNum;
+};
 
 //////////////////////////////////////////////////////////////////////////
 /// Gmaw Pawn
