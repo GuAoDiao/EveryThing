@@ -22,5 +22,6 @@ class EVERYTHING_API IChatWindowPlayerStateInterface
 
 public:
 	virtual const FString& GetPlayerChatName() const = 0;
-	virtual int32 GetPlayerlChatID() const = 0;
+	virtual int32 GetPlayerChatID() const = 0;
+	virtual int32 GetPlayerChatTeamID() const = 0;
 };

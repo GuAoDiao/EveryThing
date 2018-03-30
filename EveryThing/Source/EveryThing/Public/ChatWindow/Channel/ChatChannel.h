@@ -20,7 +20,7 @@ public:
 	virtual bool IsSwitchable() const { return true; }
 
 	virtual bool OnToggleToCurrent() const { return true; }
-	virtual bool IsNeededToSend(class APlayerState* InPlayerState) const { return true; }
+	virtual bool IsNeededToSend(class IChatWindowPlayerStateInterface* OwnerCWPS, class APlayerState* TargetPS) const { return true; }
 	virtual FText GetDisplayChannelText() const { return FText::FromString(FString::Printf(*DisplayChannelTextFormat, *ChannelName.ToString())); }
 	virtual FText GetDiaplayNameText(const FString& PlayerName) const { return FText::FromString(FString::Printf(*DisplayNameTextFormat, *PlayerName)); }
 	virtual const FName& GetChannaelName() const { return ChannelName; }

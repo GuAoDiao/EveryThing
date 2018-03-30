@@ -51,7 +51,6 @@ IChatWindowPlayerStateInterface* UChatComponent::GetChatWindowPlayerState() cons
 
 IChatWindowGameStateInterface* UChatComponent::GetChatWindowGameState() const
 {
-
 	UWorld* World = GetOwner() ? GetOwner()->GetWorld() : nullptr;
 	return World ? Cast<IChatWindowGameStateInterface>(World->GetGameState()) : nullptr;
 }
@@ -79,15 +78,16 @@ void UChatComponent::CreateChatMessage(const FChatChannel* ChatChannel, const FC
 bool UChatComponent::ServerCreateChatMessage_Validate(const FName& ChatChannelName, const FChatMessageInfo& ChatMessage) { return true; }
 void UChatComponent::ServerCreateChatMessage_Implementation(const FName& ChatChannelName, const FChatMessageInfo& ChatMessage)
 {
+	IChatWindowPlayerStateInterface* OwnerCWPS = GetChatWindowPlayerState();
 	IChatWindowGameStateInterface* OwnerCWGS = GetChatWindowGameState();
 	FChatChannel* ChatChannel = GetChannelManager().GetChatchannelDefaultValueFromName(ChatChannelName);
-	if (OwnerCWGS && ChatChannel)
+	if (OwnerCWPS && OwnerCWGS && ChatChannel)
 	{
-		for (APlayerState* CurrentPS : OwnerCWGS->GetAllChatPlayerState())
+		for (APlayerState* TargetPS : OwnerCWGS->GetAllChatPlayerState())
 		{
-			if (ChatChannel->IsNeededToSend(CurrentPS))
+			if (ChatChannel->IsNeededToSend(OwnerCWPS, TargetPS))
 			{
-				IChatWindowControllerInterface* CurrentCWC = Cast<IChatWindowControllerInterface>(CurrentPS->GetOwner());
+				IChatWindowControllerInterface* CurrentCWC = Cast<IChatWindowControllerInterface>(TargetPS->GetOwner());
 				UChatComponent* CurrentChatComponent = CurrentCWC ? CurrentCWC->GetChatComponent() : nullptr;
 				if (CurrentChatComponent)
 				{

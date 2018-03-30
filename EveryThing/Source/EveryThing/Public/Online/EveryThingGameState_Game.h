@@ -32,6 +32,7 @@ public:
 	
 	void OnPlayerPostLogin(APlayerController* NewPlayer);
 	void OnPlayerLogout(AController* Exiting);
+
 	/// Ready
 	void StartReadyCountDown();
 	void ReadyCountDown();
@@ -82,15 +83,14 @@ protected:
 	EETGameState CurrentETGameState;
 	UPROPERTY(Transient, Replicated)
 	bool bIsETGameStarted;
-	//////////////////////////////////////////////////////////////////////////
-	/// Player Add And Leave
-public:
-	virtual void AddPlayerState(APlayerState* PlayerState) override;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window Game State Interface
 public:
 	virtual const FString& GetPlayerChatName(int32 PlayerID) const override;
-	virtual const TArray<APlayerState*>& GetAllChatPlayerState() const override { return PlayerArray; }
+	virtual const TArray<APlayerState*>& GetAllChatPlayerState() const override { return ChatPlayerState; }
 	const static FString PlayerChatName_NONE;
+	int32 GetNextChatID(APlayerState* PlayerState) { return ChatPlayerState.Add(PlayerState);}
+	UPROPERTY(Transient, Replicated)
+	TArray<APlayerState*> ChatPlayerState;
 };

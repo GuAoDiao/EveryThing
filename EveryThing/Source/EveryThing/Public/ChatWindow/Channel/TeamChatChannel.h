@@ -18,6 +18,8 @@ struct FTeamChatChannel : public FChatChannel
 public:
 	FTeamChatChannel();
 
+	virtual bool IsNeededToSend(class IChatWindowPlayerStateInterface* OwnerCWPS, class APlayerState* TargetPS) const;
+
 	virtual FLinearColor GetDisplayLineColor() const override;
 	virtual FLinearColor GetDisplayChannelColor() const override;
 };

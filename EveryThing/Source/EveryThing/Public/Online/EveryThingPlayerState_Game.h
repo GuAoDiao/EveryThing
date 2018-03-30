@@ -62,9 +62,9 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window Player State Interface
 public:
-	virtual const FString& GetPlayerChatName() const { return CurrentPlayerInfo.PlayerName; }
-	virtual int32 GetPlayerlChatID() const { return ChatID; }
-	void SetPlayerChatID(int32 InChatID) { if (HasAuthority()) { ChatID = InChatID; } }
+	virtual const FString& GetPlayerChatName() const override { return CurrentPlayerInfo.PlayerName; }
+	virtual int32 GetPlayerChatID() const override { return ChatID; }
+	virtual int32 GetPlayerChatTeamID() const override { return TeamID; }
 
 	UPROPERTY(Transient, Replicated)
 	int32 ChatID;

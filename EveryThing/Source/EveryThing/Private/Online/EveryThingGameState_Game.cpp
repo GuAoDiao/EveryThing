@@ -14,6 +14,7 @@ const FString AEveryThingGameState_Game::PlayerChatName_NONE = FString("NONE");
 AEveryThingGameState_Game::AEveryThingGameState_Game()
 {
 	CurrentETGameState = EETGameState::WaitForHousePlayerLoad;
+
 	// TODO: close debug
 	// DefaultReadyTime = 15.f;
 	DefaultReadyTime = 1.f;
@@ -65,26 +66,6 @@ void AEveryThingGameState_Game::ReadyCountDown()
 		if (World) { World->GetTimerManager().SetTimer(ReadyCountDownTimer, this, &AEveryThingGameState_Game::ReadyCountDown, 1.f, false); }
 	}
 }
-
-//////////////////////////////////////////////////////////////////////////
-/// Player State
-void AEveryThingGameState_Game::AddPlayerState(APlayerState* PlayerState)
-{
-	Super::AddPlayerState(PlayerState);
-
-	if (!HasAuthority()) { return; }
-
-	if (PlayerState && Cast<IChatWindowPlayerStateInterface>(PlayerState))
-	{
-		AEveryThingPlayerState_Game* TargetETPS = Cast<AEveryThingPlayerState_Game>(PlayerState);
-		if (TargetETPS)
-		{			
-			int32 Index = PlayerArray.Find(PlayerState);
-			TargetETPS->SetPlayerChatID(Index);
-		}
-	}
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 /// Game State
@@ -150,9 +131,8 @@ void AEveryThingGameState_Game::ToggleToTargetETGameState(EETGameState TargetGam
 //////////////////////////////////////////////////////////////////////////
 /// Chat
 const FString& AEveryThingGameState_Game::GetPlayerChatName(int32 PlayerID) const
-{
-	
-	AEveryThingPlayerState_Game* TargetETPS = PlayerArray.IsValidIndex(PlayerID) ? Cast<AEveryThingPlayerState_Game>(PlayerArray[PlayerID]) : nullptr;
+{	
+	AEveryThingPlayerState_Game* TargetETPS = ChatPlayerState.IsValidIndex(PlayerID) ? Cast<AEveryThingPlayerState_Game>(ChatPlayerState[PlayerID]) : nullptr;
 	if (TargetETPS)
 	{
 		return TargetETPS->GetPlayerChatName();
@@ -180,4 +160,8 @@ void AEveryThingGameState_Game::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	DOREPLIFETIME(AEveryThingGameState_Game, bIsLANMatach);
 	DOREPLIFETIME(AEveryThingGameState_Game, MaxPlayerNum);
 	DOREPLIFETIME(AEveryThingGameState_Game, CurrentPlayerNum);
+
+	DOREPLIFETIME(AEveryThingGameState_Game, ChatPlayerState);
+
+	
 }

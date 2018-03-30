@@ -73,7 +73,7 @@ void UChatInput::ExcuteInput(const FText& InputText)
 			FChatChannel* CurrentChatChannel = ChatWindow->GetChatChannel();
 			if (CurrentChatChannel)
 			{
-				FChatMessageInfo MessageInfo(InputString, CurrentChatChannel->GetDisplayLineColor(), OwnerCWPS->GetPlayerlChatID());
+				FChatMessageInfo MessageInfo(InputString, CurrentChatChannel->GetDisplayLineColor(), OwnerCWPS->GetPlayerChatID());
 				ChatComponent->CreateChatMessage(ChatWindow->GetChatChannel(), MessageInfo);
 			}
 		}

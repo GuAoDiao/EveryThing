@@ -8,6 +8,7 @@
 
 #include "EveryThingGameInstance.h"
 #include "Online/EveryThingPlayerState_House.h"
+#include "Online/EveryThingGameState_Game.h"
 
 #include "Characters/GamePawn.h"
 #include "Characters/PlayerPawns/PlayerChairPawn.h"
@@ -22,6 +23,12 @@ void AEveryThingPlayerState_Game::BeginPlay()
 	{
 		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
 		if (OwnerETGI) { ServerSetPlayerInfo( OwnerETGI->GetPlayerInfo()); }
+	}
+
+	if (HasAuthority())
+	{
+		AEveryThingGameState_Game* OwnerETGS_G = GetWorld() ? GetWorld()->GetGameState<AEveryThingGameState_Game>() : nullptr;
+		if (OwnerETGS_G) { ChatID = OwnerETGS_G->GetNextChatID(this); }
 	}
 }
 
@@ -45,6 +52,7 @@ void AEveryThingPlayerState_Game::GetLifetimeReplicatedProps(TArray<FLifetimePro
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AEveryThingPlayerState_Game, CurrentPlayerInfo);
-	DOREPLIFETIME(AEveryThingPlayerState_Game, ChatID);
 	DOREPLIFETIME(AEveryThingPlayerState_Game, TeamID);
+
+	DOREPLIFETIME(AEveryThingPlayerState_Game, ChatID);
 }
