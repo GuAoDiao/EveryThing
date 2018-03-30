@@ -63,6 +63,10 @@ void AGamePawn::PossessedBy(AController* NewController)
 void AGamePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (HasAuthority())
+	{
+		ChangeStaminaTick(DeltaTime);
+	}
 }
 
 void AGamePawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -87,30 +91,87 @@ void AGamePawn::SetIsSelectedToHit(bool bInIsSelectedToHit)
 	}
 }
 
+void AGamePawn::AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const FHitResult& Hit)
+{
+	if (HasAuthority())
+	{
+		AEveryThingGameMode_Game* GameMode = Cast<AEveryThingGameMode_Game>(GetWorld()->GetAuthGameMode());
+		if (GameMode && GameMode->CanTakeDamage(this, OtherActor))
+		{
+			float Damage = 0.f;
+			FPointDamageEvent DamageEvent;
+			DamageEvent.HitInfo = Hit;
+			IHitAbleInterface* HitableActor = Cast<IHitAbleInterface>(OtherActor);
+			if (HitableActor)
+			{
+				AGamePawn* OtherPawn = Cast<AGamePawn>(OtherActor);
+				if (OtherPawn)
+				{
+					Damage = GameMode->GetDamageFromGamePawnHit(this, OtherPawn, NormalInpulse, Hit);
+					DamageEvent.Damage = Damage;
+					OtherPawn->TakeDamage(Damage, DamageEvent, GetController(), this);
+				}
+				else
+				{
+					Damage = GameMode->GetDamageFromHitableHit(this, NormalInpulse, Hit);
+					DamageEvent.Damage = Damage;
+					OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
+				}
+			}
+			else
+			{
+				Damage = GameMode->GetDamageFromActorHit(this, NormalInpulse, Hit);
+				DamageEvent.Damage = Damage;
+				TakeDamage(Damage, DamageEvent, GetController(), OtherActor);
+			}
+		}
+	}
+}
 void AGamePawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit)
 {
 	OnHitImplement(HitComp, OtherActor, OtherComp, NormalInpulse, Hit);
+	OnHitDelegate.Broadcast(HitComp, OtherActor, OtherComp, NormalInpulse, Hit);
 }
 
 void AGamePawn::OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit)
 {
-	OnHitDelegate.Broadcast(HitComp, OtherActor, OtherComp, NormalInpulse, Hit);
+	AcceptHitFrom(OtherActor, NormalInpulse, Hit);
 }
 
+void AGamePawn::SpendStamina(float value) { if (HasAuthority()) { Stamina -= value; } }
 
-bool AGamePawn::ServerAddEnergy_Validate(float value) { return true; }
-void AGamePawn::ServerAddEnergy_Implementation(float value)
+void AGamePawn::ChangeStaminaTick(float DeltaTime)
 {
-	ChangeEnergy(GetEnergy() + value);
+	if (Stamina < MaxStamina)
+	{
+		Stamina += StaminaRecoverRate*DeltaTime;
+	}
 }
-void AGamePawn::ChangeEnergy(float value) { if (HasAuthority()) { Energy = value; } }
 
-bool AGamePawn::ServerAddDurability_Validate(float value) { return true; }
-void AGamePawn::ServerAddDurability_Implementation(float value)
+void AGamePawn::ChangeStaminaRecovery(float Force)
+{
+	StaminaRecoverRate -= Force*0.001;
+}
+
+void AGamePawn::ResetStaminaRecovery()
+{
+	StaminaRecoverRate = MaxStamina / 6.f;
+}
+
+bool AGamePawn::ServerChangeDurability_Validate(float value) { return true; }
+void AGamePawn::ServerChangeDurability_Implementation(float value)
 {
 	ChangeDurability(GetDurability() + value);
 }
-void AGamePawn::ChangeDurability(float value) {	if (HasAuthority()) { Durability = value; }}
+void AGamePawn::ChangeDurability(float value) { if (HasAuthority()) { Durability = value; } }
+
+
+float AGamePawn::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	ServerChangeDurability(-FinalDamage);
+	return FinalDamage;
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -273,9 +334,9 @@ void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 {
 	OwnerInfo = *InInfo;
 	MaxDurability = InInfo->MaxDurability;
-	MaxEnergy = InInfo->MaxEnergy;
+	MaxStamina = InInfo->MaxStamina;
 	Durability = MaxDurability;
-	Energy = MaxEnergy;
+	Stamina = MaxStamina;
 }
 
 void AGamePawn::UpdateInfo()
@@ -346,7 +407,7 @@ void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 	DOREPLIFETIME(AGamePawn, OwnerInfo);
 	DOREPLIFETIME(AGamePawn, Durability);
-	DOREPLIFETIME(AGamePawn, Energy);
+	DOREPLIFETIME(AGamePawn, Stamina);
 }
 
 

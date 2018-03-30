@@ -55,7 +55,7 @@ protected:
 	/// HitAble
 public:
 	virtual void SetIsSelectedToHit(bool bInIsSelectedToHit) override;
-
+	virtual void AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const FHitResult& Hit) override;
 	//////////////////////////////////////////////////////////////////////////
 	/// Hit
 public:
@@ -167,6 +167,13 @@ protected:
 	UFUNCTION()
 	void OnRep_Info();
 
+	UFUNCTION()
+	void OnRep_Durability() { OnDurabilityUpdate(); }
+	void OnDurabilityUpdate() { OnUpdateDurabilityDelegate.Broadcast(Durability); }
+	UFUNCTION()
+	void OnRep_Stamina() { OnStaminaUpdate(); }
+	void OnStaminaUpdate() { OnUpdateStaminaDelegate.Broadcast(Stamina); }
+
 	UPROPERTY(BlueprintReadOnly, Replicated, ReplicatedUsing = OnRep_Info)
 	FGamePawnInfo OwnerInfo;
 	UPROPERTY(BlueprintReadOnly, Replicated)
@@ -174,24 +181,35 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	float MaxDurability;
 	UPROPERTY(BlueprintReadOnly, Replicated)
-	float Energy;
+	float Stamina;
 	UPROPERTY(BlueprintReadOnly)
-	float MaxEnergy;
+	float StaminaRecoverRate;
+	UPROPERTY(BlueprintReadOnly)
+	float MaxStamina;
 public:
 	UFUNCTION(BlueprintPure)
 	float GetDurability() const { return Durability; }	
-	void ChangeEnergy(float value);
+protected:
+	void ChangeDurability(float Value);
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void ServerAddDurability(float value);
+		void ServerChangeDurability(float Value);
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
+public:
 	UFUNCTION(BlueprintPure)
-	float GetEnergy() const { return Energy; }
-	void ChangeDurability(float value);
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void ServerAddEnergy(float value);
+		float GetStamina() const { return Stamina; }
+protected:
+	void SpendStamina(float Value);
+	void ChangeStaminaTick(float DeltaTime);
+	void ChangeStaminaRecovery(float Force);
+	void ResetStaminaRecovery();
+public:
 	float GetMaxHyperopiaDistance() const { return OwnerInfo.MaxHyperopiaDistance; }
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdateDurabilityDelegate, float /* Durability */);
 	FOnUpdateDurabilityDelegate OnUpdateDurabilityDelegate;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdateStaminaDelegate, float /* Stamina */);
+	FOnUpdateStaminaDelegate OnUpdateStaminaDelegate;
 protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Element

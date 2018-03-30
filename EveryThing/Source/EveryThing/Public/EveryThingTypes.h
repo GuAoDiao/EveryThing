@@ -97,7 +97,7 @@ public:
 	float MaxDurability;
 	// _体力(_耐力)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float Endurance;
+	float Stamina;
 	// _敏捷(_速度)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float Agility;
@@ -123,7 +123,7 @@ public:
 
 	// _蓄力值(_能量值)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float MaxEnergy;
+	float MaxStamina;
 
 	// _质量(_隐藏属性)
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
