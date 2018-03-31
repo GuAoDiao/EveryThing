@@ -3,9 +3,9 @@
 #include "GameLayout.h"
 
 
-#include "UI/Game/SelectRolesBox.h"
-#include "UI/Game/SelectSkinsBox.h"
-#include "UI/Game/SelectFormsBox.h"
+#include "UI/Game/SelectAboutRole/SelectRolesBox.h"
+#include "UI/Game/SelectAboutRole/SelectSkinsBox.h"
+#include "UI/Game/SelectAboutRole/SelectFormsBox.h"
 
 
 void UGameLayout::NativeConstruct()

@@ -78,10 +78,35 @@ void AEveryThingGameMode_Game::PostLogin(APlayerController* NewPlayer)
 void AEveryThingGameMode_Game::SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC)
 {
 	Super::SwapPlayerControllers(OldPC, NewPC);
-	
+
 	HandlePlayerLogin(NewPC);
 }
 
+
+void AEveryThingGameMode_Game::RestartPlayer(AController* NewPlayer)
+{
+	Super::RestartPlayer(NewPlayer);
+
+	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(NewPlayer);
+	if (OwnerPC_G)
+	{
+		OwnerPC_G->ClientStartPlayer();
+	}
+}
+
+void AEveryThingGameMode_Game::Logout(AController* Exiting)
+{
+	AEveryThingGameState_Game* OwnerETGS_G = GetGameState<AEveryThingGameState_Game>();
+	if (OwnerETGS_G)
+	{
+		OwnerETGS_G->OnPlayerLogout(Exiting);
+	}
+
+	Super::Logout(Exiting);
+}
+
+//////////////////////////////////////////////////////////////////////////
+/// Handle
 void AEveryThingGameMode_Game::HandlePlayerLogin(APlayerController* NewPlayer)
 {
 	AEveryThingGameState_Game* OwnerETGS_G = GetGameState<AEveryThingGameState_Game>();
@@ -111,29 +136,6 @@ void AEveryThingGameMode_Game::HandlePlayerLogin(APlayerController* NewPlayer)
 		}
 	}
 }
-
-void AEveryThingGameMode_Game::RestartPlayer(AController* NewPlayer)
-{
-	Super::RestartPlayer(NewPlayer);
-
-	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(NewPlayer);
-	if (OwnerPC_G)
-	{
-		OwnerPC_G->ClientStartPlayer();
-	}
-}
-
-void AEveryThingGameMode_Game::Logout(AController* Exiting)
-{
-	AEveryThingGameState_Game* OwnerETGS_G = GetGameState<AEveryThingGameState_Game>();
-	if (OwnerETGS_G)
-	{
-		OwnerETGS_G->OnPlayerLogout(Exiting);
-	}
-
-	Super::Logout(Exiting);
-}
-
 void AEveryThingGameMode_Game::HandleETGameReay()
 {
 	AEveryThingGameState_Game* OwnerETGS_G = GetGameState<AEveryThingGameState_Game>();
@@ -171,7 +173,7 @@ void AEveryThingGameMode_Game::HandleETGameOver()
 	AEveryThingGameState_Game* OwnerETGS_G = GetGameState<AEveryThingGameState_Game>();
 	if (OwnerETGS_G)
 	{
-		OwnerETGS_G->StartBackToHouseCountDown();
+		OwnerETGS_G->StartBackToHouseTimeCountDown();
 	}
 
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
@@ -184,7 +186,6 @@ void AEveryThingGameMode_Game::HandleETGameOver()
 		}
 	}
 }
-
 void AEveryThingGameMode_Game::HandlerETBackToHouse()
 {
 	UWorld* World = GetWorld();

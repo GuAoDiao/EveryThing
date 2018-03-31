@@ -6,7 +6,7 @@
 #include "Online/PlayerController_Game.h"
 #include "EveryThingAssetManager.h"
 #include "Characters/GamePawnManager.h"
-#include "UI/Game/SelectItem.h"
+#include "UI/Game/SelectAboutRole/SelectItem.h"
 
 void USelectRolesBox::NativeConstruct()
 {

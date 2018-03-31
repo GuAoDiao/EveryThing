@@ -63,12 +63,41 @@ protected:
 	int32 TeamID;
 
 	//////////////////////////////////////////////////////////////////////////
-	/// Score
+	/// About Game Fight Info
 public:
 	int32 GetGameScore() const { return GameScore; }
+	int32 GetKillNum() const { return KillNum; }
+	int32 GetDeathNum() const { return DeathNum; }
 
+	void AddGameScore(int32 InOffset);
+	void IncKillNum() { ++KillNum; OnKillNumUpdate(); }
+	void IncDeathNum() { ++DeathNum; OnDeathNumUpdate(); }
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameScoreOffsetDelegate, int32 /* GameScoreOffset */);
+	FOnGameScoreOffsetDelegate OnGameScoreOffsetDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameScoreUpdateDelegate, int32 /* GameScore */);
+	FOnGameScoreUpdateDelegate OnGameScoreUpdateDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnKillNumUpdateDelegate, int32 /* KillNum */);
+	FOnKillNumUpdateDelegate OnKillNumUpdateDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeathNumUpdateDelegate, int32 /* DeathNum */);
+	FOnDeathNumUpdateDelegate OnDeathNumUpdateDelegate;
 protected:
+	UFUNCTION()
+	void OnRep_GameScore() { OnGameScoreUpdate(); }
+	void OnGameScoreUpdate() { OnGameScoreOffsetDelegate.Broadcast(GameScore); }
+	UFUNCTION()
+	void OnRep_KillNum() {}
+	void OnKillNumUpdate() { OnKillNumUpdateDelegate.Broadcast(KillNum); }
+	UFUNCTION()
+	void OnRep_DeathNum() {}
+	void OnDeathNumUpdate() { OnDeathNumUpdateDelegate.Broadcast(DeathNum); }
+
+	UPROPERTY(Transient, Replicated)
 	int32 GameScore;
+	UPROPERTY(Transient, Replicated)
+	int32 KillNum;
+	UPROPERTY(Transient, Replicated)
+	int32 DeathNum;
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window Player State Interface
 public:

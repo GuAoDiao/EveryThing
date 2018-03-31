@@ -62,6 +62,15 @@ void AEveryThingPlayerState_Game::ChangeTeamID(int32 InTeamID)
 	OnTeamIDUpdate();
 }
 
+
+void AEveryThingPlayerState_Game::AddGameScore(int32 InOffset)
+{
+	GameScore += InOffset;
+	OnGameScoreOffsetDelegate.Broadcast(InOffset);
+	OnGameScoreUpdateDelegate.Broadcast(GameScore);
+}
+
+
 bool AEveryThingPlayerState_Game::ServerSetPlayerInfo_Validate(const FPlayerInfo& InPlayerInfo) { return true; }
 void AEveryThingPlayerState_Game::ServerSetPlayerInfo_Implementation(const FPlayerInfo& InPlayerInfo) { SetPlayerInfo(InPlayerInfo); }
 

@@ -26,24 +26,27 @@ public:
 
 
 	//////////////////////////////////////////////////////////////////////////
-	/// Game flow path
+	/// Game Init
 public:
 	void InitializeETGameState(const FString& InGameType, const FString& InMapName, const FString& InHouseName, bool bInIsLANMatach, int32 InMaxPlayerNum, int32 InCurrentPlayerNum);
-	
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Player Login/Logout
+public:
 	void OnPlayerPostLogin(APlayerController* NewPlayer);
 	void OnPlayerLogout(AController* Exiting);
 
+	//////////////////////////////////////////////////////////////////////////
 	/// Ready
+public:
 	void StartReadyCountDown();
-	void ReadyCountDown();
-
 	float GetRemaningReadyTime() const { return RemaningReadyTime; }
-
+	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRemaningReadyTimeUpdateDelegate, float /*RemaningReadyTime*/)
 	FOnRemaningReadyTimeUpdateDelegate OnRemaningReadyTimeUpdateDelegate;
+
 protected:
-	FTimerHandle ReadyCountDownTimer;
-	float DefaultReadyTime;
+	void ReadyCountDown();
 
 	UFUNCTION()
 	void OnRep_RemaningReadyTime() { OnRemaningReadyTimeUpdate(); }
@@ -51,46 +54,56 @@ protected:
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_RemaningReadyTime)
 	float RemaningReadyTime;
+	float DefaultReadyTime;
 
+	//////////////////////////////////////////////////////////////////////////
 	/// Gameing
 public:
 	void StartGameTimeCountDown();
-	void GameTimeCountDown();
-
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRemaningGameTimeUpdateDelegate, float /* RemaningGameTime */)
-	FOnRemaningGameTimeUpdateDelegate OnRemaningGameTimeUpdateDelegate;
-	UFUNCTION()
-	void OnRep_RemaningGameTime() { OnRemaningGameTimeUpdate(); }
-	void OnRemaningGameTimeUpdate() { OnRemaningGameTimeUpdateDelegate.Broadcast(RemaningGameTime); }
 
 	float GetRemaningGameTime() const { return RemaningGameTime; }
 
-	FTimerHandle GameTimeCountDownTimer;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRemaningGameTimeUpdateDelegate, float /* RemaningGameTime */)
+	FOnRemaningGameTimeUpdateDelegate OnRemaningGameTimeUpdateDelegate;
+protected:
+	void GameTimeCountDown();
+	UFUNCTION()
+	void OnRep_RemaningGameTime() { OnRemaningGameTimeUpdate(); }
+	void OnRemaningGameTimeUpdate() { OnRemaningGameTimeUpdateDelegate.Broadcast(RemaningGameTime); }
 	
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_RemaningGameTime)
 	float RemaningGameTime;
 	float DefaultGameTime;
 
+	//////////////////////////////////////////////////////////////////////////
 	/// Back to house
 public:
-	void StartBackToHouseCountDown();
-	void BackToHouseeCountDown();
+	void StartBackToHouseTimeCountDown();
+	float GetRemaningBackToHouseTime() const { return RemaningBackToHouseTime; }
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRemaningBackToHouseTimeUpdateDelegate, float /* RemaningGameTime */)
 	FOnRemaningBackToHouseTimeUpdateDelegate OnRemaningBackToHouseTimeUpdateDelegate;
+protected:
+	void BackToHouseeTimeCountDown();
 	UFUNCTION()
 	void OnRep_RemaningBackToHouseTime() { OnRemaningBackToHouseTimeUpdate(); }
 	void OnRemaningBackToHouseTimeUpdate() { OnRemaningBackToHouseTimeUpdateDelegate.Broadcast(RemaningBackToHouseTime); }
-
-	float GetRemaningBackToHouseTime() const { return RemaningBackToHouseTime; }
-
-	FTimerHandle BackToHouseTimeCountDownTimer;
+	
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_RemaningGameTime)
 	float RemaningBackToHouseTime;
 	float DefaultBackToHouseTime;
+	
+protected:
+	FTimerHandle CountDownTimer;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game State Attr
+
+public:
+	int32 GetActualTeamNums() const { return ActualTeamNums; }
+protected:
+	int32 ActualTeamNums;
+
 public:
 	UPROPERTY(Transient, Replicated)
 	FString GameType;
@@ -105,6 +118,7 @@ public:
 	UPROPERTY(Transient, Replicated)
 	int32 CurrentPlayerNum;
 
+protected:
 	int32 HousePlayerNum;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -112,6 +126,7 @@ public:
 public:
 	bool IsTargetETGameState(EETGameState TargetGameStae) { return CurrentETGameState == TargetGameStae; }
 	EETGameState GetETGameState() const {return CurrentETGameState;}
+	
 	void ToggleToTargetETGameState(EETGameState TargetGameStae);
 
 	bool IsETGameStarted() const {return bIsETGameStarted;}
@@ -126,8 +141,11 @@ protected:
 public:
 	virtual const FString& GetPlayerChatName(int32 PlayerID) const override;
 	virtual const TArray<APlayerState*>& GetAllChatPlayerState() const override { return ChatPlayerState; }
+	
 	const static FString PlayerChatName_NONE;
+
 	int32 GetNextChatID(APlayerState* PlayerState) { return ChatPlayerState.Add(PlayerState);}
+protected:
 	UPROPERTY(Transient, Replicated)
 	TArray<APlayerState*> ChatPlayerState;
 };

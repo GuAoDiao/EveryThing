@@ -4,7 +4,7 @@
 
 #include "UI/Game/GameMenu.h"
 #include "UI/Game/GameLayout.h"
-#include "UI/Game/GameOver.h"
+#include "UI/Game/GameFlowPath/GameOver.h"
 #include "EveryThingAssetManager.h"
 
 #include "ChatWindow/UI/ChatWindow.h"

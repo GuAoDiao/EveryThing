@@ -24,31 +24,6 @@ AEveryThingGameMode_House::AEveryThingGameMode_House()
 	bUseSeamlessTravel = true;
 }
 
-void AEveryThingGameMode_House::OpenGameFromHouseOwner()
-{
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-	UWorld* World = GetWorld();
-	FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
-
-	if (World && OwnerOnlineSessionSetting)
-	{
-		FString MapName;
-		OwnerOnlineSessionSetting->Get<FString>(SETTING_MAPNAME, MapName);
-
-		const FMapInfo* MapInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetMapInfoFromName(FName(*MapName));
-
-		checkf(MapInfo, TEXT("-_- the  map actual path must exist."));
-
-		OwnerOnlineSessionSetting->Set("GameState", FString(TEXT("Gaming")));
-		Sessions->UpdateSession(NAME_GameSession, *OwnerOnlineSessionSetting, true);
-
-		bToggleToGame = true;
-
-		World->ServerTravel(FString::Printf(TEXT("%s?listen"), *MapInfo->MapPath));
-	}
-}
-
 
 void AEveryThingGameMode_House::BeginPlay()
 {
@@ -77,6 +52,32 @@ void AEveryThingGameMode_House::BeginPlay()
 				OwnerETGS_H->OnHouseSettingUpdate();
 			}
 		}
+	}
+}
+
+
+void AEveryThingGameMode_House::OpenGameFromHouseOwner()
+{
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	UWorld* World = GetWorld();
+	FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
+
+	if (World && OwnerOnlineSessionSetting)
+	{
+		FString MapName;
+		OwnerOnlineSessionSetting->Get<FString>(SETTING_MAPNAME, MapName);
+
+		const FMapInfo* MapInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetMapInfoFromName(FName(*MapName));
+
+		checkf(MapInfo, TEXT("-_- the  map actual path must exist."));
+
+		OwnerOnlineSessionSetting->Set("GameState", FString(TEXT("Gaming")));
+		Sessions->UpdateSession(NAME_GameSession, *OwnerOnlineSessionSetting, true);
+
+		bToggleToGame = true;
+
+		World->ServerTravel(FString::Printf(TEXT("%s?listen"), *MapInfo->MapPath));
 	}
 }
 
