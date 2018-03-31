@@ -9,6 +9,14 @@ void AEveryThingHUD_House::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		// remove all widget, because if from ServerTravel, the GameLayout will display in screen.
+		UGameViewportClient* OwnerGameViewport = World->GetGameViewport();
+		if (OwnerGameViewport) { OwnerGameViewport->RemoveAllViewportWidgets(); }
+	}
+
 	// try create HouseLayout widget and change input mode
 	APlayerController* OwnerPC = GetOwningPlayerController();
 	TSubclassOf<UUserWidget> HouseLayoutClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("HouseLayout");

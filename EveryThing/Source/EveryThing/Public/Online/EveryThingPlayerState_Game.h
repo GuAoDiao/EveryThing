@@ -24,6 +24,7 @@ class EVERYTHING_API AEveryThingPlayerState_Game : public APlayerState, public I
 public:
 	virtual void BeginPlay() override;
 	
+	void SeamlessTravelTo(class APlayerState* NewPlayerState);
 	//////////////////////////////////////////////////////////////////////////
 	/// PlayerInfo
 public:
@@ -48,6 +49,7 @@ private:
 	/// Team
 public:
 	int32 GetTeamID() const { return TeamID; }
+	void SetTeamID(int32 InTeamID) { TeamID = InTeamID; OnTeamIDUpdate(); }
 	void ChangeTeamID(int32 InTeamID);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnTeamIDUpdateDelegate, int32 /* TeamID */);
 	FOnTeamIDUpdateDelegate OnTeamIDUpdateDelegate;
@@ -59,6 +61,14 @@ protected:
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_TeamID)
 	int32 TeamID;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Score
+public:
+	int32 GetGameScore() const { return GameScore; }
+
+protected:
+	int32 GameScore;
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window Player State Interface
 public:

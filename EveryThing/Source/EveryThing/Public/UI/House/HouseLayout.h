@@ -17,6 +17,9 @@ class EVERYTHING_API UHouseLayout : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+	UFUNCTION(BlueprintCallable)
+	void ExitHouse();
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Player Item
 

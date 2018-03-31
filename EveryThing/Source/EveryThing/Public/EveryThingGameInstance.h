@@ -30,7 +30,6 @@ public:
 	void OpenHouseLevel();
 	void ExitGameApplication();
 
-protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	FName MenuLevelName;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
@@ -80,10 +79,12 @@ public:
 
 protected:
 	FString CurrentSaveArchiveName;
+	FString SaveArchiveListName;
 	TArray<FString> CurrentArchivesList;
 	//////////////////////////////////////////////////////////////////////////
 	/// Player Info
 public:
+	void AddGold(int32 GetGold) { PlayerInfo.Gold += GetGold; UpdatePlayerInfo(); }
 
 	UFUNCTION(BlueprintPure)
 	FPlayerInfo& GetPlayerInfo() { return PlayerInfo; }

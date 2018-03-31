@@ -2,7 +2,9 @@
 
 #include "HouseRow.h"
 
+#include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
+#include "OnlineSessionInterface.h"
 
 #include "EveryThingGameInstance.h"
 #include "UI/EveryThingHUD_Menu.h"
@@ -22,18 +24,23 @@ void UHouseRow::UpdateDisplay()
 		// get house info from SearchResult
  		const FOnlineSessionSettings& Settings = SearchResult->Session.SessionSettings;
 
-		FString GameType, MapName, HouseName;
+		IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+		IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+		FString GameType, MapName, HouseName, GameState;
 
 		Settings.Get<FString>(SETTING_GAMEMODE, GameType);
 		Settings.Get<FString>(SETTING_MAPNAME, MapName);
 		Settings.Get<FString>(FName("HouseName"), HouseName);
-		
+		Settings.Get<FString>(FName("GameState"), GameState);
+
 
 		int32 MaxPlayersNum = Settings.NumPublicConnections;
 		int32 Pin = SearchResult->PingInMs;
 		int32 CurrentPlayersNum = MaxPlayersNum - SearchResult->Session.NumOpenPublicConnections;
 
-		InitializeDisplay(HouseName, GameType, MapName, CurrentPlayersNum, MaxPlayersNum, Pin);
+
+		InitializeDisplay(HouseName, GameType, MapName, CurrentPlayersNum, MaxPlayersNum, Pin, GameState);
+
 	}
 }
 

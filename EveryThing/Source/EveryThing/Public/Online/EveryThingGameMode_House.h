@@ -22,7 +22,11 @@ public:
 	// do nothing
 	virtual void RestartPlayer(class AController* NewPlayer) override {};
 
+	
+	bool bToggleToGame;
 	void OpenGameFromHouseOwner();
 	
 	void UpdateHouseSetting(const FString& HouseName, const FString& GameType, const FString& MapName, bool bIsLAN, int32 MaxPlayersNum);
+
+	virtual void BeginDestroy() override;
 };

@@ -65,7 +65,6 @@ public:
 protected:
 	FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
 	FOnStartSessionCompleteDelegate OnStartSessionCompleteDelegate;
-	FOnUpdateSessionCompleteDelegate OnUpdateSessionCompleteDelegate;
 	FOnDestroySessionCompleteDelegate OnDestroySessionCompleteDelegate;
 	FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
 	FOnJoinSessionCompleteDelegate OnJoinSessionCompleteDelegate;
@@ -103,7 +102,6 @@ public:
 protected:
 	virtual void OnCreateSessionComplete(FName InSessionName, bool bWasSuccessful);
 	void OnStartOnlineGameComplete(FName InSessionName, bool bWasSuccessful);
-	void OnUpdateSessionComplete(FName InSessionName, bool bWasSuccessful);
 	void OnFindSessionsComplete(bool bWasSuccessful);
 	void OnJoinSessionComplete(FName InSessionName, EOnJoinSessionCompleteResult::Type Result);
 	virtual void OnDestroySessionComplete(FName InSessionName, bool bWasSuccessful);
@@ -123,7 +121,6 @@ public:
 	bool TravelToSession(int32 ControllerId, FName SessionName);
 
 	FDelegateHandle OnCreateSessionCompleteDelegateHandle;
-	FDelegateHandle OnUpdateSessionCompleteDelegateHandle;
 	FDelegateHandle OnStartSessionCompleteDelegateHandle;
 	FDelegateHandle OnDestroySessionCompleteDelegateHandle;
 	FDelegateHandle OnFindSessionsCompleteDelegateHandle;

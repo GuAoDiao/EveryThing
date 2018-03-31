@@ -4,6 +4,7 @@
 
 #include "UI/Game/GameMenu.h"
 #include "UI/Game/GameLayout.h"
+#include "UI/Game/GameOver.h"
 #include "EveryThingAssetManager.h"
 
 #include "ChatWindow/UI/ChatWindow.h"
@@ -55,9 +56,38 @@ void AEveryThingHUD_Game::BeginPlay()
 void AEveryThingHUD_Game::ToggleToTargetGameUIState(EETGameState InGameUIState)
 {
 	CurrentGameUIState = InGameUIState;
+
 	if (GameLayout) { GameLayout->UpdateGameUIDisplay(CurrentGameUIState); }
 }
 
+void AEveryThingHUD_Game::ShowGameOver(int32 GetGold)
+{
+	if (!GameOver)
+	{
+		TSubclassOf<UUserWidget> GameOverClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("GameOver"));
+		if (GameOverClass)
+		{
+			GameOver = CreateWidget<UGameOver>(GetOwningPlayerController(), GameOverClass);
+			GameOver->InitializeGameOver(GetGold);
+		}
+	}
+
+	if (GameOver)
+	{
+		GameOver->AddToViewport();
+
+		APlayerController* OwnerPC = GetOwningPlayerController();
+		if (OwnerPC)
+		{
+			OwnerPC->bShowMouseCursor = true;
+
+			FInputModeUIOnly InputMode;
+			InputMode.SetWidgetToFocus(GameOver->TakeWidget());
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
+			OwnerPC->SetInputMode(InputMode);
+		}
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 /// Game Menu

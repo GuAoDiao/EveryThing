@@ -11,6 +11,7 @@
 #include "Online/EveryThingGameState_House.h"
 #include "Online/PlayerController_House.h"
 #include "UI/EveryThingHUD_House.h"
+#include "EveryThingAssetManager.h"
 
 AEveryThingGameMode_House::AEveryThingGameMode_House()
 {
@@ -25,8 +26,27 @@ AEveryThingGameMode_House::AEveryThingGameMode_House()
 
 void AEveryThingGameMode_House::OpenGameFromHouseOwner()
 {
-	AEveryThingGameSession* OwnerETGSession = Cast<AEveryThingGameSession>(GameSession);
-	if (OwnerETGSession) { OwnerETGSession->StartSession(); }
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
+	UWorld* World = GetWorld();
+	FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
+
+	if (World && OwnerOnlineSessionSetting)
+	{
+		FString MapName;
+		OwnerOnlineSessionSetting->Get<FString>(SETTING_MAPNAME, MapName);
+
+		const FMapInfo* MapInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetMapInfoFromName(FName(*MapName));
+
+		checkf(MapInfo, TEXT("-_- the  map actual path must exist."));
+
+		OwnerOnlineSessionSetting->Set("GameState", FString(TEXT("Gaming")));
+		Sessions->UpdateSession(NAME_GameSession, *OwnerOnlineSessionSetting, true);
+
+		bToggleToGame = true;
+
+		World->ServerTravel(FString::Printf(TEXT("%s?listen"), *MapInfo->MapPath));
+	}
 }
 
 
@@ -44,9 +64,14 @@ void AEveryThingGameMode_House::BeginPlay()
 			FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
 			if (OwnerOnlineSessionSetting)
 			{
-				OwnerOnlineSessionSetting->Get<FString>(SETTING_GAMEMODE, OwnerETGS_H->GameType);
-				OwnerOnlineSessionSetting->Get<FString>(SETTING_MAPNAME, OwnerETGS_H->MapName);
-				OwnerOnlineSessionSetting->Get<FString>(FName("HouseName"), OwnerETGS_H->HouseName);
+				FString GameType, MapName, HouseName;
+				OwnerOnlineSessionSetting->Get<FString>(SETTING_GAMEMODE, GameType);
+				OwnerOnlineSessionSetting->Get<FString>(SETTING_MAPNAME, MapName);
+				OwnerOnlineSessionSetting->Get<FString>(FName("HouseName"), HouseName);
+
+				OwnerETGS_H->GameType = GameType;
+				OwnerETGS_H->MapName = MapName;
+				OwnerETGS_H->HouseName = HouseName;
 				OwnerETGS_H->bIsLANMatch = OwnerOnlineSessionSetting->bIsLANMatch;
 				OwnerETGS_H->MaxPlayerNum = OwnerOnlineSessionSetting->NumPublicConnections;
 				OwnerETGS_H->OnHouseSettingUpdate();
@@ -70,12 +95,8 @@ void AEveryThingGameMode_House::UpdateHouseSetting(const FString& HouseName, con
 
 			OwnerOnlineSessionSetting->bIsLANMatch = bIsLAN;
 			OwnerOnlineSessionSetting->NumPublicConnections = MaxPlayersNum;
+			Sessions->UpdateSession(NAME_GameSession, *OwnerOnlineSessionSetting, true);
 
-			AEveryThingGameSession* OwnerETGSeesion = Cast<AEveryThingGameSession>(GameSession);
-			if (OwnerETGSeesion)
-			{
-				OwnerETGSeesion->UpdateSession();
-			}
 
 			AEveryThingGameState_House* OwnerETGS_H = GetGameState<AEveryThingGameState_House>();
 			if (OwnerETGS_H)
@@ -89,4 +110,15 @@ void AEveryThingGameMode_House::UpdateHouseSetting(const FString& HouseName, con
 			}
 		}
 	}
+}
+
+void AEveryThingGameMode_House::BeginDestroy()
+{
+	if (!bToggleToGame)
+	{
+		AEveryThingGameSession* OwnerGameSession = Cast<AEveryThingGameSession>(GameSession);
+		if (OwnerGameSession) { OwnerGameSession->DestroySession(); }
+	}
+
+	Super::BeginDestroy();
 }

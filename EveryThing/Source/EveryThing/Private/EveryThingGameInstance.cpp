@@ -21,6 +21,7 @@
 
 UEveryThingGameInstance::UEveryThingGameInstance()
 {
+	SaveArchiveListName = TEXT("ET_SaveArchiveListName");
 }
 
 void UEveryThingGameInstance::Init()
@@ -246,11 +247,14 @@ bool UEveryThingGameInstance::SaveArchiveWithName(const FString& ArchiveName)
 
 bool UEveryThingGameInstance::LoadArchivesList()
 {
-	UEveryThingSaveArchivesList* OwnerETSAL = Cast<UEveryThingSaveArchivesList>(UGameplayStatics::LoadGameFromSlot(TEXT("EveryThingArchivesList"), 0));
-	if (OwnerETSAL)
+	if (UGameplayStatics::DoesSaveGameExist(SaveArchiveListName, 0))
 	{
-		CurrentArchivesList = OwnerETSAL->ArchivesList;
-		return true;
+		UEveryThingSaveArchivesList* OwnerETSAL = Cast<UEveryThingSaveArchivesList>(UGameplayStatics::LoadGameFromSlot(SaveArchiveListName, 0));
+		if (OwnerETSAL)
+		{
+			CurrentArchivesList = OwnerETSAL->ArchivesList;
+			return true;
+		}
 	}
 	return false;
 }
@@ -261,7 +265,7 @@ void UEveryThingGameInstance::UpdateArchivesList()
 	if (OwnerETSAL)
 	{
 		OwnerETSAL->ArchivesList = CurrentArchivesList;
-		bool bSuccess = UGameplayStatics::SaveGameToSlot(OwnerETSAL, TEXT("EveryThingArchivesList"), 0);
+		bool bSuccess = UGameplayStatics::SaveGameToSlot(OwnerETSAL, SaveArchiveListName, 0);
 		
 		checkf(bSuccess, TEXT("-_- Save ArchiveList must be success"));
 	}

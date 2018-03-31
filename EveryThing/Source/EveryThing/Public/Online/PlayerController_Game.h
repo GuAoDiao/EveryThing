@@ -42,6 +42,8 @@ public:
 	void ClientReadyToStart();
 	UFUNCTION(Client, Reliable)
 	void ClientStartPlayer();
+	UFUNCTION(Client, Reliable)
+	void ClientGameOver(int32 Gold);
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Player State

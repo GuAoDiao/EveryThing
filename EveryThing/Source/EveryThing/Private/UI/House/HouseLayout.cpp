@@ -7,6 +7,7 @@
 #include "Online/EveryThingGameState_House.h"
 #include "Online/EveryThingPlayerState_House.h"
 #include "Online/PlayerController_House.h"
+#include "EveryThingGameInstance.h"
 
 void UHouseLayout::NativeConstruct()
 {
@@ -159,4 +160,12 @@ void UHouseLayout::UpdateHouseSetting(const FString& HouseName, const FString& G
 	{
 		OwnerPC_H->UpdateHouseSetting(HouseName, GameType, MapName, bIsLAN, MaxPlayersNum);
 	}
+}
+
+
+
+void UHouseLayout::ExitHouse()
+{
+	UEveryThingGameInstance* OwnerGameInstance = GetWorld() ? GetWorld()->GetGameInstance<UEveryThingGameInstance>() : nullptr;
+	if (OwnerGameInstance) { OwnerGameInstance->OpenMenuLevel(); }
 }

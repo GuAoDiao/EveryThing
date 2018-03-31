@@ -37,20 +37,57 @@ public:
 	void StartReadyCountDown();
 	void ReadyCountDown();
 
-	float GetReadyRemaningTime() const { return ReadyRemaningTime; }
+	float GetRemaningReadyTime() const { return RemaningReadyTime; }
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnReadyRemaningTimeUpdateDelegate, float /*ReadyRemaningTime*/)
-	FOnReadyRemaningTimeUpdateDelegate OnReadyRemaningTimeUpdateDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRemaningReadyTimeUpdateDelegate, float /*RemaningReadyTime*/)
+	FOnRemaningReadyTimeUpdateDelegate OnRemaningReadyTimeUpdateDelegate;
 protected:
 	FTimerHandle ReadyCountDownTimer;
 	float DefaultReadyTime;
 
 	UFUNCTION()
-	void OnRep_ReadyRemaningTime() { OnReadyRemaningTimeUpdate(); }
-	void OnReadyRemaningTimeUpdate() { OnReadyRemaningTimeUpdateDelegate.Broadcast(ReadyRemaningTime); }
+	void OnRep_RemaningReadyTime() { OnRemaningReadyTimeUpdate(); }
+	void OnRemaningReadyTimeUpdate() { OnRemaningReadyTimeUpdateDelegate.Broadcast(RemaningReadyTime); }
 
-	UPROPERTY(Transient, ReplicatedUsing = OnRep_ReadyRemaningTime)
-	float ReadyRemaningTime;
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_RemaningReadyTime)
+	float RemaningReadyTime;
+
+	/// Gameing
+public:
+	void StartGameTimeCountDown();
+	void GameTimeCountDown();
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRemaningGameTimeUpdateDelegate, float /* RemaningGameTime */)
+	FOnRemaningGameTimeUpdateDelegate OnRemaningGameTimeUpdateDelegate;
+	UFUNCTION()
+	void OnRep_RemaningGameTime() { OnRemaningGameTimeUpdate(); }
+	void OnRemaningGameTimeUpdate() { OnRemaningGameTimeUpdateDelegate.Broadcast(RemaningGameTime); }
+
+	float GetRemaningGameTime() const { return RemaningGameTime; }
+
+	FTimerHandle GameTimeCountDownTimer;
+	
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_RemaningGameTime)
+	float RemaningGameTime;
+	float DefaultGameTime;
+
+	/// Back to house
+public:
+	void StartBackToHouseCountDown();
+	void BackToHouseeCountDown();
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRemaningBackToHouseTimeUpdateDelegate, float /* RemaningGameTime */)
+	FOnRemaningBackToHouseTimeUpdateDelegate OnRemaningBackToHouseTimeUpdateDelegate;
+	UFUNCTION()
+	void OnRep_RemaningBackToHouseTime() { OnRemaningBackToHouseTimeUpdate(); }
+	void OnRemaningBackToHouseTimeUpdate() { OnRemaningBackToHouseTimeUpdateDelegate.Broadcast(RemaningBackToHouseTime); }
+
+	float GetRemaningBackToHouseTime() const { return RemaningBackToHouseTime; }
+
+	FTimerHandle BackToHouseTimeCountDownTimer;
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_RemaningGameTime)
+	float RemaningBackToHouseTime;
+	float DefaultBackToHouseTime;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game State Attr

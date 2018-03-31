@@ -71,6 +71,7 @@ protected:
 	/// Team ID
 public:
 	int32 GetTeamID() const { return TeamID; }
+	void SetTeamID(int32 InTeamID) { TeamID = InTeamID; OnTeamIDUpdate(); }
 	void ChangeTeamID(int32 InTeamID);
 	void OnAllowedTeamNumChanged(int32 AllowedTeamNum);
 	

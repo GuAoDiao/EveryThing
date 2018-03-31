@@ -33,12 +33,16 @@ protected:
 	class UGameMenu* GameMenu;
 	UPROPERTY(Transient)
 	class UGameLayout* GameLayout;
+	UPROPERTY(Transient)
+	class UGameOver* GameOver;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game UI State
 public:
 	EETGameState GetGameUIState() const { return CurrentGameUIState; }
 	void ToggleToTargetGameUIState(EETGameState InGameUIState);
+
+	void ShowGameOver(int32 GetGold);
 protected:
 	EETGameState CurrentGameUIState;
 

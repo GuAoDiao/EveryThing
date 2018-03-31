@@ -17,9 +17,12 @@ AEveryThingGameState_Game::AEveryThingGameState_Game()
 
 	// TODO: close debug
 	// DefaultReadyTime = 15.f;
-	DefaultReadyTime = 1.f;
 	CurrentPlayerNum = 0;
 	bIsETGameStarted = false;
+
+	DefaultReadyTime = 1.f;
+	DefaultGameTime = 600.f;
+	DefaultBackToHouseTime = 10.f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,30 +43,90 @@ void AEveryThingGameState_Game::StartReadyCountDown()
 {
 	if (!HasAuthority()) { return; }
 
-	ReadyRemaningTime = DefaultReadyTime;
-	OnReadyRemaningTimeUpdate();
+	RemaningReadyTime = DefaultReadyTime;
+	OnRemaningReadyTimeUpdate();
 
 	UWorld* World = GetWorld();
-	if (World) { World->GetTimerManager().SetTimer(ReadyCountDownTimer, this, &AEveryThingGameState_Game::ReadyCountDown, 1.f, false); }
+	if (World) { World->GetTimerManager().SetTimer(ReadyCountDownTimer, this, &AEveryThingGameState_Game::ReadyCountDown, 1.f, true); }
 }
 
 void AEveryThingGameState_Game::ReadyCountDown()
 {
 	if (!HasAuthority()) { return; }
-
-	UE_LOG(LogTemp, Log, TEXT("-_- ReadRemaningTime : %f"), ReadyRemaningTime);
-
-	if (ReadyRemaningTime <= 0.f)
+	
+	if (RemaningReadyTime <= 0.f)
 	{
+		UWorld* World = GetWorld();
+		if (World) { World->GetTimerManager().ClearTimer(ReadyCountDownTimer); }
+
 		ToggleToTargetETGameState(EETGameState::Gameing);
 	}
 	else
 	{
-		ReadyRemaningTime -= 1.f;
-		OnReadyRemaningTimeUpdate();
+		RemaningReadyTime -= 1.f;
+		OnRemaningReadyTimeUpdate();
+	}
+}
 
+
+/// Game
+
+void AEveryThingGameState_Game::StartGameTimeCountDown()
+{
+	if (!HasAuthority()) { return; }
+
+	RemaningGameTime = DefaultGameTime;
+	OnRemaningGameTimeUpdate();
+
+	UWorld* World = GetWorld();
+	if (World) { World->GetTimerManager().SetTimer(GameTimeCountDownTimer, this, &AEveryThingGameState_Game::GameTimeCountDown, 1.f, true); }
+}
+void AEveryThingGameState_Game::GameTimeCountDown()
+{
+	if (!HasAuthority()) { return; }
+	
+	if (RemaningGameTime <= 0.f)
+	{
 		UWorld* World = GetWorld();
-		if (World) { World->GetTimerManager().SetTimer(ReadyCountDownTimer, this, &AEveryThingGameState_Game::ReadyCountDown, 1.f, false); }
+		if (World) { World->GetTimerManager().ClearTimer(GameTimeCountDownTimer); }
+
+		ToggleToTargetETGameState(EETGameState::GameOver);
+	}
+	else
+	{
+		RemaningGameTime -= 1.f;
+		OnRemaningGameTimeUpdate();
+	}
+}
+
+/// Back to house
+void AEveryThingGameState_Game::StartBackToHouseCountDown()
+{
+	if (!HasAuthority()) { return; }
+
+	RemaningBackToHouseTime = DefaultBackToHouseTime;
+	OnRemaningBackToHouseTimeUpdate();
+
+	UWorld* World = GetWorld();
+	if (World) { World->GetTimerManager().SetTimer(BackToHouseTimeCountDownTimer, this, &AEveryThingGameState_Game::BackToHouseeCountDown, 1.f, true); }
+}
+
+void AEveryThingGameState_Game::BackToHouseeCountDown()
+{
+	if (!HasAuthority()) { return; }
+
+	if (RemaningBackToHouseTime <= 0.f)
+	{
+		UWorld* World = GetWorld();
+		if (World) { World->GetTimerManager().ClearTimer(BackToHouseTimeCountDownTimer); }
+
+		AEveryThingGameMode_Game* OwnerETGM_G = GetWorld() ? GetWorld()->GetAuthGameMode<AEveryThingGameMode_Game>() : nullptr;
+		if (OwnerETGM_G) { OwnerETGM_G->HandlerETBackToHouse(); }
+	}
+	else
+	{
+		RemaningBackToHouseTime -= 1.f;
+		OnRemaningBackToHouseTimeUpdate();
 	}
 }
 
@@ -149,11 +212,17 @@ void AEveryThingGameState_Game::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AEveryThingGameState_Game, ReadyRemaningTime);
 	
 	DOREPLIFETIME(AEveryThingGameState_Game, CurrentETGameState);
 	DOREPLIFETIME(AEveryThingGameState_Game, bIsETGameStarted);
 	
+	DOREPLIFETIME(AEveryThingGameState_Game, RemaningReadyTime);
+	DOREPLIFETIME(AEveryThingGameState_Game, RemaningGameTime);
+	DOREPLIFETIME(AEveryThingGameState_Game, RemaningBackToHouseTime);
+
+	
+
+
 	DOREPLIFETIME(AEveryThingGameState_Game, GameType);
 	DOREPLIFETIME(AEveryThingGameState_Game, MapName);
 	DOREPLIFETIME(AEveryThingGameState_Game, HouseName);
@@ -161,7 +230,5 @@ void AEveryThingGameState_Game::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	DOREPLIFETIME(AEveryThingGameState_Game, MaxPlayerNum);
 	DOREPLIFETIME(AEveryThingGameState_Game, CurrentPlayerNum);
 
-	DOREPLIFETIME(AEveryThingGameState_Game, ChatPlayerState);
-
-	
+	DOREPLIFETIME(AEveryThingGameState_Game, ChatPlayerState);	
 }

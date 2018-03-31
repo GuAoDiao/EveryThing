@@ -49,4 +49,6 @@ public:
 	class UUserInfoBox* UserInfoBox;
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class UReadyCountDown* ReadyCountDown;
+	UPROPERTY(BlueprintReadWrite, Transient)
+	class UGameInfoOnTop* GameInfoOnTop;
 };

@@ -9,6 +9,7 @@
 #include "Online/EveryThingGameState_Game.h"
 #include "Online/EveryThingGameSession.h"
 #include "UI/EveryThingHUD_Game.h"
+#include "EveryThingGameInstance.h"
 
 #include "PlayerFootballPawn.h"
 
@@ -18,6 +19,8 @@ AEveryThingGameMode_Game::AEveryThingGameMode_Game()
 	SpecificToDamageScale = 1.5f;
 	bStartPlayersAsSpectators = true;
 	bPauseable = false;
+	bUseSeamlessTravel = true;
+	bBackToHome = false;
 
 	DefaultPawnClass = APlayerFootballPawn::StaticClass();
 	
@@ -147,6 +150,12 @@ void AEveryThingGameMode_Game::HandleETGameReay()
 }
 void AEveryThingGameMode_Game::HandleETGameStart()
 {
+	AEveryThingGameState_Game* OwnerETGS_G = GetGameState<AEveryThingGameState_Game>();
+	if (OwnerETGS_G)
+	{
+		OwnerETGS_G->StartGameTimeCountDown();
+	}
+	
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
 		RestartPlayer(It->Get());
@@ -159,6 +168,32 @@ bool AEveryThingGameMode_Game::HandleETGameIsOver()
 void AEveryThingGameMode_Game::HandleETGameOver()
 {
 
+	AEveryThingGameState_Game* OwnerETGS_G = GetGameState<AEveryThingGameState_Game>();
+	if (OwnerETGS_G)
+	{
+		OwnerETGS_G->StartBackToHouseCountDown();
+	}
+
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController_Game* CurrentPC_G = Cast<APlayerController_Game>(It->Get());
+		AEveryThingPlayerState_Game* CurrentETPS_G = Cast<AEveryThingPlayerState_Game>(CurrentPC_G->PlayerState);
+		if (CurrentPC_G && CurrentETPS_G)
+		{
+			CurrentPC_G->ClientGameOver(CurrentETPS_G->GetGameScore());
+		}
+	}
+}
+
+void AEveryThingGameMode_Game::HandlerETBackToHouse()
+{
+	UWorld* World = GetWorld();
+	UEveryThingGameInstance* OwnetETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
+	if (World && OwnetETGI)
+	{
+		bBackToHome = true;
+		World->ServerTravel(FString::Printf(TEXT("%s?listen"), *OwnetETGI->HouseLevelName.ToString()));
+	}
 }
 
 
@@ -247,9 +282,11 @@ float AEveryThingGameMode_Game::GetDamageScaleFromElementType(EElementType Cause
 
 void AEveryThingGameMode_Game::BeginDestroy()
 {
-
-	AEveryThingGameSession* OwnerGameSession = Cast<AEveryThingGameSession>(GameSession);
-	if (OwnerGameSession) { OwnerGameSession->DestroySession(); }
+	if (!bBackToHome)
+	{
+		AEveryThingGameSession* OwnerGameSession = Cast<AEveryThingGameSession>(GameSession);
+		if (OwnerGameSession) { OwnerGameSession->DestroySession(); }
+	}
 
 	Super::BeginDestroy();
 }

@@ -17,18 +17,36 @@
 void AEveryThingPlayerState_Game::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GameScore = 100.f;
 	
 	// if not from SeamlessTravel, add in the middle of th game. set player info from GameInstance.
-	if (GetOwner() && GetOwner()->Role == ROLE_AutonomousProxy && !bFromPreviousLevel)
+	UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
+	APlayerController* OwnerPC = Cast<APlayerController>(GetOwner());
+	if (OwnerETGI && OwnerPC && OwnerPC->IsLocalController() && !bFromPreviousLevel)
 	{
-		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
-		if (OwnerETGI) { ServerSetPlayerInfo( OwnerETGI->GetPlayerInfo()); }
+		ServerSetPlayerInfo( OwnerETGI->GetPlayerInfo());
 	}
+
+
 
 	if (HasAuthority())
 	{
 		AEveryThingGameState_Game* OwnerETGS_G = GetWorld() ? GetWorld()->GetGameState<AEveryThingGameState_Game>() : nullptr;
 		if (OwnerETGS_G) { ChatID = OwnerETGS_G->GetNextChatID(this); }
+	}
+}
+
+void AEveryThingPlayerState_Game::SeamlessTravelTo(class APlayerState* NewPlayerState)
+{
+	Super::SeamlessTravelTo(NewPlayerState);
+
+	// move old info to new
+	AEveryThingPlayerState_House* OldETPS_G = Cast<AEveryThingPlayerState_House>(NewPlayerState);
+	if (OldETPS_G)
+	{
+		OldETPS_G->SetPlayerInfo(CurrentPlayerInfo);
+		OldETPS_G->SetTeamID(TeamID);
 	}
 }
 

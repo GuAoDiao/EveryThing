@@ -20,8 +20,12 @@ void AEveryThingPlayerState_House::BeginPlay()
 	Super::BeginPlay();
 
 	// update player info from GameInstance.
-	UEveryThingGameInstance* OwnerETGI = GetWorld() ? Cast<UEveryThingGameInstance>(GetWorld()->GetGameInstance()) : nullptr;
-	if (OwnerETGI) { SetPlayerInfo(OwnerETGI->GetPlayerInfo()); }
+	UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
+	APlayerController* OwnerPC = Cast<APlayerController>(GetOwner());
+	if (OwnerETGI && OwnerPC && OwnerPC->IsLocalController() && !bFromPreviousLevel)
+	{
+		ServerSetPlayerInfo(OwnerETGI->GetPlayerInfo());
+	}
 
 	if (HasAuthority())
 	{
@@ -51,15 +55,11 @@ void AEveryThingPlayerState_House::SeamlessTravelTo(class APlayerState* NewPlaye
 
 //////////////////////////////////////////////////////////////////////////
 /// Player Info
-void AEveryThingPlayerState_House::SetPlayerInfo(const FPlayerInfo& InPlayerInfo)
-{
-	if (GetOwner() && GetOwner()->Role >= ROLE_AutonomousProxy) { ServerSetPlayerInfo(InPlayerInfo); }
-}
+void AEveryThingPlayerState_House::SetPlayerInfo(const FPlayerInfo& InPlayerInfo) { CurrentPlayerInfo = InPlayerInfo; OnCurrentPlayerInfoUpdate(); }
 bool AEveryThingPlayerState_House::ServerSetPlayerInfo_Validate(const FPlayerInfo& InPlayerInfo) { return true; }
 void AEveryThingPlayerState_House::ServerSetPlayerInfo_Implementation(const FPlayerInfo& InPlayerInfo)
 {
-	CurrentPlayerInfo = InPlayerInfo;
-	OnCurrentPlayerInfoUpdate();
+	SetPlayerInfo(InPlayerInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,6 @@ void AEveryThingPlayerState_House::OnAllowedTeamNumChanged(int32 AllowedTeamNum)
 
 void AEveryThingPlayerState_House::ChangeTeamID(int32 InTeamID)
 {
-
 	AEveryThingGameState_House* OwnerETGS_H = GetWorld() ? GetWorld()->GetGameState<AEveryThingGameState_House>() : nullptr;
 	if (OwnerETGS_H && InTeamID > 0 && InTeamID <= OwnerETGS_H->GetAllowedTeamNum())
 	{
@@ -109,8 +108,7 @@ void AEveryThingPlayerState_House::ChangeTeamID(int32 InTeamID)
 bool AEveryThingPlayerState_House::ServerChangeTeamID_Validate(int32 InTeamID) { return true; }
 void AEveryThingPlayerState_House::ServerChangeTeamID_Implementation(int32 InTeamID)
 {
-	TeamID = InTeamID;
-	OnTeamIDUpdate();
+	SetTeamID(InTeamID);
 }
 
 

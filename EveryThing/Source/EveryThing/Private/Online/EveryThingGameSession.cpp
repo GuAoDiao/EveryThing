@@ -50,7 +50,6 @@ AEveryThingGameSession::AEveryThingGameSession()
 	if (!HasAnyFlags(RF_ClassDefaultObject))
 	{
 		OnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnCreateSessionComplete);
-		OnUpdateSessionCompleteDelegate = FOnUpdateSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnUpdateSessionComplete);
 		OnStartSessionCompleteDelegate = FOnStartSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnStartOnlineGameComplete);
 		OnFindSessionsCompleteDelegate = FOnFindSessionsCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnFindSessionsComplete);
 		OnJoinSessionCompleteDelegate = FOnJoinSessionCompleteDelegate::CreateUObject(this, &AEveryThingGameSession::OnJoinSessionComplete);
@@ -77,9 +76,11 @@ bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSes
 			HostSettings = MakeShareable(new FEveryThingOnlineSessionSettings(bIsLAN, bIsPresence, MaxPlayers));
 			if (HostSettings.IsValid())
 			{
-				HostSettings->Set(SETTING_GAMEMODE, GameType, EOnlineDataAdvertisementType::ViaOnlineService);
-				HostSettings->Set(SETTING_MAPNAME, MapName, EOnlineDataAdvertisementType::ViaOnlineService);
-				HostSettings->Set(FName("HouseName"), HouseName, EOnlineDataAdvertisementType::ViaOnlineService);
+				HostSettings->Set(SETTING_GAMEMODE, GameType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+				HostSettings->Set(SETTING_MAPNAME, MapName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+				HostSettings->Set(FName("HouseName"), HouseName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+				HostSettings->Set(FName("GameState"), FString(TEXT("Ready")), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+				
 
 				HostSettings->Set(SETTING_MATCHING_TIMEOUT, 120.f, EOnlineDataAdvertisementType::ViaOnlineService);
 				HostSettings->Set(SETTING_MATCHING_HOPPER, FString("TeamDeathmatch"), EOnlineDataAdvertisementType::DontAdvertise);
@@ -96,21 +97,6 @@ bool AEveryThingGameSession::HostSession(const FUniqueNetId& UserId, FName InSes
 	}
 
 	return false;
-}
-
-void AEveryThingGameSession::UpdateSession()
-{
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-	if (Sessions.IsValid())
-	{
-		FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
-		if (OwnerOnlineSessionSetting)
-		{
-			OnUpdateSessionCompleteDelegateHandle = Sessions->AddOnUpdateSessionCompleteDelegate_Handle(OnUpdateSessionCompleteDelegate);
-			Sessions->UpdateSession(NAME_GameSession, *OwnerOnlineSessionSetting, true);
-		}
-	}
 }
 
 void AEveryThingGameSession::StartSession()
@@ -213,11 +199,7 @@ void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool b
 
 	if (bWasSuccessful)
 	{
-		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
-		if (OwnerETGI)
-		{
-			OwnerETGI->OpenHouseLevel();
-		}
+		StartSession();
 	}
 	else
 	{
@@ -226,20 +208,8 @@ void AEveryThingGameSession::OnCreateSessionComplete(FName InSessionName, bool b
 		if (OwnerETMH)
 		{
 			OwnerETMH->ToggleToNewGameUIState(EMenuUIState::ErrorDialog);
-			OwnerETMH->SetErrorDialogMessage(TEXT("Can't create session"));
+			OwnerETMH->SetErrorDialogMessage(TEXT("Can't Create session"));
 		}
-	}
-}
-
-void AEveryThingGameSession::OnUpdateSessionComplete(FName InSessionName, bool bWasSuccessful)
-{
-	UE_LOG(EveryThingOnline, Log, TEXT("-_- OnUpdateSessionComplete bSuccess : %d "), bWasSuccessful);
-
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
-	if (Sessions.IsValid())
-	{
-		Sessions->ClearOnUpdateSessionCompleteDelegate_Handle(OnUpdateSessionCompleteDelegateHandle);;
 	}
 }
 
@@ -256,20 +226,20 @@ void AEveryThingGameSession::OnStartOnlineGameComplete(FName InSessionName, bool
 
 	if (bWasSuccessful)
 	{
-		UWorld* World = GetWorld();
-		FOnlineSessionSettings* OwnerOnlineSessionSetting = Sessions->GetSessionSettings(NAME_GameSession);
-
-
-		if (World && OwnerOnlineSessionSetting)
+		UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
+		if (OwnerETGI)
 		{
-			FString MapName;
-			OwnerOnlineSessionSetting->Get<FString>(SETTING_MAPNAME, MapName);
-		
-			const FMapInfo* MapInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetMapInfoFromName(FName(*MapName));
-
-			checkf(MapInfo, TEXT("-_- the  map actual path must exist."));
-
-			World->ServerTravel(FString::Printf(TEXT("%s?listen"), *MapInfo->MapPath));
+			OwnerETGI->OpenHouseLevel();
+		}
+	}
+	else
+	{
+		APlayerController* OwnerPC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
+		AEveryThingHUD_Menu* OwnerETMH = OwnerPC ? Cast<AEveryThingHUD_Menu>(OwnerPC->GetHUD()) : nullptr;
+		if (OwnerETMH)
+		{
+			OwnerETMH->ToggleToNewGameUIState(EMenuUIState::ErrorDialog);
+			OwnerETMH->SetErrorDialogMessage(TEXT("Can't Start session"));
 		}
 	}
 }

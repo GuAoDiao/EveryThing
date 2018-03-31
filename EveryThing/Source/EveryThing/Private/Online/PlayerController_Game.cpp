@@ -195,6 +195,22 @@ void APlayerController_Game::ClientStartPlayer_Implementation()
 	if (OwnerETHUD_G) { OwnerETHUD_G->ToggleToTargetGameUIState(EETGameState::Gameing); }
 }
 
+void APlayerController_Game::ClientGameOver_Implementation(int32 GetGold)
+{
+	UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
+	if (OwnerETGI)
+	{
+		OwnerETGI->AddGold(GetGold);
+	}
+
+	AEveryThingHUD_Game* OwnerETHUD_G = Cast<AEveryThingHUD_Game>(GetHUD());
+	if (OwnerETHUD_G)
+	{
+		OwnerETHUD_G->ToggleToTargetGameUIState(EETGameState::GameOver);
+		OwnerETHUD_G->ShowGameOver(GetGold);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 /// Player State
 void APlayerController_Game::OnRep_PlayerState()

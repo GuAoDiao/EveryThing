@@ -86,7 +86,7 @@ void AEveryThingGameState_House::OnGameTypeChanged()
 {
 	MapTypeInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetMapTypeInfoFromName(FName(*GameType));
 	
-	checkf(MapTypeInfo, TEXT("-_- the map type info must be exists."));
+	checkf(MapTypeInfo, TEXT("-_- the map type(%s) info must be exists."), *GameType);
 
 	AllowedTeamNum = MapTypeInfo->AllowedTeamNum;
 

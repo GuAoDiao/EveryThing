@@ -20,7 +20,7 @@ public:
 	void InitializeUI(FOnlineSessionSearchResult& InSearchResult);
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void InitializeDisplay(const FString& HouseName, const FString& GameType, const FString& MapName, int32 CurrentPlayerNums, int32 MaxPlayerNums, int32 Pin);
+	void InitializeDisplay(const FString& HouseName, const FString& GameType, const FString& MapName, int32 CurrentPlayerNums, int32 MaxPlayerNums, int32 Pin, const FString& State);
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateDisplay();

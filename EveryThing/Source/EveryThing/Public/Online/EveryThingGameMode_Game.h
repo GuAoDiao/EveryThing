@@ -34,6 +34,7 @@ public:
 	virtual void HandleETGameStart();
 	virtual bool HandleETGameIsOver();
 	virtual void HandleETGameOver();
+	virtual void HandlerETBackToHouse();
 
 	
 	//////////////////////////////////////////////////////////////////////////
@@ -50,4 +51,5 @@ public:
 private:
 	float NormalDamageScale;
 	float SpecificToDamageScale;
+	bool bBackToHome;
 };
