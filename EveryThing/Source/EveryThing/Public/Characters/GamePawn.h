@@ -179,13 +179,14 @@ public:
 	float GetDurability() const { return Durability; }
 	UFUNCTION(BlueprintPure)
 	float GetMaxDurability() const { return MaxDurability; }
+	void Healed(AActor* Curer, float HealingValue);
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDurabilityUpdateDelegate, float /* Durability */);
 	FOnDurabilityUpdateDelegate OnDurabilityUpdateDelegate;
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMaxDurabilityUpdateDelegate, float /* MaxDurability */);
 	FOnMaxDurabilityUpdateDelegate OnMaxDurabilityUpdateDelegate;
 protected:
-	void ChangeDurability(float Value);
+	void ChangeDurability(float DurabilityOffset);
 
 	UFUNCTION()
 	void OnRep_Durability() { OnDurabilityUpdate(); }
@@ -195,6 +196,8 @@ protected:
 	void OnRep_MaxDurability() { OnMaxDurabilityUpdate(); }
 	void OnMaxDurabilityUpdate() { OnMaxDurabilityUpdateDelegate.Broadcast(MaxDurability); }
 
+	void GamePawnDeath();
+	AActor* DamageCauserActor;
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Durability)
 	float Durability;
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxDurability)

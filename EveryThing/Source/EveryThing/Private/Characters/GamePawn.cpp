@@ -14,6 +14,7 @@
 #include "Characters/Moves/SkillComponent.h"
 #include "Online/PlayerController_Game.h"
 #include "Characters/Movement/Components/GamePawnMovementComponent.h"
+#include "EveryThingGameState_Game.h"
 
 #define LOCTEXT_NAMESPACE "Everything_Characters_GamePawn"
 
@@ -154,19 +155,50 @@ void AGamePawn::ChangeStaminaTick(float DeltaTime)
 	SpendStamina(-StaminaRecoverRate*DeltaTime);
 }
 
-void AGamePawn::ChangeDurability(float value)
+void AGamePawn::Healed(AActor* Curer, float HealingValue)
 {
-	Durability += value; OnDurabilityUpdateDelegate.Broadcast(Durability);
+	ChangeDurability(HealingValue);
+	AEveryThingGameState_Game* OwnerETGS_G = Cast<AEveryThingGameState_Game>(GetWorld()->GetGameState());
+	if (OwnerETGS_G) { OwnerETGS_G->OnGamePawnAcceptCure(this, Curer, HealingValue); }
 }
-
+void AGamePawn::ChangeDurability(float DurabilityOffset)
+{	
+	Durability += DurabilityOffset;
+	if (Durability < 0.f)
+	{
+		Durability = 0.f;
+	}
+	if (Durability > MaxDurability)
+	{
+		Durability = MaxDurability;
+	}
+	OnDurabilityUpdateDelegate.Broadcast(Durability);
+}
 
 float AGamePawn::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	DamageCauserActor = DamageCauser;
 	ChangeDurability(-FinalDamage);
+	
+	AEveryThingGameState_Game* OwnerETGS_G = Cast<AEveryThingGameState_Game>(GetWorld()->GetGameState());
+	if (OwnerETGS_G){OwnerETGS_G->OnGamePawnAcceptDamage(this, DamageCauser, FinalDamage);}
+
+	if (Durability == 0.f)
+	{
+		if (OwnerETGS_G) {OwnerETGS_G->OnGamePawnAcceptCriticalDamage(this, DamageCauser);}
+		GamePawnDeath();
+	}
+
 	return FinalDamage;
 }
 
+void AGamePawn::GamePawnDeath()
+{
+	AEveryThingGameState_Game* OwnerETGS_G = Cast<AEveryThingGameState_Game>(GetWorld()->GetGameState());
+	if (OwnerETGS_G) { OwnerETGS_G->OnGamePawnDeath(this, DamageCauserActor); };
+
+}
 
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn Form
@@ -346,6 +378,8 @@ void AGamePawn::OnRep_BaseInfo()
 {
 	UpdateInfo();
 }
+
+
 
 //////////////////////////////////////////////////////////////////////////
 /// Quality And Damping
