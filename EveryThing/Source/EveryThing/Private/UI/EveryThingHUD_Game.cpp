@@ -5,6 +5,7 @@
 #include "UI/Game/GameMenu.h"
 #include "UI/Game/GameLayout.h"
 #include "UI/Game/GameFlowPath/GameOver.h"
+#include "UI/Game/GameInfo/ScoreBox.h"
 #include "EveryThingAssetManager.h"
 
 #include "ChatWindow/UI/ChatWindow.h"
@@ -120,21 +121,43 @@ void AEveryThingHUD_Game::DisplayGameMenu()
 }
 void AEveryThingHUD_Game::RemoveGameMenu()
 {
-	if (GameMenu)
+	if (GameMenu && GameMenu->IsInViewport()) { GameMenu->RemoveFromViewport(); }
+
+	APlayerController* OwnerPC = GetOwningPlayerController();
+	if (OwnerPC)
 	{
-		GameMenu->RemoveFromParent();
-
-		APlayerController* OwnerPC = GetOwningPlayerController();
-		if (OwnerPC)
-		{
-			OwnerPC->bShowMouseCursor = false;
-
-			FInputModeGameOnly InputMode;
-			OwnerPC->SetInputMode(InputMode);
-		}
+		OwnerPC->bShowMouseCursor = false;
+		OwnerPC->SetInputMode(FInputModeGameOnly());
 	}
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+/// Score Box
+void AEveryThingHUD_Game::DisplayScoreBoard()
+{
+	if (!ScoreBox)
+	{
+		TSubclassOf<UUserWidget> ScoreBoxClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("ScoreBox"));
+		if (ScoreBoxClass)
+		{
+			ScoreBox = CreateWidget<UScoreBox>(GetOwningPlayerController(), ScoreBoxClass);
+		}
+	}
+
+	if (ScoreBox && !ScoreBox->IsInViewport()) { ScoreBox->AddToViewport(); }
+}
+
+void AEveryThingHUD_Game::RemoveScoreBoard()
+{
+	if (ScoreBox && ScoreBox->IsInViewport()) { ScoreBox->RemoveFromViewport(); }
+
+	APlayerController* OwnerPC = GetOwningPlayerController();
+	if (OwnerPC)
+	{
+		OwnerPC->SetInputMode(FInputModeGameOnly());
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 /// Select About Roles 

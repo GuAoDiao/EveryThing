@@ -57,6 +57,9 @@ void APlayerController_Game::RebindInput()
 	InputComponent->BindAction("DisplayGameMenu", IE_Pressed, this, &APlayerController_Game::DisplayGameMenu);
 	InputComponent->BindAction("FocusToChatWindow", IE_Pressed, this, &APlayerController_Game::FocusToChatWindow);
 	
+	InputComponent->BindAction("ToggleScoreBoard", IE_Pressed, this, &APlayerController_Game::DisplayScoreBoard);
+	InputComponent->BindAction("ToggleScoreBoard", IE_Released, this, &APlayerController_Game::RemoveScoreBoard);
+
 
 	InputComponent->BindAxis("Turn", this, &APlayerController_Game::Turn);
 	InputComponent->BindAxis("LookUp", this, &APlayerController_Game::LookUp);
@@ -84,8 +87,9 @@ void APlayerController_Game::SetPawn(APawn* InPawn)
 	IPlayerPawnInterface* OwnerPlayerPawn = Cast<IPlayerPawnInterface>(InPawn);
 	OwnerPlayerPawnComp = OwnerPlayerPawn ? OwnerPlayerPawn->GetPlayerPawnComponent() : nullptr;
 
-	// try to get right role name when first SetPawn.
-	if (CurrentRoleName.IsNone() && OwnerGamePawn)
+	// try to get actual role name when first SetPawn.
+	if (InPawn == nullptr) { CurrentRoleName = NAME_None; }
+	else if (CurrentRoleName.IsNone() && OwnerGamePawn)
 	{
 		UClass* CurrentPawnClass = OwnerGamePawn->GetClass();
 		CurrentRoleName = CurrentPawnClass ? UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleNameFromClass(CurrentPawnClass) : NAME_None;
@@ -211,6 +215,40 @@ void APlayerController_Game::ClientGameOver_Implementation(int32 GetGold)
 	}
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+/// Pawn Damage
+void APlayerController_Game::ClientOnAcceptCure_Implementation(AActor* Causer, float Treatment)
+{
+
+}
+void APlayerController_Game::ClientOnAcceptDamage_Implementation(AActor* Causer, float Damage)
+{
+
+}
+void APlayerController_Game::ClientOnAcceptCriticalDamage_Implementation(AActor* Causer)
+{
+}
+
+
+void APlayerController_Game::ClientOnTakeCure_Implementation(AActor* Accepter, float Treatment)
+{
+}
+void APlayerController_Game::ClientOnTakeDamage_Implementation(AActor* Accepter, float Damage)
+{
+}
+void APlayerController_Game::ClientOnTakeCriticalDamage_Implementation(AActor* Accepter)
+{
+}
+
+
+void APlayerController_Game::ClientOnBeKilled_Implementation(AActor* KillerActor)
+{
+}
+void APlayerController_Game::ClientOnKillOther_Implementation(AActor* KilledActor)
+{
+}
+
 //////////////////////////////////////////////////////////////////////////
 /// Player State
 void APlayerController_Game::OnRep_PlayerState()
@@ -243,6 +281,17 @@ void APlayerController_Game::FocusToChatWindow()
 {
 	AEveryThingHUD_Game* OwnerETGH = Cast<AEveryThingHUD_Game>(GetHUD());
 	if (OwnerETGH) { OwnerETGH->FocusToChatWindow(); }
+}
+
+void APlayerController_Game::DisplayScoreBoard()
+{
+	AEveryThingHUD_Game* OwnerETGH = Cast<AEveryThingHUD_Game>(GetHUD());
+	if (OwnerETGH) { OwnerETGH->DisplayScoreBoard(); }
+}
+void APlayerController_Game::RemoveScoreBoard()
+{
+	AEveryThingHUD_Game* OwnerETGH = Cast<AEveryThingHUD_Game>(GetHUD());
+	if (OwnerETGH) { OwnerETGH->RemoveScoreBoard(); }
 }
 
 //////////////////////////////////////////////////////////////////////////

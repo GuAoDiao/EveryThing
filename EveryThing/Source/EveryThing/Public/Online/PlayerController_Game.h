@@ -46,6 +46,28 @@ public:
 	void ClientGameOver(int32 Gold);
 
 	//////////////////////////////////////////////////////////////////////////
+	/// GamePawn Cure, Damage, Death
+public:
+	UFUNCTION(Client, Reliable)
+	void ClientOnAcceptCure(AActor* Causer, float Treatment);
+	UFUNCTION(Client, Reliable)
+	void ClientOnAcceptDamage(AActor* Causer, float Damage);
+	UFUNCTION(Client, Reliable)
+	void ClientOnAcceptCriticalDamage(AActor* Causer);
+
+	UFUNCTION(Client, Reliable)
+	void ClientOnTakeCure(AActor* Accepter, float Treatment);
+	UFUNCTION(Client, Reliable)
+	void ClientOnTakeDamage(AActor* Accepter, float Damage);
+	UFUNCTION(Client, Reliable)
+	void ClientOnTakeCriticalDamage(AActor* Accepter);
+
+	UFUNCTION(Client, Reliable)
+	void ClientOnBeKilled(AActor* KillerActor);
+	UFUNCTION(Client, Reliable)
+	void ClientOnKillOther(AActor* KilledActor);
+
+	//////////////////////////////////////////////////////////////////////////
 	/// Player State
 public:
 	virtual void OnRep_PlayerState() override;
@@ -55,6 +77,7 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 	/// For Game Pawn Controller Interface
+public:
 	virtual AActor* GetAttackTarget() override;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -76,9 +99,15 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	/// UI
+protected:
 	void DisplayGameMenu();
 	void FocusToChatWindow();
 
+	void DisplayScoreBoard();
+	void RemoveScoreBoard();
+
+protected:
+	class AEveryThingHUD_Game* GetOwnerETHUD_G() const;
 	//////////////////////////////////////////////////////////////////////////
 	/// Attack and skill
 public:	

@@ -7,14 +7,6 @@
 #include "UI/Game/SelectAboutRole/SelectSkinsBox.h"
 #include "UI/Game/SelectAboutRole/SelectFormsBox.h"
 
-
-void UGameLayout::NativeConstruct()
-{
-	InitializeGameLayout();
-
-	Super::NativeConstruct();
-}
-
 void UGameLayout::DisplaySelectRolesBox() { if (SelectRolesBox) { SelectRolesBox->SetVisibility(ESlateVisibility::Visible); } }
 void UGameLayout::RemoveSelectRolesBox() { if (SelectRolesBox) { SelectRolesBox->SetVisibility(ESlateVisibility::Hidden); } }
 

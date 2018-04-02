@@ -14,11 +14,18 @@
 #include "Characters/PlayerPawns/PlayerChairPawn.h"
 #include "Characters/PlayerPawns/PlayerFootballPawn.h"
 
+AEveryThingPlayerState_Game::AEveryThingPlayerState_Game()
+{
+	TeamID = -1;
+	
+	KillNum = 0;
+	DeathNum = 0;
+	GameScore = 0;
+}
+
 void AEveryThingPlayerState_Game::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GameScore = 100.f;
 	
 	// if not from SeamlessTravel, add in the middle of th game. set player info from GameInstance.
 	UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
@@ -27,8 +34,6 @@ void AEveryThingPlayerState_Game::BeginPlay()
 	{
 		ServerSetPlayerInfo( OwnerETGI->GetPlayerInfo());
 	}
-
-
 
 	if (HasAuthority())
 	{
@@ -82,4 +87,8 @@ void AEveryThingPlayerState_Game::GetLifetimeReplicatedProps(TArray<FLifetimePro
 	DOREPLIFETIME(AEveryThingPlayerState_Game, TeamID);
 
 	DOREPLIFETIME(AEveryThingPlayerState_Game, ChatID);
+
+	DOREPLIFETIME(AEveryThingPlayerState_Game, DeathNum);
+	DOREPLIFETIME(AEveryThingPlayerState_Game, KillNum);
+	DOREPLIFETIME(AEveryThingPlayerState_Game, GameScore);
 }

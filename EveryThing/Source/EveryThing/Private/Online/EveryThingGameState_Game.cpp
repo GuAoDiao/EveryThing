@@ -6,8 +6,10 @@
 #include "UnrealNetwork.h"
 #include "TimerManager.h"
 
+#include "Characters/GamePawn.h"
 #include "Online/EveryThingPlayerState_Game.h"
 #include "Online/EveryThingGameMode_Game.h"
+#include "Online/PlayerController_Game.h"
 
 const FString AEveryThingGameState_Game::PlayerChatName_NONE = FString("NONE");
 
@@ -18,11 +20,18 @@ AEveryThingGameState_Game::AEveryThingGameState_Game()
 	// TODO: close debug
 	// DefaultReadyTime = 15.f;
 	CurrentPlayerNum = 0;
+	ActualTeamNums = 1;
 	bIsETGameStarted = false;
 
 	DefaultReadyTime = 1.f;
 	DefaultGameTime = 600.f;
 	DefaultBackToHouseTime = 10.f;
+
+	// score
+	CureScoreScale = 0.5f;
+	DamageScoreScale = 0.7f;
+	CriticalDamageScore = 20.f;
+	KillScore = 100.f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -171,21 +180,85 @@ const FString& AEveryThingGameState_Game::GetPlayerChatName(int32 PlayerID) cons
 
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn Damage And Death
-void AEveryThingGameState_Game::OnGamePawnAcceptCure(AGamePawn* AccpetPawn, AActor* Causer, float Cure)
+void AEveryThingGameState_Game::OnGamePawnAcceptCure(AGamePawn* AccpetPawn, AActor* Causer, float Treatment)
 {
+	APlayerController_Game* AcceptPC_G = AccpetPawn ? Cast<APlayerController_Game>(AccpetPawn->GetController()) : nullptr;
+	if (AcceptPC_G) { AcceptPC_G->ClientOnAcceptCure(Causer, Treatment); }
+	
+	AGamePawn* CauserGamePawn = Cast<AGamePawn>(Causer);
+	APlayerController_Game* CasuerPC_G = CauserGamePawn ? Cast<APlayerController_Game>(CauserGamePawn->GetController()) : nullptr;
+	if (CasuerPC_G)
+	{
+		AEveryThingPlayerState_Game* CauserETPS_G = Cast<AEveryThingPlayerState_Game>(CasuerPC_G->PlayerState);
+		if (CauserETPS_G) { CauserETPS_G->AddGameScore(Treatment * CureScoreScale); }
 
+		CasuerPC_G->ClientOnTakeCure(AccpetPawn, Treatment);
+	}
 }
 void AEveryThingGameState_Game::OnGamePawnAcceptDamage(AGamePawn* AccpetPawn, AActor* Causer, float Damage)
 {
+	APlayerController_Game* AcceptPC_G = AccpetPawn ? Cast<APlayerController_Game>(AccpetPawn->GetController()) : nullptr;
+	if (AcceptPC_G) { AcceptPC_G->ClientOnAcceptDamage(Causer, Damage); }
 
+	AGamePawn* CauserGamePawn = Cast<AGamePawn>(Causer);
+	APlayerController_Game* CasuerPC_G = CauserGamePawn ? Cast<APlayerController_Game>(CauserGamePawn->GetController()) : nullptr;
+	if (CasuerPC_G)
+	{
+		AEveryThingPlayerState_Game* CauserETPS_G = Cast<AEveryThingPlayerState_Game>(CasuerPC_G->PlayerState);
+		if (CauserETPS_G) { CauserETPS_G->AddGameScore(Damage * DamageScoreScale); }
+
+		CasuerPC_G->ClientOnTakeDamage(AccpetPawn, Damage);
+	}
 }
+
 void AEveryThingGameState_Game::OnGamePawnAcceptCriticalDamage(AGamePawn* AccpetPawn, AActor* Causer)
 {
+	APlayerController_Game* AcceptPC_G = AccpetPawn ? Cast<APlayerController_Game>(AccpetPawn->GetController()) : nullptr;
+	if (AcceptPC_G) { AcceptPC_G->ClientOnAcceptCriticalDamage(Causer); }
 
+	AGamePawn* CauserGamePawn = Cast<AGamePawn>(Causer);
+	APlayerController_Game* CasuerPC_G = CauserGamePawn ? Cast<APlayerController_Game>(CauserGamePawn->GetController()) : nullptr;
+	if (CasuerPC_G)
+	{
+		AEveryThingPlayerState_Game* CauserETPS_G = Cast<AEveryThingPlayerState_Game>(CasuerPC_G->PlayerState);
+		if (CauserETPS_G) { CauserETPS_G->AddGameScore(CriticalDamageScore); }
+
+		CasuerPC_G->ClientOnTakeCriticalDamage(AccpetPawn);
+	}
 }
-void AEveryThingGameState_Game::OnGamePawnDeath(AGamePawn* AccpetPawn, AActor* LastDamageCauser)
-{
 
+void AEveryThingGameState_Game::OnGamePawnBeKilled(AGamePawn* KilledActor, AActor* KillerActor)
+{
+	APlayerController_Game* KilledPC_G = KilledActor ? Cast<APlayerController_Game>(KilledActor->GetController()) : nullptr;
+	if (KilledPC_G)
+	{
+		AEveryThingPlayerState_Game* KilledETPS_G = Cast<AEveryThingPlayerState_Game>(KilledPC_G->PlayerState);
+		if (KilledETPS_G) { KilledETPS_G->IncDeathNum(); }
+
+		KilledPC_G->ClientOnBeKilled(KillerActor);
+
+		AEveryThingGameMode_Game* OwnerETGM_G = GetWorld() ? GetWorld()->GetAuthGameMode<AEveryThingGameMode_Game>() : nullptr;
+		if (OwnerETGM_G)
+		{
+			KilledPC_G->Possess(nullptr);
+			KilledActor->Destroy();
+			OwnerETGM_G->RestartPlayer(KilledPC_G);
+		}
+	}
+
+	AGamePawn* KillerGamePawn = Cast<AGamePawn>(KillerActor);
+	APlayerController_Game* KillerPC_G = KillerGamePawn ? Cast<APlayerController_Game>(KillerGamePawn->GetController()) : nullptr;
+	if (KillerPC_G)
+	{
+		AEveryThingPlayerState_Game* KillerETPS_G = Cast<AEveryThingPlayerState_Game>(KillerPC_G->PlayerState);
+		if (KillerETPS_G)
+		{
+			KillerETPS_G->AddGameScore(KillScore);
+			KillerETPS_G->IncKillNum();
+		}
+
+		KillerPC_G->ClientOnKillOther(KilledActor);
+	}
 }
 
 

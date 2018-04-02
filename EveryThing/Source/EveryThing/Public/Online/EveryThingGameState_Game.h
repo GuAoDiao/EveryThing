@@ -37,6 +37,10 @@ public:
 	void OnPlayerPostLogin(APlayerController* NewPlayer);
 	void OnPlayerLogout(AController* Exiting);
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateAddDelegate, APlayerState* /* PlayerState */)
+	FOnPlayerStateAddDelegate OnPlayerStateAddDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateRemoveDelegate, APlayerState* /* PlayerState */)
+	FOnPlayerStateRemoveDelegate OnPlayerStateRemoveDelegate;
 	//////////////////////////////////////////////////////////////////////////
 	/// Ready
 public:
@@ -140,10 +144,10 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn Damage And Death
 public:
-	void OnGamePawnAcceptCure(AGamePawn* AccpetPawn, AActor* Causer, float Cure);
-	void OnGamePawnAcceptDamage(AGamePawn* AccpetPawn, AActor* Causer, float Damage);
-	void OnGamePawnAcceptCriticalDamage(AGamePawn* AccpetPawn, AActor* Causer);
-	void OnGamePawnDeath(AGamePawn* AccpetPawn, AActor* LastDamageCauser);
+	virtual void OnGamePawnAcceptCure(AGamePawn* AccpetPawn, AActor* Causer, float Treatment);
+	virtual void OnGamePawnAcceptDamage(AGamePawn* AccpetPawn, AActor* Causer, float Damage);
+	virtual void OnGamePawnAcceptCriticalDamage(AGamePawn* AccpetPawn, AActor* Causer);
+	virtual void OnGamePawnBeKilled(AGamePawn* KilledActor, AActor* KillerActor);
 
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnGamePawnAcceptCureDelegate, AGamePawn* /* AccpetPawn */, AActor* /* Causer */, float /* Cure */)
 	FOnGamePawnAcceptCureDelegate OnGamePawnAcceptCureDelegate;
@@ -151,8 +155,15 @@ public:
 	FOnGamePawnAcceptDamageDelegate OnGamePawnAcceptDamageDelegate;
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGamePawnAcceptCriticalDamageDelegate, AGamePawn* /* AccpetPawn */, AActor* /* Causer */)
 	FOnGamePawnAcceptCriticalDamageDelegate OnGamePawnAcceptCriticalDamageDelegate;
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGamePawnDeathDelegate, AGamePawn* /* AccpetPawn */, AActor* /* LastDamageCauser */)
-	FOnGamePawnDeathDelegate OnGamePawnDeathDelegate;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGamePawnBeKilledDelegate, AGamePawn* /* KilledActor */, AActor* /* KillerActor */)
+	FOnGamePawnBeKilledDelegate OnGamePawnBeKilledDelegate;
+
+	/// Score
+protected:
+	float CureScoreScale;
+	float DamageScoreScale;
+	float CriticalDamageScore;
+	float KillScore;
 
 
 	//////////////////////////////////////////////////////////////////////////

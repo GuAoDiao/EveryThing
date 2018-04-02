@@ -179,8 +179,7 @@ public:
 	float GetDurability() const { return Durability; }
 	UFUNCTION(BlueprintPure)
 	float GetMaxDurability() const { return MaxDurability; }
-	void Healed(AActor* Curer, float HealingValue);
-
+	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDurabilityUpdateDelegate, float /* Durability */);
 	FOnDurabilityUpdateDelegate OnDurabilityUpdateDelegate;
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMaxDurabilityUpdateDelegate, float /* MaxDurability */);
@@ -196,12 +195,11 @@ protected:
 	void OnRep_MaxDurability() { OnMaxDurabilityUpdate(); }
 	void OnMaxDurabilityUpdate() { OnMaxDurabilityUpdateDelegate.Broadcast(MaxDurability); }
 
-	void GamePawnDeath();
-	AActor* DamageCauserActor;
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Durability)
 	float Durability;
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxDurability)
 	float MaxDurability;
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Stamina
 public:
@@ -232,19 +230,15 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	float StaminaRecoverRate;
 
-protected:
 	//////////////////////////////////////////////////////////////////////////
-	/// Damage
+	/// Cure, Damage, Death
+
+protected:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
+	void Healed(AActor* Curer, float Treatment);
+	void GamePawnDeath();
 
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnHitableActorTakeDamageDelegate, AGamePawn*, AActor*, float);
-	FOnHitableActorTakeDamageDelegate OnHitableActorTakeDamageDelegate;
-
-	UFUNCTION()
-	void OnRep_HitableActorTakeDamage(AActor* HitableActor, float Damage) { OnHitableActorTakeDamage(HitableActor, Damage); }
-	void OnHitableActorTakeDamage(AActor* HitableActor, float Damage) { OnHitableActorTakeDamageDelegate.Broadcast(this, HitableActor, Damage); }
-
-
+	AActor* LastDamageCauserActor;
 protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Element
@@ -262,7 +256,6 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// On Use Force 
 public:
-
 	void OnConsumeForce(const FVector& Force);
 	void OnConsumeTorqueInRadians(const FVector& Torque);
 	void OnConsumeImpulse(const FVector& Impulse);

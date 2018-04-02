@@ -73,6 +73,17 @@ void UPlayerPawnComponent::BeginPlay()
 	
 }
 
+void UPlayerPawnComponent::BeginDestroy()
+{
+	if(CurrentAttackTarget)
+	{
+		IHitAbleInterface * CurrentHitableAttackTarget = Cast<IHitAbleInterface>(CurrentAttackTarget);
+		if (CurrentHitableAttackTarget) { CurrentHitableAttackTarget->SetIsSelectedToHit(false); }
+	}
+
+	Super::BeginDestroy();
+}
+
 void UPlayerPawnComponent::OnPossessedByController(AController* NewController)
 {
 	// now we get the Controller. then we can get player state from controller.

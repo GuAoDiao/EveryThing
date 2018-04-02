@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -20,7 +20,7 @@ public:
 	void OnPlayerStateAdd(class APlayerState* NewPS);
 	void OnPlayerStateRemove(class APlayerState* RemovePS);
 
-	// _°Ù¶È·­Òë_ .It shows the score information of players by blocks, usually according to team assignment.
+	// _ç™¾åº¦ç¿»è¯‘_ .It shows the score information of players by blocks, usually according to team assignment.
 	// Min is 1, Max is actual team Num.
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetSectionNums(int32 BlockNums);

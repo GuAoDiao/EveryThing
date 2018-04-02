@@ -30,11 +30,7 @@ public:
 	/// Main Widget
 protected:
 	UPROPERTY(Transient)
-	class UGameMenu* GameMenu;
-	UPROPERTY(Transient)
 	class UGameLayout* GameLayout;
-	UPROPERTY(Transient)
-	class UGameOver* GameOver;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game UI State
@@ -45,7 +41,8 @@ public:
 	void ShowGameOver(int32 GetGold);
 protected:
 	EETGameState CurrentGameUIState;
-
+	UPROPERTY(Transient)
+	class UGameOver* GameOver;
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window HUD Interface
 public:
@@ -68,6 +65,7 @@ public:
 	virtual void ReceiveChatMessage(const FChatChannel* ChatChannel, const FChatMessageInfo& ChatMessage)override;
 
 protected:
+	UPROPERTY(Transient)
 	UChatWindow* ChatWindow;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -80,6 +78,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveGameMenu();
 
+protected:
+	UPROPERTY(Transient)
+	class UGameMenu* GameMenu;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Score Box
+public:
+	void DisplayScoreBoard();
+	void RemoveScoreBoard();
+
+protected:
+	UPROPERTY(Transient)
+	class UScoreBox* ScoreBox;
 	//////////////////////////////////////////////////////////////////////////
 	/// Select About Roles 
 public:

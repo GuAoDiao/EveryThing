@@ -22,6 +22,8 @@ class EVERYTHING_API AEveryThingPlayerState_Game : public APlayerState, public I
 	GENERATED_BODY()
 	
 public:
+	AEveryThingPlayerState_Game();
+
 	virtual void BeginPlay() override;
 	
 	void SeamlessTravelTo(class APlayerState* NewPlayerState);
@@ -86,10 +88,10 @@ protected:
 	void OnRep_GameScore() { OnGameScoreUpdate(); }
 	void OnGameScoreUpdate() { OnGameScoreOffsetDelegate.Broadcast(GameScore); }
 	UFUNCTION()
-	void OnRep_KillNum() {}
+	void OnRep_KillNum() { OnKillNumUpdate(); }
 	void OnKillNumUpdate() { OnKillNumUpdateDelegate.Broadcast(KillNum); }
 	UFUNCTION()
-	void OnRep_DeathNum() {}
+	void OnRep_DeathNum() { OnDeathNumUpdate(); }
 	void OnDeathNumUpdate() { OnDeathNumUpdateDelegate.Broadcast(DeathNum); }
 
 	UPROPERTY(Transient, Replicated)

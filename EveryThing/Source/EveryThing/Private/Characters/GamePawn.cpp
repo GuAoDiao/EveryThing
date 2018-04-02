@@ -99,32 +99,43 @@ void AGamePawn::AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const F
 		AEveryThingGameMode_Game* GameMode = Cast<AEveryThingGameMode_Game>(GetWorld()->GetAuthGameMode());
 		if (GameMode && GameMode->CanTakeDamage(this, OtherActor))
 		{
-			float Damage = 0.f;
-			FPointDamageEvent DamageEvent;
-			DamageEvent.HitInfo = Hit;
 			IHitAbleInterface* HitableActor = Cast<IHitAbleInterface>(OtherActor);
 			if (HitableActor)
 			{
 				AGamePawn* OtherPawn = Cast<AGamePawn>(OtherActor);
 				if (OtherPawn)
 				{
-					Damage = GameMode->GetDamageFromGamePawnHit(this, OtherPawn, NormalInpulse, Hit);
-					DamageEvent.Damage = Damage;
-					OtherPawn->TakeDamage(Damage, DamageEvent, GetController(), this);
+					float Damage = GameMode->GetDamageFromGamePawnHit(this, OtherPawn, NormalInpulse, Hit);
+					if (Damage > 0.f)
+					{
+						FPointDamageEvent DamageEvent;
+						DamageEvent.HitInfo = Hit;
+						DamageEvent.Damage = Damage;
+						TakeDamage(Damage, DamageEvent, OtherPawn->GetController(), OtherPawn);
+					}
 				}
 				else
 				{
-					Damage = GameMode->GetDamageFromHitableHit(this, NormalInpulse, Hit);
-					DamageEvent.Damage = Damage;
-					OtherActor->TakeDamage(Damage, DamageEvent, GetController(), this);
-					OnHitableActorTakeDamageDelegate.Broadcast(this, OtherActor, Damage);
+					float Damage = GameMode->GetDamageFromHitableHit(this, NormalInpulse, Hit);
+					if (Damage > 0.f)
+					{
+						FPointDamageEvent DamageEvent;
+						DamageEvent.HitInfo = Hit;						
+						DamageEvent.Damage = Damage;
+						TakeDamage(Damage, DamageEvent, nullptr, OtherActor);
+					}
 				}
 			}
 			else
 			{
-				Damage = GameMode->GetDamageFromActorHit(this, NormalInpulse, Hit);
-				DamageEvent.Damage = Damage;
-				TakeDamage(Damage, DamageEvent, GetController(), OtherActor);
+				float Damage = GameMode->GetDamageFromActorHit(this, NormalInpulse, Hit);
+				if (Damage > 0.f)
+				{
+					FPointDamageEvent DamageEvent;
+					DamageEvent.HitInfo = Hit;
+					DamageEvent.Damage = Damage;
+					TakeDamage(Damage, DamageEvent, GetController(), OtherActor);
+				}
 			}
 		}
 	}
@@ -155,38 +166,40 @@ void AGamePawn::ChangeStaminaTick(float DeltaTime)
 	SpendStamina(-StaminaRecoverRate*DeltaTime);
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// Cure, Damage, Death
+
 void AGamePawn::Healed(AActor* Curer, float HealingValue)
 {
 	ChangeDurability(HealingValue);
+
 	AEveryThingGameState_Game* OwnerETGS_G = Cast<AEveryThingGameState_Game>(GetWorld()->GetGameState());
 	if (OwnerETGS_G) { OwnerETGS_G->OnGamePawnAcceptCure(this, Curer, HealingValue); }
 }
 void AGamePawn::ChangeDurability(float DurabilityOffset)
 {	
 	Durability += DurabilityOffset;
-	if (Durability < 0.f)
-	{
-		Durability = 0.f;
-	}
-	if (Durability > MaxDurability)
-	{
-		Durability = MaxDurability;
-	}
+	if (Durability < 0.f) { Durability = 0.f; }
+	if (Durability > MaxDurability) { Durability = MaxDurability; }
+
 	OnDurabilityUpdateDelegate.Broadcast(Durability);
 }
 
 float AGamePawn::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	DamageCauserActor = DamageCauser;
-	ChangeDurability(-FinalDamage);
 	
+	ChangeDurability(-FinalDamage);
+
+	LastDamageCauserActor = DamageCauser;
+		
 	AEveryThingGameState_Game* OwnerETGS_G = Cast<AEveryThingGameState_Game>(GetWorld()->GetGameState());
-	if (OwnerETGS_G){OwnerETGS_G->OnGamePawnAcceptDamage(this, DamageCauser, FinalDamage);}
+	if (OwnerETGS_G) { OwnerETGS_G->OnGamePawnAcceptDamage(this, DamageCauser, FinalDamage); }
 
 	if (Durability == 0.f)
 	{
 		if (OwnerETGS_G) {OwnerETGS_G->OnGamePawnAcceptCriticalDamage(this, DamageCauser);}
+
 		GamePawnDeath();
 	}
 
@@ -196,8 +209,7 @@ float AGamePawn::TakeDamage(float DamageAmount, struct FDamageEvent const & Dama
 void AGamePawn::GamePawnDeath()
 {
 	AEveryThingGameState_Game* OwnerETGS_G = Cast<AEveryThingGameState_Game>(GetWorld()->GetGameState());
-	if (OwnerETGS_G) { OwnerETGS_G->OnGamePawnDeath(this, DamageCauserActor); };
-
+	if (OwnerETGS_G) { OwnerETGS_G->OnGamePawnBeKilled(this, LastDamageCauserActor); };
 }
 
 //////////////////////////////////////////////////////////////////////////

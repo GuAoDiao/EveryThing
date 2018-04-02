@@ -18,10 +18,11 @@ class EVERYTHING_API UGameLayout : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void NativeConstruct() override;
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void InitializeGameLayout();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateGameUIDisplay(EETGameState GameUIState);
 
 	void DisplaySelectRolesBox();
 	void RemoveSelectRolesBox();
@@ -31,9 +32,6 @@ public:
 	
 	void DisplaySelectFormsBox();
 	void RemoveSelectFormsBox();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateGameUIDisplay(EETGameState GameUIState);
 public:
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class USelectRolesBox* SelectRolesBox;

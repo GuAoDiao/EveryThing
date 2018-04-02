@@ -11,6 +11,8 @@
 
 void UScoreBox::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -22,10 +24,11 @@ void UScoreBox::NativeConstruct()
 			{
 				OnPlayerStateAdd(PlayerState);
 			}
+
+			OwnerETGS_G->OnPlayerStateAddDelegate.AddUObject(this, &UScoreBox::OnPlayerStateAdd);
+			OwnerETGS_G->OnPlayerStateRemoveDelegate.AddUObject(this, &UScoreBox::OnPlayerStateRemove);
 		}
 	}
-
-	Super::NativeConstruct();
 }
 
 void UScoreBox::OnPlayerStateAdd(class APlayerState* NewPS)
@@ -33,13 +36,18 @@ void UScoreBox::OnPlayerStateAdd(class APlayerState* NewPS)
 	APlayerController* OwnerPC = GetOwningPlayer();
 	AEveryThingPlayerState_Game* NewETPS_G = Cast<AEveryThingPlayerState_Game>(NewPS);
 	TSubclassOf<UUserWidget> ScoreItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("ScoreItem");
+
 	if (NewETPS_G && OwnerPC && ScoreItemClass)
 	{
 		UScoreItem* ScoreItem = CreateWidget<UScoreItem>(OwnerPC, ScoreItemClass);
 		if(ScoreItem)
 		{
 			ScoreItem->InitializeScoreItem(NewETPS_G);
-			AddScoreItem(ScoreItem, NewETPS_G->GetTeamID());
+
+			int32 SectionID = NewETPS_G->GetTeamID();
+			if (SectionID == -1) { SectionID = 1; }
+
+			AddScoreItem(ScoreItem, SectionID);
 
 			AllScoreItem.Add(NewPS, ScoreItem);
 		}
