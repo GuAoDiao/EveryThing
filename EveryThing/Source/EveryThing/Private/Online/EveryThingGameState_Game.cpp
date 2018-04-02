@@ -169,7 +169,24 @@ const FString& AEveryThingGameState_Game::GetPlayerChatName(int32 PlayerID) cons
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+/// Game Pawn Damage And Death
+void AEveryThingGameState_Game::OnGamePawnAcceptCure(AGamePawn* AccpetPawn, AActor* Causer, float Cure)
+{
 
+}
+void AEveryThingGameState_Game::OnGamePawnAcceptDamage(AGamePawn* AccpetPawn, AActor* Causer, float Damage)
+{
+
+}
+void AEveryThingGameState_Game::OnGamePawnAcceptCriticalDamage(AGamePawn* AccpetPawn, AActor* Causer)
+{
+
+}
+void AEveryThingGameState_Game::OnGamePawnDeath(AGamePawn* AccpetPawn, AActor* LastDamageCauser)
+{
+
+}
 
 
 void AEveryThingGameState_Game::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const

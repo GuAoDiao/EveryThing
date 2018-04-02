@@ -133,7 +133,7 @@ private:
 
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentRoleSkinName)
-		FName CurrentRoleSkinName;
+	FName CurrentRoleSkinName;
 	FRoleSkin* CurrentRoleSkin;
 
 	//////////////////////////////////////////////////////////////////////////

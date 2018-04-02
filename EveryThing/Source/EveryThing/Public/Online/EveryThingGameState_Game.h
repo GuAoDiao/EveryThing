@@ -12,6 +12,7 @@
 
 
 class AEveryThingPlayerState_Game;
+class AGamePawn;
 
 /**
  * 
@@ -135,6 +136,24 @@ protected:
 	EETGameState CurrentETGameState;
 	UPROPERTY(Transient, Replicated)
 	bool bIsETGameStarted;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Game Pawn Damage And Death
+public:
+	void OnGamePawnAcceptCure(AGamePawn* AccpetPawn, AActor* Causer, float Cure);
+	void OnGamePawnAcceptDamage(AGamePawn* AccpetPawn, AActor* Causer, float Damage);
+	void OnGamePawnAcceptCriticalDamage(AGamePawn* AccpetPawn, AActor* Causer);
+	void OnGamePawnDeath(AGamePawn* AccpetPawn, AActor* LastDamageCauser);
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnGamePawnAcceptCureDelegate, AGamePawn* /* AccpetPawn */, AActor* /* Causer */, float /* Cure */)
+	FOnGamePawnAcceptCureDelegate OnGamePawnAcceptCureDelegate;
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnGamePawnAcceptDamageDelegate, AGamePawn* /* AccpetPawn */, AActor* /* Causer */, float /* Damage */)
+	FOnGamePawnAcceptDamageDelegate OnGamePawnAcceptDamageDelegate;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGamePawnAcceptCriticalDamageDelegate, AGamePawn* /* AccpetPawn */, AActor* /* Causer */)
+	FOnGamePawnAcceptCriticalDamageDelegate OnGamePawnAcceptCriticalDamageDelegate;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGamePawnDeathDelegate, AGamePawn* /* AccpetPawn */, AActor* /* LastDamageCauser */)
+	FOnGamePawnDeathDelegate OnGamePawnDeathDelegate;
+
 
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window Game State Interface
