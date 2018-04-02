@@ -7,13 +7,13 @@
 
 #include "EveryThingTypes.h"
 
-#include "UserInfoBox.generated.h"
+#include "PlayerInfoDiaplay.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API UUserInfoBox : public UUserWidget
+class EVERYTHING_API UPlayerInfoDiaplay : public UUserWidget
 {
 	GENERATED_BODY()
 

@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "FightInfoBox.generated.h"
+#include "CombatLog.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API UFightInfoBox : public UUserWidget
+class EVERYTHING_API UCombatLog : public UUserWidget
 {
 	GENERATED_BODY()
 	

@@ -42,7 +42,7 @@ public:
 protected:
 	EETGameState CurrentGameUIState;
 	UPROPERTY(Transient)
-	class UGameOver* GameOver;
+	class UGameOverDisplay* GameOver;
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window HUD Interface
 public:
@@ -90,7 +90,7 @@ public:
 
 protected:
 	UPROPERTY(Transient)
-	class UScoreBox* ScoreBox;
+	class UScoreBoard* ScoreBoard;
 	//////////////////////////////////////////////////////////////////////////
 	/// Select About Roles 
 public:

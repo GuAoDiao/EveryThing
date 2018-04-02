@@ -7,20 +7,20 @@
 
 #include "EveryThingTypes.h"
 
-#include "ImportantNote.generated.h"
+#include "ImportantNoticeItem.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API UImportantNote : public UUserWidget
+class EVERYTHING_API UImportantNoticeItem : public UUserWidget
 {
 	GENERATED_BODY()
 	
 	
 public:
 	UFUNCTION(BlueprintNativeEvent)
-	void InitializeImportantNote(const FText& ImportantNoteText, EImportantNoteType NoteType, float InRamainingTime);
+	void InitializeImportantNoticeItem(const FText& ImportantNoteText, EImportantNoteType NoteType, float InRamainingTime);
 	
 	float RemainingTime;
 };

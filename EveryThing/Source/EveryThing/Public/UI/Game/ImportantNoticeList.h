@@ -7,13 +7,13 @@
 
 #include "EveryThingTypes.h"
 
-#include "ImportantNoteBox.generated.h"
+#include "ImportantNoticeList.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API UImportantNoteBox : public UUserWidget
+class EVERYTHING_API UImportantNoticeList : public UUserWidget
 {
 	GENERATED_BODY()
 	
@@ -21,19 +21,19 @@ public:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void InitializeImportantNoteBox();
+	void InitializeImportantNoticeList();
 
 	UFUNCTION(BlueprintNativeEvent)
-	void AddImportantNoteBox(const FText& ImportantNoteText, EImportantNoteType NoteType, float InRamainingTime = 5.f);
+	void AddImportantNoticeItem(const FText& ImportantNoteText, EImportantNoteType NoteType, float InRamainingTime = 5.f);
 	
 	UPROPERTY(BlueprintReadWrite)
-	class UVerticalBox* ImprotantNoteVerticalBox;
+	class UVerticalBox* ImprotantNoticeVerticalBox;
 
 private:
 	//////////////////////////////////////////////////////////////////////////
 	/// TidyImportantNoteBox
-	void TidyImportantNoteBox();
+	void TidyImportantNoticeList();
 
 	float TidyRate;
-	FTimerHandle TidyImportantNoteBoxTimerHanadle;
+	FTimerHandle TidyTimer;
 };

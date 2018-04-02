@@ -4,19 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ReadyCountDown.generated.h"
+#include "GameOverDisplay.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EVERYTHING_API UReadyCountDown : public UUserWidget
+class EVERYTHING_API UGameOverDisplay : public UUserWidget
 {
 	GENERATED_BODY()
-
+	
+	
 public:
 	virtual void NativeConstruct() override;
-	
+
 	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateReadyCountDownTime(float Time);
+	void UpdateRemaningBackToHouseTime(float RemaningBackToHouseTime);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitializeGameOverDisplay(int32 GetGold);
+	
 };

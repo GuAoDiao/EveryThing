@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class EVERYTHING_API UScoreBox : public UUserWidget
+class EVERYTHING_API UScoreBoard : public UUserWidget
 {
 	GENERATED_BODY()
 	

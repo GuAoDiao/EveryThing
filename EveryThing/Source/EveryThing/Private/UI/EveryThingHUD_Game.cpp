@@ -4,7 +4,7 @@
 
 #include "UI/Game/GameMenu.h"
 #include "UI/Game/GameLayout.h"
-#include "UI/Game/GameFlowPath/GameOver.h"
+#include "UI/Game/GameFlowPath/GameOverDisplay.h"
 #include "UI/Game/GameInfo/ScoreBox.h"
 #include "EveryThingAssetManager.h"
 
@@ -65,11 +65,11 @@ void AEveryThingHUD_Game::ShowGameOver(int32 GetGold)
 {
 	if (!GameOver)
 	{
-		TSubclassOf<UUserWidget> GameOverClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("GameOver"));
+		TSubclassOf<UUserWidget> GameOverClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("GameOverDisplay"));
 		if (GameOverClass)
 		{
-			GameOver = CreateWidget<UGameOver>(GetOwningPlayerController(), GameOverClass);
-			GameOver->InitializeGameOver(GetGold);
+			GameOver = CreateWidget<UGameOverDisplay>(GetOwningPlayerController(), GameOverClass);
+			GameOver->InitializeGameOverDisplay(GetGold);
 		}
 	}
 
@@ -136,21 +136,21 @@ void AEveryThingHUD_Game::RemoveGameMenu()
 /// Score Box
 void AEveryThingHUD_Game::DisplayScoreBoard()
 {
-	if (!ScoreBox)
+	if (!ScoreBoard)
 	{
-		TSubclassOf<UUserWidget> ScoreBoxClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("ScoreBox"));
-		if (ScoreBoxClass)
+		TSubclassOf<UUserWidget> ScoreBoardClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName(TEXT("ScoreBoard"));
+		if (ScoreBoardClass)
 		{
-			ScoreBox = CreateWidget<UScoreBox>(GetOwningPlayerController(), ScoreBoxClass);
+			ScoreBoard = CreateWidget<UScoreBoard>(GetOwningPlayerController(), ScoreBoardClass);
 		}
 	}
 
-	if (ScoreBox && !ScoreBox->IsInViewport()) { ScoreBox->AddToViewport(); }
+	if (ScoreBoard && !ScoreBoard->IsInViewport()) { ScoreBoard->AddToViewport(); }
 }
 
 void AEveryThingHUD_Game::RemoveScoreBoard()
 {
-	if (ScoreBox && ScoreBox->IsInViewport()) { ScoreBox->RemoveFromViewport(); }
+	if (ScoreBoard && ScoreBoard->IsInViewport()) { ScoreBoard->RemoveFromViewport(); }
 
 	APlayerController* OwnerPC = GetOwningPlayerController();
 	if (OwnerPC)

@@ -40,13 +40,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class USelectFormsBox* SelectFormsBox;
 	UPROPERTY(BlueprintReadWrite, Transient)
-	class UImportantNoteBox* ImportNoteBox;
+	class UImportantNoticeList* ImportNoteBox;
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class UChatWindow* ChatWindow;
 	UPROPERTY(BlueprintReadWrite, Transient)
-	class UUserInfoBox* UserInfoBox;
+	class UPlayerInfoDiaplay* UserInfoBox;
 	UPROPERTY(BlueprintReadWrite, Transient)
-	class UReadyCountDown* ReadyCountDown;
+	class UGameReadyDisplay* ReadyCountDown;
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class UGameInfoOnTop* GameInfoOnTop;
 };

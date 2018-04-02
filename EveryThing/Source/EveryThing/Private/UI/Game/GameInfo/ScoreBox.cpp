@@ -9,7 +9,7 @@
 
 
 
-void UScoreBox::NativeConstruct()
+void UScoreBoard::NativeConstruct()
 {
 	Super::NativeConstruct();
 
@@ -25,13 +25,13 @@ void UScoreBox::NativeConstruct()
 				OnPlayerStateAdd(PlayerState);
 			}
 
-			OwnerETGS_G->OnPlayerStateAddDelegate.AddUObject(this, &UScoreBox::OnPlayerStateAdd);
-			OwnerETGS_G->OnPlayerStateRemoveDelegate.AddUObject(this, &UScoreBox::OnPlayerStateRemove);
+			OwnerETGS_G->OnPlayerStateAddDelegate.AddUObject(this, &UScoreBoard::OnPlayerStateAdd);
+			OwnerETGS_G->OnPlayerStateRemoveDelegate.AddUObject(this, &UScoreBoard::OnPlayerStateRemove);
 		}
 	}
 }
 
-void UScoreBox::OnPlayerStateAdd(class APlayerState* NewPS)
+void UScoreBoard::OnPlayerStateAdd(class APlayerState* NewPS)
 {
 	APlayerController* OwnerPC = GetOwningPlayer();
 	AEveryThingPlayerState_Game* NewETPS_G = Cast<AEveryThingPlayerState_Game>(NewPS);
@@ -54,7 +54,7 @@ void UScoreBox::OnPlayerStateAdd(class APlayerState* NewPS)
 	}
 }
 
-void UScoreBox::OnPlayerStateRemove(class APlayerState* RemovePS)
+void UScoreBoard::OnPlayerStateRemove(class APlayerState* RemovePS)
 {
 	AEveryThingPlayerState_Game* RemvoeETPS_G = Cast<AEveryThingPlayerState_Game>(RemovePS);
 	if (RemvoeETPS_G && AllScoreItem.Contains(RemovePS))
