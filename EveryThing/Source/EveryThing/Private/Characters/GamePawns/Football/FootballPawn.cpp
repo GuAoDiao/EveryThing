@@ -3,6 +3,7 @@
 #include "FootballPawn.h"
 
 #include "Components/StaticMeshComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 #include "EveryThingAssetManager.h"
 #include "Characters/GamePawnManager.h"

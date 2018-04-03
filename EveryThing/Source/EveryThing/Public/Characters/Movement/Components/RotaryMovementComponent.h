@@ -15,9 +15,12 @@ class EVERYTHING_API URotaryMovementComponent : public UGamePawnMovementComponen
 
 public:
 	URotaryMovementComponent();
+	
+	FTimerHandle MoveTimer;
+	void MoveTimerImplementation();
+	int32 EmptyMoveTimerTick;
 
 	virtual void RebindInputComp(class UInputComponent* OwnerInputComp);
-
 
 	virtual void UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale = 1.f) override;
 public:
@@ -26,7 +29,6 @@ public:
 	void Move(const FVector& Direction, float AxisValue);
 	void MoveToLocation(const FVector& Location, float AxisValue);
 	void AcceptForceImpulse(const FVector& Location, const FVector& Force);
-
 
 	void StartJump();
 
@@ -68,6 +70,9 @@ private:
 	bool bIsJumping;
 	UPROPERTY(Replicated, Transient)
 	bool bIsFastMovementState;
+
+	bool bWantsToMove;
+	FVector WantMoveDirection;
 
 	class IRotaryMovementPawnInterface* OwnerRotaryPawn;
 };

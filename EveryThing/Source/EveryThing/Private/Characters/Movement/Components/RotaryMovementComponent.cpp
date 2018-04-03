@@ -6,6 +6,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/InputComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
 
 #include "Characters/GamePawn.h"
 #include "Characters/Movement/Interfaces/RotaryMovementPawnInterface.h"
@@ -19,10 +21,36 @@ URotaryMovementComponent::URotaryMovementComponent()
 
 	FastSpeedScale = 1.5f;
 	FastJumpScale = 1.5f;
-
-
+	
 	OwnerRotaryPawn = Cast<IRotaryMovementPawnInterface>(GetOwner());
 	OwnerPrimitiveComp = OwnerRotaryPawn ? OwnerRotaryPawn->GetPrimitiveComponent() : nullptr;
+
+	bWantsToMove = false;
+	WantMoveDirection = FVector::ZeroVector;
+}
+
+
+void URotaryMovementComponent::MoveTimerImplementation()
+{
+	if (bWantsToMove && OwnerGamePawn)
+	{
+		Move(WantMoveDirection.GetSafeNormal(), 2.f);
+
+		bWantsToMove = false;
+
+		WantMoveDirection = FVector::ZeroVector;
+	}
+	else
+	{
+		--EmptyMoveTimerTick;
+		if (EmptyMoveTimerTick <= 0)
+		{
+			if (GetWorld())
+			{
+				GetWorld()->GetTimerManager().ClearTimer(MoveTimer);
+			}
+		}
+	}
 }
 
 void URotaryMovementComponent::RebindInputComp(class UInputComponent* OwnerInputComp)
@@ -51,21 +79,47 @@ void URotaryMovementComponent::UpdateAgilityAndQuality(float Agility, float Qual
 
 void URotaryMovementComponent::MoveForward(float AxisValue)
 {
-	if (OwnerRotaryPawn)
+	if (OwnerRotaryPawn && AxisValue!= 0.f)
 	{
+		bWantsToMove = true;
+
 		FVector Direction = OwnerRotaryPawn->GetActualForwardVector();
 		Direction.Z = 0.f;
-		Move(Direction.GetSafeNormal(), AxisValue);
+
+		WantMoveDirection += AxisValue * Direction;
+
+		if (GetWorld())
+		{
+			FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+			EmptyMoveTimerTick = 10;
+			if (!TimerManager.IsTimerActive(MoveTimer))
+			{
+				TimerManager.SetTimer(MoveTimer, this, &URotaryMovementComponent::MoveTimerImplementation, 0.03f, true);
+			}
+		}
 	}
 }
 
 void URotaryMovementComponent::MoveRight(float AxisValue)
 {
-	if (OwnerRotaryPawn)
+	if (OwnerRotaryPawn && AxisValue != 0.f)
 	{
+		bWantsToMove = true;
+
 		FVector Direction = OwnerRotaryPawn->GetActualRightVector();
 		Direction.Z = 0.f;
-		Move(Direction.GetSafeNormal(), AxisValue);
+
+		WantMoveDirection += AxisValue * Direction;
+
+		if (GetWorld())
+		{
+			FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+			EmptyMoveTimerTick = 10;
+			if (!TimerManager.IsTimerActive(MoveTimer))
+			{
+				TimerManager.SetTimer(MoveTimer, this, &URotaryMovementComponent::MoveTimerImplementation, 0.05f, true);
+			}
+		}
 	}
 }
 

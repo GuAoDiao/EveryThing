@@ -6,6 +6,8 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Components/StaticMeshComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+
 
 #include "EveryThingAssetManager.h"
 #include "Online/EveryThingGameMode_Game.h"
@@ -221,7 +223,7 @@ void AGamePawn::GamePawnDeath()
 
 	bIsDeath = true;
 
-	GetWorldTimerManager().SetTimer(DelayToDestroyTimer, this, &AGamePawn::DelayToDestroy, 3.f, false);
+	GetWorldTimerManager().SetTimer(DelayToDestroyTimer, this, &AGamePawn::DelayToDestroy, 1.f, false);
 }
 
 void AGamePawn::DelayToDestroy()
