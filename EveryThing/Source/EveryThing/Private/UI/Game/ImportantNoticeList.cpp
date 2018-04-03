@@ -23,29 +23,32 @@ void UImportantNoticeList::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UImportantNoticeList::AddImportantNoticeItem_Implementation(const FText& ImportantNoteText, EImportantNoteType NoteType, float InRamainingTime)
+void UImportantNoticeList::AddImportantNoticeItem(const FText& ImportantNoteText, EImportantNoteType NoteType, float InRamainingTime)
 {
-	if (!ImprotantNoticeVerticalBox) { return; }
-
-	TSubclassOf<UUserWidget> ImportantNoticeItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("ImportantNoticeItem");
-	if (!ImportantNoticeItemClass) { return; }
-	
-	UImportantNoticeItem* ImportantNoticeItem = CreateWidget<UImportantNoticeItem>(GetOwningPlayer(), ImportantNoticeItemClass);
-	if (ImportantNoticeItem)
+	if (ImprotantNoticeVerticalBox)
 	{
-		ImportantNoticeItem->InitializeImportantNoticeItem(ImportantNoteText, NoteType, InRamainingTime);
+		TSubclassOf<UUserWidget> ImportantNoticeItemClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetUserWidgetFromName("ImportantNoticeItem");
+		UImportantNoticeItem* ImportantNoticeItem = ImportantNoticeItemClass ? CreateWidget<UImportantNoticeItem>(GetOwningPlayer(), ImportantNoticeItemClass) : nullptr;
 
-		ImprotantNoticeVerticalBox->AddChild(ImportantNoticeItem);
-
-		if (GetWorld())
+		if (ImportantNoticeItem)
 		{
-			FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-			if (!TimerManager.IsTimerActive(TidyTimer))
-			{
-				TimerManager.SetTimer(TidyTimer, this, &UImportantNoticeList::TidyImportantNoticeList, TidyRate, true);
-			}
+			ImportantNoticeItem->InitializeImportantNoticeItem(ImportantNoteText, NoteType);
+			ImportantNoticeItem->RemainingTime = InRamainingTime;
+
+			ImprotantNoticeVerticalBox->AddChild(ImportantNoticeItem);
+		}		
+	}
+
+	if (GetWorld())
+	{
+		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+		if (!TimerManager.IsTimerActive(TidyTimer))
+		{
+			TimerManager.SetTimer(TidyTimer, this, &UImportantNoticeList::TidyImportantNoticeList, TidyRate, true);
 		}
 	}
+
+	ScrollVerticalBoxToEnd();
 }
 
 
@@ -60,7 +63,6 @@ void UImportantNoticeList::TidyImportantNoticeList()
 			UImportantNoticeItem* ImportantNode = Cast<UImportantNoticeItem>(ImprotantNoticeVerticalBox->GetChildAt(i));
 			if (ImportantNode)
 			{
-				UE_LOG(LogTemp, Log, TEXT("-_- Curren ramining Time is : %f"), ImportantNode->RemainingTime);
 				ImportantNode->RemainingTime -= TidyRate;
 				if (ImportantNode->RemainingTime <= 0.f)
 				{

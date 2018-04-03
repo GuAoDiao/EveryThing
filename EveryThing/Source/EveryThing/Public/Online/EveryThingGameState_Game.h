@@ -147,7 +147,7 @@ public:
 	virtual void OnGamePawnAcceptCure(AGamePawn* AccpetPawn, AActor* Causer, float Treatment);
 	virtual void OnGamePawnAcceptDamage(AGamePawn* AccpetPawn, AActor* Causer, float Damage);
 	virtual void OnGamePawnAcceptCriticalDamage(AGamePawn* AccpetPawn, AActor* Causer);
-	virtual void OnGamePawnBeKilled(AGamePawn* KilledActor, AActor* KillerActor);
+	virtual void OnGamePawnBeKilled(AGamePawn* KilledGamePawn, AActor* KillerActor);
 
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnGamePawnAcceptCureDelegate, AGamePawn* /* AccpetPawn */, AActor* /* Causer */, float /* Cure */)
 	FOnGamePawnAcceptCureDelegate OnGamePawnAcceptCureDelegate;
@@ -155,7 +155,7 @@ public:
 	FOnGamePawnAcceptDamageDelegate OnGamePawnAcceptDamageDelegate;
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGamePawnAcceptCriticalDamageDelegate, AGamePawn* /* AccpetPawn */, AActor* /* Causer */)
 	FOnGamePawnAcceptCriticalDamageDelegate OnGamePawnAcceptCriticalDamageDelegate;
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGamePawnBeKilledDelegate, AGamePawn* /* KilledActor */, AActor* /* KillerActor */)
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGamePawnBeKilledDelegate, AGamePawn* /* KilledGamePawn */, AActor* /* KillerActor */)
 	FOnGamePawnBeKilledDelegate OnGamePawnBeKilledDelegate;
 
 	/// Score

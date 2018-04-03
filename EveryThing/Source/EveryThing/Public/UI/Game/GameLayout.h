@@ -39,14 +39,20 @@ public:
 	class USelectSkinsBox* SelectSkinsBox;
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class USelectFormsBox* SelectFormsBox;
-	UPROPERTY(BlueprintReadWrite, Transient)
-	class UImportantNoticeList* ImportNoteBox;
+	
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class UChatWindow* ChatWindow;
-	UPROPERTY(BlueprintReadWrite, Transient)
-	class UPlayerInfoDiaplay* UserInfoBox;
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class UGameReadyDisplay* ReadyCountDown;
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class UGameInfoOnTop* GameInfoOnTop;
+	UPROPERTY(BlueprintReadWrite, Transient)
+	class UImportantNoticeList* ImportNoteBox;
+	UPROPERTY(BlueprintReadWrite, Transient)
+	class UCombatLog* CombatLog;
+
+	UPROPERTY(BlueprintReadWrite, Transient)
+	class UPlayerInfoDiaplay* PlayerInfoBox;
+	UPROPERTY(BlueprintReadWrite, Transient)
+	class UPlayerFightInfo* PlayerFightInfo;
 };

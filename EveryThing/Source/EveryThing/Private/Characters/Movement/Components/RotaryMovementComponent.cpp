@@ -17,7 +17,7 @@ URotaryMovementComponent::URotaryMovementComponent()
 	bIsJumping = false;
 	bIsFastMovementState = false;
 
-	FastSpeedScale = 2.f;
+	FastSpeedScale = 1.5f;
 	FastJumpScale = 1.5f;
 
 
@@ -42,7 +42,7 @@ void URotaryMovementComponent::UpdateAgilityAndQuality(float Agility, float Qual
 {
 	Super::UpdateAgilityAndQuality(SpeedScale, Quality, QualityScale);
 
-	SpeedForceBase = ActualMoveForce * ActualSpeed;
+	SpeedForceBase = ActualMoveForce * ActualSpeed ;
 	JumpForceBase = ActualJumpForce;
 
 	SetMovementState(bIsFastMovementState);

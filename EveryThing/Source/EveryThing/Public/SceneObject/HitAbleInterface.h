@@ -18,5 +18,8 @@ class EVERYTHING_API IHitAbleInterface
 
 public:
 	virtual void SetIsSelectedToHit(bool bIsInSelectedToHit) = 0;
+	
 	virtual void AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const FHitResult& Hit) = 0;
+
+	virtual const FString& GetHitAbleActorDisplayName() const = 0;
 };

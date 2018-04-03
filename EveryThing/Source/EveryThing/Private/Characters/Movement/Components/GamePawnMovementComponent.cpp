@@ -10,9 +10,9 @@ UGamePawnMovementComponent::UGamePawnMovementComponent()
 {
 	bReplicates = true;
 
-	MoveForceScale = 10.f;
-	SpeedScale = 10.f;
-	JumpForceScale = 75.f;
+	MoveForceScale = 25.f;
+	SpeedScale = 5.f;
+	JumpForceScale = 100.f;
 
 	OwnerGamePawn = Cast<AGamePawn>(GetOwner());
 }

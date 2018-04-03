@@ -14,7 +14,12 @@ class EVERYTHING_API UCombatLog : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void NativeConstruct() override;
 	
-	
-	
+	void OnGamePawnBeKilled(const FString& KilledName, const FString& KillerName);
+	void OnGamePawnSuicided(const FString& KilledName);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AddCombatLogItem(class UCombatLogItem* CombatLogItem);
 };

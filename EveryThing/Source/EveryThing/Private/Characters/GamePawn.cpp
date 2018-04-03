@@ -4,6 +4,7 @@
 
 #include "UnrealNetwork.h"
 #include "Engine/World.h"
+#include "TimerManager.h"
 #include "Components/StaticMeshComponent.h"
 
 #include "EveryThingAssetManager.h"
@@ -51,6 +52,8 @@ void AGamePawn::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 
 	UpdateInfo();
+
+	HitAbleDisplayName = RoleName.ToString();
 }
 
 void AGamePawn::PossessedBy(AController* NewController)
@@ -78,6 +81,8 @@ void AGamePawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// HitAble Interface
 void AGamePawn::SetIsSelectedToHit(bool bInIsSelectedToHit)
 {
 	if (bInIsSelectedToHit)
@@ -134,12 +139,15 @@ void AGamePawn::AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const F
 					FPointDamageEvent DamageEvent;
 					DamageEvent.HitInfo = Hit;
 					DamageEvent.Damage = Damage;
-					TakeDamage(Damage, DamageEvent, GetController(), OtherActor);
+					TakeDamage(Damage, DamageEvent, nullptr, OtherActor);
 				}
 			}
 		}
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// Hit
 void AGamePawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit)
 {
 	OnHitImplement(HitComp, OtherActor, OtherComp, NormalInpulse, Hit);
@@ -148,7 +156,7 @@ void AGamePawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimiti
 
 void AGamePawn::OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit)
 {
-	AcceptHitFrom(OtherActor, NormalInpulse, Hit);
+	if (!bIsDeath) { AcceptHitFrom(OtherActor, NormalInpulse, Hit); }
 }
 
 void AGamePawn::SpendStamina(float value)
@@ -210,6 +218,15 @@ void AGamePawn::GamePawnDeath()
 {
 	AEveryThingGameState_Game* OwnerETGS_G = Cast<AEveryThingGameState_Game>(GetWorld()->GetGameState());
 	if (OwnerETGS_G) { OwnerETGS_G->OnGamePawnBeKilled(this, LastDamageCauserActor); };
+
+	bIsDeath = true;
+
+	GetWorldTimerManager().SetTimer(DelayToDestroyTimer, this, &AGamePawn::DelayToDestroy, 3.f, false);
+}
+
+void AGamePawn::DelayToDestroy()
+{
+	Destroy();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -501,6 +518,7 @@ void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AGamePawn, OwnerAttackComp);
 	DOREPLIFETIME(AGamePawn, OwnerSkillComp);
 
+	DOREPLIFETIME(AGamePawn, HitAbleDisplayName);
 	DOREPLIFETIME(AGamePawn, BaseInfo);
 
 	DOREPLIFETIME(AGamePawn, Durability);

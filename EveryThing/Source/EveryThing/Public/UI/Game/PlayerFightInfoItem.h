@@ -14,7 +14,10 @@ class EVERYTHING_API UPlayerFightInfoItem : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
 	
-	
-	
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitializePlayerFightInfoItemDisplay(const FText& FightInfo);
+
+	float RemainingTime;
 };

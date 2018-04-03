@@ -23,15 +23,15 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void InitializeImportantNoticeList();
 
-	UFUNCTION(BlueprintNativeEvent)
 	void AddImportantNoticeItem(const FText& ImportantNoteText, EImportantNoteType NoteType, float InRamainingTime = 5.f);
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void ScrollVerticalBoxToEnd();
+
 	UPROPERTY(BlueprintReadWrite)
 	class UVerticalBox* ImprotantNoticeVerticalBox;
 
 private:
-	//////////////////////////////////////////////////////////////////////////
-	/// TidyImportantNoteBox
 	void TidyImportantNoticeList();
 
 	float TidyRate;

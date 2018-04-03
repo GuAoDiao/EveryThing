@@ -46,27 +46,59 @@ public:
 	void ClientGameOver(int32 Gold);
 
 	//////////////////////////////////////////////////////////////////////////
-	/// GamePawn Cure, Damage, Death
+	/// All Game State Info
 public:
 	UFUNCTION(Client, Reliable)
-	void ClientOnAcceptCure(AActor* Causer, float Treatment);
+	void ClientOnAcceptCure(const FString& CauserName, float Treatment);
 	UFUNCTION(Client, Reliable)
-	void ClientOnAcceptDamage(AActor* Causer, float Damage);
+	void ClientOnAcceptDamage(const FString& CauserName, float Damage);
 	UFUNCTION(Client, Reliable)
-	void ClientOnAcceptCriticalDamage(AActor* Causer);
+	void ClientOnAcceptCriticalDamage(const FString& CauserName);
+	
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAcceptCureDelegate, const FString& /* CauserName */, float /* Treatment */)
+	FOnAcceptCureDelegate OnAcceptCureDelegate;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAcceptDamageDelegate, const FString& /* CauserName */, float /* Damage */)
+	FOnAcceptDamageDelegate OnAcceptDamageDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAcceptCriticalDamageDelegate, const FString& /* CauserName */)
+	FOnAcceptCriticalDamageDelegate OnAcceptCriticalDamageDelegate;
 
 	UFUNCTION(Client, Reliable)
-	void ClientOnTakeCure(AActor* Accepter, float Treatment);
+	void ClientOnTakeCure(const FString& AccepterName, float Treatment);
 	UFUNCTION(Client, Reliable)
-	void ClientOnTakeDamage(AActor* Accepter, float Damage);
+	void ClientOnTakeDamage(const FString& AccepterName, float Damage);
 	UFUNCTION(Client, Reliable)
-	void ClientOnTakeCriticalDamage(AActor* Accepter);
+	void ClientOnTakeCriticalDamage(const FString& AccepterName);
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnTakeCureDelegate, const FString& /* AccepterName */, float /* Treatment */);
+	FOnTakeCureDelegate OnTakeCureDelegate;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnTakeDamageDelegate, const FString& /* AccepterName */, float /* Damage */);
+	FOnTakeDamageDelegate OnTakeDamageDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnTakeCriticalDamageDelegate, const FString& /* AccepterName */);
+	FOnTakeCriticalDamageDelegate OnTakeCriticalDamageDelegate;
 
 	UFUNCTION(Client, Reliable)
-	void ClientOnBeKilled(AActor* KillerActor);
+	void ClientOnBeKilled(const FString& KillerName);
 	UFUNCTION(Client, Reliable)
-	void ClientOnKillOther(AActor* KilledActor);
+	void ClientOnSuicided();
+	UFUNCTION(Client, Reliable)
+	void ClientOnKillOther(const FString& KilledName);
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBeKilledDelegate, const FString& /* KillerName */);
+	FOnBeKilledDelegate OnBeKilledDelegate;
+	DECLARE_MULTICAST_DELEGATE(FOnSuicidedDelegate);
+	FOnSuicidedDelegate OnSuicidedDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnKillOtherDelegate, const FString& /* KilledName */);
+	FOnKillOtherDelegate OnKillOtherDelegate;
+
+	UFUNCTION(Client, Reliable)
+	void ClientOnGamePawnBeKilled(const FString& KilledName, const FString& KillerName);
+	UFUNCTION(Client, Reliable)
+	void ClientOnGamePawnSuicided(const FString& KilledName);
+	
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGamePawnBeKilledDelegate, const FString& /* KilledName */, const FString& /* KillerName */);
+	FOnGamePawnBeKilledDelegate OnGamePawnBeKilledDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnGamePawnSuicidedDelegate, const FString& /* KilledName */);
+	FOnGamePawnSuicidedDelegate OnGamePawnSuicidedDelegate;
 	//////////////////////////////////////////////////////////////////////////
 	/// Player State
 public:

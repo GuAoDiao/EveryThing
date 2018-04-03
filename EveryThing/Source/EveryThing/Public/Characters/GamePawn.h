@@ -52,10 +52,16 @@ protected:
 	class UGamePawnMovementComponent* MovementComp;
 
 	//////////////////////////////////////////////////////////////////////////
-	/// HitAble
+	/// HitAble Interface
 public:
 	virtual void SetIsSelectedToHit(bool bInIsSelectedToHit) override;
 	virtual void AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const FHitResult& Hit) override;
+	virtual const FString& GetHitAbleActorDisplayName() const override { return HitAbleDisplayName; }
+
+	void SetHitAbleDisplayName(const FString& InHitAbleDisplayName) { HitAbleDisplayName = InHitAbleDisplayName; }
+protected:
+	UPROPERTY(Replicated)
+	FString HitAbleDisplayName;
 	//////////////////////////////////////////////////////////////////////////
 	/// Hit
 public:
@@ -237,9 +243,12 @@ protected:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 	void Healed(AActor* Curer, float Treatment);
 	void GamePawnDeath();
-
-	AActor* LastDamageCauserActor;
+	void DelayToDestroy();
 protected:
+	bool bIsDeath;
+	AActor* LastDamageCauserActor;
+	FTimerHandle DelayToDestroyTimer;
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Element
 

@@ -31,6 +31,8 @@ public:
 	/// PlayerInfo
 public:
 	const FPlayerInfo& GetPlayerInfo() const { return CurrentPlayerInfo; }
+	const FString& GetPlayerDisplayName() const { return CurrentPlayerInfo.PlayerName; }
+
 	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo);
 
 	UFUNCTION(Server, Reliable, WithValidation)

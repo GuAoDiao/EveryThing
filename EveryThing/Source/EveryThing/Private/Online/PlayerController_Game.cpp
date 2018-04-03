@@ -217,37 +217,23 @@ void APlayerController_Game::ClientGameOver_Implementation(int32 GetGold)
 
 
 //////////////////////////////////////////////////////////////////////////
-/// Pawn Damage
-void APlayerController_Game::ClientOnAcceptCure_Implementation(AActor* Causer, float Treatment)
-{
-
-}
-void APlayerController_Game::ClientOnAcceptDamage_Implementation(AActor* Causer, float Damage)
-{
-
-}
-void APlayerController_Game::ClientOnAcceptCriticalDamage_Implementation(AActor* Causer)
-{
-}
+/// All Game State Info
+void APlayerController_Game::ClientOnAcceptCure_Implementation(const FString& CauserName, float Treatment) { OnAcceptCureDelegate.Broadcast(CauserName, Treatment); }
+void APlayerController_Game::ClientOnAcceptDamage_Implementation(const FString& CauserName, float Damage) { OnAcceptDamageDelegate.Broadcast(CauserName, Damage); }
+void APlayerController_Game::ClientOnAcceptCriticalDamage_Implementation(const FString& CauserName) { OnAcceptCriticalDamageDelegate.Broadcast(CauserName); }
 
 
-void APlayerController_Game::ClientOnTakeCure_Implementation(AActor* Accepter, float Treatment)
-{
-}
-void APlayerController_Game::ClientOnTakeDamage_Implementation(AActor* Accepter, float Damage)
-{
-}
-void APlayerController_Game::ClientOnTakeCriticalDamage_Implementation(AActor* Accepter)
-{
-}
+void APlayerController_Game::ClientOnTakeCure_Implementation(const FString& AccepterName, float Treatment) { OnTakeCureDelegate.Broadcast(AccepterName, Treatment); }
+void APlayerController_Game::ClientOnTakeDamage_Implementation(const FString& AccepterName, float Damage) { OnTakeDamageDelegate.Broadcast(AccepterName, Damage); }
+void APlayerController_Game::ClientOnTakeCriticalDamage_Implementation(const FString& AccepterName) { OnTakeCriticalDamageDelegate.Broadcast(AccepterName); }
 
 
-void APlayerController_Game::ClientOnBeKilled_Implementation(AActor* KillerActor)
-{
-}
-void APlayerController_Game::ClientOnKillOther_Implementation(AActor* KilledActor)
-{
-}
+void APlayerController_Game::ClientOnBeKilled_Implementation(const FString& KillerName) { OnBeKilledDelegate.Broadcast(KillerName); }
+void APlayerController_Game::ClientOnSuicided_Implementation() { OnSuicidedDelegate.Broadcast(); }
+void APlayerController_Game::ClientOnKillOther_Implementation(const FString& KilledName) { OnKillOtherDelegate.Broadcast(KilledName); }
+
+void APlayerController_Game::ClientOnGamePawnBeKilled_Implementation(const FString& KilledName, const FString& KillerName) { OnGamePawnBeKilledDelegate.Broadcast(KilledName, KillerName); }
+void APlayerController_Game::ClientOnGamePawnSuicided_Implementation(const FString& KilledName) { OnGamePawnSuicidedDelegate.Broadcast(KilledName); }
 
 //////////////////////////////////////////////////////////////////////////
 /// Player State

@@ -118,6 +118,8 @@ void UPlayerPawnComponent::OnPlayerInfoUpdate(const FPlayerInfo& InPlayerInfo)
 {
 	if (OwnerPawn)
 	{
+		OwnerPawn->SetHitAbleDisplayName(InPlayerInfo.PlayerName);
+
 		// update all Skin and From we have;
 		for (const FName& SkinName : OwnerPawn->AllRoleSkinName)
 		{

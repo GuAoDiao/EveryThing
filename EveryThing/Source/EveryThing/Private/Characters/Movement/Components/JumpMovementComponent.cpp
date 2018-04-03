@@ -13,7 +13,7 @@ UJumpMovementComponent::UJumpMovementComponent()
 {
 	bReplicates = true;
 	
-	AdjustRotationForce = 1500000 * 100.f;
+	AdjustRotationForce = 15000000 * 100.f;
 	AtuoAdjustRotationForceStrength = 2.f;
 
 	AdjustPawnRotationForce = 500000 * 100.f;

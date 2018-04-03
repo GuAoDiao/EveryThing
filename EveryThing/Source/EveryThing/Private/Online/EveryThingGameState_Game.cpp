@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "EveryThingGameState_Game.h"
 
@@ -183,7 +183,12 @@ const FString& AEveryThingGameState_Game::GetPlayerChatName(int32 PlayerID) cons
 void AEveryThingGameState_Game::OnGamePawnAcceptCure(AGamePawn* AccpetPawn, AActor* Causer, float Treatment)
 {
 	APlayerController_Game* AcceptPC_G = AccpetPawn ? Cast<APlayerController_Game>(AccpetPawn->GetController()) : nullptr;
-	if (AcceptPC_G) { AcceptPC_G->ClientOnAcceptCure(Causer, Treatment); }
+	if (AcceptPC_G)
+	{
+		IHitAbleInterface* CauserHitable = Cast<IHitAbleInterface>(Causer);
+		FString CauserActorDisplayName = CauserHitable ? CauserHitable->GetHitAbleActorDisplayName() : TEXT("固定物体"); 
+		AcceptPC_G->ClientOnAcceptCure(CauserActorDisplayName, Treatment);
+	}
 	
 	AGamePawn* CauserGamePawn = Cast<AGamePawn>(Causer);
 	APlayerController_Game* CasuerPC_G = CauserGamePawn ? Cast<APlayerController_Game>(CauserGamePawn->GetController()) : nullptr;
@@ -192,13 +197,18 @@ void AEveryThingGameState_Game::OnGamePawnAcceptCure(AGamePawn* AccpetPawn, AAct
 		AEveryThingPlayerState_Game* CauserETPS_G = Cast<AEveryThingPlayerState_Game>(CasuerPC_G->PlayerState);
 		if (CauserETPS_G) { CauserETPS_G->AddGameScore(Treatment * CureScoreScale); }
 
-		CasuerPC_G->ClientOnTakeCure(AccpetPawn, Treatment);
+		if (AccpetPawn) { CasuerPC_G->ClientOnTakeCure(AccpetPawn->GetHitAbleActorDisplayName(), Treatment); }
 	}
 }
 void AEveryThingGameState_Game::OnGamePawnAcceptDamage(AGamePawn* AccpetPawn, AActor* Causer, float Damage)
 {
 	APlayerController_Game* AcceptPC_G = AccpetPawn ? Cast<APlayerController_Game>(AccpetPawn->GetController()) : nullptr;
-	if (AcceptPC_G) { AcceptPC_G->ClientOnAcceptDamage(Causer, Damage); }
+	if (AcceptPC_G)
+	{
+		IHitAbleInterface* CauserHitable = Cast<IHitAbleInterface>(Causer);
+		FString CauserActorDisplayName = CauserHitable ? CauserHitable->GetHitAbleActorDisplayName() : TEXT("固定物体");
+		AcceptPC_G->ClientOnAcceptDamage(CauserActorDisplayName, Damage);
+	}
 
 	AGamePawn* CauserGamePawn = Cast<AGamePawn>(Causer);
 	APlayerController_Game* CasuerPC_G = CauserGamePawn ? Cast<APlayerController_Game>(CauserGamePawn->GetController()) : nullptr;
@@ -207,14 +217,20 @@ void AEveryThingGameState_Game::OnGamePawnAcceptDamage(AGamePawn* AccpetPawn, AA
 		AEveryThingPlayerState_Game* CauserETPS_G = Cast<AEveryThingPlayerState_Game>(CasuerPC_G->PlayerState);
 		if (CauserETPS_G) { CauserETPS_G->AddGameScore(Damage * DamageScoreScale); }
 
-		CasuerPC_G->ClientOnTakeDamage(AccpetPawn, Damage);
+		if (AccpetPawn) { CasuerPC_G->ClientOnTakeDamage(AccpetPawn->GetHitAbleActorDisplayName(), Damage); }
 	}
 }
 
 void AEveryThingGameState_Game::OnGamePawnAcceptCriticalDamage(AGamePawn* AccpetPawn, AActor* Causer)
 {
+
 	APlayerController_Game* AcceptPC_G = AccpetPawn ? Cast<APlayerController_Game>(AccpetPawn->GetController()) : nullptr;
-	if (AcceptPC_G) { AcceptPC_G->ClientOnAcceptCriticalDamage(Causer); }
+	if (AcceptPC_G)
+	{
+		IHitAbleInterface* CauserHitable = Cast<IHitAbleInterface>(Causer);
+		FString CauserActorDisplayName = CauserHitable ? CauserHitable->GetHitAbleActorDisplayName() : TEXT("固定物体"); 
+		AcceptPC_G->ClientOnAcceptCriticalDamage(CauserActorDisplayName);
+	}
 
 	AGamePawn* CauserGamePawn = Cast<AGamePawn>(Causer);
 	APlayerController_Game* CasuerPC_G = CauserGamePawn ? Cast<APlayerController_Game>(CauserGamePawn->GetController()) : nullptr;
@@ -223,30 +239,40 @@ void AEveryThingGameState_Game::OnGamePawnAcceptCriticalDamage(AGamePawn* Accpet
 		AEveryThingPlayerState_Game* CauserETPS_G = Cast<AEveryThingPlayerState_Game>(CasuerPC_G->PlayerState);
 		if (CauserETPS_G) { CauserETPS_G->AddGameScore(CriticalDamageScore); }
 
-		CasuerPC_G->ClientOnTakeCriticalDamage(AccpetPawn);
+		if (AccpetPawn) { CasuerPC_G->ClientOnTakeCriticalDamage(AccpetPawn->GetHitAbleActorDisplayName()); }
 	}
 }
 
-void AEveryThingGameState_Game::OnGamePawnBeKilled(AGamePawn* KilledActor, AActor* KillerActor)
+void AEveryThingGameState_Game::OnGamePawnBeKilled(AGamePawn* KilledGamePawn, AActor* KillerActor)
 {
-	APlayerController_Game* KilledPC_G = KilledActor ? Cast<APlayerController_Game>(KilledActor->GetController()) : nullptr;
+	AGamePawn* KillerGamePawn = Cast<AGamePawn>(KillerActor);
+
+	APlayerController_Game* KilledPC_G = KilledGamePawn ? Cast<APlayerController_Game>(KilledGamePawn->GetController()) : nullptr;
 	if (KilledPC_G)
 	{
 		AEveryThingPlayerState_Game* KilledETPS_G = Cast<AEveryThingPlayerState_Game>(KilledPC_G->PlayerState);
 		if (KilledETPS_G) { KilledETPS_G->IncDeathNum(); }
 
-		KilledPC_G->ClientOnBeKilled(KillerActor);
+		if (KillerActor)
+		{
+			IHitAbleInterface* KillerHitable = Cast<IHitAbleInterface>(KillerActor);
+			FString KillerName = KillerHitable ? KillerHitable->GetHitAbleActorDisplayName() : TEXT("固定物体");
+			KilledPC_G->ClientOnBeKilled(KillerName);
+		}
+		else
+		{
+			KilledPC_G->ClientOnSuicided();
+		}
 
 		AEveryThingGameMode_Game* OwnerETGM_G = GetWorld() ? GetWorld()->GetAuthGameMode<AEveryThingGameMode_Game>() : nullptr;
 		if (OwnerETGM_G)
 		{
-			KilledPC_G->Possess(nullptr);
-			KilledActor->Destroy();
+			KilledPC_G->UnPossess();
+
 			OwnerETGM_G->RestartPlayer(KilledPC_G);
 		}
 	}
 
-	AGamePawn* KillerGamePawn = Cast<AGamePawn>(KillerActor);
 	APlayerController_Game* KillerPC_G = KillerGamePawn ? Cast<APlayerController_Game>(KillerGamePawn->GetController()) : nullptr;
 	if (KillerPC_G)
 	{
@@ -257,7 +283,27 @@ void AEveryThingGameState_Game::OnGamePawnBeKilled(AGamePawn* KilledActor, AActo
 			KillerETPS_G->IncKillNum();
 		}
 
-		KillerPC_G->ClientOnKillOther(KilledActor);
+		if (KillerGamePawn) { KillerPC_G->ClientOnKillOther(KillerGamePawn->GetHitAbleActorDisplayName()); }
+	}
+
+	if (GetWorld())
+	{
+		if (KillerGamePawn)
+		{
+			for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+			{
+				APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(It->Get());
+				if (OwnerPC_G) { OwnerPC_G->ClientOnGamePawnBeKilled(KilledGamePawn->GetHitAbleActorDisplayName(), KillerGamePawn->GetHitAbleActorDisplayName()); }
+			}
+		}
+		else
+		{
+			for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+			{
+				APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(It->Get());
+				if (OwnerPC_G) { OwnerPC_G->ClientOnGamePawnSuicided(KilledGamePawn->GetHitAbleActorDisplayName()); }
+			}
+		}
 	}
 }
 

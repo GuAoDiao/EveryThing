@@ -13,8 +13,12 @@ UCLASS()
 class EVERYTHING_API UCombatLogItem : public UUserWidget
 {
 	GENERATED_BODY()
-	
-	
-	
+
+public:
+	void InitializeCombatLogSuicided(const FString& KilledGamePawnName);
+	void InitializeCombatLogBeKilled(const FString& KilledGamePawnName, const FString& KillerName);
+protected:
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitializeCombatLogItemDisplay(const FText& CombatLog);	
 	
 };

@@ -232,13 +232,26 @@ float AEveryThingGameMode_Game::GetDamageFromActorHit(AGamePawn* PlayerPawn, con
 	if (PlayerPawn && OtherActor)
 	{
 		float Speed = FVector::DotProduct(PlayerPawn->GetVelocity(), Hit.Normal);
+		float UpSpeed = FMath::Clamp(PlayerPawn->GetVelocity().Z,0.f,1000.f);
 		if (Speed > 200.f)
-		{
-			float MyStability = 100.f;
-			Damage = (NormalInpulse.Size() / MyStability) / 200.f;
-			FString name = OtherActor->GetName();
-			UE_LOG(LogTemp, Log, TEXT("Hit! speed %f,impulse %f,name %s"), Speed, NormalInpulse.Size(), *name);
+		{	
+			if (UpSpeed <= 300.f)
+			{
+				float MyStability = 100.f;
+				Damage = Speed*(NormalInpulse.Size() / MyStability) / 40000.f;
+				FString name = OtherActor->GetName();
+				UE_LOG(LogTemp, Log, TEXT("Hit! speed %f,UpSpeed %f,impulse %f,damage %f,name %s"), Speed, UpSpeed, NormalInpulse.Size(), Damage, *name);
+			}
+			else
+			{
+				float FreeFallModifier = 2.0f;
+				float MyStability = 100.f;
+				Damage = (Speed + UpSpeed * FreeFallModifier)*(NormalInpulse.Size() / MyStability) / 40000.f;
+				FString name = OtherActor->GetName();
+				UE_LOG(LogTemp, Log, TEXT("Hit! speed %f,UpSpeed %f,impulse %f,damage %f,name %s"), Speed, UpSpeed, NormalInpulse.Size(), Damage, *name);
+			}
 		}
+		
 	}
 	return Damage;
 }

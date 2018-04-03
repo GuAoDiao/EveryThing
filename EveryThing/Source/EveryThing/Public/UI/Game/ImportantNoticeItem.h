@@ -19,8 +19,8 @@ class EVERYTHING_API UImportantNoticeItem : public UUserWidget
 	
 	
 public:
-	UFUNCTION(BlueprintNativeEvent)
-	void InitializeImportantNoticeItem(const FText& ImportantNoteText, EImportantNoteType NoteType, float InRamainingTime);
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitializeImportantNoticeItem(const FText& ImportantNoteText, EImportantNoteType NoteType);
 	
 	float RemainingTime;
 };
