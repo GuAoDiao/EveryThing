@@ -17,6 +17,8 @@ class EVERYTHING_API IHitAbleInterface
 	GENERATED_BODY()
 
 public:
+	virtual bool CanIsSelectedToHit() const = 0;
+
 	virtual void SetIsSelectedToHit(bool bIsInSelectedToHit) = 0;
 	
 	virtual void AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const FHitResult& Hit) = 0;

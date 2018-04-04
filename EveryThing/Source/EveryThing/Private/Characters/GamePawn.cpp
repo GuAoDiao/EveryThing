@@ -6,6 +6,8 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Components/StaticMeshComponent.h"
+#include "Materials/MaterialInstanceConstant.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 
 
@@ -223,12 +225,46 @@ void AGamePawn::GamePawnDeath()
 
 	bIsDeath = true;
 
-	GetWorldTimerManager().SetTimer(DelayToDestroyTimer, this, &AGamePawn::DelayToDestroy, 1.f, false);
+	StaticMeshComp->SetSimulatePhysics(false);
+	StaticMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	UMaterialInstanceConstant* DissolveMaterial = UEveryThingAssetManager::GetAssetManagerInstance()->GetMaterialFromName("Dissolve", true);
+	UMaterialInstanceDynamic* DissolveDynamicMaterial = DissolveMaterial ? UMaterialInstanceDynamic::Create(DissolveMaterial, nullptr) : nullptr;
+	DissolvePercent = 0.f;
+	if (DissolveDynamicMaterial)
+	{
+		for (int32 i = 0; i < StaticMeshComp->GetNumMaterials(); ++i)
+		{
+			StaticMeshComp->SetMaterial(i, DissolveDynamicMaterial);
+		}
+	}
+
+
+	GetWorldTimerManager().SetTimerForNextTick(this, &AGamePawn::DelayToDestroy);
 }
 
 void AGamePawn::DelayToDestroy()
 {
-	Destroy();
+	UWorld* Wolrd = GetWorld();
+	if (Wolrd)
+	{
+		DissolvePercent += Wolrd->GetDeltaSeconds() * 0.3f;
+
+		for (int32 i = 0; i < StaticMeshComp->GetNumMaterials(); ++i)
+		{
+			UMaterialInstanceDynamic* DissolveDynamicMaterial = Cast<UMaterialInstanceDynamic>(StaticMeshComp->GetMaterial(i));
+			if (DissolveDynamicMaterial) { DissolveDynamicMaterial->SetScalarParameterValue("Percent", DissolvePercent); }
+		}
+
+		if (DissolvePercent < 1.f)
+		{
+			Wolrd->GetTimerManager().SetTimerForNextTick(this, &AGamePawn::DelayToDestroy);
+		}
+		else
+		{
+			Destroy();
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

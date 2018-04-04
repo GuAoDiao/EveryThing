@@ -16,6 +16,12 @@ class EVERYTHING_API URotaryMovementComponent : public UGamePawnMovementComponen
 public:
 	URotaryMovementComponent();
 	
+	virtual void BeginDestroy() override;
+
+	virtual void RebindInputComp(class UInputComponent* OwnerInputComp);
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Move Actual 
 	FTimerHandle MoveTimer;
 	void StartMoveTimer();
 	void CloseMoveTimer();
@@ -23,7 +29,6 @@ public:
 	void UnpauseMoveTimer();
 	void MoveTimerImplementation();
 
-	virtual void RebindInputComp(class UInputComponent* OwnerInputComp);
 
 	virtual void UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale = 1.f) override;
 public:

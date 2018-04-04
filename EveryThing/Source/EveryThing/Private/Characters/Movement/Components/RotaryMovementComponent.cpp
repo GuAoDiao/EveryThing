@@ -29,6 +29,13 @@ URotaryMovementComponent::URotaryMovementComponent()
 	WantMoveDirection = FVector::ZeroVector;
 }
 
+void URotaryMovementComponent::BeginDestroy()
+{
+	CloseMoveTimer();
+
+	Super::BeginDestroy();
+}
+
 void URotaryMovementComponent::StartMoveTimer()
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();

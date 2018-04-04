@@ -163,7 +163,7 @@ void UFootballAttackComponent::ExcuteAttack(float DeltaTime)
 				StopAttack();
 			}
 		}
-		OwnerPawnRMC->MoveToLocation(AttackActorLocation, 5 * 100.f * DeltaTime);
+		OwnerPawnRMC->MoveToLocation(AttackActorLocation, 90.f * DeltaTime);
 	}
 	else
 	{

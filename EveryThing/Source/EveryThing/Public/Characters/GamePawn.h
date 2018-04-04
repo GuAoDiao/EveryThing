@@ -25,8 +25,7 @@ public:
 	AGamePawn();
 
 	virtual void OnConstruction(const FTransform& Transform) override;
-
-
+	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void Tick(float DeltaTime) override;
@@ -57,7 +56,7 @@ public:
 	virtual void SetIsSelectedToHit(bool bInIsSelectedToHit) override;
 	virtual void AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const FHitResult& Hit) override;
 	virtual const FString& GetHitAbleActorDisplayName() const override { return HitAbleDisplayName; }
-
+	virtual bool CanIsSelectedToHit() const override {return bIsDeath;}
 	void SetHitAbleDisplayName(const FString& InHitAbleDisplayName) { HitAbleDisplayName = InHitAbleDisplayName; }
 protected:
 	UPROPERTY(Replicated)
@@ -246,6 +245,7 @@ protected:
 	void DelayToDestroy();
 protected:
 	bool bIsDeath;
+	float DissolvePercent;
 	AActor* LastDamageCauserActor;
 	FTimerHandle DelayToDestroyTimer;
 
