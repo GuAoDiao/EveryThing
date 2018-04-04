@@ -390,11 +390,15 @@ void AGamePawn::ResetInfoFromDataTable(const FName& GamePawnName)
 void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 {
 	BaseInfo = *InInfo;
+	
 	MaxDurability = InInfo->MaxDurability;
-	MaxStamina = InInfo->MaxStamina;
 	Durability = MaxDurability;
+	
+	MaxStamina = InInfo->MaxStamina;
 	Stamina = MaxStamina;
+	
 	StaminaRecoverRate = MaxStamina / 16.f;
+
 	ForceDivider = InInfo->ForceDivider*BaseScale;
 	TorqueDivider = InInfo->ForceDivider*BigBaseScale;
 	ImpluseDivider = InInfo->ImpluseDivider*BaseScale;

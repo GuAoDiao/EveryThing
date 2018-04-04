@@ -17,8 +17,11 @@ public:
 	URotaryMovementComponent();
 	
 	FTimerHandle MoveTimer;
+	void StartMoveTimer();
+	void CloseMoveTimer();
+	void PauseMoveTimer();
+	void UnpauseMoveTimer();
 	void MoveTimerImplementation();
-	int32 EmptyMoveTimerTick;
 
 	virtual void RebindInputComp(class UInputComponent* OwnerInputComp);
 

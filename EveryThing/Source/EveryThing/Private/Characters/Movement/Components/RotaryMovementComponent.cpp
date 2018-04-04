@@ -29,27 +29,64 @@ URotaryMovementComponent::URotaryMovementComponent()
 	WantMoveDirection = FVector::ZeroVector;
 }
 
+void URotaryMovementComponent::StartMoveTimer()
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	if (!TimerManager.TimerExists(MoveTimer))
+	{
+		TimerManager.SetTimer(MoveTimer, this, &URotaryMovementComponent::MoveTimerImplementation, 1.f, true);
+	}
+	else if(TimerManager.IsTimerPaused(MoveTimer))
+	{
+		TimerManager.UnPauseTimer(MoveTimer);
+	}
+}
+
+void URotaryMovementComponent::PauseMoveTimer()
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	TimerManager.PauseTimer(MoveTimer);
+
+}
+void URotaryMovementComponent::UnpauseMoveTimer()
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	TimerManager.UnPauseTimer(MoveTimer);
+}
+
+void URotaryMovementComponent::CloseMoveTimer()
+{
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(MoveTimer);
+	}
+}
 
 void URotaryMovementComponent::MoveTimerImplementation()
 {
 	if (bWantsToMove && OwnerGamePawn)
 	{
-		Move(WantMoveDirection.GetSafeNormal(), 2.f);
+		FVector ActualDirection = FVector::ZeroVector;
+		if (WantMoveDirection.X != 0.f) { ActualDirection += WantMoveDirection.X * OwnerRotaryPawn->GetActualForwardVector(); }
+		if (WantMoveDirection.Y != 0.f) { ActualDirection += WantMoveDirection.Y * OwnerRotaryPawn->GetActualRightVector(); }
+		ActualDirection.Z = 0.f;
 
-		bWantsToMove = false;
-
+		if (ActualDirection != FVector::ZeroVector)
+		{
+			Move(ActualDirection.GetSafeNormal(), 40.f);
+		}
+		else
+		{
+			bWantsToMove = false;
+			PauseMoveTimer();
+		}
+		
 		WantMoveDirection = FVector::ZeroVector;
 	}
 	else
 	{
-		--EmptyMoveTimerTick;
-		if (EmptyMoveTimerTick <= 0)
-		{
-			if (GetWorld())
-			{
-				GetWorld()->GetTimerManager().ClearTimer(MoveTimer);
-			}
-		}
+		bWantsToMove = false;
+		PauseMoveTimer();
 	}
 }
 
@@ -81,21 +118,13 @@ void URotaryMovementComponent::MoveForward(float AxisValue)
 {
 	if (OwnerRotaryPawn && AxisValue!= 0.f)
 	{
-		bWantsToMove = true;
+		WantMoveDirection.X = AxisValue;
 
-		FVector Direction = OwnerRotaryPawn->GetActualForwardVector();
-		Direction.Z = 0.f;
-
-		WantMoveDirection += AxisValue * Direction;
-
-		if (GetWorld())
+		if (!bWantsToMove && GetWorld())
 		{
-			FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-			EmptyMoveTimerTick = 10;
-			if (!TimerManager.IsTimerActive(MoveTimer))
-			{
-				TimerManager.SetTimer(MoveTimer, this, &URotaryMovementComponent::MoveTimerImplementation, 0.03f, true);
-			}
+			bWantsToMove = true;
+
+			StartMoveTimer();
 		}
 	}
 }
@@ -104,21 +133,13 @@ void URotaryMovementComponent::MoveRight(float AxisValue)
 {
 	if (OwnerRotaryPawn && AxisValue != 0.f)
 	{
-		bWantsToMove = true;
+		WantMoveDirection.Y = AxisValue;
 
-		FVector Direction = OwnerRotaryPawn->GetActualRightVector();
-		Direction.Z = 0.f;
-
-		WantMoveDirection += AxisValue * Direction;
-
-		if (GetWorld())
+		if (!bWantsToMove && GetWorld())
 		{
-			FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-			EmptyMoveTimerTick = 10;
-			if (!TimerManager.IsTimerActive(MoveTimer))
-			{
-				TimerManager.SetTimer(MoveTimer, this, &URotaryMovementComponent::MoveTimerImplementation, 0.05f, true);
-			}
+			bWantsToMove = true;
+
+			StartMoveTimer();
 		}
 	}
 }
