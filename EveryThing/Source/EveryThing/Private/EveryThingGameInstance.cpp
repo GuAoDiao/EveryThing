@@ -87,7 +87,7 @@ void UEveryThingGameInstance::BeginLoadingMap(const FString& MapName)
 	}
 }
 
-inline bool UEveryThingGameInstance::IsLoadingMapFinished() const
+bool UEveryThingGameInstance::IsLoadingMapFinished() const
 {
 	return LoadingMapMoviePlayer ? LoadingMapMoviePlayer->IsLoadingFinished() : true;
 }
@@ -227,7 +227,7 @@ bool UEveryThingGameInstance::LoadArchiveFromName(const FString& ArchiveName)
 	return false;
 }
 
-inline bool UEveryThingGameInstance::SaveCurrentArchive() { return SaveArchiveWithName(CurrentSaveArchiveName); }
+bool UEveryThingGameInstance::SaveCurrentArchive() { return SaveArchiveWithName(CurrentSaveArchiveName); }
 bool UEveryThingGameInstance::SaveArchiveWithName(const FString& ArchiveName)
 {
 	UEveryThingSaveArchive* OwnerETSA = Cast<UEveryThingSaveArchive>(UGameplayStatics::CreateSaveGameObject(UEveryThingSaveArchive::StaticClass()));;
