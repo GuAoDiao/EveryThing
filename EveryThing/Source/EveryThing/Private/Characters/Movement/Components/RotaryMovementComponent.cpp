@@ -34,7 +34,7 @@ void URotaryMovementComponent::StartMoveTimer()
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	if (!TimerManager.TimerExists(MoveTimer))
 	{
-		TimerManager.SetTimer(MoveTimer, this, &URotaryMovementComponent::MoveTimerImplementation, 1.f, true);
+		TimerManager.SetTimer(MoveTimer, this, &URotaryMovementComponent::MoveTimerImplementation, 0.16f, true);
 	}
 	else if(TimerManager.IsTimerPaused(MoveTimer))
 	{
@@ -73,7 +73,7 @@ void URotaryMovementComponent::MoveTimerImplementation()
 
 		if (ActualDirection != FVector::ZeroVector)
 		{
-			Move(ActualDirection.GetSafeNormal(), 40.f);
+			Move(ActualDirection.GetSafeNormal(), 2.f);
 		}
 		else
 		{

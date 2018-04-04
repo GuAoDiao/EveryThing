@@ -13,10 +13,10 @@ UJumpMovementComponent::UJumpMovementComponent()
 {
 	bReplicates = true;
 	
-	AdjustRotationForce = 15000000 * 100.f;
-	AtuoAdjustRotationForceStrength = 2.f;
+	AdjustRotationForce = 60.f;
+	AtuoAdjustRotationForceStrength = 1.f;
 
-	AdjustPawnRotationForce = 500000 * 100.f;
+	AdjustPawnRotationForce = 20.f;
 
 	bHasMoveDirection = false;
 	bIsToogleMovementState = false;
@@ -59,10 +59,10 @@ void UJumpMovementComponent::UpdateAgilityAndQuality(float Agility, float Qualit
 {
 	Super::UpdateAgilityAndQuality(SpeedScale, Quality, QualityScale);
 
-	JumpForwardForce = ActualMoveForce * ActualSpeed * 1.4f;
-	JumpHeightForce = ActualJumpForce ;
+	JumpForwardForce = ActualMoveForce * ActualSpeed * 5.f;
+	JumpHeightForce = ActualJumpForce * 1.5f;
 
-	AdjustLocationForce = ActualMoveForce * ActualSpeed * 0.7f;
+	AdjustLocationForce = ActualMoveForce * ActualSpeed * 0.15f;
 }
 
 void UJumpMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
@@ -144,7 +144,7 @@ void UJumpMovementComponent::RotatePawn(float AxisValue)
 	
 	if (OwnerPrimitiveComp)
 	{
-		FVector Impulse = OwnerPrimitiveComp->GetUpVector() * 7500.f;
+		FVector Impulse = OwnerPrimitiveComp->GetUpVector() * 15000.f;
 		FVector Torque = OwnerPrimitiveComp->GetUpVector() * AdjustPawnRotationForce * AxisValue;
 
 		if (AddTorqueInRadiansIfHaveEnoughStamina(Torque))

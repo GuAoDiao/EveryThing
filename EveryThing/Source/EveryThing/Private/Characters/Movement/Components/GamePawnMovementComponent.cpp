@@ -12,7 +12,7 @@ UGamePawnMovementComponent::UGamePawnMovementComponent()
 
 	MoveForceScale = 2.5f;
 	SpeedScale = 1.f;
-	JumpForceScale = 80.f;
+	JumpForceScale = 400.f;
 
 	OwnerGamePawn = Cast<AGamePawn>(GetOwner());
 }
@@ -42,8 +42,6 @@ bool UGamePawnMovementComponent::AddForceIfHaveEnoughStamina(const FVector& Forc
 	{
 		if (OwnerGamePawn->CanConsumeForce(Force))
 		{
-			UE_LOG(LogTemp, Log, TEXT("-_- Force %f"), Force.Size());
-
 			OwnerPrimitiveComp->AddForce(Force, NAME_None, true);
 			OwnerGamePawn->OnConsumeForce(Force);
 			return true;
