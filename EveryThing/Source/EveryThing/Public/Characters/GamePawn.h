@@ -274,5 +274,9 @@ public:
 	bool CanConsumeImpulse(const FVector& Impulse);
 
 protected:
-	float ForceParam = 5000000.f;
+	float ForceDivider = 2000000.f;
+	float TorqueDivider = 10000000000.f;
+	float ImpluseDivider = 50000000.f;
+	float BaseScale=10000.f;
+	float BigBaseScale = 100000000.f;
 };

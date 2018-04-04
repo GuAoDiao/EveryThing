@@ -395,6 +395,9 @@ void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 	Durability = MaxDurability;
 	Stamina = MaxStamina;
 	StaminaRecoverRate = MaxStamina / 16.f;
+	ForceDivider = InInfo->ForceDivider*BaseScale;
+	TorqueDivider = InInfo->ForceDivider*BigBaseScale;
+	ImpluseDivider = InInfo->ImpluseDivider*BaseScale;
 }
 
 void AGamePawn::UpdateInfo()
@@ -443,22 +446,22 @@ void AGamePawn::ResetDamping()
 /// On Use Force 
 void AGamePawn::OnConsumeForce(const FVector& Force)
 {
-		SpendStamina(Force.Size() / ForceParam);
+		SpendStamina(Force.Size() / ForceDivider);
 }
 
 void AGamePawn::OnConsumeTorqueInRadians(const FVector& Torque)
 {
-		SpendStamina(Torque.Size() / 5000000);
+		SpendStamina(Torque.Size() / TorqueDivider);
 }
 
 void AGamePawn::OnConsumeImpulse(const FVector& Impulse)
 {
-		SpendStamina(Impulse.Size() / 50000000);
+		SpendStamina(Impulse.Size() / ImpluseDivider);
 }
 
 bool AGamePawn::CanConsumeForce(const FVector& Force)
 {
-	if (Stamina>Force.Size() / ForceParam)
+	if (Stamina>Force.Size() / ForceDivider)
 	{
 		return true;
 	}
@@ -470,7 +473,7 @@ bool AGamePawn::CanConsumeForce(const FVector& Force)
 
 bool AGamePawn::CanConsumeTorqueInRadians(const FVector& Torque)
 {
-	if (Stamina > Torque.Size() / 5000000)
+	if (Stamina > Torque.Size() / TorqueDivider)
 	{
 		return true;
 	}
@@ -482,7 +485,7 @@ bool AGamePawn::CanConsumeTorqueInRadians(const FVector& Torque)
 
 bool AGamePawn::CanConsumeImpulse(const FVector& Impulse)
 {
-	if (Stamina>Impulse.Size()/50000000)
+	if (Stamina>Impulse.Size()/ ImpluseDivider)
 	{
 		return true;
 	}

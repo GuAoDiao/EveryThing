@@ -148,6 +148,14 @@ public:
 	float LinearDamping;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float AngularDamping;
+	
+	//_体力消耗参数
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float ForceDivider;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float TorqueDivider;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float ImpluseDivider;
 };
 
 
