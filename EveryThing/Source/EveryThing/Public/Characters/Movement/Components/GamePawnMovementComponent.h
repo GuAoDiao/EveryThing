@@ -15,16 +15,23 @@ class EVERYTHING_API UGamePawnMovementComponent : public UActorComponent
 public:
 	UGamePawnMovementComponent();
 	
-	virtual void UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale = 1.f);
+	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) {}
+	//////////////////////////////////////////////////////////////////////////
+	/// Authority
 protected:
-
 	bool HasAuthority();
 	bool IsAutonomousProxy();
+	bool IsLocalPlayer();
 
+public:
+	virtual void UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale = 1.f);
+protected:	
 	float ActualMoveForce;
 	float MoveForceScale;
+
 	float ActualJumpForce;
 	float JumpForceScale;
+
 	float ActualSpeed;
 	float SpeedScale;
 
@@ -36,6 +43,4 @@ protected:
 	bool AddTorqueInRadiansIfHaveEnoughStamina(const FVector& Torue);
 	bool AddImpulseIfHaveEnoughStamina(const FVector& Impulse);
 
-public:
-	virtual void RebindInputComp(class UInputComponent* OwnerInputComp) {}
 };

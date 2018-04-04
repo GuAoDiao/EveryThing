@@ -22,7 +22,7 @@
 #include "Characters/GamePawnManager.h"
 
 
-#define LOCTEXT_NAMESPACE "Everything_Characters_PlayerPawnController"
+#define LOCTEXT_NAMESPACE "Everything_Online_PlayerController_Game"
 
 APlayerController_Game::APlayerController_Game()
 {
@@ -234,6 +234,12 @@ void APlayerController_Game::ClientOnKillOther_Implementation(const FString& Kil
 
 void APlayerController_Game::ClientOnGamePawnBeKilled_Implementation(const FString& KilledName, const FString& KillerName) { OnGamePawnBeKilledDelegate.Broadcast(KilledName, KillerName); }
 void APlayerController_Game::ClientOnGamePawnSuicided_Implementation(const FString& KilledName) { OnGamePawnSuicidedDelegate.Broadcast(KilledName); }
+
+void APlayerController_Game::CreatePlayerFightInfo(const FText& FightInfo)
+{
+	AEveryThingHUD_Game* OwnerETGH = Cast<AEveryThingHUD_Game>(GetHUD());
+	if (OwnerETGH) { OwnerETGH->CreatePlayerFightInfo(FightInfo); }
+}
 
 //////////////////////////////////////////////////////////////////////////
 /// Player State

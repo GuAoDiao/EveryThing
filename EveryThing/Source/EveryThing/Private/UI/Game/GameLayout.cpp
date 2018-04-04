@@ -6,7 +6,11 @@
 #include "UI/Game/SelectAboutRole/SelectRolesBox.h"
 #include "UI/Game/SelectAboutRole/SelectSkinsBox.h"
 #include "UI/Game/SelectAboutRole/SelectFormsBox.h"
+#include "UI/Game/PlayerFightInfo.h"
 
+
+//////////////////////////////////////////////////////////////////////////
+/// About Role Select
 void UGameLayout::DisplaySelectRolesBox() { if (SelectRolesBox) { SelectRolesBox->SetVisibility(ESlateVisibility::Visible); } }
 void UGameLayout::RemoveSelectRolesBox() { if (SelectRolesBox) { SelectRolesBox->SetVisibility(ESlateVisibility::Hidden); } }
 
@@ -15,3 +19,7 @@ void UGameLayout::RemoveSelectSkinsBox() { if (SelectSkinsBox) { SelectSkinsBox-
 
 void UGameLayout::DisplaySelectFormsBox() { if (SelectFormsBox) { SelectFormsBox->SetVisibility(ESlateVisibility::Visible); } }
 void UGameLayout::RemoveSelectFormsBox() { if (SelectFormsBox) { SelectFormsBox->SetVisibility(ESlateVisibility::Hidden); } }
+
+//////////////////////////////////////////////////////////////////////////
+/// Player Fight Info
+void UGameLayout::CreatePlayerFightInfo(const FText& FightInfo) { if (PlayerFightInfo) { PlayerFightInfo->CreatePlayerFightInfo(FightInfo); } }

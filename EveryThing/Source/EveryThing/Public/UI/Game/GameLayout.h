@@ -24,6 +24,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateGameUIDisplay(EETGameState GameUIState);
 
+	//////////////////////////////////////////////////////////////////////////
+	/// About Role Select
+public:
 	void DisplaySelectRolesBox();
 	void RemoveSelectRolesBox();
 
@@ -32,6 +35,11 @@ public:
 	
 	void DisplaySelectFormsBox();
 	void RemoveSelectFormsBox();
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Player Fight Info
+public:
+	void CreatePlayerFightInfo(const FText& FightInfo);
 public:
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class USelectRolesBox* SelectRolesBox;

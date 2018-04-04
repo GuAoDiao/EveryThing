@@ -16,5 +16,5 @@ class EVERYTHING_API AEveryThingPlayerStart : public APlayerStart
 	
 	
 public:
-	bool bIsUsed;	
+	virtual bool CanSpawnGamePawn(AController* Player);
 };

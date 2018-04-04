@@ -14,13 +14,15 @@ class EVERYTHING_API UPlayerFightInfo : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	void CreatePlayerFightInfo(const FText& FightInfo);
+
 protected:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void InitializePlayerFightInfo();
-
-
+	
 	void OnAcceptCure(const FString& CauserName, float Treatment);
 	void OnAcceptDamage(const FString& CauserName, float Damage);
 	void OnAcceptCriticalDamage(const FString& CauserName);

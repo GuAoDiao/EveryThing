@@ -6,13 +6,14 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/InputComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "Online/PlayerController_Game.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 
 #include "Characters/GamePawn.h"
 #include "Characters/Movement/Interfaces/RotaryMovementPawnInterface.h"
 
-
+#define LOCTEXT_NAMESPACE "Everything_Characters_RotaryMovementComponent"
 
 URotaryMovementComponent::URotaryMovementComponent()
 {	
@@ -208,14 +209,22 @@ void URotaryMovementComponent::ToogleMovementState()
 	{
 		ServerToogleMovementState();
 	}
-
-	bIsFastMovementState = !bIsFastMovementState;
-	SetMovementState(bIsFastMovementState);
+	else
+	{
+		bIsFastMovementState = !bIsFastMovementState;
+		SetMovementState(bIsFastMovementState);
+	}
 }
 
 void URotaryMovementComponent::SetMovementState(bool bInIsFastMovementState)
-{
-	UE_LOG(LogTemp, Log, TEXT("-_- current is %s state"), bInIsFastMovementState ? TEXT("fast") : TEXT("slow"));
+{	
+	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(OwnerGamePawn->GetController());
+	if (OwnerPC_G && OwnerPC_G->IsLocalController())
+	{
+		OwnerPC_G->CreatePlayerFightInfo(
+			bInIsFastMovementState ? LOCTEXT("OnMovementFastState", "Toggle To Fast State") : LOCTEXT("OnMovementSlowState", "Toggle To Slow State")
+		);
+	}
 
 	if (bInIsFastMovementState)
 	{
@@ -227,6 +236,8 @@ void URotaryMovementComponent::SetMovementState(bool bInIsFastMovementState)
 		CurrentSpeed = SpeedForceBase;
 		CurrentJumpForce = JumpForceBase;
 	}
+
+
 }
 
 bool URotaryMovementComponent::ServerToogleMovementState_Validate() { return true; }
@@ -242,3 +253,5 @@ void URotaryMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(URotaryMovementComponent, bIsJumping);
 	DOREPLIFETIME(URotaryMovementComponent, bIsFastMovementState);
 }
+
+#undef LOCTEXT_NAMESPACE

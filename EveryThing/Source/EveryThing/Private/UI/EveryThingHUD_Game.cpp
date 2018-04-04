@@ -160,6 +160,10 @@ void AEveryThingHUD_Game::RemoveScoreBoard()
 }
 
 //////////////////////////////////////////////////////////////////////////
+/// Player Fight Info
+void AEveryThingHUD_Game::CreatePlayerFightInfo(const FText& FightInfo) { if (GameLayout) { GameLayout->CreatePlayerFightInfo(FightInfo); } }
+
+//////////////////////////////////////////////////////////////////////////
 /// Select About Roles 
 
 void AEveryThingHUD_Game::ToggleSelectRolesBox(bool bIsDisplay)

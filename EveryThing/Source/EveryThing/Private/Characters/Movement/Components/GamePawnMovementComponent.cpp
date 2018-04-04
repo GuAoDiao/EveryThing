@@ -3,7 +3,8 @@
 #include "GamePawnMovementComponent.h"
 
 #include "Components/PrimitiveComponent.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Controller.h"
+
 #include "Characters/GamePawn.h"
 
 UGamePawnMovementComponent::UGamePawnMovementComponent()
@@ -17,17 +18,23 @@ UGamePawnMovementComponent::UGamePawnMovementComponent()
 	OwnerGamePawn = Cast<AGamePawn>(GetOwner());
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// Authority	
 bool UGamePawnMovementComponent::HasAuthority()
 {
-	AActor* Owner = GetOwner();
-	return Owner ? Owner->HasAuthority() : false;
+	return OwnerGamePawn ? OwnerGamePawn->HasAuthority() : false;
 }
 
 bool UGamePawnMovementComponent::IsAutonomousProxy()
 {
-	AActor* Owner = GetOwner();
-	return Owner ? Owner->Role == ROLE_AutonomousProxy : false;
+	return OwnerGamePawn ? OwnerGamePawn->Role == ROLE_AutonomousProxy : false;
 }
+bool UGamePawnMovementComponent::IsLocalPlayer()
+{
+	AController* OwnerController = OwnerGamePawn ? OwnerGamePawn->GetController() : nullptr;
+	return OwnerController ? OwnerController->IsLocalController() : false;
+}
+
 
 void UGamePawnMovementComponent::UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale)
 {

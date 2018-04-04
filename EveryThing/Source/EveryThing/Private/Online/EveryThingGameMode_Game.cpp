@@ -2,12 +2,14 @@
 
 #include "EveryThingGameMode_Game.h"
 
+#include "EngineUtils.h"
 #include "Engine/World.h"
 
 #include "Online/PlayerController_Game.h"
 #include "Online/EveryThingPlayerState_Game.h"
 #include "Online/EveryThingGameState_Game.h"
 #include "Online/EveryThingGameSession.h"
+#include "Online/EveryThingPlayerStart.h"
 #include "UI/EveryThingHUD_Game.h"
 #include "EveryThingGameInstance.h"
 
@@ -29,6 +31,8 @@ AEveryThingGameMode_Game::AEveryThingGameMode_Game()
 	PlayerStateClass = AEveryThingPlayerState_Game::StaticClass();
 	GameStateClass = AEveryThingGameState_Game::StaticClass();
 	HUDClass = AEveryThingHUD_Game::StaticClass();
+
+	ETPlayerStatrClass = AEveryThingPlayerStart::StaticClass();
 }
 
 
@@ -92,6 +96,22 @@ void AEveryThingGameMode_Game::RestartPlayer(AController* NewPlayer)
 	{
 		OwnerPC_G->ClientStartPlayer();
 	}
+}
+
+AActor* AEveryThingGameMode_Game::FindPlayerStart_Implementation(AController* Player, const FString& IncomingName)
+{
+	if (GetWorld() && ETPlayerStatrClass)
+	{
+		for (TActorIterator<AEveryThingPlayerStart> It(GetWorld(), ETPlayerStatrClass); It; ++It)
+		{
+			if (It->CanSpawnGamePawn(Player))
+			{
+				return *It;
+			}
+		}
+	}
+
+	return Super::FindPlayerStart_Implementation(Player, IncomingName);
 }
 
 void AEveryThingGameMode_Game::Logout(AController* Exiting)

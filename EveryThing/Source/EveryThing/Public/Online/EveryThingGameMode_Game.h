@@ -27,6 +27,7 @@ public:
 	virtual void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC);
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void RestartPlayer(AController* NewPlayer) override;
+	virtual AActor* FindPlayerStart_Implementation(AController* Player, const FString& IncomingName = TEXT("")) override;
 	virtual void Logout(AController* Exiting) override;
 	virtual void BeginDestroy() override;
 
@@ -49,8 +50,10 @@ public:
 
 
 
-private:
+protected:
 	float NormalDamageScale;
 	float SpecificToDamageScale;
 	bool bBackToHome;
+
+	TSubclassOf<class AEveryThingPlayerStart> ETPlayerStatrClass;
 };

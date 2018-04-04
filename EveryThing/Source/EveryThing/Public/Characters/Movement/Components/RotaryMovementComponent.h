@@ -40,9 +40,7 @@ public:
 
 	void StartJump();
 
-	void ToogleMovementState();
-private:
-	void SetMovementState(bool bIsFastMovementState);
+	
 public:
 	void SetIsJumping(bool bInIsJumping) { bIsJumping = bInIsJumping; }
 	bool CanJump() { return !bIsJumping; }
@@ -54,8 +52,7 @@ private:
 	void ServerAcceptForceImpulse(const FVector& Location, const FVector& Force);
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerStartJump();
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerToogleMovementState();
+
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float SpeedForceBase;
@@ -72,12 +69,26 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Transient, Replicated)
 	float CurrentJumpForce;
 
+	//////////////////////////////////////////////////////////////////////////
+	/// Movement State
+public:
+	void ToogleMovementState();
+
+protected:
+	void SetMovementState(bool bIsFastMovementState);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerToogleMovementState();
+	UFUNCTION()
+	void OnRep_IsFastMovementState() { SetMovementState(bIsFastMovementState); }
+
+	UPROPERTY(ReplicatedUsing = OnRep_IsFastMovementState, Transient)
+	bool bIsFastMovementState;
+
 
 private:
 	UPROPERTY(Replicated, Transient)
 	bool bIsJumping;
-	UPROPERTY(Replicated, Transient)
-	bool bIsFastMovementState;
 
 	bool bWantsToMove;
 	FVector WantMoveDirection;

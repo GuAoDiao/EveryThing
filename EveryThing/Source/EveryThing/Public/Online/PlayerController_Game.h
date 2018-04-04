@@ -99,6 +99,9 @@ public:
 	FOnGamePawnBeKilledDelegate OnGamePawnBeKilledDelegate;
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnGamePawnSuicidedDelegate, const FString& /* KilledName */);
 	FOnGamePawnSuicidedDelegate OnGamePawnSuicidedDelegate;
+
+public:
+	void CreatePlayerFightInfo(const FText& FightInfo);
 	//////////////////////////////////////////////////////////////////////////
 	/// Player State
 public:
