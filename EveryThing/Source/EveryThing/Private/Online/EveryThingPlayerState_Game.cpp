@@ -9,6 +9,7 @@
 #include "EveryThingGameInstance.h"
 #include "Online/EveryThingPlayerState_House.h"
 #include "Online/EveryThingGameState_Game.h"
+#include "Online/PlayerController_Game.h"
 
 #include "Characters/GamePawn.h"
 #include "Characters/PlayerPawns/PlayerChairPawn.h"
@@ -17,7 +18,7 @@
 AEveryThingPlayerState_Game::AEveryThingPlayerState_Game()
 {
 	TeamID = -1;
-	
+
 	KillNum = 0;
 	DeathNum = 0;
 	GameScore = 0;
@@ -26,17 +27,20 @@ AEveryThingPlayerState_Game::AEveryThingPlayerState_Game()
 void AEveryThingPlayerState_Game::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	// if not from SeamlessTravel, add in the middle of th game. set player info from GameInstance.
 	UEveryThingGameInstance* OwnerETGI = Cast<UEveryThingGameInstance>(GetGameInstance());
 	APlayerController* OwnerPC = Cast<APlayerController>(GetOwner());
 	if (OwnerETGI && OwnerPC && OwnerPC->IsLocalController() && !bFromPreviousLevel)
 	{
-		ServerSetPlayerInfo( OwnerETGI->GetPlayerInfo());
+		ServerSetPlayerInfo(OwnerETGI->GetPlayerInfo());
 	}
 
 	if (HasAuthority())
 	{
+		APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(OwnerPC);
+		if (OwnerPC_G) { OwnerPC_G->OnRoleNameUpdateDelegate.AddUObject(this, &AEveryThingPlayerState_Game::SetLastSelectRoleName); }
+
 		AEveryThingGameState_Game* OwnerETGS_G = GetWorld() ? GetWorld()->GetGameState<AEveryThingGameState_Game>() : nullptr;
 		if (OwnerETGS_G)
 		{

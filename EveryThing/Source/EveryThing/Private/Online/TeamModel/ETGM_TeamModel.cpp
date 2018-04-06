@@ -2,6 +2,10 @@
 
 #include "ETGM_TeamModel.h"
 
+#include "Online/TeamModel/EveryThingPlayerStart_Team.h"
 
 
-
+AETGM_TeamModel::AETGM_TeamModel()
+{
+	ETPlayerStatrClass = AEveryThingPlayerStart_Team::StaticClass();
+}

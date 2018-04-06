@@ -151,18 +151,17 @@ void UPlayerPawnComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 
 		if (SelectedHitAbleActor && SelectedHitAbleActor != CurrentAttackTarget && SelectedHitAbleActor!= OwnerPawn)
 		{
-			IHitAbleInterface* CurrentHitableAttackTarget;
-			if (CurrentAttackTarget)
+			IHitAbleInterface* SelectedHitableAttackTarget = Cast<IHitAbleInterface>(SelectedHitAbleActor);
+			if (SelectedHitableAttackTarget && SelectedHitableAttackTarget->CanBeSelectedToHit(OwnerPawn))
 			{
-				CurrentHitableAttackTarget = Cast<IHitAbleInterface>(CurrentAttackTarget);
+				IHitAbleInterface* CurrentHitableAttackTarget = Cast<IHitAbleInterface>(CurrentAttackTarget);
 				if (CurrentHitableAttackTarget) { CurrentHitableAttackTarget->SetIsSelectedToHit(false); }
-			}
-			
-			LastAttackTarget = CurrentAttackTarget;
-			CurrentAttackTarget = SelectedHitAbleActor;
 
-			CurrentHitableAttackTarget = Cast<IHitAbleInterface>(CurrentAttackTarget);
-			if (CurrentHitableAttackTarget) { CurrentHitableAttackTarget->SetIsSelectedToHit(true); }
+				LastAttackTarget = CurrentAttackTarget;
+				CurrentAttackTarget = SelectedHitAbleActor;
+
+				SelectedHitableAttackTarget->SetIsSelectedToHit(true);
+			}
 		}
 	}
 }

@@ -12,6 +12,8 @@
 #include "Online/EveryThingPlayerStart.h"
 #include "UI/EveryThingHUD_Game.h"
 #include "EveryThingGameInstance.h"
+#include "EveryThingAssetManager.h"
+#include "Characters/GamePawnManager.h"
 
 #include "PlayerFootballPawn.h"
 
@@ -25,7 +27,6 @@ AEveryThingGameMode_Game::AEveryThingGameMode_Game()
 	bBackToHome = false;
 
 	DefaultPawnClass = APlayerFootballPawn::StaticClass();
-	
 	GameSessionClass = AEveryThingGameSession::StaticClass();
 	PlayerControllerClass = APlayerController_Game::StaticClass();
 	PlayerStateClass = AEveryThingPlayerState_Game::StaticClass();
@@ -112,6 +113,22 @@ AActor* AEveryThingGameMode_Game::FindPlayerStart_Implementation(AController* Pl
 	}
 
 	return Super::FindPlayerStart_Implementation(Player, IncomingName);
+}
+
+UClass* AEveryThingGameMode_Game::GetDefaultPawnClassForController_Implementation(AController* InController)
+{
+	APlayerController_Game* InPC_G = Cast<APlayerController_Game>(InController);
+	AEveryThingPlayerState_Game* InETPS_G = InPC_G ? Cast<AEveryThingPlayerState_Game>(InPC_G->PlayerState) : nullptr;
+	if (InETPS_G)
+	{
+		const FName& RoleName = InETPS_G->GetLastSelectRoleName();
+		if (!RoleName.IsNone())
+		{
+			return UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleClassFromName(RoleName).Get();
+		}
+	}
+
+	return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 
 void AEveryThingGameMode_Game::Logout(AController* Exiting)

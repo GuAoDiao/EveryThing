@@ -150,6 +150,11 @@ void AGamePawn::AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const F
 	}
 }
 
+bool AGamePawn::CanBeSelectedToHit(AActor* Selector) const
+{
+	return !bIsDeath;
+}
+
 //////////////////////////////////////////////////////////////////////////
 /// Hit
 void AGamePawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalInpulse, const FHitResult& Hit)

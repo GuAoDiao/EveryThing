@@ -186,6 +186,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Experience;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName LastSelectRoleName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FName> AllHaveRoleNames;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FName> AllHaveRoleSkinNames;

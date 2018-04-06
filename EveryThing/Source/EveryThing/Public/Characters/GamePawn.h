@@ -56,7 +56,7 @@ public:
 	virtual void SetIsSelectedToHit(bool bInIsSelectedToHit) override;
 	virtual void AcceptHitFrom(AActor* OtherActor, FVector NormalInpulse, const FHitResult& Hit) override;
 	virtual const FString& GetHitAbleActorDisplayName() const override { return HitAbleDisplayName; }
-	virtual bool CanIsSelectedToHit() const override {return bIsDeath;}
+	virtual bool CanBeSelectedToHit(AActor* Selector) const override;
 	void SetHitAbleDisplayName(const FString& InHitAbleDisplayName) { HitAbleDisplayName = InHitAbleDisplayName; }
 protected:
 	UPROPERTY(Replicated)

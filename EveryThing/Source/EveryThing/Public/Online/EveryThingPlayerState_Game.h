@@ -32,6 +32,9 @@ public:
 public:
 	const FPlayerInfo& GetPlayerInfo() const { return CurrentPlayerInfo; }
 	const FString& GetPlayerDisplayName() const { return CurrentPlayerInfo.PlayerName; }
+	
+	const FName& GetLastSelectRoleName() const { return CurrentPlayerInfo.LastSelectRoleName; }
+	void SetLastSelectRoleName(const FName& RoleName) { CurrentPlayerInfo.LastSelectRoleName = RoleName; }
 
 	void SetPlayerInfo(const FPlayerInfo& InPlayerInfo);
 

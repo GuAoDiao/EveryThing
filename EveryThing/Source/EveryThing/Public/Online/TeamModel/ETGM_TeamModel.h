@@ -14,7 +14,8 @@ class EVERYTHING_API AETGM_TeamModel : public AEveryThingGameMode_Game
 {
 	GENERATED_BODY()
 	
-	
+public:
+	AETGM_TeamModel();
 	
 	
 };
