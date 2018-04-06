@@ -30,7 +30,7 @@ public:
 	/// Game Init
 public:
 	void InitializeETGameState(const FString& InGameType, const FString& InMapName, const FString& InHouseName, bool bInIsLANMatach, int32 InMaxPlayerNum, int32 InCurrentPlayerNum);
-
+	void OnGameTypeChanged();
 	//////////////////////////////////////////////////////////////////////////
 	/// Player Login/Logout
 public:
@@ -106,8 +106,7 @@ protected:
 
 public:
 	int32 GetActualTeamNums() const { return ActualTeamNums; }
-protected:
-	int32 ActualTeamNums;
+
 
 public:
 	UPROPERTY(Transient, Replicated)
@@ -125,6 +124,32 @@ public:
 
 protected:
 	int32 HousePlayerNum;
+	UPROPERTY(Transient, Replicated)
+	int32 ActualTeamNums;
+	const FMapTypeInfo* MapTypeInfo;
+
+	float CureScoreScale;
+	float DamageScoreScale;
+	float CriticalDamageScore;
+	float KillScore;
+	
+	//////////////////////////////////////////////////////////////////////////
+	/// Team
+
+public:
+	int32 GetAllowedTeamNum() const { return AllowedTeamNum; }
+	bool CheckTeamIDIsAllowed(int32 TeamID) const { return TeamID > 0 && TeamID <= AllowedTeamNum; }
+
+	int32 GetRandomTeamID() const;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAllowedTeamNumChangeDelegate, int32 /* MaxTeam */);
+	FOnAllowedTeamNumChangeDelegate OnAllowedTeamNumChangeDelegate;
+protected:
+	void OnAllowedTeamNumChanged() { OnAllowedTeamNumChangeDelegate.Broadcast(AllowedTeamNum); };
+	
+	UPROPERTY(Transient, Replicated)
+	int32 AllowedTeamNum;
+
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Game State
@@ -157,14 +182,6 @@ public:
 	FOnGamePawnAcceptCriticalDamageDelegate OnGamePawnAcceptCriticalDamageDelegate;
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGamePawnBeKilledDelegate, AGamePawn* /* KilledGamePawn */, AActor* /* KillerActor */)
 	FOnGamePawnBeKilledDelegate OnGamePawnBeKilledDelegate;
-
-	/// Score
-protected:
-	float CureScoreScale;
-	float DamageScoreScale;
-	float CriticalDamageScore;
-	float KillScore;
-
 
 	//////////////////////////////////////////////////////////////////////////
 	/// For Chat Window Game State Interface

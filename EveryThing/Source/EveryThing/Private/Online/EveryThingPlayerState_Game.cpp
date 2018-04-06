@@ -38,7 +38,13 @@ void AEveryThingPlayerState_Game::BeginPlay()
 	if (HasAuthority())
 	{
 		AEveryThingGameState_Game* OwnerETGS_G = GetWorld() ? GetWorld()->GetGameState<AEveryThingGameState_Game>() : nullptr;
-		if (OwnerETGS_G) { ChatID = OwnerETGS_G->GetNextChatID(this); }
+		if (OwnerETGS_G)
+		{
+			OnAllowedTeamNumChanged(OwnerETGS_G->GetAllowedTeamNum());
+			OwnerETGS_G->OnAllowedTeamNumChangeDelegate.AddUObject(this, &AEveryThingPlayerState_Game::OnAllowedTeamNumChanged);
+
+			ChatID = OwnerETGS_G->GetNextChatID(this);
+		}
 	}
 }
 
@@ -67,6 +73,20 @@ void AEveryThingPlayerState_Game::ChangeTeamID(int32 InTeamID)
 	OnTeamIDUpdate();
 }
 
+
+void AEveryThingPlayerState_Game::OnAllowedTeamNumChanged(int32 AllowedTeamNum)
+{
+	if (TeamID > 0 && TeamID <= AllowedTeamNum)
+	{
+
+	}
+	else
+	{
+		AEveryThingGameState_Game* OwnerETGS_G = GetWorld() ? GetWorld()->GetGameState<AEveryThingGameState_Game>() : nullptr;
+		int32 NewTeamID = OwnerETGS_G ? OwnerETGS_G->GetRandomTeamID() : 1;
+		ChangeTeamID(NewTeamID);
+	}
+}
 
 void AEveryThingPlayerState_Game::AddGameScore(int32 InOffset)
 {

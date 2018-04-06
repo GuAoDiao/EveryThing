@@ -68,14 +68,16 @@ public:
 public:
 	int32 GetAllowedTeamNum() const { return AllowedTeamNum; }
 	bool CheckTeamIDIsAllowed(int32 TeamID) const { return TeamID > 0 && TeamID <= AllowedTeamNum; }
+	int32 GetRandomTeamID() const;
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAllowedTeamNumChangeDelegate, int32 /* MaxTeam */);
 	FOnAllowedTeamNumChangeDelegate OnAllowedTeamNumChangeDelegate;
+
+protected:
 	UFUNCTION()
 	void OnRep_AllowedTeamNum() { OnAllowedTeamNumChanged(); }
 	void OnAllowedTeamNumChanged() { OnAllowedTeamNumChangeDelegate.Broadcast(AllowedTeamNum); };
 	
-	int32 GetRandomTeamID() const;
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_AllowedTeamNum)
 	int32 AllowedTeamNum;

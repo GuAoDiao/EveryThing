@@ -55,6 +55,9 @@ public:
 	int32 GetTeamID() const { return TeamID; }
 	void SetTeamID(int32 InTeamID) { TeamID = InTeamID; OnTeamIDUpdate(); }
 	void ChangeTeamID(int32 InTeamID);
+
+	void OnAllowedTeamNumChanged(int32 AllowedTeamNum);
+
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnTeamIDUpdateDelegate, int32 /* TeamID */);
 	FOnTeamIDUpdateDelegate OnTeamIDUpdateDelegate;
 

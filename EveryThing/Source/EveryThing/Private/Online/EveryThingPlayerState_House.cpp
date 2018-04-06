@@ -97,19 +97,20 @@ void AEveryThingPlayerState_House::OnAllowedTeamNumChanged(int32 AllowedTeamNum)
 void AEveryThingPlayerState_House::ChangeTeamID(int32 InTeamID)
 {
 	AEveryThingGameState_House* OwnerETGS_H = GetWorld() ? GetWorld()->GetGameState<AEveryThingGameState_House>() : nullptr;
-	if (OwnerETGS_H && InTeamID > 0 && InTeamID <= OwnerETGS_H->GetAllowedTeamNum())
+	if (OwnerETGS_H && OwnerETGS_H->CheckTeamIDIsAllowed(InTeamID))
 	{
-		if (GetOwner() && GetOwner()->Role >= ROLE_AutonomousProxy)
+		if (!HasAuthority() && GetOwner() && GetOwner()->Role >= ROLE_AutonomousProxy)
 		{
 			ServerChangeTeamID(InTeamID);
+		}
+		else
+		{
+			SetTeamID(InTeamID);
 		}
 	}
 }
 bool AEveryThingPlayerState_House::ServerChangeTeamID_Validate(int32 InTeamID) { return true; }
-void AEveryThingPlayerState_House::ServerChangeTeamID_Implementation(int32 InTeamID)
-{
-	SetTeamID(InTeamID);
-}
+void AEveryThingPlayerState_House::ServerChangeTeamID_Implementation(int32 InTeamID) { ChangeTeamID(InTeamID); }
 
 
 bool AEveryThingPlayerState_House::CheckIsHouseOwner()

@@ -10,28 +10,21 @@
 #include "Online/EveryThingPlayerState_Game.h"
 #include "Online/EveryThingGameMode_Game.h"
 #include "Online/PlayerController_Game.h"
+#include "EveryThingAssetManager.h"
 
 const FString AEveryThingGameState_Game::PlayerChatName_NONE = FString("NONE");
 
 AEveryThingGameState_Game::AEveryThingGameState_Game()
 {
+	CurrentPlayerNum = 0;
+	bIsETGameStarted = false;
 	CurrentETGameState = EETGameState::WaitForHousePlayerLoad;
 
 	// TODO: close debug
-	// DefaultReadyTime = 15.f;
-	CurrentPlayerNum = 0;
-	ActualTeamNums = 1;
-	bIsETGameStarted = false;
-
 	DefaultReadyTime = 1.f;
+	// DefaultReadyTime = 15.f;
 	DefaultGameTime = 600.f;
 	DefaultBackToHouseTime = 10.f;
-
-	// score
-	CureScoreScale = 0.5f;
-	DamageScoreScale = 0.7f;
-	CriticalDamageScore = 20.f;
-	KillScore = 100.f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -44,8 +37,66 @@ void AEveryThingGameState_Game::InitializeETGameState(const FString& InGameType,
 	bIsLANMatach = bInIsLANMatach;
 	MaxPlayerNum = InMaxPlayerNum;
 	HousePlayerNum = InCurrentPlayerNum;
+
+	OnGameTypeChanged();
 }
 
+
+void AEveryThingGameState_Game::OnGameTypeChanged()
+{
+	MapTypeInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetMapTypeInfoFromName(FName(*GameType));
+
+	checkf(MapTypeInfo, TEXT("-_- the map type(%s) info must be exists."), *GameType);
+
+	AllowedTeamNum = MapTypeInfo->AllowedTeamNum;
+	ActualTeamNums = MapTypeInfo->ActualTeamNums;
+
+	OnAllowedTeamNumChanged();
+
+	CureScoreScale = MapTypeInfo->CureScoreScale;
+	DamageScoreScale = MapTypeInfo->DamageScoreScale;
+	CriticalDamageScore = MapTypeInfo->CriticalDamageScore;
+	KillScore = MapTypeInfo->KillScore;
+}
+
+int32 AEveryThingGameState_Game::GetRandomTeamID() const
+{
+	if (AllowedTeamNum == 0) { return -1; }
+
+	TArray<int32> AllTeamPlayerNums;
+	for (int32 i = 0; i < AllowedTeamNum; ++i)
+	{
+		AllTeamPlayerNums.Add(0);
+	}
+
+	for (const APlayerState* PlayerState : PlayerArray)
+	{
+		const AEveryThingPlayerState_Game* ETPS_G = Cast<AEveryThingPlayerState_Game>(PlayerState);
+		if (ETPS_G)
+		{
+			int32 TeamID = ETPS_G->GetTeamID();
+			if (CheckTeamIDIsAllowed(TeamID)) { ++AllTeamPlayerNums[TeamID - 1]; }
+		}
+	}
+
+	int32 PlayerNumMinTeam = 0;
+
+	int32 MinPlayerNum = INT_MAX;
+	for (int32 i = 0; i < AllTeamPlayerNums.Num(); ++i)
+	{
+		if (AllTeamPlayerNums[i] < MinPlayerNum)
+		{
+			PlayerNumMinTeam = i;
+			MinPlayerNum = AllTeamPlayerNums[i];
+		}
+	}
+
+	return PlayerNumMinTeam + 1;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Start Ready
 void AEveryThingGameState_Game::StartReadyCountDown()
 {
 	RemaningReadyTime = DefaultReadyTime;
@@ -141,6 +192,8 @@ void AEveryThingGameState_Game::OnPlayerLogout(AController* Exiting)
 
 	if (IsTargetETGameState(EETGameState::WaitForHousePlayerLoad)) { --HousePlayerNum; }
 }
+
+
 
 void AEveryThingGameState_Game::ToggleToTargetETGameState(EETGameState TargetGameStae)
 {
@@ -326,6 +379,8 @@ void AEveryThingGameState_Game::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	DOREPLIFETIME(AEveryThingGameState_Game, bIsLANMatach);
 	DOREPLIFETIME(AEveryThingGameState_Game, MaxPlayerNum);
 	DOREPLIFETIME(AEveryThingGameState_Game, CurrentPlayerNum);
+	DOREPLIFETIME(AEveryThingGameState_Game, ActualTeamNums);
+	DOREPLIFETIME(AEveryThingGameState_Game, AllowedTeamNum);
 
 	DOREPLIFETIME(AEveryThingGameState_Game, ChatPlayerState);	
 }

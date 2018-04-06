@@ -95,6 +95,19 @@ public:
 	int32 AllowedTeamNum;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 NeededTeamNum;
+	// if TeamMode, value may be 2.
+	// if IndividualModel, value is 1.
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 ActualTeamNums;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float CureScoreScale;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float DamageScoreScale;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float CriticalDamageScore;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float KillScore;
 };
 
 //////////////////////////////////////////////////////////////////////////

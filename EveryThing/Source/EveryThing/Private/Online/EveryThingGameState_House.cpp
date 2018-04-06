@@ -95,6 +95,8 @@ void AEveryThingGameState_House::OnGameTypeChanged()
 
 int32 AEveryThingGameState_House::GetRandomTeamID() const
 {
+	if (AllowedTeamNum == 0) { return -1; }
+
 	TArray<int32> AllTeamPlayerNums;
 	for (int32 i = 0; i < AllowedTeamNum; ++i)
 	{
@@ -107,10 +109,7 @@ int32 AEveryThingGameState_House::GetRandomTeamID() const
 		if (ETPS_H)
 		{
 			int32 TeamID = ETPS_H->GetTeamID();
-			if (TeamID > 0 && TeamID <= AllowedTeamNum)
-			{
-				++AllTeamPlayerNums[TeamID - 1];
-			}
+			if (CheckTeamIDIsAllowed(TeamID)) { ++AllTeamPlayerNums[TeamID - 1]; }
 		}
 	}
 
