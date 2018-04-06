@@ -11,9 +11,9 @@ UGamePawnMovementComponent::UGamePawnMovementComponent()
 {
 	bReplicates = true;
 
-	MoveForceScale = 2.5f;
-	SpeedScale = 1.f;
-	JumpForceScale = 400.f;
+	MoveForceScale = 0.1f;
+	SpeedScale = 0.1f;
+	JumpForceScale = 2.f;
 
 	OwnerGamePawn = Cast<AGamePawn>(GetOwner());
 }
@@ -41,6 +41,8 @@ void UGamePawnMovementComponent::UpdateAgilityAndQuality(float Agility, float Qu
 	ActualMoveForce = Quality * QualityScale * MoveForceScale;
 	ActualJumpForce = Agility * Quality * QualityScale * JumpForceScale;
 	ActualSpeed = Agility * SpeedScale;
+
+	UE_LOG(LogTemp, Log, TEXT("-_- Agility : %f, ActualSpeed : %f"), Agility, ActualSpeed);
 }
 
 bool UGamePawnMovementComponent::AddForceIfHaveEnoughStamina(const FVector& Force)

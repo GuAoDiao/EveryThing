@@ -39,7 +39,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	/// Player Fight Info
 public:
-	void CreatePlayerFightInfo(const FText& FightInfo);
+	void ClientCreatePlayerFightInfo(const FText& FightInfo);
 public:
 	UPROPERTY(BlueprintReadWrite, Transient)
 	class USelectRolesBox* SelectRolesBox;

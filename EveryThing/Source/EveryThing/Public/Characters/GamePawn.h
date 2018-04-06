@@ -165,17 +165,14 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn info
 public:
-	void UpdateInfo();
-
 	float GetMaxHyperopiaDistance() const { return BaseInfo.MaxHyperopiaDistance; }
 protected:
 	void ResetInfoFromDataTable(const FName& GamePawnName);
 	void SetInfo(const FGamePawnInfo* InInfo);
-	UFUNCTION()
-	void OnRep_BaseInfo();
 
-	UPROPERTY(BlueprintReadOnly, Replicated, ReplicatedUsing = OnRep_BaseInfo)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	FGamePawnInfo BaseInfo;
+	
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Durability
@@ -184,13 +181,14 @@ public:
 	float GetDurability() const { return Durability; }
 	UFUNCTION(BlueprintPure)
 	float GetMaxDurability() const { return MaxDurability; }
-	
+
+	void ChangeDurability(float DurabilityOffset);
+
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDurabilityUpdateDelegate, float /* Durability */);
 	FOnDurabilityUpdateDelegate OnDurabilityUpdateDelegate;
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMaxDurabilityUpdateDelegate, float /* MaxDurability */);
 	FOnMaxDurabilityUpdateDelegate OnMaxDurabilityUpdateDelegate;
 protected:
-	void ChangeDurability(float DurabilityOffset);
 
 	UFUNCTION()
 	void OnRep_Durability() { OnDurabilityUpdate(); }
@@ -256,11 +254,25 @@ protected:
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Quality And Damping
+public:
+	float GetAgility() const { return Agility; }
+	void SetAgility(float InAgility) { Agility = InAgility; OnAgilityAndQualityChanged(); }
+	void SetQualityScale(float InQualityScale) { QualityScale = InQualityScale; OnAgilityAndQualityChanged(); }
 protected:
+	UPROPERTY(ReplicatedUsing = OnRep_AgilityAndQuality)
+	float Agility;
+	UPROPERTY(ReplicatedUsing = OnRep_AgilityAndQuality)
+	float Quality;
+	UPROPERTY(ReplicatedUsing = OnRep_AgilityAndQuality)
+	float QualityScale;
+
+	UFUNCTION()
+	void OnRep_AgilityAndQuality() { OnAgilityAndQualityChanged(); }
+	void OnAgilityAndQualityChanged();
+
 	void ResetQuality();
 	void ResetDamping();
 
-	void SetQualityScale(float InQualityScale);
 
 	//////////////////////////////////////////////////////////////////////////
 	/// On Use Force 

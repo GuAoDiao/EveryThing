@@ -55,9 +55,10 @@ void AGamePawn::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	UpdateInfo();
-
 	HitAbleDisplayName = RoleName.ToString();
+
+	Durability = MaxDurability;
+	Stamina = MaxStamina;
 }
 
 void AGamePawn::PossessedBy(AController* NewController)
@@ -433,45 +434,39 @@ void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 	BaseInfo = *InInfo;
 	
 	MaxDurability = InInfo->MaxDurability;
-	Durability = MaxDurability;
-	
 	MaxStamina = InInfo->MaxStamina;
-	Stamina = MaxStamina;
 	
 	StaminaRecoverRate = MaxStamina / 16.f;
+
+	Agility = InInfo->Agility;
+	Quality = InInfo->Quality;
+	QualityScale = InInfo->QualityScale;
 
 	ForceDivider = InInfo->ForceDivider*BaseScale;
 	TorqueDivider = InInfo->ForceDivider*BigBaseScale;
 	ImpluseDivider = InInfo->ImpluseDivider*BaseScale;
+
+	OnAgilityAndQualityChanged();
 }
-
-void AGamePawn::UpdateInfo()
-{
-	ResetQuality();
-	ResetDamping();
-
-	if (MovementComp) { MovementComp->UpdateAgilityAndQuality(BaseInfo.Agility, BaseInfo.Quality, BaseInfo.QualityScale); }
-}
-
-void AGamePawn::OnRep_BaseInfo()
-{
-	UpdateInfo();
-}
-
-
 
 //////////////////////////////////////////////////////////////////////////
 /// Quality And Damping
-void AGamePawn::SetQualityScale(float InQualityScale) { BaseInfo.QualityScale = InQualityScale; ResetQuality(); }
+void AGamePawn::OnAgilityAndQualityChanged()
+{
+	ResetQuality();
 
+	ResetDamping();
+
+	if (MovementComp) { MovementComp->UpdateAgilityAndQuality(Agility, Quality, QualityScale); }
+}
 
 void AGamePawn::ResetQuality()
 {
 	FBodyInstance* BodyInstance = StaticMeshComp->GetBodyInstance();
 	if (BodyInstance)
 	{
-		BodyInstance->MassScale = BaseInfo.QualityScale;
-		BodyInstance->SetMassOverride(BaseInfo.Quality);
+		BodyInstance->MassScale = QualityScale;
+		BodyInstance->SetMassOverride(Quality);
 		BodyInstance->UpdateMassProperties();
 	}
 }
@@ -491,53 +486,32 @@ void AGamePawn::ResetDamping()
 /// On Use Force 
 void AGamePawn::OnConsumeForce(const FVector& Force)
 {
-		SpendStamina(Force.Size() / ForceDivider);
+	SpendStamina(Force.Size() / ForceDivider);
 }
 
 void AGamePawn::OnConsumeTorqueInRadians(const FVector& Torque)
 {
-		SpendStamina(Torque.Size() / TorqueDivider);
+	SpendStamina(Torque.Size() / TorqueDivider);
 }
 
 void AGamePawn::OnConsumeImpulse(const FVector& Impulse)
 {
-		SpendStamina(Impulse.Size() / ImpluseDivider);
+	SpendStamina(Impulse.Size() / ImpluseDivider);
 }
 
 bool AGamePawn::CanConsumeForce(const FVector& Force)
 {
-	if (Stamina>Force.Size() / ForceDivider)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return !bIsDeath && Stamina > Force.Size() / ForceDivider;
 }
 
 bool AGamePawn::CanConsumeTorqueInRadians(const FVector& Torque)
 {
-	if (Stamina > Torque.Size() / TorqueDivider)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return !bIsDeath && Stamina > Torque.Size() / TorqueDivider;
 }
 
 bool AGamePawn::CanConsumeImpulse(const FVector& Impulse)
 {
-	if (Stamina>Impulse.Size()/ ImpluseDivider)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return !bIsDeath && Stamina > Impulse.Size() / ImpluseDivider;
 }
 
 void AGamePawn::ResetDefaultSkinAndFormFromDataTable()
@@ -575,6 +549,10 @@ void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AGamePawn, MaxDurability);
 	DOREPLIFETIME(AGamePawn, Stamina);
 	DOREPLIFETIME(AGamePawn, MaxStamina);
+
+	DOREPLIFETIME(AGamePawn, Agility);
+	DOREPLIFETIME(AGamePawn, Quality);
+	DOREPLIFETIME(AGamePawn, QualityScale);
 }
 
 

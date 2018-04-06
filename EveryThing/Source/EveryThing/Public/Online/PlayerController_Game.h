@@ -101,7 +101,8 @@ public:
 	FOnGamePawnSuicidedDelegate OnGamePawnSuicidedDelegate;
 
 public:
-	void CreatePlayerFightInfo(const FText& FightInfo);
+	UFUNCTION(Client, Reliable)
+	void ClientCreatePlayerFightInfo(const FText& FightInfo);
 	//////////////////////////////////////////////////////////////////////////
 	/// Player State
 public:

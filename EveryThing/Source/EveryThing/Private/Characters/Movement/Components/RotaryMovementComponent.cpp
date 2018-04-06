@@ -113,10 +113,10 @@ void URotaryMovementComponent::RebindInputComp(class UInputComponent* OwnerInput
 
 void URotaryMovementComponent::UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale)
 {
-	Super::UpdateAgilityAndQuality(SpeedScale, Quality, QualityScale);
+	Super::UpdateAgilityAndQuality(Agility, Quality, QualityScale);
 
-	SpeedForceBase = ActualMoveForce * ActualSpeed ;
-	JumpForceBase = ActualJumpForce;
+	SpeedForceBase = ActualMoveForce * ActualSpeed * 1.5f;
+	JumpForceBase = ActualJumpForce * 1.5f;
 
 	SetMovementState(bIsFastMovementState);
 }
@@ -213,19 +213,19 @@ void URotaryMovementComponent::ToogleMovementState()
 	{
 		bIsFastMovementState = !bIsFastMovementState;
 		SetMovementState(bIsFastMovementState);
+
+		APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(OwnerGamePawn->GetController());
+		if (OwnerPC_G)
+		{
+			OwnerPC_G->ClientCreatePlayerFightInfo(
+				bIsFastMovementState ? LOCTEXT("OnMovementFastState", "Toggle To Fast State") : LOCTEXT("OnMovementSlowState", "Toggle To Slow State")
+			);
+		}
 	}
 }
 
 void URotaryMovementComponent::SetMovementState(bool bInIsFastMovementState)
 {	
-	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(OwnerGamePawn->GetController());
-	if (OwnerPC_G && OwnerPC_G->IsLocalController())
-	{
-		OwnerPC_G->CreatePlayerFightInfo(
-			bInIsFastMovementState ? LOCTEXT("OnMovementFastState", "Toggle To Fast State") : LOCTEXT("OnMovementSlowState", "Toggle To Slow State")
-		);
-	}
-
 	if (bInIsFastMovementState)
 	{
 		CurrentSpeed = SpeedForceBase * FastSpeedScale;
@@ -236,8 +236,6 @@ void URotaryMovementComponent::SetMovementState(bool bInIsFastMovementState)
 		CurrentSpeed = SpeedForceBase;
 		CurrentJumpForce = JumpForceBase;
 	}
-
-
 }
 
 bool URotaryMovementComponent::ServerToogleMovementState_Validate() { return true; }

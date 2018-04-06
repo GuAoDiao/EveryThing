@@ -15,7 +15,7 @@ class EVERYTHING_API UPlayerFightInfo : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void CreatePlayerFightInfo(const FText& FightInfo);
+	void ClientCreatePlayerFightInfo(const FText& FightInfo);
 
 protected:
 	virtual void NativeConstruct() override;

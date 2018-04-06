@@ -22,4 +22,4 @@ void UGameLayout::RemoveSelectFormsBox() { if (SelectFormsBox) { SelectFormsBox-
 
 //////////////////////////////////////////////////////////////////////////
 /// Player Fight Info
-void UGameLayout::CreatePlayerFightInfo(const FText& FightInfo) { if (PlayerFightInfo) { PlayerFightInfo->CreatePlayerFightInfo(FightInfo); } }
+void UGameLayout::ClientCreatePlayerFightInfo(const FText& FightInfo) { if (PlayerFightInfo) { PlayerFightInfo->ClientCreatePlayerFightInfo(FightInfo); } }

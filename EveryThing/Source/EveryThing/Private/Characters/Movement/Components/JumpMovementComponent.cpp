@@ -57,12 +57,12 @@ void UJumpMovementComponent::RebindInputComp(UInputComponent* OwnerInputComp)
 
 void UJumpMovementComponent::UpdateAgilityAndQuality(float Agility, float Quality, float QualityScale)
 {
-	Super::UpdateAgilityAndQuality(SpeedScale, Quality, QualityScale);
+	Super::UpdateAgilityAndQuality(Agility, Quality, QualityScale);
 
-	JumpForwardForce = ActualMoveForce * ActualSpeed * 5.f;
-	JumpHeightForce = ActualJumpForce * 1.5f;
+	JumpForwardForce = ActualMoveForce * ActualSpeed * 25.f;
+	JumpHeightForce = ActualJumpForce * 2.5f;
 
-	AdjustLocationForce = ActualMoveForce * ActualSpeed * 0.15f;
+	AdjustLocationForce = ActualMoveForce * ActualSpeed * 0.35f;
 }
 
 void UJumpMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)

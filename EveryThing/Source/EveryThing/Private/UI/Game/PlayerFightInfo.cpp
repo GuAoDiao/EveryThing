@@ -116,7 +116,7 @@ void UPlayerFightInfo::OnKillOther(const FString& KilledName)
 	AddPlayerFightInfoItem(FightInfo);
 }
 
-void UPlayerFightInfo::CreatePlayerFightInfo(const FText& FightInfo) { AddPlayerFightInfoItem(FightInfo); }
+void UPlayerFightInfo::ClientCreatePlayerFightInfo(const FText& FightInfo) { AddPlayerFightInfoItem(FightInfo); }
 void UPlayerFightInfo::AddPlayerFightInfoItem(const FText& FightInfo, float InRamainingTime)
 {
 	if (PlayerFightInfoVerticalBox)

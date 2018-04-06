@@ -239,7 +239,7 @@ void AEveryThingGameState_Game::OnGamePawnAcceptCure(AGamePawn* AccpetPawn, AAct
 	if (AcceptPC_G)
 	{
 		IHitAbleInterface* CauserHitable = Cast<IHitAbleInterface>(Causer);
-		FString CauserActorDisplayName = CauserHitable ? CauserHitable->GetHitAbleActorDisplayName() : TEXT("场景物体"); 
+		FString CauserActorDisplayName = CauserHitable ? CauserHitable->GetHitAbleActorDisplayName() : TEXT("SceneObject"); 
 		AcceptPC_G->ClientOnAcceptCure(CauserActorDisplayName, Treatment);
 	}
 	
@@ -259,7 +259,7 @@ void AEveryThingGameState_Game::OnGamePawnAcceptDamage(AGamePawn* AccpetPawn, AA
 	if (AcceptPC_G)
 	{
 		IHitAbleInterface* CauserHitable = Cast<IHitAbleInterface>(Causer);
-		FString CauserActorDisplayName = CauserHitable ? CauserHitable->GetHitAbleActorDisplayName() : TEXT("场景物体");
+		FString CauserActorDisplayName = CauserHitable ? CauserHitable->GetHitAbleActorDisplayName() : TEXT("SceneObject");
 		AcceptPC_G->ClientOnAcceptDamage(CauserActorDisplayName, Damage);
 	}
 
@@ -281,7 +281,7 @@ void AEveryThingGameState_Game::OnGamePawnAcceptCriticalDamage(AGamePawn* Accpet
 	if (AcceptPC_G)
 	{
 		IHitAbleInterface* CauserHitable = Cast<IHitAbleInterface>(Causer);
-		FString CauserActorDisplayName = CauserHitable ? CauserHitable->GetHitAbleActorDisplayName() : TEXT("场景物体"); 
+		FString CauserActorDisplayName = CauserHitable ? CauserHitable->GetHitAbleActorDisplayName() : TEXT("SceneObject"); 
 		AcceptPC_G->ClientOnAcceptCriticalDamage(CauserActorDisplayName);
 	}
 
@@ -309,7 +309,7 @@ void AEveryThingGameState_Game::OnGamePawnBeKilled(AGamePawn* KilledGamePawn, AA
 		if (KillerActor)
 		{
 			IHitAbleInterface* KillerHitable = Cast<IHitAbleInterface>(KillerActor);
-			FString KillerName = KillerHitable ? KillerHitable->GetHitAbleActorDisplayName() : TEXT("场景物体");
+			FString KillerName = KillerHitable ? KillerHitable->GetHitAbleActorDisplayName() : TEXT("SceneObject");
 			KilledPC_G->ClientOnBeKilled(KillerName);
 		}
 		else
