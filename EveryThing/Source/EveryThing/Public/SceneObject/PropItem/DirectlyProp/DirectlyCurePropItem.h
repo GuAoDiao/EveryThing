@@ -15,7 +15,7 @@ class EVERYTHING_API ADirectlyCurePropItem : public ADirectlyPropItem
 	GENERATED_BODY()
 	
 public:
-	virtual void BeOverlapByGamePawn(class AGamePawn* OverlapGamePawn) override;
+	virtual bool BeOverlapByGamePawn(class AGamePawn* OverlapGamePawn) override;
 
 	
 };

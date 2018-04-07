@@ -23,53 +23,27 @@ void UETChatWindow::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
-	if (OwnerPPC)
-	{
-		OwnerPPC->OnRoleNameUpdateDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetRoleSuccess);
-		OwnerPPC->OnToggleToTargetRoleFailureDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetRoleFailure);
-		
-		OnToglleToTargetRole(Cast<AGamePawn>(OwnerPPC->GetPawn()));
+	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(GetOwningPlayer());
+	if (OwnerPC_G)
+	{	
+		OwnerPC_G->OnRoleNameUpdateDelegate.AddUObject(this, &UETChatWindow::OnRoleNameUpdate);
+		OnRoleNameUpdate(OwnerPC_G->GetCurrentRoleName());
 	}
 }
 
-void UETChatWindow::OnToglleToTargetRole(AGamePawn* InGamePawn)
+void UETChatWindow::OnRoleNameUpdate(const FName& RoleName)
 {
-	if (InGamePawn)
+	APlayerController_Game* OwnerPC_G = Cast<APlayerController_Game>(GetOwningPlayer());
+	AGamePawn* OwnerGamePawn = OwnerPC_G ? Cast<AGamePawn>(OwnerPC_G->GetPawn()) : nullptr;
+	if (OwnerGamePawn)
 	{
-		InGamePawn->OnToggleToTargetFormFailureDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetFormFailure);
-		InGamePawn->OnToggleToTargetFormSuccessDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetFormSuccess);
+		OwnerGamePawn->OnToggleToTargetFormFailureDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetFormFailure);
+		OwnerGamePawn->OnToggleToTargetFormSuccessDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetFormSuccess);
 
-		InGamePawn->OnToggleToTargetSkinFailureDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetSkinFailure);
-		InGamePawn->OnToggleToTargetSkinSuccessDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetSkinSuccess);
+		OwnerGamePawn->OnToggleToTargetSkinFailureDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetSkinFailure);
+		OwnerGamePawn->OnToggleToTargetSkinSuccessDelegate.AddUObject(this, &UETChatWindow::OnToggleToTargetSkinSuccess);
 	}
 
-}
-
-void UETChatWindow::OnToggleToTargetRoleSuccess(const FName& TargetRoleName)
-{
-	FFormatNamedArguments Arguments;
-	Arguments.Add(TEXT("TargetRoleName"), FText::FromName(TargetRoleName));
-
-	FText DisplayInfo = FText::Format(LOCTEXT("OnToggleToTargetRoleSuccess", "Success toggle toggle to target role : {TargetRoleName}."), Arguments);
-
-	APlayerController_Game* OwnerPPC = Cast<APlayerController_Game>(GetOwningPlayer());
-	OnToglleToTargetRole(OwnerPPC ? Cast<AGamePawn>(OwnerPPC->GetPawn()) : nullptr);
-	
-	AddSystemMessage(ESystemMessageType::Success, DisplayInfo);
-}
-
-
-void UETChatWindow::OnToggleToTargetRoleFailure(const FName& TargetRoleName, const FText& ErrorInfo)
-{
-	FFormatNamedArguments Arguments;
-	Arguments.Add(TEXT("TargetRoleName"), FText::FromName(TargetRoleName));
-	Arguments.Add(TEXT("ErrorInfo"), ErrorInfo);
-
-
-	FText DisplayInfo = FText::Format(LOCTEXT("OnToggleToTargetRoleFailure", "Failure toggle to target role : {TargetRoleName}, because: {ErrorInfo}"), Arguments);
-
-	AddSystemMessage(ESystemMessageType::Error, DisplayInfo);
 }
 
 void UETChatWindow::OnToggleToTargetSkinSuccess(const FName& TargetSkinName)

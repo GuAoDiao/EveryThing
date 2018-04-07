@@ -8,7 +8,7 @@
 
 #define LOCTEXT_NAMESPACE "Everything_SceneObject_AcceleratePropItem"
 
-void AAcceleratePropItem::BeOverlapByGamePawn(class AGamePawn* OverlapGamePawn)
+bool AAcceleratePropItem::BeOverlapByGamePawn(class AGamePawn* OverlapGamePawn)
 {
 	if (OverlapGamePawn && !CurrentEffectGamePawn)
 	{
@@ -19,7 +19,11 @@ void AAcceleratePropItem::BeOverlapByGamePawn(class AGamePawn* OverlapGamePawn)
 
 		FTimerDelegate TimerDelegate;
 		GetWorldTimerManager().SetTimer(ResetGamePawnAgilityTimer, this, &AAcceleratePropItem::ResetGamePawnAgility, 5.f, false);
+
+		return true;
 	}
+
+	return false;
 }
 
 void AAcceleratePropItem::ResetGamePawnAgility()

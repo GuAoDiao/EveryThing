@@ -13,6 +13,7 @@
 #include "Kismet/KismetMathLibrary.h"
 
 #include "Characters/GamePawn.h"
+#include "Characters/PropComponent.h"
 #include "Online/PlayerController_Game.h"
 #include "Online/EveryThingPlayerState_Game.h"
 #include "UI/EveryThingHUD_Game.h"
@@ -295,7 +296,8 @@ void UPlayerPawnComponent::OnPressNumberKeyboard(int32 NumberIndex)
 
 void UPlayerPawnComponent::UseProp(int32 NumberIndex)
 {
-	UE_LOG(LogTemp, Log, TEXT("-_- Use Prop Of Index: %d"), NumberIndex)
+	UPropComponent* OwnerPropComp = OwnerPawn ? OwnerPawn->GetPropComponent() : nullptr;
+	if (OwnerPropComp) { OwnerPropComp->UsePropFromIndex(NumberIndex); }
 }
 
 void UPlayerPawnComponent::ToggleRoleForm(int32 NumberIndex) { if (OwnerPawn) { OwnerPawn->ToggleToNewFormWithIndex(NumberIndex); } }

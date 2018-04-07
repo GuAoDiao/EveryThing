@@ -14,7 +14,10 @@ class EVERYTHING_API APickupPropItem : public ABasePropItem
 {
 	GENERATED_BODY()
 	
-	
-	
-	
+public:	
+	virtual bool BeOverlapByGamePawn(class AGamePawn* OverlapGamePawn) override;
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	int32 PickupPropItemID;
 };

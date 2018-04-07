@@ -13,6 +13,7 @@
 
 #include "EveryThingAssetManager.h"
 #include "Online/EveryThingGameMode_Game.h"
+#include "Characters/PropComponent.h"
 #include "Characters/Form/GamePawnForm.h"
 #include "Characters/Skin/GamePawnSkin.h"
 #include "Characters/Moves/AttackComponent.h"
@@ -27,7 +28,7 @@ AGamePawn::AGamePawn()
 {
 	bReplicates = true;
 
-	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
+	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComp");
 	
 	StaticMeshComp->SetSimulatePhysics(true);
 
@@ -42,6 +43,8 @@ AGamePawn::AGamePawn()
 	StaticMeshComp->OnComponentHit.AddDynamic(this, &AGamePawn::OnHit);
 
 	SetRootComponent(StaticMeshComp);
+
+	PropComp = CreateDefaultSubobject<UPropComponent>("PropComp");
 
 	MovementComp = nullptr;
 	
@@ -169,6 +172,26 @@ void AGamePawn::OnHitImplement(UPrimitiveComponent* HitComp, AActor* OtherActor,
 	if (!bIsDeath) { AcceptHitFrom(OtherActor, NormalInpulse, Hit); }
 }
 
+//////////////////////////////////////////////////////////////////////////
+/// Game Pawn Form And Skin
+
+void AGamePawn::ResetDefaultSkinAndFormFromDataTable()
+{
+	const FRoleInfo* RoleInfo;
+	if (UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleInfoFromName(RoleName, RoleInfo) && RoleInfo)
+	{
+		AllHaveRoleSkinName.AddUnique(RoleInfo->DefaultSkinName);
+		OnAllHaveRoleSkinNameUpdate();
+		ToggleToTargetSkin(RoleInfo->DefaultSkinName);
+
+		AllHaveRoleFormName.AddUnique(RoleInfo->DefaultFormName);
+		OnAllHaveRoleFormNameUpdate();
+		ToggleToTargetForm(RoleInfo->DefaultFormName);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+/// Stamina
 void AGamePawn::SpendStamina(float value)
 {
 	Stamina -= value;
@@ -513,24 +536,6 @@ bool AGamePawn::CanConsumeImpulse(const FVector& Impulse)
 {
 	return !bIsDeath && Stamina > Impulse.Size() / ImpluseDivider;
 }
-
-void AGamePawn::ResetDefaultSkinAndFormFromDataTable()
-{
-	const FRoleInfo* RoleInfo;
-	if (UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleInfoFromName(RoleName, RoleInfo) && RoleInfo)
-	{
-		AllHaveRoleSkinName.AddUnique(RoleInfo->DefaultSkinName);
-		OnAllHaveRoleSkinNameUpdate();
-		ToggleToTargetSkin(RoleInfo->DefaultSkinName);
-		
-		AllHaveRoleFormName.AddUnique(RoleInfo->DefaultFormName);
-		OnAllHaveRoleFormNameUpdate();
-		ToggleToTargetForm(RoleInfo->DefaultFormName);
-	}
-}
-
-
-
 
 void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

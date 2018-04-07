@@ -15,7 +15,7 @@ class EVERYTHING_API AAcceleratePropItem : public ADirectlyPropItem
 	GENERATED_BODY()
 
 public:
-	virtual void BeOverlapByGamePawn(class AGamePawn* OverlapGamePawn) override;
+	virtual bool BeOverlapByGamePawn(class AGamePawn* OverlapGamePawn) override;
 	
 protected:
 	void ResetGamePawnAgility();

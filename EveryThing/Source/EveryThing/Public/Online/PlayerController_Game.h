@@ -161,10 +161,8 @@ public:
 	
 	void ToggleRoleWithIndex(int32 NumberIndex);
 	
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnToggleToTargetRoleSuccessDelegate, const FName& /* TargetRoleName */);
-	FOnToggleToTargetRoleSuccessDelegate OnRoleNameUpdateDelegate;
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnToggleToTargetRoleFailureDelegate, const FName& /* TargetRoleName */, const FText&  /* ErrorInfo */);
-	FOnToggleToTargetRoleFailureDelegate OnToggleToTargetRoleFailureDelegate;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRoleNameUpdateDelegate, const FName& /* TargetRoleName */);
+	FOnRoleNameUpdateDelegate OnRoleNameUpdateDelegate;
 	
 private:
 	void ToggleRoleWithName(const FName& TargetRoleName);

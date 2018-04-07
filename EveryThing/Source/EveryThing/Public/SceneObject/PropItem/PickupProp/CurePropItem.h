@@ -13,8 +13,9 @@ UCLASS()
 class EVERYTHING_API ACurePropItem : public APickupPropItem
 {
 	GENERATED_BODY()
-	
-	
+
+public:
+	ACurePropItem();
 	
 	
 };

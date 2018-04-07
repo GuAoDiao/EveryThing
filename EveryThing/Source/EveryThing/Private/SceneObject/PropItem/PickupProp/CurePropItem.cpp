@@ -3,5 +3,8 @@
 #include "CurePropItem.h"
 
 
-
+ACurePropItem::ACurePropItem()
+{
+	PickupPropItemID = 1;
+}
 

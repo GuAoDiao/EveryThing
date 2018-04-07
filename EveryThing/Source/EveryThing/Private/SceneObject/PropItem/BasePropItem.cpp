@@ -31,13 +31,14 @@ void ABasePropItem::OnPropBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 		AGamePawn* OwnerGamePawn = Cast<AGamePawn>(OtherActor);
 		if (OwnerGamePawn)
 		{
-			BeOverlapByGamePawn(OwnerGamePawn);
+			if (BeOverlapByGamePawn(OwnerGamePawn))
+			{
+				SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-			SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				SetActorHiddenInGame(true);
 
-			SetActorHiddenInGame(true);
-
-			GetWorldTimerManager().SetTimer(RespawnTimer, this, &ABasePropItem::Respawn, RespawnTime, false);
+				GetWorldTimerManager().SetTimer(RespawnTimer, this, &ABasePropItem::Respawn, RespawnTime, false);
+			}
 		}
 	}
 }

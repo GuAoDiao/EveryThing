@@ -41,8 +41,6 @@ void UGamePawnMovementComponent::UpdateAgilityAndQuality(float Agility, float Qu
 	ActualMoveForce = Quality * QualityScale * MoveForceScale;
 	ActualJumpForce = Agility * Quality * QualityScale * JumpForceScale;
 	ActualSpeed = Agility * SpeedScale;
-
-	UE_LOG(LogTemp, Log, TEXT("-_- Agility : %f, ActualSpeed : %f"), Agility, ActualSpeed);
 }
 
 bool UGamePawnMovementComponent::AddForceIfHaveEnoughStamina(const FVector& Force)

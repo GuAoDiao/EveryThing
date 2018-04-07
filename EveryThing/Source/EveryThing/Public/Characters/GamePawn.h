@@ -15,6 +15,7 @@ class USkillComponent;
 class FRoleForm;
 class FRoleSkin;
 class UGamePawnMovementComponent;
+class UPropComponent;
 
 UCLASS()
 class EVERYTHING_API AGamePawn : public APawn, public IHitAbleInterface
@@ -44,11 +45,14 @@ public:
 	/// Component
 public:
 	inline UGamePawnMovementComponent* GetGamePawnMovementComponent() const { return MovementComp; }
+	inline UPropComponent* GetPropComponent() const { return PropComp; }
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
 	class UStaticMeshComponent* StaticMeshComp;
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
 	class UGamePawnMovementComponent* MovementComp;
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
+	class UPropComponent* PropComp;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// HitAble Interface

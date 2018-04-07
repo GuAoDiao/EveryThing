@@ -351,7 +351,7 @@ void APlayerController_Game::ToggleRoleWithName(const FName& TargetRoleName)
 	AEveryThingPlayerState_Game* OwnerETPS = Cast<AEveryThingPlayerState_Game>(PlayerState);
 	if (!OwnerETPS)
 	{
-		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("ToggleRoleWhenNotFonutPlayer", "Can't find Owner Player State."));
+		ClientCreatePlayerFightInfo(LOCTEXT("ToggleRoleWhenNotFonutPlayer", "Can't find Owner Player State."));
 		return;
 	}
 	
@@ -361,7 +361,7 @@ void APlayerController_Game::ToggleRoleWithName(const FName& TargetRoleName)
 	{
 		FFormatNamedArguments Arguments;
 		Arguments.Add(TEXT("TargetRoleName"), FText::FromName(TargetRoleName));
-		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, FText::Format(LOCTEXT("ToggleRoleWhenNotHaveTargetRole", "Don't have Target role name : {TargetRoleName}."), Arguments));
+		ClientCreatePlayerFightInfo(FText::Format(LOCTEXT("ToggleRoleWhenNotHaveTargetRole", "Don't have Target role name : {TargetRoleName}."), Arguments));
 		return;
 	}
 	
@@ -369,14 +369,14 @@ void APlayerController_Game::ToggleRoleWithName(const FName& TargetRoleName)
 	UClass* TargetPawnClass = UEveryThingAssetManager::GetAssetManagerInstance()->GetGamePawnManager()->GetRoleClassFromName(TargetRoleName).Get();
 	if (!TargetPawnClass)
 	{
-		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("ToggleRoleWhenNotFoundTargetRoleClass", "Can't find Target Role Class."));
+		ClientCreatePlayerFightInfo(LOCTEXT("ToggleRoleWhenNotFoundTargetRoleClass", "Can't find Target Role Class."));
 		return;
 	}
 
 	// check target pawn and current pawn isn't Parent-child
 	if (CurrentRoleName == TargetRoleName)
 	{
-		OnToggleToTargetRoleFailureDelegate.Broadcast(TargetRoleName, LOCTEXT("ToggleRoleWhenSameRole", "Already is the target Role, needn't to toggle."));
+		ClientCreatePlayerFightInfo(LOCTEXT("ToggleRoleWhenSameRole", "Already is the target Role, needn't to toggle."));
 		return;
 	}
 
@@ -413,6 +413,10 @@ void APlayerController_Game::ToggleRoleWithName(const FName& TargetRoleName)
 	// update current pawn class
 	CurrentRoleName = TargetRoleName;
 	OnCurrentRoleNameUpdate();
+
+	FFormatNamedArguments Arguments;
+	Arguments.Add(TEXT("TargetRoleName"), FText::FromName(CurrentRoleName));
+	ClientCreatePlayerFightInfo(FText::Format(LOCTEXT("ToggleRoleWhenSuccess", "Success toggle toggle to target role : {TargetRoleName}."), Arguments));
 	
 	StopToggleRole();
 }

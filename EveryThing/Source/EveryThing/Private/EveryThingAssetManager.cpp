@@ -31,6 +31,7 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 	LoadMaterialFromDT();
 	LoadParticleFromDT();
 	LoadAllUserWidgetFromDT();
+	LoadAllPropInfoFromDT();
 	LoadAllMapTypeAndMapInfoFromDT();
 }
 
@@ -183,7 +184,7 @@ void UEveryThingAssetManager::LoadAllUserWidgetFromDT()
 	if (UserWidgetDatatable)
 	{
 		TArray<FUserWidgetData*> UserWidgetDataInDatatable;
-		UserWidgetDatatable->GetAllRows<FUserWidgetData>(TEXT("found all UserWidget DataTable"), UserWidgetDataInDatatable);
+		UserWidgetDatatable->GetAllRows<FUserWidgetData>(TEXT("found all UserWidget in DataTable"), UserWidgetDataInDatatable);
 		for (FUserWidgetData* UserWidgetData : UserWidgetDataInDatatable)
 		{
 			AllUserWidgetAsset.Add(UserWidgetData->Name, UserWidgetData->UserWidgetClass);
@@ -275,6 +276,32 @@ const FMapTypeInfo* UEveryThingAssetManager::GetMapTypeInfoFromName(const FName&
 	}
 	return nullptr;
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+/// Prop Info
+void UEveryThingAssetManager::LoadAllPropInfoFromDT()
+{
+	UDataTable* PropInfoDatatable = GetDataTableFromName(TEXT("PropInfo"));
+	if (PropInfoDatatable)
+	{
+		TArray<FPickupPropInfo*> PropInfoInDatatable;
+		PropInfoDatatable->GetAllRows<FPickupPropInfo>(TEXT("found all PropInfo in DataTable"), PropInfoInDatatable);
+		for (FPickupPropInfo* PickupPropInfo : PropInfoInDatatable)
+		{
+			AllPropsInfo.Add(PickupPropInfo->ID, *PickupPropInfo);
+		}
+	}
+}
+const FPickupPropInfo* UEveryThingAssetManager::GetPropInfoFromID(int32 PropID) const
+{
+	if (AllPropsInfo.Contains(PropID))
+	{
+		return &AllPropsInfo[PropID];
+	}
+	return nullptr;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 /// Game Pawn

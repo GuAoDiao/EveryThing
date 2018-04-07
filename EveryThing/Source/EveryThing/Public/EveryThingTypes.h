@@ -278,3 +278,21 @@ enum class EETGameState : uint8
 	Gameing,
 	GameOver,
 };
+
+
+USTRUCT(BlueprintType)
+struct FPickupPropInfo : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	int32 ID;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FName Name;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FString Description;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	UTexture2D* Icon;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	TSubclassOf<class UPropBase> PropClass;
+};

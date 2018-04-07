@@ -20,9 +20,8 @@ class EVERYTHING_API UETChatWindow : public UChatWindow
 public:
 	virtual void NativeConstruct() override;
 
-	void OnToggleToTargetRoleSuccess(const FName& TargetRoleName);
-	void OnToggleToTargetRoleFailure(const FName& TargetRoleName, const FText& ErrorInfo);
-	
+	void OnRoleNameUpdate(const FName& RoleName);
+		
 	void OnToggleToTargetSkinSuccess(const FName& TargetSkinName);
 	void OnToggleToTargetSkinFailure(const FName& TargetSkinName, const FText& ErrorInfo);
 
@@ -30,7 +29,6 @@ public:
 	void OnToggleToTargetFormFailure(const FName& TargetFormName, const FText& ErrorInfo);
 
 
-	void OnToglleToTargetRole(class AGamePawn* InGamePawn);
 
 	void OnPlayerJoinGame(class APlayerState* InPlayerState);
 	void OnPlayerLeaveGame(class APlayerState* InPlayerState);

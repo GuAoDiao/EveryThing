@@ -155,6 +155,15 @@ private:
 	TMap<FName, FMapTypeInfo> AllMapTypesInfo;
 
 	//////////////////////////////////////////////////////////////////////////
+	/// Prop Info
+public:
+	void LoadAllPropInfoFromDT();
+	const FPickupPropInfo* GetPropInfoFromID(int32 PropID) const;
+
+private:
+	TMap<int32, FPickupPropInfo> AllPropsInfo;
+
+	//////////////////////////////////////////////////////////////////////////
 	/// Game Pawn
 public:
 	UGamePawnManager* GetGamePawnManager();
