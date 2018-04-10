@@ -48,8 +48,6 @@ void AEveryThingGameMode_Game::InitGame(const FString& MapName, const FString& O
 void AEveryThingGameMode_Game::InitGameState()
 {
 	Super::InitGameState();
-	
-	UE_LOG(LogTemp, Log, TEXT("-_- init game state"));
 
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 	IOnlineSessionPtr Sessions = Subsystem ? Subsystem->GetSessionInterface() : nullptr;
@@ -277,7 +275,6 @@ float AEveryThingGameMode_Game::GetDamageFromActorHit(AGamePawn* PlayerPawn, con
 				float MyStability = 100.f;
 				Damage = Speed*(NormalInpulse.Size() / MyStability) / 40000.f;
 				FString name = OtherActor->GetName();
-				UE_LOG(LogTemp, Log, TEXT("Hit! speed %f,UpSpeed %f,impulse %f,damage %f,name %s"), Speed, UpSpeed, NormalInpulse.Size(), Damage, *name);
 			}
 			else 
 			{
@@ -285,7 +282,6 @@ float AEveryThingGameMode_Game::GetDamageFromActorHit(AGamePawn* PlayerPawn, con
 				float MyStability = 100.f;
 				Damage = (Speed + UpSpeed * FreeFallModifier)*(NormalInpulse.Size() / MyStability) / 40000.f;
 				FString name = OtherActor->GetName();
-				UE_LOG(LogTemp, Log, TEXT("Hit! speed %f,UpSpeed %f,impulse %f,damage %f,name %s"), Speed, UpSpeed, NormalInpulse.Size(), Damage, *name);
 			}
 		}
 		
@@ -305,7 +301,6 @@ float AEveryThingGameMode_Game::GetDamageFromGamePawnHit(AGamePawn* PlayerPawn, 
 			float MyAgility = 100.f;//100-200
 			float OtherAgility = 100.f;//100-200
 			Damage = (Speed / OtherStability) * (1 + (MyAgility - OtherAgility) / (MyAgility + OtherAgility))*NormalInpulse.Size() / 100000.f;
-			UE_LOG(LogTemp, Log, TEXT("Hit! speed %f,impulse %f, damage %f"), Speed, NormalInpulse.Size(), Damage);
 		}
 	}
 	return Damage;

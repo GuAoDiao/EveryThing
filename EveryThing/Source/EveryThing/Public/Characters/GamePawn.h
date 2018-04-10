@@ -281,6 +281,9 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	/// On Use Force 
 public:
+	void ChangeCansumeScale(int32 InCansumeScale) { CansumeScale = InCansumeScale; }
+	int32 GetCansumeScale() const { return CansumeScale; }
+
 	void OnConsumeForce(const FVector& Force);
 	void OnConsumeTorqueInRadians(const FVector& Torque);
 	void OnConsumeImpulse(const FVector& Impulse);
@@ -290,9 +293,12 @@ public:
 	bool CanConsumeImpulse(const FVector& Impulse);
 
 protected:
-	float ForceDivider = 2000000.f;
-	float TorqueDivider = 10000000000.f;
-	float ImpluseDivider = 50000000.f;
-	float BaseScale=10000.f;
-	float BigBaseScale = 100000000.f;
+	inline int32 GetConsumeForceValue(const FVector& Force) const { return Force.Size() * ConsumeForceScale * CansumeScale; }
+	inline int32 GetConsumeTorqueInRadiansValue(const FVector& Torque) const { return Torque.Size() * ConsumeTorqueScale * CansumeScale; }
+	inline int32 GetConsumeImpulseValue(const FVector& Impulse) const { return Impulse.Size() * ConsumeImpluseScale * CansumeScale; }
+
+	float CansumeScale;
+	float ConsumeForceScale;
+	float ConsumeTorqueScale;
+	float ConsumeImpluseScale;
 };

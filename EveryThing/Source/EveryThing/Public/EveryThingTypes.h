@@ -164,11 +164,11 @@ public:
 	
 	//_体力消耗参数
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float ForceDivider;
+	float ConsumeForceScale;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float TorqueDivider;
+	float ConsumeTorqueScale;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float ImpluseDivider;
+	float ConsumeImpluseScale;
 };
 
 

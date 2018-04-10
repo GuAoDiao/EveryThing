@@ -17,5 +17,6 @@ class EVERYTHING_API AETGM_TeamModel : public AEveryThingGameMode_Game
 public:
 	AETGM_TeamModel();
 	
+	virtual bool CanTakeDamage(AGamePawn* PlayerPawn, AActor* OtherActor) override;
 	
 };

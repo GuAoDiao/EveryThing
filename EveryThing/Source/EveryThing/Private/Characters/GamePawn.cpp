@@ -52,6 +52,8 @@ AGamePawn::AGamePawn()
 	OwnerSkillComp = nullptr;
 
 	PrimaryActorTick.bCanEverTick = true;
+
+	CansumeScale = 1.f;
 }
 
 void AGamePawn::OnConstruction(const FTransform& Transform)
@@ -465,9 +467,9 @@ void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 	Quality = InInfo->Quality;
 	QualityScale = InInfo->QualityScale;
 
-	ForceDivider = InInfo->ForceDivider*BaseScale;
-	TorqueDivider = InInfo->ForceDivider*BigBaseScale;
-	ImpluseDivider = InInfo->ImpluseDivider*BaseScale;
+	ConsumeForceScale = InInfo->ConsumeForceScale * 0.0001f;
+	ConsumeImpluseScale = InInfo->ConsumeImpluseScale * 0.0001f;;
+	ConsumeTorqueScale = InInfo->ConsumeTorqueScale * 0.0000001f;
 
 	OnAgilityAndQualityChanged();
 }
@@ -509,32 +511,32 @@ void AGamePawn::ResetDamping()
 /// On Use Force 
 void AGamePawn::OnConsumeForce(const FVector& Force)
 {
-	SpendStamina(Force.Size() / ForceDivider);
+	SpendStamina(GetConsumeForceValue(Force));
 }
 
 void AGamePawn::OnConsumeTorqueInRadians(const FVector& Torque)
 {
-	SpendStamina(Torque.Size() / TorqueDivider);
+	SpendStamina(GetConsumeTorqueInRadiansValue(Torque));
 }
 
 void AGamePawn::OnConsumeImpulse(const FVector& Impulse)
 {
-	SpendStamina(Impulse.Size() / ImpluseDivider);
+	SpendStamina(GetConsumeImpulseValue(Impulse));
 }
 
 bool AGamePawn::CanConsumeForce(const FVector& Force)
 {
-	return !bIsDeath && Stamina > Force.Size() / ForceDivider;
+	return !bIsDeath && Stamina > GetConsumeForceValue(Force);
 }
 
 bool AGamePawn::CanConsumeTorqueInRadians(const FVector& Torque)
 {
-	return !bIsDeath && Stamina > Torque.Size() / TorqueDivider;
+	return !bIsDeath && Stamina > GetConsumeTorqueInRadiansValue(Torque);
 }
 
 bool AGamePawn::CanConsumeImpulse(const FVector& Impulse)
 {
-	return !bIsDeath && Stamina > Impulse.Size() / ImpluseDivider;
+	return !bIsDeath && Stamina > GetConsumeImpulseValue(Impulse);
 }
 
 void AGamePawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

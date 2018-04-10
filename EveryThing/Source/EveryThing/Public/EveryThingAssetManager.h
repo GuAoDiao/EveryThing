@@ -83,7 +83,7 @@ class EVERYTHING_API UEveryThingAssetManager : public UObject
 protected:
 	UEveryThingAssetManager();
 
-	virtual void BeginDestroy() override;
+	virtual void FinishDestroy() override;
 public:
 	static UEveryThingAssetManager* GetAssetManagerInstance();
 	static void DestroyAssetManagerInstance();

@@ -9,3 +9,9 @@ AETGM_TeamModel::AETGM_TeamModel()
 {
 	ETPlayerStatrClass = AEveryThingPlayerStart_Team::StaticClass();
 }
+
+
+bool AETGM_TeamModel::CanTakeDamage(AGamePawn* PlayerPawn, AActor* OtherActor)
+{
+	return true;
+}

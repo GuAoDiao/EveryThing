@@ -11,7 +11,10 @@ UEveryThingAssetManager* UEveryThingAssetManager::AssetManager = nullptr;
 
 UEveryThingAssetManager::UEveryThingAssetManager()
 {
+#if !WITH_EDITORONLY_DATA
 	SetFlags(RF_Standalone);
+#endif
+
 	AssetManager = this;
 
 	// load all DataTable
@@ -35,11 +38,13 @@ UEveryThingAssetManager::UEveryThingAssetManager()
 	LoadAllMapTypeAndMapInfoFromDT();
 }
 
-void UEveryThingAssetManager::BeginDestroy()
+void UEveryThingAssetManager::FinishDestroy()
 {
 	AssetManager = nullptr;
 
-	Super::BeginDestroy();
+	UE_LOG(LogTemp, Log, TEXT("-_- destory everything asset manager."));
+
+	Super::FinishDestroy();
 }
 
 UEveryThingAssetManager* UEveryThingAssetManager::GetAssetManagerInstance()
@@ -56,7 +61,6 @@ UEveryThingAssetManager* UEveryThingAssetManager::GetAssetManagerInstance()
 
 void UEveryThingAssetManager::DestroyAssetManagerInstance()
 {
-	if (AssetManager) { AssetManager->BeginDestroy(); }
 	AssetManager = nullptr;
 }
 

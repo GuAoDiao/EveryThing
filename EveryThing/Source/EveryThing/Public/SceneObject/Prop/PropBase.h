@@ -16,4 +16,7 @@ class EVERYTHING_API UPropBase : public UObject
 	
 public:
 	virtual bool BeUseByGamePawn(class AGamePawn* InGamePawn) { return true; }
+
+protected:
+	void CreatePlayerFightInfoFromProp(class AGamePawn* TargetGamePawn, const FText& FightInfo);
 };
