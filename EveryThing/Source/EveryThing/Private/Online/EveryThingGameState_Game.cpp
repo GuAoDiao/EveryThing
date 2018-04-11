@@ -25,6 +25,8 @@ AEveryThingGameState_Game::AEveryThingGameState_Game()
 	// DefaultReadyTime = 15.f;
 	DefaultGameTime = 600.f;
 	DefaultBackToHouseTime = 10.f;
+
+	ActualTeamNums = 1;
 }
 
 //////////////////////////////////////////////////////////////////////////

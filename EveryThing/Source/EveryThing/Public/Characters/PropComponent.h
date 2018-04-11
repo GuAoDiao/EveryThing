@@ -7,6 +7,19 @@
 #include "PropComponent.generated.h"
 
 
+USTRUCT(BlueprintType)
+struct FPropItemStroe
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FPropItemStroe() : PropID(-1), PropNum(0) {}
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 PropID;
+	UPROPERTY(BlueprintReadWrite)
+	int32 PropNum;
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class EVERYTHING_API UPropComponent : public UActorComponent
 {
@@ -52,5 +65,5 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_AllPropsIndex)
 	TArray<int32> AllPropsIndex;
 	UPROPERTY(ReplicatedUsing = OnRep_AllProps)
-	TMap<int32 /*PropID*/, int32/*PropNum*/> AllProps;
+	TArray<FPropItemStroe> AllProps;
 };

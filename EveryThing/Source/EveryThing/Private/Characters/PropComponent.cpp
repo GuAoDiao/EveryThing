@@ -29,29 +29,39 @@ UPropComponent::UPropComponent()
 /// Game Prop
 bool UPropComponent::AddProp(int32 PropID)
 {
-	if (AllProps.Contains(PropID))
+	for (int32 i = 0; i < AllProps.Num(); ++i)
 	{
-		++AllProps[PropID];
-		OnAllPropsChanged();
-		return true;
-	}
-	else
-	{
-		if (CurrentPropItemNum <= MaxPropItemNum)
+		if (AllProps[i].PropID == PropID)
 		{
-			AllProps.Add(PropID, 1);
-			++CurrentPropItemNum;
-			for (int32 i = 0; i < MaxPropItemNum; ++i)
-			{
-				if (AllPropsIndex[i] == -1)
-				{
-					AllPropsIndex[i] = PropID;
-					break;
-				}
-			}
-			OnAllPropsIndexChanged();
+			++AllProps[i].PropNum;
+			OnAllPropsChanged();
 			return true;
 		}
+	}
+
+	
+	if (CurrentPropItemNum <= MaxPropItemNum)
+	{
+		FPropItemStroe StoreInfo;
+		
+		StoreInfo.PropID = PropID;
+		StoreInfo.PropNum = 1;
+				
+		AllProps.Add(StoreInfo);
+
+		++CurrentPropItemNum;
+
+		for (int32 j = 0; j < MaxPropItemNum; ++j)
+		{
+			if (AllPropsIndex[j] == -1)
+			{
+				AllPropsIndex[j] = PropID;
+				break;
+			}
+		}
+
+		OnAllPropsIndexChanged();
+		return true;
 	}
 
 	return false;
@@ -67,38 +77,50 @@ void UPropComponent::UsePropFromIndex(int32 Index)
 
 void UPropComponent::UseProp(int32 PropID)
 {
-	if (AllProps.Contains(PropID))
+	for (int32 i = 0; i < AllProps.Num(); ++i)
 	{
-		const FPickupPropInfo* PropInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetPropInfoFromID(PropID);
-		
-		UPropBase* Prop = PropInfo && PropInfo->PropClass ? NewObject<UPropBase>(this, PropInfo->PropClass) : nullptr;
-		if (Prop && Prop->BeUseByGamePawn(OwnerGamePawn))
+		if (AllProps[i].PropID == PropID)
 		{
-			--AllProps[PropID];
+			const FPickupPropInfo* PropInfo = UEveryThingAssetManager::GetAssetManagerInstance()->GetPropInfoFromID(PropID);
 
-			OnAllPropsChanged();
-
-			if (AllProps[PropID] == 0)
+			UPropBase* Prop = PropInfo && PropInfo->PropClass ? NewObject<UPropBase>(this, PropInfo->PropClass) : nullptr;
+			if (Prop && Prop->BeUseByGamePawn(OwnerGamePawn))
 			{
-				--CurrentPropItemNum;
-				AllProps.Remove(PropID);
-				for (int32 i = 0; i < MaxPropItemNum; ++i)
+				--AllProps[i].PropNum;
+
+				OnAllPropsChanged();
+
+				if (AllProps[i].PropNum == 0)
 				{
-					if (AllPropsIndex[i] == PropID)
+					--CurrentPropItemNum;
+					AllProps.RemoveAt(i);
+
+					for (int32 j = 0; j < MaxPropItemNum; ++j)
 					{
-						AllPropsIndex[i] = -1;
-						break;
+						if (AllPropsIndex[j] == PropID)
+						{
+							AllPropsIndex[j] = -1;
+							break;
+						}
 					}
+
+					OnAllPropsIndexChanged();
 				}
-				OnAllPropsIndexChanged();
 			}
-		}		
+		}
 	}
 }
 
 int32 UPropComponent::GetPropNums(int32 PropID) const
 {
-	return AllProps.Contains(PropID) ? AllProps[PropID] : 0;
+	for (int32 i = 0; i < AllProps.Num(); ++i)
+	{
+		if (AllProps[i].PropID == PropID)
+		{
+			return AllProps[i].PropNum;
+		}
+	}
+	return 0;
 }
 
 
