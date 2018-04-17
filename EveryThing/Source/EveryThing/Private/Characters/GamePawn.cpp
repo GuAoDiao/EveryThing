@@ -64,6 +64,8 @@ void AGamePawn::OnConstruction(const FTransform& Transform)
 
 	Durability = MaxDurability;
 	Stamina = MaxStamina;
+
+	OnAgilityAndQualityChanged();
 }
 
 void AGamePawn::PossessedBy(AController* NewController)
@@ -471,7 +473,10 @@ void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 	ConsumeImpluseScale = InInfo->ConsumeImpluseScale * 0.0001f;;
 	ConsumeTorqueScale = InInfo->ConsumeTorqueScale * 0.0000001f;
 
-	OnAgilityAndQualityChanged();
+	if (!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		OnAgilityAndQualityChanged();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -253,25 +253,31 @@ AActor* UPlayerPawnComponent::TryToGetHitAbleActor() const
 	APlayerController* OwnerPC = OwnerPawn ? Cast<APlayerController>(OwnerPawn->GetController()) : nullptr;
 	if (OwnerPC)
 	{
-		FVector CameraLocation;
-		FRotator CameraRotation;
-		OwnerPC->GetPlayerViewPoint(CameraLocation, CameraRotation);
-		FVector EndTrace = CameraLocation + (CameraRotation.Vector() * OwnerPawn->GetMaxHyperopiaDistance());
+		FVector CenterLocation, CenterDirection;
+		int32 X, Y;
+		OwnerPC->GetViewportSize(X, Y);
+		OwnerPC->DeprojectScreenPositionToWorld(X * 0.5f, Y * 0.5f, CenterLocation, CenterDirection);
+		FVector EndTrace = CenterLocation + CenterDirection * OwnerPawn->GetMaxHyperopiaDistance();
 
 		FCollisionQueryParams TraceParams;
 		TraceParams.AddIgnoredActor(OwnerPawn);
 		FHitResult Hit;
-		
-		UKismetSystemLibrary::DrawDebugPoint(OwnerPawn, EndTrace, 10.f, FLinearColor::Blue, 0.1f);
-		UKismetSystemLibrary::DrawDebugLine(OwnerPawn, OwnerPawn->GetActorLocation(), EndTrace, FLinearColor::Yellow, 0.1f, 5.f);
 
-		if (GetWorld()->LineTraceSingleByChannel(Hit, OwnerPawn->GetActorLocation(), EndTrace, ECC_Visibility, TraceParams))
+		if (GetWorld()->LineTraceSingleByChannel(Hit, CenterLocation, EndTrace, ECC_Visibility, TraceParams))
 		{
-			if (Cast<IHitAbleInterface>(Hit.GetActor()))	
+			EndTrace = Hit.Location;
+			
+			if (Cast<IHitAbleInterface>(Hit.GetActor()))
 			{
-				return Hit.GetActor();
+				if (GetWorld()->LineTraceSingleByChannel(Hit, OwnerPawn->GetActorLocation(), EndTrace, ECC_Visibility, TraceParams))
+				{
+					{
+						return Hit.GetActor();
+					}
+				}
 			}
 		}
+
 	}
 
 	return nullptr;

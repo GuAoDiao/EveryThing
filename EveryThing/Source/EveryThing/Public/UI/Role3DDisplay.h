@@ -17,6 +17,8 @@ class EVERYTHING_API ARole3DDisplay : public AActor
 public:
 	ARole3DDisplay();
 	
+	virtual void BeginPlay() override;
+
 	void AdjustUp(float AxisValue);
 	void AdjustRight(float AxisValue);
 

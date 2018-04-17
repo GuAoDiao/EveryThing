@@ -23,8 +23,6 @@ ARole3DDisplay::ARole3DDisplay()
 	SceneCaptureComp2D->ProjectionType = ECameraProjectionMode::Orthographic;
 	SceneCaptureComp2D->OrthoWidth = 1024.f;
 	
-	UTextureRenderTarget2D* Texture = LoadObject<UTextureRenderTarget2D>(this, TEXT("TextureRenderTarget2D'/Game/EveryThing/UI/T_Character.T_Character'"));
-	SceneCaptureComp2D->TextureTarget = Texture;
 	SceneCaptureComp2D->SetupAttachment(CameraComp);
 
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
@@ -45,6 +43,13 @@ ARole3DDisplay::ARole3DDisplay()
 	ChangeRole(CurrentRoleName);
 }
 
+void ARole3DDisplay::BeginPlay()
+{
+	Super::BeginPlay();
+
+	UTextureRenderTarget2D* Texture = LoadObject<UTextureRenderTarget2D>(this, TEXT("TextureRenderTarget2D'/Game/EveryThing/UI/T_Character.T_Character'"));
+	SceneCaptureComp2D->TextureTarget = Texture;
+}
 
 void ARole3DDisplay::ChangeRole(const FName& RoleName)
 {
