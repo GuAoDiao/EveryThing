@@ -150,18 +150,27 @@ void UPlayerPawnComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 	{
 		AActor* SelectedHitAbleActor = TryToGetHitAbleActor();
 
+		IHitAbleInterface* CurrentHitableAttackTarget = Cast<IHitAbleInterface>(CurrentAttackTarget);
+
 		if (SelectedHitAbleActor && SelectedHitAbleActor != CurrentAttackTarget && SelectedHitAbleActor!= OwnerPawn)
 		{
 			IHitAbleInterface* SelectedHitableAttackTarget = Cast<IHitAbleInterface>(SelectedHitAbleActor);
 			if (SelectedHitableAttackTarget && SelectedHitableAttackTarget->CanBeSelectedToHit(OwnerPawn))
 			{
-				IHitAbleInterface* CurrentHitableAttackTarget = Cast<IHitAbleInterface>(CurrentAttackTarget);
 				if (CurrentHitableAttackTarget) { CurrentHitableAttackTarget->SetIsSelectedToHit(false); }
 
 				LastAttackTarget = CurrentAttackTarget;
 				CurrentAttackTarget = SelectedHitAbleActor;
 
 				SelectedHitableAttackTarget->SetIsSelectedToHit(true);
+			}
+		}
+		else if (CurrentHitableAttackTarget)
+		{
+			if (!CurrentHitableAttackTarget->CanBeSelectedToHit(OwnerPawn))
+			{
+				CurrentHitableAttackTarget->SetIsSelectedToHit(false);
+				CurrentAttackTarget = nullptr;
 			}
 		}
 	}
@@ -249,7 +258,6 @@ void UPlayerPawnComponent::SelectLastAttackTarget()
 
 AActor* UPlayerPawnComponent::TryToGetHitAbleActor() const
 {
-
 	APlayerController* OwnerPC = OwnerPawn ? Cast<APlayerController>(OwnerPawn->GetController()) : nullptr;
 	if (OwnerPC)
 	{

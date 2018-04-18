@@ -317,13 +317,8 @@ void AEveryThingGameState_Game::OnGamePawnBeKilled(AGamePawn* KilledGamePawn, AA
 			KilledPC_G->ClientOnSuicided();
 		}
 
-		AEveryThingGameMode_Game* OwnerETGM_G = GetWorld() ? GetWorld()->GetAuthGameMode<AEveryThingGameMode_Game>() : nullptr;
-		if (OwnerETGM_G)
-		{
-			KilledPC_G->UnPossess();
-
-			OwnerETGM_G->RestartPlayer(KilledPC_G);
-		}
+		KilledPC_G->UnPossess();
+		KilledPC_G->DelayToRestartGamePawn(3.f);
 	}
 
 	APlayerController_Game* KillerPC_G = KillerGamePawn ? Cast<APlayerController_Game>(KillerGamePawn->GetController()) : nullptr;

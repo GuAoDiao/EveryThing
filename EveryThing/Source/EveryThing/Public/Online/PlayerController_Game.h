@@ -178,4 +178,12 @@ private:
 	FName CurrentRoleName;
 
 	TArray<FName> AllRoleNames;
+
+	//////////////////////////////////////////////////////////////////////////
+	/// Delay to restart
+
+public:
+	void DelayToRestartGamePawn(float DelayTime);
+protected:
+	void RestartGamePawn();
 };

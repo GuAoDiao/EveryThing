@@ -3,6 +3,7 @@
 #include "PlayerController_Game.h"
 
 #include "UnrealNetwork.h"
+#include "TimerManager.h"
 #include "GameFramework/InputSettings.h"
 
 #include "EveryThingTypes.h"
@@ -19,6 +20,7 @@
 #include "Characters/Movement/Components/GamePawnMovementComponent.h"
 #include "SceneObject/HitAbleInterface.h"
 #include "Online/EveryThingPlayerState_Game.h"
+#include "Online/EveryThingGameMode_Game.h"
 #include "Characters/GamePawnManager.h"
 
 
@@ -428,6 +430,20 @@ void APlayerController_Game::ServerToggleRole_Implementation(const FName& Target
 }
 
 
+void APlayerController_Game::DelayToRestartGamePawn(float DelayTime)
+{
+	FTimerHandle DelayToRestartTimer;
+	GetWorldTimerManager().SetTimer(DelayToRestartTimer, this, &APlayerController_Game::RestartGamePawn, DelayTime, false);
+}
+
+void APlayerController_Game::RestartGamePawn()
+{
+	AEveryThingGameMode_Game* OwnerETGM_G = GetWorld() ? GetWorld()->GetAuthGameMode<AEveryThingGameMode_Game>() : nullptr;
+	if (OwnerETGM_G)
+	{
+		OwnerETGM_G->RestartPlayer(this);
+	}
+}
 
 
 void APlayerController_Game::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const

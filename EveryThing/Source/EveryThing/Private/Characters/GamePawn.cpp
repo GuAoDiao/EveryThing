@@ -62,9 +62,6 @@ void AGamePawn::OnConstruction(const FTransform& Transform)
 
 	HitAbleDisplayName = RoleName.ToString();
 
-	Durability = MaxDurability;
-	Stamina = MaxStamina;
-
 	OnAgilityAndQualityChanged();
 }
 
@@ -461,9 +458,16 @@ void AGamePawn::SetInfo(const FGamePawnInfo* InInfo)
 	BaseInfo = *InInfo;
 	
 	MaxDurability = InInfo->MaxDurability;
+	Durability = MaxDurability;
+	OnDurabilityUpdate();
+	OnMaxDurabilityUpdate();
+
 	MaxStamina = InInfo->MaxStamina;
+	Stamina = MaxStamina;
+	OnStaminaUpdate();
+	OnMaxStaminaUpdate();
 	
-	StaminaRecoverRate = MaxStamina / 16.f;
+	StaminaRecoverRate = MaxStamina / 8.f;
 
 	Agility = InInfo->Agility;
 	Quality = InInfo->Quality;
