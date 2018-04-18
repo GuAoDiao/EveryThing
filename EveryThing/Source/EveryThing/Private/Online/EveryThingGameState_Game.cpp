@@ -20,9 +20,7 @@ AEveryThingGameState_Game::AEveryThingGameState_Game()
 	bIsETGameStarted = false;
 	CurrentETGameState = EETGameState::WaitForHousePlayerLoad;
 
-	// TODO: close debug
-	DefaultReadyTime = 1.f;
-	// DefaultReadyTime = 15.f;
+	DefaultReadyTime = 15.f;
 	DefaultGameTime = 600.f;
 	DefaultBackToHouseTime = 10.f;
 
