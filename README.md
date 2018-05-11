@@ -14,6 +14,7 @@
 
 
 小组合作因部分原因即将停止,该项目之后将转为个人项目,看心情写
+个人项目路径:https://github.com/GuAoDiao/GUAO_EveryThing
 
 - 存档功能 
     - 存档的正常创建,读取,保存.
